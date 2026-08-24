@@ -1,0 +1,110 @@
+<!-- WIDGET DE ACCESIBILIDAD — incluir justo antes de </body> -->
+<div id="acc-widget">
+  <button id="acc-toggle" aria-label="Opciones de accesibilidad">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      width="22"
+      height="22"
+    >
+      <circle cx="12" cy="4" r="2" />
+      <path d="M19 9H5a1 1 0 000 2h5l-1.5 8h2l1-5 1 5h2L13 11h5a1 1 0 000-2z" />
+    </svg>
+  </button>
+
+  <div id="acc-panel">
+    <div class="acc-head">
+      <svg class="extracted-style-350"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        width="16"
+        height="16"
+      >
+        <circle cx="12" cy="4" r="2" />
+        <path
+          d="M19 9H5a1 1 0 000 2h5l-1.5 8h2l1-5 1 5h2L13 11h5a1 1 0 000-2z"
+        />
+      </svg>
+      <span>Accesibilidad</span>
+    </div>
+
+    <button class="acc-btn" id="acc-btn-contrast">
+      <span class="acc-ico">
+        <svg viewBox="0 0 24 24" width="14" height="14">
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <path d="M12 2a10 10 0 010 20V2z" fill="currentColor" />
+        </svg>
+      </span>
+      Contraste alto
+    </button>
+
+    <button class="acc-btn" id="acc-btn-dark">
+      <span class="acc-ico">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+          <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" />
+        </svg>
+      </span>
+      Modo oscuro
+    </button>
+
+    <button class="acc-btn" id="acc-btn-light">
+      <span class="acc-ico">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          width="14"
+          height="14"
+        >
+          <circle cx="12" cy="12" r="5" fill="currentColor" stroke="none" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      </span>
+      Modo claro
+    </button>
+
+    <div class="acc-divider"></div>
+
+    <button class="acc-btn" id="acc-btn-density">
+      <span class="acc-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </span>
+      Tabla compacta
+    </button>
+
+    <button class="acc-btn" id="acc-btn-plus">
+      <span class="acc-ico acc-ico-txt">A+</span>
+      Aumentar letra
+    </button>
+
+    <button class="acc-btn" id="acc-btn-minus">
+      <span class="acc-ico acc-ico-txt extracted-style-351">A−</span>
+      Reducir letra
+    </button>
+
+    <div class="extracted-style-352">
+      <button class="acc-btn-reset" id="acc-btn-reset">Restablecer todo</button>
+    </div>
+  </div>
+</div>
