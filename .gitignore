@@ -1,0 +1,47 @@
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
+
+# Migraciones de Django (Ignorar archivos de migración excepto __init__.py)
+*/migrations/*.py
+!*/migrations/__init__.py
+*/migrations/*.pyc
+
+# Assets
+node_modules/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+
+# Static files recolectados
+staticfiles/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Empaquetado
+*.egg-info/
