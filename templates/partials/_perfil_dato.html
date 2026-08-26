@@ -1,11 +1,9 @@
-{# templates/partials/_perfil_dato.html #}
-{# Uso: {% include "partials/_perfil_dato.html" with icono="envelope" label="Correo" valor=usuario.correo %} #}
-<div class="d-flex"align-items:flex-start;gap:.65rem;margin-bottom:.65rem;">
-  <div class="extracted-style-385">
-    <i class="bi bi-{{ icono }} extracted-style-386"></i>
+<div class="d-flex align-items-start gap-2 mb-2">
+  <div class="p-2 rounded bg-light text-primary">
+    <i class="bi bi-{{ icono }}"></i>
   </div>
-  <div class="extracted-style-228">
-    <div class="extracted-style-387">{{ label }}</div>
-    <div class="extracted-style-388">{{ valor }}</div>
+  <div>
+    <div class="text-uppercase text-muted extra-small font-monospace">{{ label }}</div>
+    <div class="fw-semibold small text-dark">{{ valor }}</div>
   </div>
 </div>

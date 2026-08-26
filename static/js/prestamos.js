@@ -85,16 +85,13 @@ var maxSteps    = 4;
 var productosData = [];
 var usuariosData  = [];
 try {
-  var prodEl = document.getElementById('productos-data');
+  var prodEl = document.getElementById('herramientas-data') || document.getElementById('productos-data');
   if (prodEl) productosData = JSON.parse(prodEl.textContent);
   var usrEl = document.getElementById('usuarios-data');
   if (usrEl) usuariosData = JSON.parse(usrEl.textContent);
 } catch (e) {
-  console.error("Error al parsear datos de productos/usuarios:", e);
+  console.error("Error al parsear datos de herramientas/usuarios:", e);
 }
-
-console.log("Productos cargados:", productosData);
-console.log("Usuarios cargados:", usuariosData);
 
 var wizardSteps = [
   { id:1, label:'Responsable' },
@@ -157,12 +154,20 @@ function limpiarAlerta() {
 /* ── Validación por paso — devuelve {ok, msg, tipo} ── */
 function validarPasoActual() {
   if (currentStep === 1) {
-    var sel = document.getElementById('id_usuario');
-    if (!sel || !sel.value) {
-      sel && sel.classList.add('is-invalid');
-      return { ok:false, msg:'Debes seleccionar un usuario responsable antes de continuar.', tipo:'error' };
+    var docInp = document.getElementById('id_documento');
+    var fichaInp = document.getElementById('id_ficha');
+    if (docInp && !docInp.value.trim()) {
+      docInp.classList.add('is-invalid');
+      return { ok:false, msg:'Ingresa el número de documento del solicitante.', tipo:'error' };
     }
-    sel.classList.remove('is-invalid');
+    if (docInp) docInp.classList.remove('is-invalid');
+
+    if (fichaInp && !fichaInp.value.trim()) {
+      fichaInp.classList.add('is-invalid');
+      return { ok:false, msg:'Ingresa la Ficha SENA.', tipo:'error' };
+    }
+    if (fichaInp) fichaInp.classList.remove('is-invalid');
+
     return { ok:true };
   }
   if (currentStep === 2) {
@@ -209,7 +214,7 @@ function goToStep(step) {
   document.getElementById('step-' + step).style.display = 'block';
   currentStep = step;
   var titles = [
-    { title:'Paso 1: Responsable del préstamo',   subtitle:'Selecciona el usuario responsable' },
+    { title:'Paso 1: Responsable del préstamo',   subtitle:'Ingresa datos del solicitante y ficha' },
     { title:'Paso 2: Herramientas',               subtitle:'Selecciona las herramientas a prestar' },
     { title:'Paso 3: Detalles del préstamo',      subtitle:'Agrega información adicional' },
     { title:'Paso 4: Resumen',                    subtitle:'Revisa todos los datos antes de confirmar' },
@@ -229,15 +234,12 @@ function goToStep(step) {
 }
 
 function updateSummary() {
-  var usuarioSelect   = document.getElementById('id_usuario');
-  var nombreInput     = document.querySelector('[name="nombre_usuario"]');
-  var vencimientoInput = document.querySelector('[name="fecha_vencimiento"]');
-  var doc      = usuarioSelect ? usuarioSelect.value : '';
-  var usuario  = usuariosData.find(function (u) { return u.doc === doc; });
-  var nombreTexto = nombreInput && nombreInput.value ? nombreInput.value : (usuario ? usuario.nombre : 'No seleccionado');
-  document.getElementById('summary-usuario').textContent = nombreTexto;
-  var venc = vencimientoInput && vencimientoInput.value;
-  document.getElementById('summary-vencimiento').textContent = venc ? 'Vencimiento: ' + venc : '';
+  var docInput   = document.getElementById('id_documento');
+  var fichaInput = document.getElementById('id_ficha');
+  var docTexto   = docInput ? docInput.value : '';
+  var fichaTexto = fichaInput ? fichaInput.value : '';
+  
+  document.getElementById('summary-usuario').textContent = 'Doc: ' + (docTexto || '—') + (fichaTexto ? ' · Ficha: ' + fichaTexto : '');
   var container = document.getElementById('summary-items');
   container.innerHTML = '';
   document.querySelectorAll('#crear-items-container .crear-item-row').forEach(function (row) {
@@ -245,15 +247,17 @@ function updateSummary() {
     var qty = row.querySelector('input[name="cantidad[]"]');
     if (!sel || !sel.value) return;
     var prod = productosData.find(function (p) { return p.pk == sel.value; });
-    if (!prod) return;
+    var nombreStr = prod ? (prod.nombre || prod.nombre_herramienta) : sel.options[sel.selectedIndex].text;
+    var codigoStr = prod ? (prod.codigo || prod.sku || '') : '';
+    
     var item = document.createElement('div');
     item.style.cssText = 'padding:.65rem .85rem; border-radius:var(--radius-sm);' +
       'background:rgba(9,77,146,.05); border:1px solid rgba(9,77,146,.1);' +
       'display:flex; align-items:center; justify-content:space-between;';
     item.innerHTML =
       '<div>' +
-        '<div style="font-weight:600; font-size:.88rem;">' + escapeHtml(prod.nombre) + '</div>' +
-        '<div style="font-family:var(--font-mono); font-size:.72rem; color:var(--text-muted);">' + escapeHtml(prod.sku) + '</div>' +
+        '<div style="font-weight:600; font-size:.88rem;">' + escapeHtml(nombreStr) + '</div>' +
+        (codigoStr ? '<div style="font-family:var(--font-mono); font-size:.72rem; color:var(--text-muted);">' + escapeHtml(codigoStr) + '</div>' : '') +
       '</div>' +
       '<div style="font-family:var(--font-mono); font-size:.9rem; font-weight:700; color:var(--navy);">×' + (qty ? qty.value : 1) + '</div>';
     container.appendChild(item);
@@ -267,14 +271,16 @@ function updateSummary() {
 function crearFilaProducto() {
   var opciones = '<option value="">— Selecciona herramienta —</option>' +
     productosData.map(function (p) {
-      return '<option value="' + p.pk + '" data-stock="' + p.stock + '">[' +
-        escapeHtml(p.sku) + '] ' + escapeHtml(p.nombre) + ' — Stock: ' + p.stock + '</option>';
+      var stock = p.stock_disponible !== undefined ? p.stock_disponible : (p.stock !== undefined ? p.stock : 0);
+      var codigo = p.codigo || p.sku || '';
+      return '<option value="' + p.pk + '" data-stock="' + stock + '">[' +
+        escapeHtml(codigo) + '] ' + escapeHtml(p.nombre) + ' — Stock: ' + stock + '</option>';
     }).join('');
   var div = document.createElement('div');
   div.className = 'crear-item-row row g-2 align-items-start mb-2';
   div.innerHTML =
     '<div class="col">' +
-      '<select name="producto[]" class="form-select crear-prod-sel" required>' + opciones + '</select>' +
+      '<select name="herramienta[]" class="form-select crear-prod-sel" required>' + opciones + '</select>' +
       '<div class="stock-info-dyn d-none mt-1 px-2 py-1 rounded" style="font-size:.78rem;display:flex;align-items:center;gap:.4rem;"></div>' +
     '</div>' +
     '<div class="col-auto" style="width:90px;"><input type="number" name="cantidad[]" class="form-control text-center" min="1" value="1" required></div>' +
@@ -320,18 +326,26 @@ function actualizarDelBtns() {
   });
 }
 
-document.getElementById('id_usuario').addEventListener('change', function () {
-  var doc = this.value;
-  var u   = usuariosData.find(function (u) { return u.doc === doc; });
-  var inp = document.querySelector('[name="nombre_usuario"]');
-  if (u && inp) inp.value = u.nombre;
-});
+var userSelect = document.getElementById('id_usuario');
+if (userSelect) {
+  userSelect.addEventListener('change', function () {
+    var opt = this.options[this.selectedIndex];
+    var doc = opt ? opt.dataset.doc : '';
+    var docInp = document.getElementById('id_documento');
+    if (doc && docInp && !docInp.value) {
+      docInp.value = doc;
+    }
+  });
+}
 
 document.getElementById('modalCrearPrestamo').addEventListener('show.bs.modal', function () {
   currentStep = 1;
   goToStep(1);
   document.getElementById('wizardForm').reset();
-  document.getElementById('id_usuario').classList.remove('is-invalid');
+  var docInp = document.getElementById('id_documento');
+  if (docInp) docInp.classList.remove('is-invalid');
+  var fichaInp = document.getElementById('id_ficha');
+  if (fichaInp) fichaInp.classList.remove('is-invalid');
   var container = document.getElementById('crear-items-container');
   while (container.children.length > 1) container.removeChild(container.lastChild);
   actualizarDelBtns();

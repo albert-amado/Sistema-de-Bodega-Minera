@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+{# ══ MENSAJES ══ #}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3 {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+{# ══ CABECERA ══ #}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h5 class="fw-bold mb-0">Mis Préstamos</h5>
+    <p class="mb-0 small text-muted">
+      {% if usuario %}{{ usuario.nombre_completo|default:usuario.get_full_name|default:usuario.username }}{% else %}Invitado{% endif %}
+      {% if usuario.numero_documento %}<span class="font-monospace opacity-75">· {{ usuario.numero_documento }}</span>{% endif %}
+    </p>
+  </div>
+  <button class="btn btn-primary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalSolicitar">
+    <i class="bi bi-plus-circle"></i> Nueva solicitud
+  </button>
+</div>
+
+{# ══ KPI CARDS ══ #}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card h-100 p-3 text-center border-0 shadow-sm">
+      <div class="text-muted small fw-semibold">Total</div>
+      <div class="fs-4 fw-bold text-dark">{{ total_prestamos }}</div>
+      <div class="text-muted small">solicitados</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card h-100 p-3 text-center border-0 shadow-sm">
+      <div class="text-muted small fw-semibold">Activos</div>
+      <div class="fs-4 fw-bold text-primary">{{ total_activos|default:0 }}</div>
+      <div class="text-muted small">en tu poder</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card h-100 p-3 text-center border-0 shadow-sm {% if proximos_vencer > 0 %}border-warning{% endif %}">
+      <div class="text-muted small fw-semibold">Próx. vencer</div>
+      <div class="fs-4 fw-bold {% if proximos_vencer > 0 %}text-warning{% else %}text-muted{% endif %}">{{ proximos_vencer|default:0 }}</div>
+      <div class="text-muted small">en 3 días</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card h-100 p-3 text-center border-0 shadow-sm {% if vencidos_count > 0 %}border-danger{% endif %}">
+      <div class="text-muted small fw-semibold">Vencidos</div>
+      <div class="fs-4 fw-bold {% if vencidos_count > 0 %}text-danger{% else %}text-muted{% endif %}">{{ vencidos_count|default:0 }}</div>
+      <div class="text-muted small">requieren atención</div>
+    </div>
+  </div>
+</div>
+
+{# ══ FILTROS ══ #}
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body py-2 px-3">
+    <div class="d-flex gap-2 flex-wrap align-items-center">
+      <button class="btn btn-sm btn-primary pu-filter-btn" data-filter="todos" onclick="puFiltrar('todos', this)">
+        Todos <span class="badge bg-white text-primary ms-1 font-monospace">{{ total_prestamos }}</span>
+      </button>
+      <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="activo" onclick="puFiltrar('activo', this)">
+        Activos
+      </button>
+      <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="pendiente" onclick="puFiltrar('pendiente', this)">
+        Pendientes
+      </button>
+      <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="devuelto" onclick="puFiltrar('devuelto', this)">
+        Devueltos
+      </button>
+    </div>
+  </div>
+</div>
+
+{# ══ TABLA DE PRÉSTAMOS ══ #}
+{% if all_prestamos %}
+<div class="card border-0 shadow-sm">
+  <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between px-3 py-3">
+    <h6 class="fw-bold mb-0"><i class="bi bi-journal-text me-2"></i>Mis solicitudes</h6>
+    <span class="badge bg-primary-subtle text-primary border font-monospace">{{ total_prestamos }} registros</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0" id="pu-tabla">
+      <thead class="table-light">
+        <tr>
+          <th></th>
+          <th>#</th>
+          <th>Herramientas</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Ficha</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in all_prestamos %}
+        <tr class="pu-row {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}table-warning{% endif %}" data-estado="{{ p.estado }}">
+          <td class="ps-3">
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#pu-detail-{{ p.pk }}" class="btn btn-sm btn-link text-muted p-0">
+              <i class="bi bi-chevron-right pu-chevron"></i>
+            </button>
+          </td>
+          <td><span class="font-monospace text-muted small">#{{ p.pk }}</span></td>
+          <td>
+            <div class="d-flex flex-wrap gap-1">
+              {% for item in p.detalles.all|default:p.items.all %}
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                {{ item.herramienta.nombre|default:item.producto.nombre }} ×{{ item.cantidad }}
+              </span>
+              {% endfor %}
+            </div>
+          </td>
+          <td>
+            {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
+              <span class="badge bg-warning-subtle text-warning-emphasis">Pendiente</span>
+            {% elif p.estado == 'ENTREGADO' or p.estado == 'entregado' or p.estado == 'activo' %}
+              <span class="badge bg-success-subtle text-success">Entregado</span>
+            {% elif p.estado == 'PARCIAL' or p.estado == 'parcial' %}
+              <span class="badge bg-info-subtle text-info">Parcial</span>
+            {% elif p.estado == 'DEVUELTO' or p.estado == 'devuelto' %}
+              <span class="badge bg-primary-subtle text-primary">Devuelto</span>
+            {% elif p.estado == 'CANCELADO' or p.estado == 'cancelado' or p.estado == 'rechazado' %}
+              <span class="badge bg-danger-subtle text-danger">Cancelado</span>
+            {% else %}
+              <span class="badge bg-secondary-subtle text-secondary">{{ p.get_estado_display|default:p.estado }}</span>
+            {% endif %}
+          </td>
+          <td class="font-monospace text-muted small">{{ p.fecha|default:p.fecha_prestamo|date:"d/m/Y" }}</td>
+          <td><span class="font-monospace small text-muted">Ficha: {{ p.ficha }}</span></td>
+        </tr>
+
+        {# Detalle colapsable #}
+        <tr>
+          <td colspan="6" class="p-0 border-0">
+            <div class="collapse" id="pu-detail-{{ p.pk }}">
+              <div class="p-3 bg-light border-bottom">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <h6 class="fw-bold small text-muted text-uppercase mb-2">Herramientas</h6>
+                    {% for item in p.detalles.all|default:p.items.all %}
+                    <div class="d-flex align-items-center justify-content-between p-2 mb-1 bg-white rounded border small">
+                      <div>
+                        <div class="fw-semibold">{{ item.herramienta.nombre|default:item.producto.nombre }}</div>
+                        <div class="font-monospace text-muted extra-small">Código: {{ item.herramienta.codigo|default:item.producto.codigo_sku }}</div>
+                      </div>
+                      <span class="badge bg-primary">×{{ item.cantidad }}</span>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <div class="col-md-6">
+                    <h6 class="fw-bold small text-muted text-uppercase mb-2">Información del Préstamo</h6>
+                    <div class="small">
+                      <div><strong>Documento:</strong> {{ p.documento }}</div>
+                      <div><strong>Ficha SENA:</strong> {{ p.ficha }}</div>
+                      <div><strong>Fecha:</strong> {{ p.fecha|default:p.fecha_prestamo|date:"d/m/Y" }}</div>
+                      {% if p.observaciones %}<div><strong>Observaciones:</strong> {{ p.observaciones }}</div>{% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="card border-0 shadow-sm text-center py-5">
+  <i class="bi bi-inbox fs-1 text-muted mb-2 opacity-50"></i>
+  <p class="text-muted small mb-3">No tienes préstamos registrados aún.</p>
+  <div>
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalSolicitar">
+      Hacer mi primera solicitud
+    </button>
+  </div>
+</div>
+{% endif %}
+
+{# ══ MODAL SOLICITAR PRÉSTAMO ══ #}
+<div class="modal fade" id="modalSolicitar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Solicitar Préstamo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form method="post" action="{% url 'usuario_solicitar_prestamo' %}" novalidate id="formSolicitar">
+        {% csrf_token %}
+        <div class="modal-body">
+          <h6 class="fw-bold small text-primary mb-3">1. Datos del Solicitante</h6>
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Número de Documento *</label>
+              <input type="text" name="documento" class="form-control form-control-sm" value="{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% endif %}" required placeholder="Documento">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Ficha SENA *</label>
+              <input type="text" name="ficha" class="form-control form-control-sm" required placeholder="Ej: 2670123">
+            </div>
+          </div>
+
+          <h6 class="fw-bold small text-primary mb-3">2. Selecciona las Herramientas</h6>
+          <div id="sol-items-container">
+            <div class="sol-item-row row g-2 align-items-start mb-2">
+              <div class="col">
+                <select name="herramienta[]" class="form-select form-select-sm sol-prod-sel" required>
+                  <option value="">— Selecciona herramienta —</option>
+                  {% for h in herramientas_disponibles|default:productos_disponibles %}
+                  <option value="{{ h.pk }}" data-stock="{{ h.stock_disponible|default:h.stock|default:0 }}">
+                    [{{ h.codigo|default:h.codigo_sku }}] {{ h.nombre }}{% if h.stock_disponible <= 0 or h.stock <= 0 %} ⚠ Sin stock{% endif %}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-auto" style="width:90px;">
+                <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" value="1" placeholder="Cant.">
+              </div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-outline-danger btn-sm sol-del-btn disabled">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" id="sol-add-item" class="btn btn-outline-primary btn-sm mb-3">
+            <i class="bi bi-plus-circle me-1"></i> Añadir otra herramienta
+          </button>
+
+          <h6 class="fw-bold small text-primary mb-2">3. Observaciones</h6>
+          <textarea name="observaciones" class="form-control form-control-sm" rows="3" placeholder="Indica el motivo o detalles de tu solicitud..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-send me-1"></i> Enviar solicitud</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.querySelectorAll('[data-bs-target^="#pu-detail-"]').forEach(function (btn) {
+    var target = document.querySelector(btn.getAttribute('data-bs-target'));
+    if (!target) return;
+    target.addEventListener('show.bs.collapse', function () {
+      var icon = btn.querySelector('.pu-chevron');
+      if (icon) icon.style.transform = 'rotate(90deg)';
+    });
+    target.addEventListener('hide.bs.collapse', function () {
+      var icon = btn.querySelector('.pu-chevron');
+      if (icon) icon.style.transform = 'rotate(0deg)';
+    });
+  });
+
+  function puFiltrar(estado, btn) {
+    document.querySelectorAll('.pu-filter-btn').forEach(function (b) {
+      b.classList.remove('btn-primary');
+      b.classList.add('btn-outline-secondary');
+    });
+    btn.classList.remove('btn-outline-secondary');
+    btn.classList.add('btn-primary');
+
+    document.querySelectorAll('#pu-tabla .pu-row').forEach(function (tr) {
+      var mostrar = estado === 'todos' || tr.dataset.estado === estado || (estado === 'activo' && tr.dataset.estado === 'ENTREGADO');
+      tr.style.display = mostrar ? '' : 'none';
+      var siguiente = tr.nextElementSibling;
+      if (siguiente && siguiente.querySelector('.collapse')) {
+        siguiente.style.display = mostrar ? '' : 'none';
+      }
+    });
+  }
+</script>
+{% endblock %}

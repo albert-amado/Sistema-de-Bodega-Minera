@@ -1,6 +1,6 @@
 <aside>
   <div class="aside-header">
-    <i class="bi bi-cloud-haze2-fill extracted-style-353"></i>
+    <i class="bi bi-cloud-haze2-fill text-warning me-2"></i>
     <span class="aside-brand-name">Mine</span>
     <span class="aside-brand-sub">inventory</span>
   </div>
@@ -9,7 +9,7 @@
 
     <!-- GENERAL -->
     <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-361">
+      <span class="text-uppercase aside-section-label">
         General
       </span>
       <hr class="flex-grow-1 my-0 opacity-10" />
@@ -40,9 +40,9 @@
     </a>
 
     <!-- SESIÓN — solo visible si NO hay sesión activa -->
-    {% if not request.session.usuario_nombre %}
+    {% if not request.user.is_authenticated %}
     <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-361">
+      <span class="text-uppercase aside-section-label">
         Sesión
       </span>
       <hr class="flex-grow-1 my-0 opacity-10" />
@@ -85,7 +85,7 @@
         <button type="button" class="btn btn-profile-pill w-100 d-flex align-items-center justify-content-between px-2 py-1"
           data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
           <div class="d-flex align-items-center gap-2 text-truncate me-1">
-            {% with nombre=request.session.usuario_nombre|default:"Usuario" %}
+            {% with nombre=request.user.get_full_name|default:request.user.username|default:"Invitado" %}
             <div class="profile-avatar-circle flex-shrink-0 fw-bold text-white">
               {{ nombre|slice:":2"|upper }}
             </div>
@@ -105,7 +105,7 @@
           <li>
             <span class="dropdown-item-text profile-role-header">
               <i class="bi bi-shield-check me-1"></i>
-              {{ request.session.usuario_rol|default:"Sin rol" }}
+              {{ request.user.is_authenticated|yesno:"Usuario,Invitado" }}
             </span>
           </li>
           <li><hr class="dropdown-divider"></li>
