@@ -13,7 +13,7 @@ urlpatterns = [
     # Rutas auxiliares de fallback para la navegación
     path('inventario/', prestamo_views.prestamo_lista, name='inventario'),
     path('reportes/', prestamo_views.prestamo_lista, name='reportes'),
-    path('devoluciones/', prestamo_views.prestamo_lista, name='devoluciones'),
+    path('devoluciones/', prestamo_views.devoluciones_lista, name='devoluciones'),
     path('usuarios/', prestamo_views.prestamo_lista, name='lista_usuarios'),
     path('login/', prestamo_views.prestamo_lista, name='login'),
     path('logout/', prestamo_views.prestamo_lista, name='logout'),
