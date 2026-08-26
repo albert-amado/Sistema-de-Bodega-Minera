@@ -1,0 +1,854 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<style>
+  /* Ensure Select2 fills the container */
+  .select2-container {
+    width: 100% !important;
+  }
+</style>
+{% endblock css %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-dismissible fade show d-flex align-items-center gap-2 alert-custom" role="alert">
+  {% if message.tags == 'error' %}
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2.2">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+  {% else %}
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2.2">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </svg>
+  {% endif %}
+  <span>{{ message }}</span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<style>
+  /* ── KPI Cards Inventario ── */
+  .inv-kpi-card {
+    border-radius: 14px;
+    border: 1px solid rgba(0,0,0,.06);
+    background: var(--bg-surface, #fff);
+    padding: 1.1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    transition: transform .18s ease, box-shadow .18s ease;
+    height: 100%;
+  }
+  .inv-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.1);
+  }
+  .inv-kpi-icon {
+    width: 50px; height: 50px;
+    min-width: 50px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+  }
+  .inv-kpi-icon.blue   { background: linear-gradient(135deg,#2563eb22,#3b82f622); color: #2563eb; }
+  .inv-kpi-icon.green  { background: linear-gradient(135deg,#16a34a22,#22c55e22); color: #16a34a; }
+  .inv-kpi-icon.red    { background: linear-gradient(135deg,#dc262622,#ef444422); color: #dc2626; }
+  .inv-kpi-icon.amber  { background: linear-gradient(135deg,#d9770622,#f59e0b22); color: #d97706; }
+  .inv-kpi-label {
+    font-size: .72rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: var(--text-muted, #71816D); margin-bottom: .2rem;
+  }
+  .inv-kpi-value {
+    font-size: 1.75rem; font-weight: 800;
+    line-height: 1; color: var(--text-main, #1B2021);
+    font-family: var(--font-title, 'Space Grotesk', sans-serif);
+  }
+  .inv-kpi-value.danger  { color: #dc2626; }
+  .inv-kpi-value.warning { color: #d97706; }
+  /* border-left accent */
+  .inv-kpi-card.accent-blue   { border-left: 3px solid #3b82f6; }
+  .inv-kpi-card.accent-green  { border-left: 3px solid #22c55e; }
+  .inv-kpi-card.accent-red    { border-left: 3px solid #ef4444; }
+  .inv-kpi-card.accent-amber  { border-left: 3px solid #f59e0b; }
+
+  /* ── Search / Filter bar ── */
+  .inv-filter-bar {
+    background: var(--bg-surface, #fff);
+    border: 1px solid rgba(0,0,0,.07);
+    border-radius: 14px;
+    padding: .75rem 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+  }
+  /* Search block — grows to fill all remaining space */
+  .inv-filter-search {
+    flex: 1 1 0%;
+    min-width: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .inv-search-icon {
+    position: absolute;
+    left: .8rem;
+    color: var(--text-muted, #71816d);
+    font-size: .9rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .inv-search-input {
+    width: 100% !important;
+    height: 38px;
+    padding: 0 .9rem 0 2.2rem;
+    border-radius: 9px;
+    border: 1px solid rgba(0,0,0,.1);
+    background: var(--bg-body, #f5f4f0);
+    font-size: .85rem;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+  }
+  .inv-search-input:focus {
+    background: #fff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+  }
+  /* Category block — fixed width, no shrink */
+  .inv-cat-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+  }
+  .inv-cat-select {
+    width: 200px;
+    height: 38px;
+    border-radius: 9px;
+    border: 1px solid rgba(0,0,0,.1);
+    background: var(--bg-body, #f5f4f0);
+    font-size: .85rem;
+    padding: 0 .75rem;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    appearance: auto;
+  }
+  .inv-cat-select:focus {
+    background: #fff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+  }
+  .inv-filter-bar .btn-add-cat {
+    height: 38px; width: 38px; border-radius: 9px;
+    background: #16a34a; color: #fff; border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+    cursor: pointer;
+    transition: background .15s, transform .12s;
+  }
+  .inv-filter-bar .btn-add-cat:hover { background: #15803d; transform: scale(1.07); }
+  .inv-filter-bar .btn-clear {
+    flex-shrink: 0;
+    height: 38px; padding: 0 .85rem; border-radius: 9px; font-size: .82rem;
+    border: 1px solid rgba(0,0,0,.12); background: transparent;
+    color: var(--text-muted, #71816d); white-space: nowrap;
+    display: flex; align-items: center; gap: .3rem;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .inv-filter-bar .btn-clear:hover {
+    background: #fee2e2; color: #dc2626; border-color: #fca5a5;
+  }
+
+  /* Dark mode */
+  body.dark-mode .inv-kpi-card {
+    background: #23272b; border-color: rgba(255,255,255,.08);
+  }
+  body.dark-mode .inv-kpi-value { color: #EFECCA; }
+  body.dark-mode .inv-filter-bar {
+    background: #23272b; border-color: rgba(255,255,255,.08);
+  }
+  body.dark-mode .inv-search-input,
+  body.dark-mode .inv-cat-select {
+    background: #1a1e22; border-color: rgba(255,255,255,.12); color: #EFECCA;
+  }
+  body.dark-mode .inv-search-input:focus,
+  body.dark-mode .inv-cat-select:focus {
+    background: #1e2428;
+  }
+</style>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="inv-kpi-card accent-blue">
+      <div class="inv-kpi-icon blue">
+        <i class="bi bi-tools"></i>
+      </div>
+      <div>
+        <div class="inv-kpi-label">Total Herramientas</div>
+        <div class="inv-kpi-value">{{ kpi_total_productos }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="inv-kpi-card accent-green">
+      <div class="inv-kpi-icon green">
+        <i class="bi bi-box-seam"></i>
+      </div>
+      <div>
+        <div class="inv-kpi-label">Unidades Totales</div>
+        <div class="inv-kpi-value">{{ kpi_total_stock }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="inv-kpi-card accent-red">
+      <div class="inv-kpi-icon red">
+        <i class="bi bi-exclamation-octagon"></i>
+      </div>
+      <div>
+        <div class="inv-kpi-label">Agotadas (Sin Stock)</div>
+        <div class="inv-kpi-value {% if kpi_sin_stock > 0 %}danger{% endif %}">{{ kpi_sin_stock }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="inv-kpi-card accent-amber">
+      <div class="inv-kpi-icon amber">
+        <i class="bi bi-graph-down-arrow"></i>
+      </div>
+      <div>
+        <div class="inv-kpi-label">Stock Bajo (≤ 5)</div>
+        <div class="inv-kpi-value {% if kpi_stock_bajo > 0 %}warning{% endif %}">{{ kpi_stock_bajo }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="inv-filter-bar mb-4">
+  <div class="inv-filter-search">
+    <i class="bi bi-search inv-search-icon"></i>
+    <input type="text" id="inventario-busqueda" class="inv-search-input" placeholder="Buscar por SKU o nombre de herramienta…" value="{{ request.GET.busqueda|default:'' }}">
+  </div>
+
+  <div class="inv-cat-wrap">
+    <select id="inventario-categoria" class="inv-cat-select">
+      <option value="">— Todas las Categorías —</option>
+      {% for cat in categorias %}
+      <option value="{{ cat.pk }}" {% if request.GET.categoria == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
+      {% endfor %}
+    </select>
+    <button type="button" class="btn-add-cat" data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria" title="Nueva categoría">
+      <i class="bi bi-plus-lg"></i>
+    </button>
+  </div>
+
+  <button type="button" id="btn-limpiar-filtros" class="btn-clear" title="Limpiar filtros">
+    <i class="bi bi-x-circle"></i> Limpiar
+  </button>
+</div>
+
+
+
+<div class="card table-card p-3">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <span class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </svg>
+      Herramientas registradas
+    </span>
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge-count">
+        {{ total }} registro{{ total|pluralize }}
+      </span>
+      <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#modalKardexHistorial" title="Ver Historial Kardex">
+        <i class="bi bi-journal-text"></i> Kardex
+      </button>
+      <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#modalNuevaHerramienta" data-bs-placement="bottom" title="Registrar una nueva herramienta en el inventario">
+          <i class="bi bi-plus-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table-app datatable-custom" id="inventario-table">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Ubicación</th>
+          <th>Stock</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for producto in productos %}
+        <tr>
+          <td><span class="sku-text">{{ producto.codigo_sku }}</span></td>
+          <td class="fw-semibold">{{ producto.nombre }}</td>
+          <td class="description-col">
+            <span class="text-truncate d-block description-text">{{ producto.descripcion|default:"—" }}</span>
+          </td>
+          <td class="col-categoria" data-categoria-id="{{ producto.categoria.pk|default:'' }}">
+            {% if producto.categoria %}
+            <span class="badge-state badge-aprobada">{{ producto.categoria }}</span>
+            {% else %}
+            <span class="text-muted-small">Sin categoría</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if producto.estante %}
+            <button class="btn btn-outline-secondary btn-sm btn-reg-action btn-ver-ubicacion" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver ubicación física de la herramienta" data-almacen-nombre="{{ producto.estante.almacen.nombre|escapejs }}" data-almacen-pk="{{ producto.estante.almacen.pk }}" data-estante-codigo="{{ producto.estante.codigo|escapejs }}" data-estante-pk="{{ producto.estante.pk }}" data-producto-nombre="{{ producto.nombre|escapejs }}">
+              <i class="bi bi-geo-alt"></i> Ver
+            </button>
+            {% else %}
+            <span class="text-muted-small">—</span>
+            {% endif %}
+          </td>
+          <td data-order="{{ producto.stock }}">
+            {% if producto.stock == 0 %}
+            <span class="badge-state badge-rechazada">Sin stock</span>
+            {% elif producto.stock <= 5 %}
+            <span class="badge-state badge-pendiente">{{ producto.stock }} unidades</span>
+            {% else %}
+            <span class="badge-state badge-aprobada">{{ producto.stock }} unidades</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="d-flex gap-1 justify-content-center align-items-center">
+              {% if producto.stock > 0 %}
+              <button type="button" class="btn btn-sm btn-outline-success px-2 py-1 btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Registrar préstamo rápido" onclick="abrirPrestamo('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
+                <i class="bi bi-arrow-left-right"></i>
+              </button>
+              {% else %}
+              <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1 btn-action-small" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Sin existencias para préstamo" onclick="event.stopPropagation();">
+                <i class="bi bi-arrow-left-right"></i>
+              </button>
+              {% endif %}
+
+              <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock }}', '{% if producto.categoria %}{{ producto.categoria.pk }}{% endif %}')">
+                <i class="bi bi-pencil"></i>
+              </button>
+
+              <button type="button" class="btn btn-sm btn-light border text-warning btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Enviar a mantenimiento" onclick="abrirMantenimiento('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
+                <i class="bi bi-wrench"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center py-4 text-muted">
+            <i class="bi bi-box-seam display-6 d-block mb-2"></i> No se encontraron herramientas registradas.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== MODALES ==================== -->
+
+<div class="modal fade" id="modalPrestamoRapido" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-person-plus me-2"></i>Registrar Préstamo de Salida</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{% url 'prestamo' %}">
+        {% csrf_token %}
+        <input type="hidden" name="producto[]" id="prestamo_producto_id">
+        <div class="modal-body p-4">
+          <div class="alert alert-success py-2 mb-3 fs-7">
+            <strong>Herramienta:</strong> <span id="prestamo_display_herramienta">—</span>
+          </div>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Usuario *</label>
+              <select name="usuario" id="prestamo_usuario" class="form-select" required onchange="actualizarNombreUsuario();">
+                <option value="">— Selecciona usuario —</option>
+                {% for usuario in usuarios_sistema %}
+                <option value="{{ usuario.numero_documento }}" data-nombre="{{ usuario.nombre_completo|escapejs }}">
+                  {{ usuario.nombre_completo }} — {{ usuario.numero_documento }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre Completo</label>
+              <input type="text" name="nombre_usuario" id="prestamo_nombre_usuario" class="form-control" placeholder="Se autocompletará" readonly required>
+            </div>
+            <div class="col-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Cantidad a Prestar *</label>
+              <input type="number" name="cantidad[]" class="form-control" min="1" value="1" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha de Devolución Estimada</label>
+              <input type="date" name="fecha_vencimiento" class="form-control">
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Observación inicial</label>
+              <textarea name="observaciones" class="form-control" rows="2" placeholder="Frente de trabajo, área de minas, etc..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-0 px-4 py-3">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success px-4">Confirmar Préstamo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalUbicacion" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title d-flex align-items-center gap-2"><i class="bi bi-geo-alt"></i> Ubicación de la herramienta</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-padded">
+        <div class="detalle-row">
+          <span class="label-caps">Herramienta</span>
+          <span class="value-text" id="ubi_producto_nombre">—</span>
+        </div>
+        <div class="detalle-row">
+          <span class="label-caps">Almacén</span>
+          <span class="value-text" id="ubi_almacen_nombre">—</span>
+        </div>
+        <div class="detalle-row">
+          <span class="label-caps">Código almacén</span>
+          <span class="value-text font-monospace" id="ubi_almacen_pk">—</span>
+        </div>
+        <div class="detalle-row border-bottom-0">
+          <span class="label-caps">Estante</span>
+          <span class="value-text font-monospace" id="ubi_estante_codigo">—</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalNuevaHerramienta" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Nueva Herramienta</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'inventario:inventario' %}" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear_producto">
+        <div class="modal-body p-4">
+
+          {% if error_producto %}
+          <div class="alert alert-danger py-2 fs-7 mb-3">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error_producto }}
+          </div>
+          {% endif %}
+
+          <div class="modal-section-title">Datos de la herramienta</div>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Código SKU *</label>
+              <input type="text" name="codigo_sku" class="form-control" placeholder="Ej: SKU-001" value="{{ post_sku }}" required>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre *</label>
+              <input type="text" name="nombre" class="form-control" placeholder="Nombre de la herramienta" value="{{ post_nombre }}" required>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label text-muted fw-bold small uppercase mb-0">Categoría</label>
+                <button type="button" class="btn btn-sm btn-outline-success py-0 px-2" onclick="abrirCategoriaDesdeProducto();" title="Crear categoría instantánea">
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+              </div>
+              <select name="categoria" class="form-select" id="select-categoria-nueva">
+                <option value="">-- Sin Categoría --</option>
+                {% for cat in categorias %}
+                <option value="{{ cat.pk }}" {% if post_categoria|slugify == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Stock / Cantidad inicial</label>
+              <input type="number" name="stock" class="form-control" min="0" value="{{ post_stock|default:1 }}" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
+              <textarea name="descripcion" class="form-control" rows="3" placeholder="Descripción (opcional)">{{ post_descripcion }}</textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-0 px-4 py-3">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success px-4">Guardar Registro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalEditarHerramienta" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Modificar Información</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar_producto">
+        <input type="hidden" name="producto_id" id="edit_producto_id">
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Código / SKU</label>
+              <input type="text" name="codigo_sku" id="edit_sku" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre</label>
+              <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Categoría</label>
+              <select name="categoria" id="edit_categoria" class="form-select">
+                <option value="">-- Sin Categoría --</option>
+                {% for cat in categorias %}
+                <option value="{{ cat.pk }}">{{ cat.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Stock / Cantidad</label>
+              <input type="number" name="stock" id="edit_stock" class="form-control" min="0" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
+              <textarea name="descripcion" id="edit_descripcion" class="form-control" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-0 px-4 py-3">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary px-4">Actualizar Datos</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL MANTENIMIENTO ==================== -->
+<div class="modal fade" id="modalMantenimiento" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+    <div class="modal-content d-flex flex-column modal-max-vh">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title fw-bold"><i class="bi bi-wrench me-2"></i>Enviar a Mantenimiento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="formMantenimiento" method="POST" action="{% url 'mantenimiento:registrar_desde_inventario' %}" class="d-flex flex-column flex-grow-1 min-h-0">
+        {% csrf_token %}
+        <input type="hidden" name="producto_id" id="mantProductoId">
+
+        <div class="modal-body flex-grow-1 overflow-auto p-4 min-h-0">
+          <div class="alert alert-info py-2 mb-3 fs-7">
+            <div class="fw-bold">Herramienta seleccionada:</div>
+            <span id="mantTextDisplay"></span>
+          </div>
+
+          <!-- ==================== CAMPOS DEL FORMULARIO DE MANTENIMIENTO ==================== -->
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Tipo de Mantenimiento *</label>
+              {{ mant_form.tipo_mantenimiento }}
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Tipo de Estado Actual *</label>
+              {{ mant_form.tipo_estado }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha de Reporte / Detección *</label>
+              {{ mant_form.fecha_reporte }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Inicio Mantenimiento *</label>
+              {{ mant_form.fecha_inicio }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Fin Estimada</label>
+              {{ mant_form.fecha_fin_estimada }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Fin Real</label>
+              {{ mant_form.fecha_fin_real }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Tiempo Empleado (horas)</label>
+              {{ mant_form.tiempo_empleado_horas }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Prioridad / Urgencia *</label>
+              {{ mant_form.prioridad }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Responsable / Técnico *</label>
+              {{ mant_form.responsable }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Costo Estimado</label>
+              {{ mant_form.costo_estimado }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Costo Real</label>
+              {{ mant_form.costo_real }}
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Estado del Registro *</label>
+              {{ mant_form.estado_registro }}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light border-0 px-4 py-3 flex-shrink-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-warning text-dark px-4 fw-bold">Confirmar Envío</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalNuevaCategoria" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-tag-fill me-2"></i>Crear Nueva Categoría</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{% url 'inventario:inventario' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear_categoria">
+
+        <input type="hidden" name="codigo_sku" value="{{ post_sku }}">
+        <input type="hidden" name="nombre" value="{{ post_nombre }}">
+        <input type="hidden" name="descripcion" value="{{ post_descripcion }}">
+        <input type="hidden" name="stock" value="{{ post_stock }}">
+
+        <div class="modal-body p-4">
+          {% if error_categoria %}
+          <div class="alert alert-danger py-2 fs-7 mb-3">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error_categoria }}
+          </div>
+          {% endif %}
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre de la Categoría *</label>
+              <input type="text" name="cat_nombre" class="form-control" placeholder="Ej: Herramientas Eléctricas" value="{{ post_cat_nombre }}" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción corta</label>
+              <textarea name="cat_descripcion" class="form-control" rows="2" placeholder="Opcional...">{{ post_cat_descripcion }}</textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-0 px-4 py-3">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success px-4">Guardar Categoría</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function abrirMantenimiento(id, sku, nombre) {
+    const modalEl = document.getElementById('modalMantenimiento');
+    const dialog = modalEl.querySelector('.modal-dialog');
+    if (dialog) dialog.classList.add('modal-dialog-scrollable', 'modal-xl');
+
+    document.getElementById('mantProductoId').value = id;
+    document.getElementById('mantTextDisplay').innerText = '[' + sku + '] ' + nombre;
+
+    var modalInst = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static' });
+    modalInst.show();
+  }
+
+  function abrirEditar(id, sku, nombre, descripcion, stock, categoria) {
+    document.getElementById('edit_producto_id').value = id;
+    document.getElementById('edit_sku').value = sku;
+    document.getElementById('edit_nombre').value = nombre;
+    document.getElementById('edit_descripcion').value = descripcion;
+    document.getElementById('edit_stock').value = stock;
+    
+    let catSelect = document.getElementById('edit_categoria');
+    if (categoria && categoria !== 'None' && categoria !== '') {
+      catSelect.value = categoria;
+    } else {
+      catSelect.value = "";
+    }
+    
+    var modalEdit = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditarHerramienta'), { backdrop: 'static' });
+    modalEdit.show();
+  }
+
+  // Flujo puente: Abrir categoría desde el modal de producto conservando datos
+  function abrirCategoriaDesdeProducto() {
+    // Cerramos el modal de herramientas temporalmente
+    var modalProdElement = document.getElementById('modalNuevaHerramienta');
+    var modalProd = bootstrap.Modal.getInstance(modalProdElement);
+    if(modalProd) modalProd.hide();
+
+    // Sincronizamos los inputs actuales del producto hacia el formulario del modal de categoría
+    var formCat = document.querySelector('#modalNuevaCategoria form');
+    formCat.querySelector('input[name="codigo_sku"]').value = modalProdElement.querySelector('input[name="codigo_sku"]').value;
+    formCat.querySelector('input[name="nombre"]').value = modalProdElement.querySelector('input[name="nombre"]').value;
+    formCat.querySelector('input[name="descripcion"]').value = modalProdElement.querySelector('textarea[name="descripcion"]').value;
+    formCat.querySelector('input[name="stock"]').value = modalProdElement.querySelector('input[name="stock"]').value;
+
+    // Abrimos el modal de categoría
+    var modalCat = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaCategoria'));
+    modalCat.show();
+  }
+
+// Control de Reapertura automática mediante banderas del backend
+  document.addEventListener("DOMContentLoaded", function() {
+    {% if form_modal_errors or request.session.abrir_modal_producto %}
+      // Usamos getOrCreateInstance para evitar crear múltiples instancias del mismo modal y bugs visuales
+      var modalProd = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaHerramienta'));
+      modalProd.show();
+    {% elif modal_categoria_errors %}
+      var modalCat = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaCategoria'));
+      modalCat.show();
+    {% endif %}
+  });
+</script>
+
+{# ══ MODAL KARDEX HISTORIAL ══ #}
+<div class="modal fade" id="modalKardexHistorial" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-journal-text me-2"></i>Kardex - Historial de Movimientos</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th class="text-center">Cant.</th>
+                <th class="text-center">Stock (Ant → Nuevo)</th>
+                <th>Responsable</th>
+                <th>Observaciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for k in kardex_list %}
+              <tr>
+                <td class="small text-nowrap">{{ k.creado_en|date:"d/m/Y H:i" }}</td>
+                <td><strong>{{ k.producto.nombre }}</strong> <span class="text-muted small">({{ k.producto.codigo_sku }})</span></td>
+                <td>
+                  {% if k.tipo_movimiento == 'entrada' %}
+                    <span class="badge bg-success">Entrada</span>
+                  {% elif k.tipo_movimiento == 'salida' %}
+                    <span class="badge bg-danger">Salida</span>
+                  {% elif k.tipo_movimiento == 'prestamo' %}
+                    <span class="badge bg-warning text-dark">Préstamo</span>
+                  {% elif k.tipo_movimiento == 'devolucion' %}
+                    <span class="badge bg-info text-dark">Devolución</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Ajuste</span>
+                  {% endif %}
+                </td>
+                <td class="text-center fw-bold">{{ k.cantidad }}</td>
+                <td class="text-center small font-monospace">{{ k.stock_anterior }} → {{ k.stock_nuevo }}</td>
+                <td class="small">{{ k.usuario_nombre }}</td>
+                <td class="small text-muted">{{ k.observaciones|default:"—" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4 text-muted">
+                  <i class="bi bi-journal-x display-6 d-block mb-2"></i> No hay registros de movimientos en Kardex aún.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
+<script defer src="{% static 'js/tables/inventario_table.js' %}?v=3"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      $('#select-categoria-nueva').select2({
+          theme: 'bootstrap-5',
+          dropdownParent: $('#modalNuevaHerramienta'),
+          placeholder: '-- Sin Categoría --',
+          allowClear: true,
+          width: '100%',
+          language: {
+            noResults: function() {
+              return "No se encontraron resultados";
+            }
+          }
+      });
+      
+      $('#edit_categoria').select2({
+          theme: 'bootstrap-5',
+          dropdownParent: $('#modalEditarHerramienta'),
+          placeholder: '-- Sin Categoría --',
+          allowClear: true,
+          width: '100%',
+          language: {
+            noResults: function() {
+              return "No se encontraron resultados";
+            }
+          }
+      });
+  });
+</script>
+{% endblock js %}

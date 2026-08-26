@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-dismissible fade show d-flex align-items-center gap-2 alert-custom" role="alert">
+    {% if message.tags == 'error' %}
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2.2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+    {% else %}
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2.2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+    {% endif %}
+    <span>{{ message }}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="card table-card p-3">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <span class="card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 16v-1a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v1" />
+                <circle cx="12" cy="7" r="3" />
+                <path d="M20 8v6M23 11h-6" />
+            </svg>
+            Proveedores
+        </span>
+
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge-count">
+                {{ proveedores|length }} registro{{ proveedores|length|pluralize }}
+            </span>
+            <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 has-tooltip"
+                data-bs-toggle="modal" data-bs-target="#modalNuevoProveedor" data-bs-placement="bottom"
+                title="Registrar un nuevo proveedor">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table-app datatable-custom" id="proveedores-table">
+            <thead>
+                <tr>
+                    <th>NIT</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prov in proveedores %}
+                <tr>
+                    <td><span class="sku-text">{{ prov.nit_proveedor }}</span></td>
+                    <td>{{ prov.telefono_contacto }}</td>
+                    <td>{{ prov.correo_proveedor }}</td>
+                    <td class="description-col">
+                        <span class="text-truncate d-block description-text">{{ prov.descripcion|default:"—" }}</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">
+                        <i class="bi bi-truck display-6 d-block mb-2"></i> No hay proveedores registrados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalNuevoProveedor" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Proveedor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'inventario:lista_proveedores' %}" novalidate>
+                {% csrf_token %}
+                <div class="modal-body p-4">
+                    <div class="modal-section-title">Datos del proveedor</div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold small uppercase mb-1">NIT *</label>
+                            {{ form.nit_proveedor }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-bold small uppercase mb-1">Teléfono de contacto
+                                *</label>
+                            {{ form.telefono_contacto }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted fw-bold small uppercase mb-1">Correo *</label>
+                            {{ form.correo_proveedor }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
+                            {{ form.descripcion }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0 px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">Guardar Proveedor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
+{% endblock %}
