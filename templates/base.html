@@ -34,14 +34,11 @@
 
   <div class="body-wrap">
 
-    {# ── Aside condicional según rol ── #}
-    {% with rol=request.session.usuario_rol|default:"" %}
-    {% if rol == "Administrador" or rol == "Admin" %}
+    {% if request.user.is_staff %}
     {% include "partials/aside_admin.html" %}
     {% else %}
     {% include "partials/aside_usuario.html" %}
     {% endif %}
-    {% endwith %}
 
     <main>{% block content %}{% endblock %}</main>
   </div>

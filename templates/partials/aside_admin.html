@@ -1,6 +1,6 @@
 <aside>
   <div class="aside-header">
-    <i class="bi bi-cloud-haze2-fill extracted-style-353"></i>
+    <i class="bi bi-cloud-haze2-fill text-warning me-2"></i>
     <span class="aside-brand-name">Mine</span>
     <span class="aside-brand-sub">inventory</span>
   </div>
@@ -8,7 +8,7 @@
   <nav class="aside-nav">
     <!-- GENERAL -->
     <div class="px-3 pt-3 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-354">General</span>
+      <span class="text-uppercase aside-section-label">General</span>
     </div>
 
     <a href="{% url 'home' %}"
@@ -41,7 +41,7 @@
 
     <!-- ANÁLISIS -->
     <div class="px-3 pt-4 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-354">Análisis</span>
+      <span class="text-uppercase aside-section-label">Análisis</span>
     </div>
 
     <a href="{% url 'reportes' %}"
@@ -56,7 +56,7 @@
 
     <!-- DEVOLUCIONES -->
     <div class="px-3 pt-4 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-354">Devoluciones</span>
+      <span class="text-uppercase aside-section-label">Devoluciones</span>
     </div>
 
     <a href="{% url 'devoluciones' %}"
@@ -70,7 +70,7 @@
 
     <!-- USUARIOS -->
     <div class="px-3 pt-4 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-355">Usuarios</span>
+      <span class="text-uppercase aside-section-label">Usuarios</span>
     </div>
 
     <a href="{% url 'lista_usuarios' %}"
@@ -84,9 +84,9 @@
     </a>
 
     <!-- SESIÓN — solo visible si NO hay sesión activa -->
-    {% if not request.session.usuario_nombre %}
+    {% if not request.user.is_authenticated %}
     <div class="px-3 pt-4 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-354">Sesión</span>
+      <span class="text-uppercase aside-section-label">Sesión</span>
     </div>
 
     <a href="{% url 'login' %}"
@@ -102,7 +102,7 @@
 
     <!-- OPERACIONES -->
     <div class="px-3 pt-4 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-354">Operaciones</span>
+      <span class="text-uppercase aside-section-label">Operaciones</span>
     </div>
 
     <!-- Almacén collapse -->
@@ -192,7 +192,7 @@
 
     <!-- configuracion -->
     <div class="px-3 pt-4 pb-1">
-      <span class="text-uppercase fw-semibold extracted-style-354">Sistema</span>
+      <span class="text-uppercase aside-section-label">Sistema</span>
     </div>
 
     <a href="{% url 'configuracion' %}"
@@ -229,7 +229,7 @@
         <button type="button" class="btn btn-profile-pill w-100 d-flex align-items-center justify-content-between px-2 py-1"
           data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
           <div class="d-flex align-items-center gap-2 text-truncate me-1">
-            {% with nombre=request.session.usuario_nombre|default:"Administrador" %}
+            {% with nombre=request.user.get_full_name|default:request.user.username|default:"Administrador" %}
             <div class="profile-avatar-circle flex-shrink-0 fw-bold text-white">
               {{ nombre|slice:":2"|upper }}
             </div>
@@ -249,7 +249,7 @@
           <li>
             <span class="dropdown-item-text profile-role-header">
               <i class="bi bi-shield-check me-1"></i>
-              {{ request.session.usuario_rol|default:"Sin rol" }}
+              {{ request.user.is_authenticated|yesno:"Administrador,Invitado" }}
             </span>
           </li>
           <li><hr class="dropdown-divider"></li>

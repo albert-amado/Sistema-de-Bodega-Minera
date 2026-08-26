@@ -1,22 +1,25 @@
-"""
-URL configuration for core project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from prestamo import views as prestamo_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Rutas de la aplicación de Préstamos
+    path('', prestamo_views.prestamo_usuario_lista, name='home'),
+    path('home-usuario/', prestamo_views.prestamo_usuario_lista, name='home_usuario'),
+    path('prestamo/', include('prestamo.urls')),
+    
+    # Rutas auxiliares de fallback para la navegación
+    path('inventario/', prestamo_views.prestamo_lista, name='inventario'),
+    path('reportes/', prestamo_views.prestamo_lista, name='reportes'),
+    path('devoluciones/', prestamo_views.prestamo_lista, name='devoluciones'),
+    path('usuarios/', prestamo_views.prestamo_lista, name='lista_usuarios'),
+    path('login/', prestamo_views.prestamo_lista, name='login'),
+    path('logout/', prestamo_views.prestamo_lista, name='logout'),
+    path('perfil/', prestamo_views.prestamo_lista, name='perfil'),
+    path('almacenes/', prestamo_views.prestamo_lista, name='almacenes'),
+    path('estantes/', prestamo_views.prestamo_lista, name='estantes'),
+    path('configuracion/', prestamo_views.prestamo_lista, name='configuracion'),
+    path('api/notificaciones/', prestamo_views.notificaciones_json, name='notificaciones_json'),
 ]
