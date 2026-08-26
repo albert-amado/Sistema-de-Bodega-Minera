@@ -191,30 +191,52 @@ def rechazar_prestamo(request):
     return redirect('prestamo')
 
 
+def devoluciones_lista(request):
+    """Vista principal para la gestión de devoluciones (Admin)."""
+    devoluciones_qs = DevolucionHerramienta.objects.select_related('prestamo__usuario', 'recibido_por').prefetch_related('prestamo__detalles__herramienta').order_by('-id')
+    prestamos_activos = Prestamo.objects.filter(estado__in=[EstadoPrestamo.ENTREGADO, EstadoPrestamo.PARCIAL]).prefetch_related('detalles__herramienta').select_related('usuario').order_by('-id')
+
+    context = {
+        'devoluciones': devoluciones_qs,
+        'prestamos_activos': prestamos_activos,
+    }
+    return render(request, 'devoluciones.html', context)
+
+
 def devolver_prestamo(request):
     """Registra la devolución de herramientas de un préstamo."""
     if request.method == 'POST':
-        pk = request.POST.get('pk')
-        prestamo = get_object_or_404(Prestamo, pk=pk)
+        pk = request.POST.get('pk') or request.POST.get('prestamo_id')
+        if pk:
+            prestamo = get_object_or_404(Prestamo, pk=pk)
 
-        with transaction.atomic():
-            # Restablecer stock
-            for detalle in prestamo.detalles.select_related('herramienta'):
-                h = detalle.herramienta
-                h.stock_disponible += detalle.cantidad
-                h.save()
+            with transaction.atomic():
+                # Restablecer stock
+                for detalle in prestamo.detalles.select_related('herramienta'):
+                    h = detalle.herramienta
+                    h.stock_disponible += detalle.cantidad
+                    h.save()
 
-            prestamo.estado = EstadoPrestamo.DEVUELTO
-            prestamo.save()
+                devolucion_total = request.POST.get('devolucion_total') != 'false'
+                if devolucion_total:
+                    prestamo.estado = EstadoPrestamo.DEVUELTO
+                else:
+                    prestamo.estado = EstadoPrestamo.PARCIAL
+                prestamo.save()
 
-            DevolucionHerramienta.objects.create(
-                prestamo=prestamo,
-                codigo_recibe=request.user.username if request.user.is_authenticated else 'SISTEMA',
-                recibido_por=request.user if request.user.is_authenticated else None,
-                observaciones="Devolución completa registrada"
-            )
-            messages.success(request, f"Devolución del Préstamo #{prestamo.pk} completada.")
+                obs = request.POST.get('observaciones') or request.POST.get('motivo') or "Devolución registrada"
 
+                DevolucionHerramienta.objects.create(
+                    prestamo=prestamo,
+                    codigo_recibe=request.user.username if request.user.is_authenticated else 'SISTEMA',
+                    recibido_por=request.user if request.user.is_authenticated else None,
+                    observaciones=obs
+                )
+                messages.success(request, f"Devolución del Préstamo #{prestamo.pk} completada.")
+
+    referer = request.META.get('HTTP_REFERER', '')
+    if 'devoluciones' in referer:
+        return redirect('devoluciones')
     return redirect('prestamo')
 
 

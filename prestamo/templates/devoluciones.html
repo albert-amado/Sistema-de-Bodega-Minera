@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- ══ ALERTAS ══ -->
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'warning' %}
+      <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 devoluciones__style-1" role="alert">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c4900a" stroke-width="2.2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        {{ message }}
+        <button type="button" class="btn-close ms-auto devoluciones__style-2" data-bs-dismiss="alert"></button>
+      </div>
+    {% else %}
+      <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 devoluciones__style-3" role="alert">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71816D" stroke-width="2.2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        {{ message }}
+        <button type="button" class="btn-close ms-auto devoluciones__style-4" data-bs-dismiss="alert"></button>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<!-- ══ CABECERA ══ -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h5 class="devoluciones__style-5">
+      Devoluciones
+    </h5>
+    <p class="devoluciones__style-6">
+      Gestión de devoluciones de productos
+    </p>
+  </div>
+  <button class="btn-primary-mine"
+          data-bs-toggle="modal" data-bs-target="#modalCrear">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="16"/>
+      <line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+    Nueva Devolución
+  </button>
+</div>
+
+<!-- ══ FILTROS DEVOLUCIONES ══ -->
+<div class="card p-3 border-0 shadow-sm mb-4 bg-white">
+  <div class="row g-2 align-items-center">
+    <div class="col-12 col-md-7">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+        <input type="text" id="devoluciones-busqueda" data-no-validate autocomplete="off" class="form-control bg-light border-start-0" placeholder="Buscar devolución por préstamo, usuario o observaciones…">
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <select id="devoluciones-estado" data-no-validate class="form-select form-select-sm bg-light">
+        <option value="">-- Todos los Estados --</option>
+        <option value="DEVUELTO">Devuelto</option>
+        <option value="PARCIAL">Devolución Parcial</option>
+        <option value="ENTREGADO">Entregado</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="CANCELADO">Cancelado</option>
+      </select>
+    </div>
+    <div class="col-12 col-md-1">
+      <button type="button" id="btn-limpiar-filtros-dev" class="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center" title="Limpiar filtros">
+        <i class="bi bi-brush"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TABLA ══ -->
+<div class="card table-card p-3">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <span class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <polyline points="1 4 1 10 7 10"/>
+        <path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
+      </svg>
+      Devoluciones registradas
+    </span>
+    <span class="badge-count">
+      {{ devoluciones|length }} registro{{ devoluciones|length|pluralize }}
+    </span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table-app datatable-custom" id="devoluciones-table">
+      <thead>
+        <tr>
+          <th class="devoluciones__style-8"></th>
+          <th>#</th>
+          <th>Préstamo</th>
+          <th>Recibido Por</th>
+          <th>Herramientas</th>
+          <th>Estado Préstamo</th>
+          <th>Fecha Devolución</th>
+          <th class="devoluciones__style-9">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in devoluciones %}
+        <tr class="devoluciones__style-10" onclick="if(!event.target.closest('button') && !event.target.closest('form')) { $(this).find('.btn-toggle-details').trigger('click'); }" onmouseover="this.style.background='rgba(9,77,146,.02)'" onmouseout="this.style.background='transparent'">
+          <td class="prestamo__style-37">
+            <button type="button" class="btn-toggle-details prestamo__style-38" data-target-detail="detail-{{ d.pk }}">
+              <svg class="row-chevron prestamo__style-39" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </td>
+          <td><span class="devoluciones__style-12">#{{ d.pk }}</span></td>
+          <td>
+            <div class="prestamo__style-41">Préstamo #{{ d.prestamo.pk }}</div>
+            <div class="prestamo__style-42">{{ d.prestamo.usuario.get_full_name|default:d.prestamo.usuario|default:d.prestamo.documento }}</div>
+            <small class="text-muted font-monospace">Ficha: {{ d.prestamo.ficha }}</small>
+          </td>
+          <td>
+            <div class="fw-semibold text-dark">{{ d.recibido_por.get_full_name|default:d.recibido_por|default:d.codigo_recibe }}</div>
+            <small class="text-muted font-monospace">Doc: {{ d.codigo_recibe }}</small>
+          </td>
+          <td>
+            <div class="prestamo__style-43">
+              {% for item in d.prestamo.detalles.all|default:d.items.all %}
+              <span class="prestamo__style-44">
+                {{ item.herramienta.nombre|default:item.producto.nombre }} ×{{ item.cantidad }}
+              </span>
+              {% empty %}
+              <span class="text-muted small">Sin herramientas</span>
+              {% endfor %}
+            </div>
+          </td>
+          <td>
+            {% if d.prestamo.estado == 'DEVUELTO' or d.devolucion_total %}
+              <span class="badge bg-success-subtle text-success border">Devuelto</span>
+            {% elif d.prestamo.estado == 'PARCIAL' %}
+              <span class="badge bg-info-subtle text-info border">Parcial</span>
+            {% elif d.prestamo.estado == 'ENTREGADO' %}
+              <span class="badge bg-primary-subtle text-primary border">Entregado</span>
+            {% else %}
+              <span class="badge bg-secondary-subtle text-secondary border">{{ d.prestamo.get_estado_display|default:d.prestamo.estado }}</span>
+            {% endif %}
+          </td>
+          <td class="prestamo__style-47">
+            {{ d.fecha|default:d.fecha_creacion|date:"d/m/Y" }}
+          </td>
+
+          <td class="text-center">
+            <button type="button" class="btn btn-sm btn-outline-secondary btn-toggle-details px-2 py-1" data-target-detail="detail-{{ d.pk }}">
+              <i class="bi bi-eye"></i> Detalle
+            </button>
+          </td>
+        </tr>
+
+        <!-- DETALLE DESPLEGABLE -->
+        <tr class="detail-row d-none devoluciones__style-19" id="detail-{{ d.pk }}">
+          <td colspan="8" class="devoluciones__style-20">
+            <div class="devoluciones__style-21">
+              <p class="devoluciones__style-22">
+                Detalle completo Devolución #{{ d.pk }}
+              </p>
+              <div class="row g-3 devoluciones__style-23">
+                <div class="col-6 col-md-2">
+                  <div class="devoluciones__style-24">Préstamo</div>
+                  <div class="devoluciones__style-25">#{{ d.prestamo.pk }}</div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <div class="devoluciones__style-26">Solicitante</div>
+                  <div class="devoluciones__style-27">{{ d.prestamo.usuario.get_full_name|default:d.prestamo.usuario|default:d.prestamo.documento }}</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="devoluciones__style-28">Recibido Por</div>
+                  <div class="devoluciones__style-27">{{ d.recibido_por.get_full_name|default:d.recibido_por|default:d.codigo_recibe }}</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="devoluciones__style-28">Estado Préstamo</div>
+                  <div class="devoluciones__style-29">{{ d.prestamo.get_estado_display|default:d.prestamo.estado }}</div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <div class="devoluciones__style-31">Fecha Devolución</div>
+                  <div class="devoluciones__style-32">{{ d.fecha|default:d.fecha_creacion|date:"d/m/Y" }}</div>
+                </div>
+                <div class="col-12">
+                  <div class="devoluciones__style-33">Observaciones</div>
+                  <div class="devoluciones__style-34">{{ d.observaciones|default:d.motivo|default:"Sin observaciones." }}</div>
+                </div>
+                <div class="col-12">
+                  <div class="devoluciones__style-35">
+                    Detalle de herramientas reintegradas
+                  </div>
+                  <div class="devoluciones__style-36">
+                    {% for item in d.prestamo.detalles.all|default:d.items.all %}
+                      <div class="devoluciones__style-37">
+                        <div class="devoluciones__style-38">
+                           <div class="devoluciones__style-39">{{ item.herramienta.nombre|default:item.producto.nombre }} (Código: {{ item.herramienta.codigo|default:item.producto.codigo_sku }})</div>
+                        </div>
+                        <div class="devoluciones__style-43">×{{ item.cantidad }}</div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+          <td colspan="8" class="devoluciones__style-44">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.3" class="devoluciones__style-45">
+              <path d="M22 12H16L14 15H10L8 12H2"/>
+              <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+            </svg>
+            <p class="devoluciones__style-46">
+              No hay devoluciones registradas aún.<br>
+              <span class="devoluciones__style-47">Usa <strong>Nueva Devolución</strong> para agregar una.</span>
+            </p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     DATOS PRÉSTAMOS ACTIVOS
+══════════════════════════════════════ -->
+<script id="dev-prestamos-data" type="application/json">
+[{% for p in prestamos_activos %}
+{
+  "id": {{ p.pk }},
+  "usuario": "{{ p.usuario.get_full_name|default:p.usuario|default:p.documento|escapejs }}",
+  "nombre_usuario": "{{ p.usuario.get_full_name|default:''|escapejs }}",
+  "documento": "{{ p.documento|escapejs }}",
+  "ficha": "{{ p.ficha|escapejs }}",
+  "estado": "{{ p.estado }}",
+  "fecha_prestamo": "{{ p.fecha|date:'d/m/Y' }}",
+  "items": [
+    {% for item in p.detalles.all %}
+    {
+      "id": {{ item.pk }},
+      "devuelto": false,
+      "cantidad": {{ item.cantidad }},
+      "herramienta": {
+        "id": {{ item.herramienta.pk }},
+        "nombre": "{{ item.herramienta.nombre|escapejs }}",
+        "codigo": "{{ item.herramienta.codigo|escapejs }}",
+        "stock_disponible": {{ item.herramienta.stock_disponible }}
+      },
+      "producto": {
+        "id": {{ item.herramienta.pk }},
+        "nombre": "{{ item.herramienta.nombre|escapejs }}",
+        "codigo_sku": "{{ item.herramienta.codigo|escapejs }}",
+        "stock": {{ item.herramienta.stock_disponible }}
+      }
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}{% if not forloop.last %},{% endif %}
+{% endfor %}]
+</script>
+
+
+<!-- ══════════════════════════════════════
+     MODAL CREAR — Wizard 3 pasos
+══════════════════════════════════════ -->
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content devoluciones__style-48">
+
+      <div class="modal-header devoluciones__style-49">
+        <div class="devoluciones__style-50">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" stroke-width="2.2" opacity=".7">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
+          </svg>
+          <h5 class="modal-title">Nueva Devolución</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body devoluciones__style-51">
+        <div class="devoluciones__style-52" id="dev-wiz-progress-wrap">
+          <div id="dev-wiz-progress-bar" class="devoluciones__style-53"></div>
+        </div>
+        <div id="dev-wiz-panel" class="devoluciones__style-54"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FORM oculto para POST -->
+<form method="post" action="{% url 'devolver_prestamo' %}" id="form-devolucion-final" novalidate class="d-none">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="crear">
+  <input type="hidden" name="pk" id="fin-prestamo-id">
+  <input type="hidden" name="prestamo_id" id="fin-prestamo-id-alt">
+  <input type="hidden" name="devolucion_total" id="fin-devolucion-total" value="true">
+  <input type="hidden" name="motivo_requerido" id="fin-motivo-requerido" value="false">
+  <input type="hidden" name="observaciones" id="fin-motivo">
+  <input type="hidden" name="motivo" id="fin-motivo-alt">
+  <input type="hidden" name="estado_equipo" id="fin-estado-equipo" value="excelente">
+</form>
+
+
+
+
+
+<!-- ══ MODAL ACEPTAR DEVOLUCION ══ -->
+<div class="modal fade" id="modalAceptarDevolucion" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>Aprobar Devolución <span id="acp-id"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" action="{% url 'devoluciones' %}" id="form-aceptar-devolucion">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="aceptar">
+        <input type="hidden" name="devolucion_id" id="acp-dev-id">
+        <div class="modal-body">
+          <p class="mb-2">¿Estás seguro de aprobar esta devolución?</p>
+          <ul class="list-unstyled small bg-light p-3 rounded mb-3">
+            <li><strong>Préstamo:</strong> <span id="acp-prestamo"></span></li>
+            <li><strong>Usuario:</strong> <span id="acp-usuario"></span></li>
+          </ul>
+          <div class="mb-2">
+            <label class="form-label small font-mono">Observaciones (Opcional)</label>
+            <textarea name="motivo" class="form-control form-control-sm" rows="2" placeholder="Notas sobre la entrega o estado del equipo…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-sm btn-success" onclick="confirmarAceptar()">
+            <i class="bi bi-check-lg me-1"></i> Confirmar Aprobar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL RECHAZAR DEVOLUCION ══ -->
+<div class="modal fade" id="modalRechazarDevolucion" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-x-circle text-danger me-2"></i>Rechazar Devolución <span id="rch-id"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" action="{% url 'devoluciones' %}" id="form-rechazar-devolucion">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="rechazar">
+        <input type="hidden" name="devolucion_id" id="rch-dev-id">
+        <div class="modal-body">
+          <ul class="list-unstyled small bg-light p-3 rounded mb-3">
+            <li><strong>Préstamo:</strong> <span id="rch-prestamo"></span></li>
+            <li><strong>Usuario:</strong> <span id="rch-usuario"></span></li>
+          </ul>
+          <div id="rch-motivo-err" class="alert alert-danger py-2 small mb-2 d-none" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> El motivo del rechazo debe tener al menos 10 caracteres.
+          </div>
+          <div class="mb-2">
+            <label class="form-label small font-mono">Motivo del rechazo *</label>
+            <textarea id="rch-motivo-textarea" name="motivo" class="form-control form-control-sm" rows="3" placeholder="Explica la razón por la que se rechaza la devolución (mínimo 10 caracteres)…" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-sm btn-danger" onclick="confirmarRechazar()">
+            <i class="bi bi-x-lg me-1"></i> Confirmar Rechazo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener('click', function (e) {
+    var btnAceptar = e.target.closest('.btn-aceptar-click');
+    if (btnAceptar) {
+      e.preventDefault();
+      var pk = btnAceptar.getAttribute('data-pk');
+      var prestamoPk = btnAceptar.getAttribute('data-prestamo-pk');
+      var usuario = btnAceptar.getAttribute('data-usuario');
+      if (typeof abrirAceptar === 'function') {
+        abrirAceptar(pk, prestamoPk, usuario);
+      }
+      return;
+    }
+
+    var btnRechazar = e.target.closest('.btn-rechazar-click');
+    if (btnRechazar) {
+      e.preventDefault();
+      var pk = btnRechazar.getAttribute('data-pk');
+      var prestamoPk = btnRechazar.getAttribute('data-prestamo-pk');
+      var usuario = btnRechazar.getAttribute('data-usuario');
+      if (typeof abrirRechazar === 'function') {
+        abrirRechazar(pk, prestamoPk, usuario);
+      }
+      return;
+    }
+  });
+</script>
+<script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
+<script defer src="{% static 'js/datatables-init.js' %}?v=3"></script>
+<script defer src="{% static 'js/tables/devoluciones_table.js' %}?v=3"></script>
+<script defer src="{% static 'js/devoluciones.js' %}?v=3"></script>
+{% endblock js %}
