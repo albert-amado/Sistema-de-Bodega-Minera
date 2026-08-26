@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class CategoriaHerramienta(models.Model):
     codigo_categoria = models.AutoField(primary_key=True)
     tipo_herramienta = models.CharField(max_length=100)
@@ -8,9 +9,10 @@ class CategoriaHerramienta(models.Model):
 
     def __str__(self):
         return self.nombre_categoria
-    
+
     class Meta:
-        db_table = 'categoria_herramienta'
+        db_table = "categoria_herramienta"
+
 
 class Herramienta(models.Model):
     codigo_herramienta = models.AutoField(primary_key=True)
@@ -19,15 +21,43 @@ class Herramienta(models.Model):
     descripcion = models.TextField(blank=True, null=True)
     disponibilidad = models.CharField(max_length=50, blank=True, null=True)
     fecha_ingreso = models.DateField(blank=True, null=True)
-    codigo_categoria = models.ForeignKey(CategoriaHerramienta, on_delete=models.SET_NULL, null=True, blank=True, db_column='codigo_categoria')
+    codigo_categoria = models.ForeignKey(
+        CategoriaHerramienta,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        db_column="codigo_categoria",
+    )
     codigo_suministro = models.IntegerField(null=True, blank=True)
     estado = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.nombre_herramienta
 
+    @property
+    def codigo(self):
+        return self.codigo_sku or f"HER-{self.codigo_herramienta}"
+
+    @property
+    def nombre(self):
+        return self.nombre_herramienta
+
+    @property
+    def stock_disponible(self):
+        if (
+            self.disponibilidad is not None
+            and str(self.disponibilidad).isdigit()
+        ):
+            return int(self.disponibilidad)
+        return 1 if self.disponibilidad != "No disponible" else 0
+
+    @stock_disponible.setter
+    def stock_disponible(self, value):
+        self.disponibilidad = str(max(0, int(value)))
+
     class Meta:
-        db_table = 'herramienta'
+        db_table = "herramienta"
+
 
 class Traslado(models.Model):
     codigo_traslado = models.AutoField(primary_key=True)
@@ -40,17 +70,29 @@ class Traslado(models.Model):
         return f"Traslado {self.codigo_traslado}"
 
     class Meta:
-        db_table = 'traslado'
+        db_table = "traslado"
+
 
 class DetalleTraslado(models.Model):
     codigo_detalle = models.AutoField(primary_key=True)
-    codigo_traslado = models.ForeignKey(Traslado, on_delete=models.CASCADE, db_column='codigo_traslado')
-    codigo_herramienta = models.ForeignKey(Herramienta, on_delete=models.CASCADE, db_column='codigo_herramienta')
+    codigo_traslado = models.ForeignKey(
+        Traslado,
+        on_delete=models.CASCADE,
+        db_column="codigo_traslado",
+    )
+    codigo_herramienta = models.ForeignKey(
+        Herramienta,
+        on_delete=models.CASCADE,
+        db_column="codigo_herramienta",
+    )
     cantidad = models.IntegerField(blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"Detalle {self.codigo_detalle} - Traslado {self.codigo_traslado_id}"
+        return (
+            f"Detalle {self.codigo_detalle} - "
+            f"Traslado {self.codigo_traslado_id}"
+        )
 
     class Meta:
-        db_table = 'detalle_traslado'
+        db_table = "detalle_traslado"
