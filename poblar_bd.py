@@ -32,12 +32,12 @@ def poblar():
     # 2. Crear Usuarios
     print("Creando usuarios...")
     admin_user = Usuario.objects.create(
-        documento='123456789',
+        documento='0000000000',
         tipo_documento='CC',
         primer_nombre='Admin',
         primer_apellido='Sistema',
         correo_personal='admin@sistema.com',
-        password=make_password('admin123'),
+        password=make_password('@dmin123'),
         rol='Administrador'
     )
     
@@ -145,8 +145,8 @@ def poblar():
     print("¡Base de datos poblada con éxito!")
     print("\n--- Credenciales de acceso ---")
     print("Administrador:")
-    print(" - Documento: 123456789")
-    print(" - Contraseña: admin123")
+    print(" - Documento: 0000000000")
+    print(" - Contraseña: @dmin123")
     print("Usuario Normal:")
     print(" - Documento: 987654321")
     print(" - Contraseña: usuario123")

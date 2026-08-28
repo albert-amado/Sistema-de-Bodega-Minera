@@ -340,13 +340,12 @@ def nueva_contrasena_view(request, uid, token):
 # ─────────────────────────────────────────────────────────────
 #  HOME
 # ─────────────────────────────────────────────────────────────
+from pagina_principal.views import home_usuario_view as dashboard_view
+
 @sesion_requerida
 @login_required
 def home_view(request):
-    rol = (request.session.get('usuario_rol') or '').strip().lower()
-    if rol in ('administrador', 'admin'):
-        return redirect('pagina_principal')
-    return redirect('home_usuario')
+    return dashboard_view(request)
 
 
 # ─────────────────────────────────────────────────────────────
