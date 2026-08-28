@@ -13,7 +13,7 @@ from prestamo.models import Prestamo, productos_disponibles, Producto
 
 MESES_ABREV = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
-
+me
 def _rango_ultimos_6_meses(hoy: date) -> list[tuple[int, int]]:
     """[(año, mes), ...] de los últimos 6 meses (incluye actual), orden cronológico."""
     meses: list[tuple[int, int]] = []

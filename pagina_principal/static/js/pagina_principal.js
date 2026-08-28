@@ -1,8 +1,3 @@
-/**
- * home_usuario.js
- * Lógica de KPIs y gráficos del dashboard de usuario.
- * Los datos JSON se inyectan desde el template mediante <script type="application/json">.
- */
 
 document.addEventListener('DOMContentLoaded', () => {
   // ──────────────────────────────────────────────
