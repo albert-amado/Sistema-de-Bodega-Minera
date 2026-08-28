@@ -9,11 +9,12 @@ from django.utils import timezone
 
 #from devoluciones.models import Devolucion
 #from inventario.models import Producto
-from prestamo.models import Prestamo, productos_disponibles, Producto
+from herramienta.models import Herramienta
+from prestamo.models import Prestamo
 
 MESES_ABREV = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
-me
+
 def _rango_ultimos_6_meses(hoy: date) -> list[tuple[int, int]]:
     """[(año, mes), ...] de los últimos 6 meses (incluye actual), orden cronológico."""
     meses: list[tuple[int, int]] = []
@@ -64,11 +65,11 @@ def home_usuario_view(request):
     except Usuario.DoesNotExist:
         return redirect('login')
 
-    # ── Query única con jerarquía completa + conteo de items (evita N+1 y {{ p.items.count }}) ──
+    # ── Query única con jerarquía completa + conteo de detalles ──
     all_prestamos = (
         Prestamo.objects
-        .prefetch_related('items__codigo_herramienta__codigo_categoria')
-        .annotate(num_items=Count('items'))
+        .prefetch_related('detalles__herramienta__codigo_categoria')
+        .annotate(num_items=Count('detalles'))
         .filter(documento=doc)
         .order_by('-fecha')
     )
@@ -102,9 +103,9 @@ def home_usuario_view(request):
     historial_reciente = all_prestamos.filter(estado='devuelto')
     
 
-    productos_disponibles = Producto.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
+    productos_disponibles = Herramienta.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
     alertas_stock = list(
-        Producto.objects.filter(disponibilidad='No disponible')
+        Herramienta.objects.filter(disponibilidad='No disponible')
         .values_list('nombre_herramienta', flat=True)
     )
 

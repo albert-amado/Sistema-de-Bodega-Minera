@@ -345,7 +345,7 @@ def nueva_contrasena_view(request, uid, token):
 def home_view(request):
     rol = (request.session.get('usuario_rol') or '').strip().lower()
     if rol in ('administrador', 'admin'):
-        return redirect('home')
+        return redirect('pagina_principal')
     return redirect('home_usuario')
 
 
