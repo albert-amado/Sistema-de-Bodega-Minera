@@ -44,14 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'prestamo',
     'usuario',
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
     "herramienta",
-    "prestamo",
 ]
 
 MIDDLEWARE = [
