@@ -64,7 +64,7 @@ def _validar_documento(tipo, numero):
 # ─────────────────────────────────────────────────────────────
 def login_view(request):
     if request.session.get('usuario_documento'):
-        return redirect('home')
+        return redirect('pagina_principal')
 
     if request.method == 'POST':
         tipo_documento = request.POST.get('tipo_documento', '').strip().upper()
@@ -129,10 +129,7 @@ def login_view(request):
         request.session['usuario_rol']            = usuario.rol
         request.session['usuario_tipo_documento'] = usuario.tipo_documento
 
-        rol = usuario.rol.strip().lower()
-        if rol in ('administrador', 'instructor'):
-            return redirect('home')
-        return redirect('home_usuario')
+        return redirect('pagina_principal')
 
     return render(request, 'login.html')
 
@@ -234,9 +231,7 @@ def registro_view(request):
         request.session['usuario_rol']            = usuario.rol
         request.session['usuario_tipo_documento'] = usuario.tipo_documento
 
-        if usuario.rol.strip().lower() in ('administrador', 'instructor'):
-            return redirect('home')
-        return redirect('home_usuario')
+        return redirect('pagina_principal')
 
     return render(request, 'registro.html', ctx_base)
 
@@ -343,10 +338,7 @@ def nueva_contrasena_view(request, uid, token):
 @sesion_requerida
 @login_required
 def home_view(request):
-    rol = (request.session.get('usuario_rol') or '').strip().lower()
-    if rol in ('administrador', 'admin'):
-        return redirect('home')
-    return redirect('home_usuario')
+    return redirect('pagina_principal')
 
 
 # ─────────────────────────────────────────────────────────────

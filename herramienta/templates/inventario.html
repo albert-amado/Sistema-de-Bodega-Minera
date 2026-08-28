@@ -351,10 +351,6 @@
               <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock }}', '{% if producto.categoria %}{{ producto.categoria.pk }}{% endif %}')">
                 <i class="bi bi-pencil"></i>
               </button>
-
-              <button type="button" class="btn btn-sm btn-light border text-warning btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Enviar a mantenimiento" onclick="abrirMantenimiento('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
-                <i class="bi bi-wrench"></i>
-              </button>
             </div>
           </td>
         </tr>
@@ -464,7 +460,7 @@
         <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Nueva Herramienta</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" action="{% url 'inventario:inventario' %}" novalidate>
+      <form method="post" action="{% url 'inventario' %}" novalidate>
         {% csrf_token %}
         <input type="hidden" name="accion" value="crear_producto">
         <div class="modal-body p-4">
@@ -568,86 +564,7 @@
   </div>
 </div>
 
-<!-- ==================== MODAL MANTENIMIENTO ==================== -->
-<div class="modal fade" id="modalMantenimiento" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
-    <div class="modal-content d-flex flex-column modal-max-vh">
-      <div class="modal-header bg-warning text-dark">
-        <h5 class="modal-title fw-bold"><i class="bi bi-wrench me-2"></i>Enviar a Mantenimiento</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="formMantenimiento" method="POST" action="{% url 'mantenimiento:registrar_desde_inventario' %}" class="d-flex flex-column flex-grow-1 min-h-0">
-        {% csrf_token %}
-        <input type="hidden" name="producto_id" id="mantProductoId">
-
-        <div class="modal-body flex-grow-1 overflow-auto p-4 min-h-0">
-          <div class="alert alert-info py-2 mb-3 fs-7">
-            <div class="fw-bold">Herramienta seleccionada:</div>
-            <span id="mantTextDisplay"></span>
-          </div>
-
-          <!-- ==================== CAMPOS DEL FORMULARIO DE MANTENIMIENTO ==================== -->
-          <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Tipo de Mantenimiento *</label>
-              {{ mant_form.tipo_mantenimiento }}
-            </div>
-            <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Tipo de Estado Actual *</label>
-              {{ mant_form.tipo_estado }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha de Reporte / Detección *</label>
-              {{ mant_form.fecha_reporte }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Inicio Mantenimiento *</label>
-              {{ mant_form.fecha_inicio }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Fin Estimada</label>
-              {{ mant_form.fecha_fin_estimada }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Fin Real</label>
-              {{ mant_form.fecha_fin_real }}
-            </div>
-            <div class="col-md-4">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Tiempo Empleado (horas)</label>
-              {{ mant_form.tiempo_empleado_horas }}
-            </div>
-            <div class="col-md-4">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Prioridad / Urgencia *</label>
-              {{ mant_form.prioridad }}
-            </div>
-            <div class="col-md-4">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Responsable / Técnico *</label>
-              {{ mant_form.responsable }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Costo Estimado</label>
-              {{ mant_form.costo_estimado }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Costo Real</label>
-              {{ mant_form.costo_real }}
-            </div>
-            <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Estado del Registro *</label>
-              {{ mant_form.estado_registro }}
-            </div>
-          </div>
-        </div>
-
-        <div class="modal-footer bg-light border-0 px-4 py-3 flex-shrink-0">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-warning text-dark px-4 fw-bold">Confirmar Envío</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
+<!-- ==================== MODAL NUEVA CATEGORIA ==================== -->
 <div class="modal fade" id="modalNuevaCategoria" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
@@ -655,7 +572,7 @@
         <h5 class="modal-title fw-bold"><i class="bi bi-tag-fill me-2"></i>Crear Nueva Categoría</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="POST" action="{% url 'inventario:inventario' %}">
+      <form method="POST" action="{% url 'inventario' %}">
         {% csrf_token %}
         <input type="hidden" name="accion" value="crear_categoria">
 
@@ -691,18 +608,6 @@
 </div>
 
 <script>
-  function abrirMantenimiento(id, sku, nombre) {
-    const modalEl = document.getElementById('modalMantenimiento');
-    const dialog = modalEl.querySelector('.modal-dialog');
-    if (dialog) dialog.classList.add('modal-dialog-scrollable', 'modal-xl');
-
-    document.getElementById('mantProductoId').value = id;
-    document.getElementById('mantTextDisplay').innerText = '[' + sku + '] ' + nombre;
-
-    var modalInst = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static' });
-    modalInst.show();
-  }
-
   function abrirEditar(id, sku, nombre, descripcion, stock, categoria) {
     document.getElementById('edit_producto_id').value = id;
     document.getElementById('edit_sku').value = sku;

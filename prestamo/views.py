@@ -1,12 +1,13 @@
 import json
 
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from herramienta.models import Herramienta
+from usuario.models import Usuario
+from usuario.decorators import login_required, admin_required
 
 from .models import (
     DetallePrestamo,
@@ -15,22 +16,21 @@ from .models import (
     Prestamo,
 )
 
-User = get_user_model()
-
 
 def notificaciones_json(request):
     """Endpoint para obtener notificaciones en JSON."""
     return JsonResponse({"items": []})
 
 
+@login_required
 def prestamo_lista(request):
     """Vista principal para la gestión de préstamos (Admin)."""
     prestamos_qs = (
         Prestamo.objects.prefetch_related(
-            "detalles__herramienta", "devoluciones"
+            "detalles__codigo_herramienta", "devoluciones"
         )
-        .select_related("usuario")
-        .order_by("-id")
+        .select_related("documento")
+        .order_by("-pk")
     )
 
     # Filtro opcional por estado
@@ -50,7 +50,7 @@ def prestamo_lista(request):
     ).count()
 
     herramientas_qs = Herramienta.objects.all()
-    usuarios_qs = User.objects.all()
+    usuarios_qs = Usuario.objects.all()
 
     # Formateo JSON para scripts en plantilla
     herramientas_json = [
@@ -66,15 +66,15 @@ def prestamo_lista(request):
     usuarios_json = [
         {
             "pk": u.pk,
-            "username": u.username,
-            "nombre_completo": u.get_full_name() or u.username,
-            "documento": (
-                getattr(u, "numero_documento", "")
-                or getattr(u, "documento", "")
-            ),
+            "username": u.documento,
+            "nombre_completo": u.nombre_completo or u.documento,
+            "documento": u.documento,
         }
         for u in usuarios_qs
     ]
+
+    doc_sesion = request.session.get('usuario_documento')
+    usuario_actual = Usuario.objects.filter(documento=doc_sesion).first() if doc_sesion else None
 
     context = {
         "all_prestamos": prestamos_qs,
@@ -88,6 +88,7 @@ def prestamo_lista(request):
         "productos_disponibles": herramientas_qs,
         "productos": herramientas_qs,
         "usuarios": usuarios_qs,
+        "usuario": usuario_actual,
         "herramientas_json": json.dumps(herramientas_json),
         "productos_json": json.dumps(herramientas_json),
         "usuarios_json": json.dumps(usuarios_json),
@@ -95,21 +96,22 @@ def prestamo_lista(request):
     return render(request, "prestamo.html", context)
 
 
+@login_required
 def prestamo_usuario_lista(request):
     """Vista de préstamos para la interfaz de Usuario."""
-    usuario_actual = request.user if request.user.is_authenticated else None
+    doc_sesion = request.session.get('usuario_documento')
 
-    if usuario_actual:
+    if doc_sesion:
         prestamos_qs = (
-            Prestamo.objects.filter(usuario=usuario_actual)
-            .prefetch_related("detalles__herramienta")
-            .order_by("-id")
+            Prestamo.objects.filter(documento_id=doc_sesion)
+            .prefetch_related("detalles__codigo_herramienta")
+            .order_by("-pk")
         )
     else:
         prestamos_qs = (
             Prestamo.objects.all()
-            .prefetch_related("detalles__herramienta")
-            .order_by("-id")
+            .prefetch_related("detalles__codigo_herramienta")
+            .order_by("-pk")
         )
 
     total_prestamos = prestamos_qs.count()
@@ -120,6 +122,7 @@ def prestamo_usuario_lista(request):
     proximos_vencer = 0
 
     herramientas_qs = Herramienta.objects.all()
+    usuario_obj = Usuario.objects.filter(documento=doc_sesion).first() if doc_sesion else None
 
     context = {
         "all_prestamos": prestamos_qs,
@@ -130,11 +133,12 @@ def prestamo_usuario_lista(request):
         "herramientas_disponibles": herramientas_qs,
         "productos_disponibles": herramientas_qs,
         "productos": herramientas_qs,
-        "usuario": usuario_actual,
+        "usuario": usuario_obj,
     }
     return render(request, "prestamo_usuario.html", context)
 
 
+@login_required
 @transaction.atomic
 def crear_prestamo(request):
     """Procesa la creación de un nuevo préstamo (Wizard Admin)."""
@@ -149,21 +153,19 @@ def crear_prestamo(request):
             messages.error(
                 request, "El documento y la ficha SENA son obligatorios."
             )
-            return redirect("prestamo")
+            return redirect("inventario")
 
         if not herramientas_ids:
             messages.error(
                 request, "Debes seleccionar al menos una herramienta."
             )
-            return redirect("prestamo")
+            return redirect("inventario")
 
-        # Buscar o vincular usuario opcional
-        usuario_obj = User.objects.filter(username=documento).first()
+        usuario_obj = Usuario.objects.filter(documento=documento).first()
 
         nuevo_prestamo = Prestamo.objects.create(
-            documento=documento,
+            documento=usuario_obj,
             ficha=ficha,
-            usuario=usuario_obj,
             estado=EstadoPrestamo.PENDIENTE,
             observaciones=observaciones,
         )
@@ -175,8 +177,8 @@ def crear_prestamo(request):
                 cant_num = int(cant)
                 herramienta = Herramienta.objects.get(pk=h_id)
                 DetallePrestamo.objects.create(
-                    prestamo=nuevo_prestamo,
-                    herramienta=herramienta,
+                    codigo_prestamo=nuevo_prestamo,
+                    codigo_herramienta=herramienta,
                     cantidad=cant_num,
                 )
             except (ValueError, Herramienta.DoesNotExist):
@@ -185,9 +187,10 @@ def crear_prestamo(request):
         messages.success(
             request, f"Préstamo #{nuevo_prestamo.pk} registrado con éxito."
         )
-    return redirect("prestamo")
+    return redirect("inventario")
 
 
+@login_required
 def aprobar_prestamo(request):
     """Aprueba una solicitud de préstamo y descuenta stock."""
     if request.method == "POST":
@@ -195,17 +198,16 @@ def aprobar_prestamo(request):
         prestamo = get_object_or_404(Prestamo, pk=pk)
 
         with transaction.atomic():
-            # Descontar stock
-            for detalle in prestamo.detalles.select_related("herramienta"):
-                h = detalle.herramienta
-                if h.stock_disponible >= detalle.cantidad:
+            for detalle in prestamo.detalles.select_related("codigo_herramienta"):
+                h = detalle.codigo_herramienta
+                if h and h.stock_disponible >= detalle.cantidad:
                     h.stock_disponible -= detalle.cantidad
                     h.save()
-                else:
+                elif h:
                     messages.error(
                         request, f"Stock insuficiente para {h.nombre}."
                     )
-                    return redirect("prestamo")
+                    return redirect("inventario")
 
             prestamo.estado = EstadoPrestamo.ENTREGADO
             prestamo.save()
@@ -213,9 +215,10 @@ def aprobar_prestamo(request):
                 request, f"Préstamo #{prestamo.pk} aprobado y entregado."
             )
 
-    return redirect("prestamo")
+    return redirect("inventario")
 
 
+@login_required
 def rechazar_prestamo(request):
     """Rechaza / Cancela una solicitud de préstamo."""
     if request.method == "POST":
@@ -231,34 +234,40 @@ def rechazar_prestamo(request):
         prestamo.save()
         messages.warning(request, f"Préstamo #{prestamo.pk} rechazado.")
 
-    return redirect("prestamo")
+    return redirect("inventario")
 
 
+@login_required
 def devoluciones_lista(request):
     """Vista principal para la gestión de devoluciones (Admin)."""
     devoluciones_qs = (
         DevolucionHerramienta.objects.select_related(
-            "prestamo__usuario", "recibido_por"
+            "codigo_prestamo__documento", "codigo_recibe"
         )
-        .prefetch_related("prestamo__detalles__herramienta")
-        .order_by("-id")
+        .prefetch_related("codigo_prestamo__detalles__codigo_herramienta")
+        .order_by("-pk")
     )
     prestamos_activos = (
         Prestamo.objects.filter(
             estado__in=[EstadoPrestamo.ENTREGADO, EstadoPrestamo.PARCIAL]
         )
-        .prefetch_related("detalles__herramienta")
-        .select_related("usuario")
-        .order_by("-id")
+        .prefetch_related("detalles__codigo_herramienta")
+        .select_related("documento")
+        .order_by("-pk")
     )
+
+    doc_sesion = request.session.get('usuario_documento')
+    usuario_actual = Usuario.objects.filter(documento=doc_sesion).first() if doc_sesion else None
 
     context = {
         "devoluciones": devoluciones_qs,
         "prestamos_activos": prestamos_activos,
+        "usuario": usuario_actual,
     }
     return render(request, "devoluciones.html", context)
 
 
+@login_required
 def devolver_prestamo(request):
     """Registra la devolución de herramientas de un préstamo."""
     if request.method == "POST":
@@ -267,11 +276,11 @@ def devolver_prestamo(request):
             prestamo = get_object_or_404(Prestamo, pk=pk)
 
             with transaction.atomic():
-                # Restablecer stock
-                for detalle in prestamo.detalles.select_related("herramienta"):
-                    h = detalle.herramienta
-                    h.stock_disponible += detalle.cantidad
-                    h.save()
+                for detalle in prestamo.detalles.select_related("codigo_herramienta"):
+                    h = detalle.codigo_herramienta
+                    if h:
+                        h.stock_disponible += detalle.cantidad
+                        h.save()
 
                 devolucion_total = (
                     request.POST.get("devolucion_total") != "false"
@@ -288,19 +297,12 @@ def devolver_prestamo(request):
                     or "Devolución registrada"
                 )
 
-                cod_recibe = (
-                    request.user.username
-                    if request.user.is_authenticated
-                    else "SISTEMA"
-                )
-                rec_por = (
-                    request.user if request.user.is_authenticated else None
-                )
+                doc_sesion = request.session.get('usuario_documento')
+                rec_por = Usuario.objects.filter(documento=doc_sesion).first() if doc_sesion else None
 
                 DevolucionHerramienta.objects.create(
-                    prestamo=prestamo,
-                    codigo_recibe=cod_recibe,
-                    recibido_por=rec_por,
+                    codigo_prestamo=prestamo,
+                    codigo_recibe=rec_por,
                     observaciones=obs,
                 )
                 messages.success(
@@ -311,9 +313,10 @@ def devolver_prestamo(request):
     referer = request.META.get("HTTP_REFERER", "")
     if "devoluciones" in referer:
         return redirect("devoluciones")
-    return redirect("prestamo")
+    return redirect("inventario")
 
 
+@login_required
 def editar_prestamo(request):
     """Actualiza las observaciones de un préstamo existente."""
     if request.method == "POST":
@@ -323,9 +326,10 @@ def editar_prestamo(request):
         prestamo.observaciones = observaciones
         prestamo.save()
         messages.success(request, f"Préstamo #{prestamo.pk} actualizado.")
-    return redirect("prestamo")
+    return redirect("inventario")
 
 
+@login_required
 def usuario_solicitar_prestamo(request):
     """Procesa la solicitud de préstamo enviada desde el portal de usuario."""
     if request.method == "POST":
@@ -337,14 +341,13 @@ def usuario_solicitar_prestamo(request):
 
         if not documento or not ficha:
             messages.error(request, "Documento y Ficha SENA son requeridos.")
-            return redirect("prestamo_usuario")
+            return redirect("pagina_principal")
 
         with transaction.atomic():
-            usr = request.user if request.user.is_authenticated else None
+            usr = Usuario.objects.filter(documento=documento).first()
             nuevo = Prestamo.objects.create(
-                documento=documento,
+                documento=usr,
                 ficha=ficha,
-                usuario=usr,
                 estado=EstadoPrestamo.PENDIENTE,
                 observaciones=observaciones,
             )
@@ -356,8 +359,8 @@ def usuario_solicitar_prestamo(request):
                     cant_num = int(cant)
                     herramienta = Herramienta.objects.get(pk=h_id)
                     DetallePrestamo.objects.create(
-                        prestamo=nuevo,
-                        herramienta=herramienta,
+                        codigo_prestamo=nuevo,
+                        codigo_herramienta=herramienta,
                         cantidad=cant_num,
                     )
                 except (ValueError, Herramienta.DoesNotExist):
@@ -366,4 +369,4 @@ def usuario_solicitar_prestamo(request):
         messages.success(
             request, f"Solicitud #{nuevo.pk} enviada correctamente."
         )
-    return redirect("prestamo_usuario")
+    return redirect("pagina_principal")

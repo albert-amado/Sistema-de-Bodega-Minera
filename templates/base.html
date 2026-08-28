@@ -34,7 +34,7 @@
 
   <div class="body-wrap">
 
-    {% if request.user.is_staff %}
+    {% if request.session.usuario_rol|lower == 'administrador' or request.session.usuario_rol|lower == 'admin' or request.user.is_staff %}
     {% include "partials/aside_admin.html" %}
     {% else %}
     {% include "partials/aside_usuario.html" %}

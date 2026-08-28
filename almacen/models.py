@@ -1,9 +1,9 @@
 from django.db import models
 
-# Create your models here.
 class Almacen(models.Model):
     codigo_almacen = models.AutoField(primary_key=True, db_column='codigo_almacen')
     nombre = models.CharField(max_length=100, verbose_name="Nombre")
+    dimensiones = models.CharField(max_length=100, blank=True, null=True, verbose_name="Dimensiones")
     ubicacion = models.CharField(max_length=255, blank=True, null=True, verbose_name="Ubicación")
 
     class Meta:
@@ -19,6 +19,7 @@ class Almacen(models.Model):
 class Estante(models.Model):
     num_estante = models.AutoField(primary_key=True, db_column='num_estante')
     codigo = models.CharField(max_length=50, verbose_name="Código")
+    dimensiones = models.CharField(max_length=100, blank=True, null=True, verbose_name="Dimensiones")
     codigo_almacen = models.ForeignKey(
         Almacen,
         on_delete=models.RESTRICT,

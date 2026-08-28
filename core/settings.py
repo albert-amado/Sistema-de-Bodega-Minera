@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'usuario',
     "herramienta",
     "almacen",
+    "pagina_principal",
 ]
 
 MIDDLEWARE = [
@@ -144,5 +145,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='desarrollo@local.com')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='desarrollo@local.com')
+
+LOGIN_URL = '/'
+
