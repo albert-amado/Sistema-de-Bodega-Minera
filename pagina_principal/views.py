@@ -28,7 +28,7 @@ def _rango_ultimos_6_meses(hoy: date) -> list[tuple[int, int]]:
 
 
 def _tendencia_meses_usuario(doc: str) -> dict[str, list]:
-    """Total y devueltos por mes (últimos 6) para UN usuario. 1 sola query agregada."""
+    """Total y devueltos por mes (últimos 7 meses) para UN usuario. 1 sola query agregada."""
     hoy = timezone.localdate()
     rango = _rango_ultimos_6_meses(hoy)
     fecha_inicio = date(rango[0][0], rango[0][1], 1)
