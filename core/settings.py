@@ -42,11 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'pagina_principal',
     'prestamo',
     'usuario',
     "herramienta",
     "almacen",
-    "pagina_principal",
 ]
 
 MIDDLEWARE = [

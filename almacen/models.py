@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import RegexValidator
+
 
 class Almacen(models.Model):
     codigo_almacen = models.AutoField(primary_key=True, db_column='codigo_almacen')

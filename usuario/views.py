@@ -335,6 +335,8 @@ def nueva_contrasena_view(request, uid, token):
 # ─────────────────────────────────────────────────────────────
 #  HOME
 # ─────────────────────────────────────────────────────────────
+from pagina_principal.views import home_usuario_view as dashboard_view
+
 @sesion_requerida
 @login_required
 def home_view(request):
