@@ -18,7 +18,7 @@ from pathlib import Path
 # ────────────────────────────────────────────────────────
 # Configuración
 # ────────────────────────────────────────────────────────
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_NAME = os.path.basename(os.getcwd())
 
 # Carpetas a omitir

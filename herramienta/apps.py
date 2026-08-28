@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class HerramientaConfig(AppConfig):
-    name = 'herramienta'
+    name = "herramienta"
