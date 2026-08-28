@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pagina_principal.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- ═══════════════════════════════════
+     CABECERA
+═══════════════════════════════════ -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h5 class="fw-bold mb-1" style="color: var(--text-main, #1B2021);">
+      Resumen general del sistema
+    </h5>
+    <p class="text-muted small mb-0">Indicadores clave y distribución gráfica en tiempo real</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'inventario:inventario' %}" class="btn-outline-mine text-decoration-none">
+      <i class="bi bi-boxes me-1"></i> Ver inventario
+    </a>
+    <a href="{% url 'prestamo' %}" class="btn-primary-mine text-decoration-none">
+      <i class="bi bi-clipboard-check me-1"></i> Ver préstamos
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     KPI CARDS
+═══════════════════════════════════ -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card h-100 kpi-card" data-kpi-delay="0">
+      <div class="kpi-accent-bar" style="background: #5b8dee;"></div>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Total préstamos</span>
+        <i class="bi bi-clipboard-data text-primary fs-5"></i>
+      </div>
+      <div class="kpi-num-display kpi-number" data-target="{{ kpis.total_prestamos }}">0</div>
+      <div class="small text-muted" style="font-size: 0.78rem;">
+        <i class="bi bi-check-circle text-primary"></i> Tasa devolución {{ kpis.tasa_devolucion }}%
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card h-100 kpi-card" data-kpi-delay="130">
+      <div class="kpi-accent-bar" style="background: #1D9E75;"></div>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Préstamos activos</span>
+        <i class="bi bi-clock-history text-success fs-5"></i>
+      </div>
+      <div class="kpi-num-display kpi-number" data-target="{{ kpis.activos_count }}">0</div>
+      <div class="small text-success" style="font-size: 0.78rem;">
+        <i class="bi bi-check-circle"></i> {{ kpis.porcentaje_activos }}% del total
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card h-100 kpi-card" data-kpi-delay="260">
+      <div class="kpi-accent-bar" style="background: #98473E;"></div>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Vencidos</span>
+        <i class="bi bi-exclamation-triangle text-danger fs-5"></i>
+      </div>
+      <div class="kpi-num-display kpi-number" data-target="{{ kpis.vencidos_count }}">0</div>
+      <div class="small text-danger" style="font-size: 0.78rem;">
+        <i class="bi bi-exclamation-circle"></i> Requieren atención
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card h-100 kpi-card" data-kpi-delay="390">
+      <div class="kpi-accent-bar" style="background: #c4900a;"></div>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Devueltos</span>
+        <i class="bi bi-arrow-return-left text-warning fs-5"></i>
+      </div>
+      <div class="kpi-num-display kpi-number" data-target="{{ kpis.devueltos_count }}">0</div>
+      <div class="small text-warning" style="font-size: 0.78rem;">
+        <i class="bi bi-percent"></i> Incidencias {{ kpis.porcentaje_incidencias }}%
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     FILA 1 DE GRÁFICAS PRINCIPALES
+═══════════════════════════════════ -->
+<div class="row g-3 mb-4">
+  <!-- GRÁFICA 1: ESTADO DE PRÉSTAMOS -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="card-title"><i class="bi bi-pie-chart-fill me-2 text-primary"></i>Estado de Préstamos</span>
+        <a href="{% url 'prestamo' %}" class="btn-ghost text-decoration-none">Ver todos</a>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="chartPrestamos"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- GRÁFICA 2: EVOLUCIÓN MENSUAL / CATEGORÍAS -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="card-title"><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Actividad por Mes</span>
+        <a href="{% url 'inventario:inventario' %}" class="btn-ghost text-decoration-none">Ver inventario</a>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="chartMeses"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     FILA 2: SALUD DE INVENTARIO & ACTIVIDAD
+═══════════════════════════════════ -->
+<div class="row g-3 mb-4">
+  <!-- GRÁFICA 3: SALUD DE INVENTARIO -->
+  <div class="col-lg-5">
+    <div class="card h-100">
+      <div class="card-header">
+        <span class="card-title"><i class="bi bi-heart-pulse-fill me-2 text-danger"></i>Estado de Disponibilidad</span>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="chartSalud"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- PANEL DE ACTIVIDAD RECIENTE Y ACCESOS RÁPIDOS -->
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="card-title"><i class="bi bi-activity me-2 text-warning"></i>Últimas Devoluciones y Accesos</span>
+        <a href="{% url 'devoluciones' %}" class="btn-ghost text-decoration-none">Ver todas</a>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <!-- Feed de Devoluciones Recientes -->
+          <div class="col-md-7">
+            <h6 class="text-muted small fw-bold mb-3 text-uppercase">Devoluciones Recientes</h6>
+            {% for d in devoluciones_recientes %}
+            <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded border recent-dev-row">
+              <div>
+                <div class="fw-semibold text-truncate small recent-dev-title">
+                  Préstamo #{{ d.prestamo.id }} — {{ d.prestamo.usuario }}
+                </div>
+                <div class="text-muted" style="font-size: 0.75rem;">
+                  <i class="bi bi-calendar-event me-1"></i>{{ d.fecha|date:"d M Y" }}
+                </div>
+              </div>
+              <span class="badge-state
+                {% if d.estado == 'pendiente' %}badge-pendiente
+                {% elif d.estado == 'aprobada' %}badge-aprobada
+                {% else %}badge-rechazada{% endif %}">
+                {{ d.get_estado_display }}
+              </span>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 text-muted small">
+              <i class="bi bi-inbox fs-3 d-block mb-1"></i>
+              Sin devoluciones recientes.
+            </div>
+            {% endfor %}
+          </div>
+          <!-- Accesos Rápidos Directos -->
+          <div class="col-md-5 d-flex flex-column gap-2 justify-content-center">
+            <h6 class="text-muted small fw-bold mb-2 text-uppercase">Accesos Rápidos</h6>
+            <a href="{% url 'inventario:inventario' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(91,141,238,0.15); color: #2563eb;">
+                <i class="bi bi-boxes"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="fw-semibold small">Gestión Inventario</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Catálogo & Stock</div>
+              </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
+            </a>
+            <a href="{% url 'prestamo' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(16,185,129,0.15); color: #059669;">
+                <i class="bi bi-clipboard-check"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="fw-semibold small">Gestión Préstamos</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Registros y entregas</div>
+              </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
+            </a>
+            <a href="{% url 'devoluciones' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(245,158,11,0.15); color: #d97706;">
+                <i class="bi bi-arrow-return-left"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="fw-semibold small">Devoluciones</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Recepción de equipos</div>
+              </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<!-- CDN Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Datos JSON inyectados de forma segura desde la vista -->
+<script id="chart-estados-data" type="application/json">{{ chart_estados_json|safe }}</script>
+<script id="chart-meses-data" type="application/json">{{ chart_meses_json|safe }}</script>
+
+<!-- Lógica modularizada -->
+<script defer src="{% static 'js/pagina_principal.js' %}"></script>
+{% endblock js %}
