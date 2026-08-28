@@ -1,0 +1,134 @@
+.kpi-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #ffffff;
+  border: 1px solid rgba(27, 32, 33, 0.09);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(27, 32, 33, 0.04);
+}
+
+.kpi-card.kpi-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 24px rgba(27, 32, 33, 0.1);
+  transition: opacity 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.kpi-accent-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 4px 4px 0 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.65s ease 0.2s;
+}
+
+.kpi-card.kpi-visible .kpi-accent-bar {
+  transform: scaleX(1);
+}
+
+.kpi-title-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.kpi-num-display {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.1;
+  margin: 8px 0;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+}
+
+.quick-action-link {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quick-action-link:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateX(3px);
+}
+
+.quick-action-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.recent-dev-row {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.recent-dev-title {
+  color: #1e293b;
+}
+
+/* ── Dark mode ── */
+body.dark-mode .kpi-card {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode .kpi-title-label {
+  color: #94a3b8 !important;
+}
+
+body.dark-mode .kpi-num-display {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .quick-action-link {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+}
+
+body.dark-mode .quick-action-link:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-mode .recent-dev-row {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode .recent-dev-title {
+  color: #f8fafc !important;
+}
