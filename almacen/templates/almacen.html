@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-dismissible fade show d-flex align-items-center gap-2 alert-custom" role="alert">
+  {% if message.tags == 'error' %}
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2.2">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+  {% else %}
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2.2">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </svg>
+  {% endif %}
+  <span>{{ message }}</span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- ══ TARJETAS KPI ══ -->
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-lg-6">
+    <div class="card p-3 border-0 shadow-sm bg-white h-100">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="text-muted fw-normal mb-1">Total Almacenes</h6>
+          <h3 class="fw-bold mb-0">{{ total_almacenes }}</h3>
+        </div>
+        <div class="icon-shape bg-light-primary text-primary rounded-circle p-3">
+          <i class="bi bi-building fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-6">
+    <div class="card p-3 border-0 shadow-sm bg-white h-100">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="text-muted fw-normal mb-1">Total Estantes</h6>
+          <h3 class="fw-bold mb-0">{{ total_estantes }}</h3>
+        </div>
+        <div class="icon-shape bg-light-success text-success rounded-circle p-3">
+          <i class="bi bi-layout-three-columns fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card table-card p-3">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <span class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </svg>
+      Almacenes registrados
+    </span>
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge-count">
+        {{ almacenes|length }} registro{{ almacenes|length|pluralize }}
+      </span>
+      <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#modalAlmacen" data-bs-placement="bottom" title="Registrar un nuevo almacén">
+        <i class="bi bi-plus-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table-app datatable-custom" id="almacenes-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Detalles</th>
+          <th>Capacidad</th>
+          <th>Fecha Creación</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for almacen in almacenes %}
+        <tr
+          data-alm-id="{{ almacen.id }}"
+          data-alm-nombre="{{ almacen.nombre|escapejs }}"
+          data-alm-detalles="{{ almacen.detalles|default:''|escapejs }}"
+          data-alm-capacidad="{{ almacen.capacidad|default:'' }}"
+          data-alm-fecha="{{ almacen.fecha_creacion|date:'d/m/Y H:i' }}"
+        >
+          <td><span class="sku-text">{{ almacen.id }}</span></td>
+          <td class="fw-semibold">
+            <a href="{% url 'detalle_almacen' almacen.pk %}" class="text-decoration-none text-reset d-inline-flex align-items-center gap-2">
+              {{ almacen.nombre }}
+              <svg class="extracted-style-1" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          </td>
+          <td class="description-col">
+            {% if almacen.detalles %}
+            <button type="button" class="btn btn-outline-secondary btn-sm btn-action-small btn-ver-detalle" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles del almacén">
+              <i class="bi bi-eye"></i>
+            </button>
+            {% else %}
+            <span class="text-muted-small">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if almacen.capacidad %}
+            <span class="badge-state badge-aprobada">{{ almacen.capacidad }}</span>
+            {% else %}
+            <span class="text-muted-small">—</span>
+            {% endif %}
+          </td>
+          <td>{{ almacen.fecha_creacion|date:"d/m/Y H:i" }}</td>
+          <td>
+            <div class="d-flex gap-1 justify-content-center align-items-center">
+              <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}','{{ almacen.detalles|default:''|escapejs }}','{{ almacen.capacidad|default:'' }}')">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-light border text-danger btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar almacén" onclick="abrirEliminarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ Modal Ver Detalles ══ -->
+<div class="modal fade" id="modalDetallesAlmacen" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title fw-bold d-flex align-items-center gap-2"><i class="bi bi-eye me-1"></i>Detalles del Almacén</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-padded">
+        <div class="detalle-row">
+          <span class="label-caps">ID</span>
+          <span class="value-text" id="det_id">—</span>
+        </div>
+        <div class="detalle-row">
+          <span class="label-caps">Nombre</span>
+          <span class="value-text" id="det_nombre">—</span>
+        </div>
+        <div class="detalle-row">
+          <span class="label-caps">Descripción</span>
+          <span class="value-text" id="det_detalles">—</span>
+        </div>
+        <div class="detalle-row">
+          <span class="label-caps">Capacidad</span>
+          <span class="value-text" id="det_capacidad">—</span>
+        </div>
+        <div class="detalle-row border-bottom-0">
+          <span class="label-caps">Fecha creación</span>
+          <span class="value-text font-monospace" id="det_fecha">—</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Modal Crear ══ -->
+<div class="modal fade" id="modalAlmacen" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Nuevo Almacén</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{% url 'almacenes' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear">
+        <div class="modal-body p-4">
+
+          {% if form.errors %}
+          <div class="alert alert-danger py-2 fs-7 mb-3">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</div>
+            {% endfor %}
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <div class="modal-section-title">Datos del almacén</div>
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre *</label>
+              {{ form.nombre }}
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Detalles</label>
+              {{ form.detalles }}
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Capacidad</label>
+              {{ form.capacidad }}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-0 px-4 py-3">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success px-4">Guardar Almacén</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Modal Editar ══ -->
+<div class="modal fade" id="modalEditarAlmacen" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Modificar Almacén</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{% url 'almacenes' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="almacen_id" id="edit_almacen_id">
+        <div class="modal-body p-4">
+
+          {% if form_editar.errors %}
+          <div class="alert alert-danger py-2 fs-7 mb-3">
+            {% for field, errors in form_editar.errors.items %}
+            {% for error in errors %}
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</div>
+            {% endfor %}
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre *</label>
+              <input type="text" name="nombre" id="edit_almacen_nombre" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Detalles</label>
+              <textarea name="detalles" id="edit_almacen_detalles" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Capacidad</label>
+              <input type="number" name="capacidad" id="edit_almacen_capacidad" class="form-control" min="0">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-0 px-4 py-3">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary px-4">Actualizar Datos</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Modal Eliminar ══ -->
+<div class="modal fade" id="modalEliminarAlmacen" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title fw-bold"><i class="bi bi-trash me-2"></i>Eliminar Almacén</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <p class="mb-2">¿Estás seguro de eliminar el almacén</p>
+        <p id="eliminar_almacen_nombre" class="fw-bold text-danger fs-5"></p>
+        <p class="text-muted small mb-0">Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer bg-light border-0 px-4 py-3">
+        <form method="POST" action="{% url 'almacenes' %}" class="d-flex gap-2">
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="eliminar">
+          <input type="hidden" name="almacen_id" id="eliminar_almacen_id">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-warning text-dark fw-bold px-4">Sí, eliminar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Scripts ══ -->
+{% if show_modal %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    new bootstrap.Modal(document.getElementById('modalAlmacen')).show();
+  });
+</script>
+{% endif %}
+
+{% if show_modal_editar %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('edit_almacen_id').value        = '{{ request.POST.almacen_id }}';
+    document.getElementById('edit_almacen_nombre').value    = '{{ request.POST.nombre|escapejs }}';
+    document.getElementById('edit_almacen_detalles').value  = '{{ request.POST.detalles|escapejs }}';
+    document.getElementById('edit_almacen_capacidad').value = '{{ request.POST.capacidad }}';
+    new bootstrap.Modal(document.getElementById('modalEditarAlmacen')).show();
+  });
+</script>
+{% endif %}
+
+<script>
+  /* ── Modal detalles (delegación global) ── */
+  $(document).on('click', '.btn-ver-detalle', function () {
+    var tr = this.closest('tr');
+    if (!tr) return;
+    document.getElementById('det_id').textContent        = tr.dataset.almId || '';
+    document.getElementById('det_nombre').textContent    = tr.dataset.almNombre || '';
+    document.getElementById('det_detalles').textContent  = tr.dataset.almDetalles || '—';
+    document.getElementById('det_capacidad').textContent = tr.dataset.almCapacidad || '—';
+    document.getElementById('det_fecha').textContent     = tr.dataset.almFecha || '';
+    new bootstrap.Modal(document.getElementById('modalDetallesAlmacen')).show();
+  });
+
+  function abrirEditarAlmacen(pk, nombre, detalles, capacidad) {
+    document.getElementById('edit_almacen_id').value        = pk;
+    document.getElementById('edit_almacen_nombre').value    = nombre;
+    document.getElementById('edit_almacen_detalles').value  = detalles;
+    document.getElementById('edit_almacen_capacidad').value = capacidad;
+    new bootstrap.Modal(document.getElementById('modalEditarAlmacen')).show();
+  }
+
+  function abrirEliminarAlmacen(pk, nombre) {
+    document.getElementById('eliminar_almacen_id').value           = pk;
+    document.getElementById('eliminar_almacen_nombre').textContent = '"' + nombre + '"';
+    new bootstrap.Modal(document.getElementById('modalEliminarAlmacen')).show();
+  }
+</script>
+
+{% endblock %}
+
+{% block js %}
+<script defer src="{% static 'js/tables/almacenamiento_table.js' %}?v=3"></script>
+{% endblock js %}
