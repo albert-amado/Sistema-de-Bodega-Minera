@@ -1,6 +1,7 @@
 from django.db import models
+from django.core.validators import RegexValidator
 
-# Create your models here.
+
 class Almacen(models.Model):
     codigo_almacen = models.AutoField(primary_key=True, db_column='codigo_almacen')
     nombre = models.CharField(max_length=100, verbose_name="Nombre")
@@ -18,7 +19,14 @@ class Almacen(models.Model):
 
 class Estante(models.Model):
     num_estante = models.AutoField(primary_key=True, db_column='num_estante')
-    codigo = models.CharField(max_length=50, verbose_name="Código")
+    codigo = models.CharField(
+        max_length=50,
+        verbose_name="Código",
+        validators=[RegexValidator(
+            regex=r'^\d+$',
+            message="El código solo debe contener números."
+        )]
+    )
     codigo_almacen = models.ForeignKey(
         Almacen,
         on_delete=models.RESTRICT,
