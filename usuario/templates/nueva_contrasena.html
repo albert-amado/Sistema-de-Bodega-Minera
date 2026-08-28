@@ -1,0 +1,88 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nueva contraseña · MINE Inventory</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+<body class="auth-page">
+  <div class="left-panel">
+    <canvas id="mineCanvas"></canvas>
+
+    <div class="left-content">
+      <div class="brand-text">MINE<span>.</span></div>
+      <div class="brand-sub">Centro Minero · Regional Boyacá · SENA</div>
+    </div>
+
+    <div class="left-content img-container-center">
+      <img src="{% static 'img/fondo.png' %}" alt="Campus SENA Centro Minero" />
+    </div>
+
+    <div class="left-content">
+      <span class="corner-note">Inventory </span>
+    </div>
+  </div>
+
+  <div class="right-panel">
+
+    <div class="logo-row">
+      <div class="logo-box">
+        <img src="{% static 'img/Logo-del-sena-Verde-150x150-removebg-preview.png' %}" alt="SENA" />
+      </div>
+      <div>
+        <div class="logo-sup">Centro Minero · SENA</div>
+        <div class="logo-name">Regional Boyacá</div>
+      </div>
+    </div>
+
+    <div class="icon-badge">🗝</div>
+
+    <div class="page-title" class="text-center">Nueva contraseña</div>
+    <div class="page-sub" class="text-center">
+      Escribe tu nueva contraseña. Debe tener al menos 8 caracteres.
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert-mine {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+          {% if message.tags == 'error' %}⚠{% else %}✓{% endif %} {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div id="msg-area"></div>
+
+    <form method="POST" id="newPassForm" autocomplete="off" novalidate>
+      {% csrf_token %}
+
+      <div class="field-wrap">
+        <span class="field-lbl">Nueva contraseña</span>
+        <input type="password" id="password1" name="password1" class="mine-input full"
+               placeholder="Mínimo 8 caracteres" required />
+      </div>
+
+      <div class="field-wrap">
+        <span class="field-lbl">Confirmar contraseña</span>
+        <input type="password" id="password2" name="password2" class="mine-input full"
+               placeholder="confirma la contraseña" required />
+      </div>
+
+      <button type="submit" class="btn-submit">Guardar contraseña ✓</button>
+    </form>
+
+    <hr class="divider" />
+    <div class="text-center-form">
+      <a href="{% url 'login' %}" class="link-mine">← Volver al inicio de sesión</a>
+    </div>
+
+    <div class="version-text">MINE Inventory </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/usuario.js' %}"></script>
+</body>
+</html>
