@@ -9,7 +9,8 @@ from django.utils import timezone
 
 #from devoluciones.models import Devolucion
 #from inventario.models import Producto
-from prestamo.models import Prestamo, productos_disponibles, Producto
+from prestamo.models import Prestamo
+from herramienta.models import Herramienta
 
 MESES_ABREV = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
@@ -102,9 +103,9 @@ def home_usuario_view(request):
     historial_reciente = all_prestamos.filter(estado='devuelto')
     
 
-    productos_disponibles = Producto.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
+    productos_disponibles = Herramienta.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
     alertas_stock = list(
-        Producto.objects.filter(disponibilidad='No disponible')
+        Herramienta.objects.filter(disponibilidad='No disponible')
         .values_list('nombre_herramienta', flat=True)
     )
 
