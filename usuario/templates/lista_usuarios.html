@@ -1,0 +1,792 @@
+{% extends "base.html" %}
+{% load static %}    
+{% block title %}Gestión de Usuarios{% endblock %}
+{% load static %}
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+       style="background:{% if message.tags == 'error' %}rgba(152,71,62,.1){% else %}rgba(58,122,66,.1){% endif %};
+              border:1px solid {% if message.tags == 'error' %}rgba(152,71,62,.25){% else %}rgba(58,122,66,.25){% endif %};
+              border-radius:var(--radius-md);color:var(--text-main);font-family:var(--font-ui);" role="alert">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+         stroke="{% if message.tags == 'error' %}#98473E{% else %}#3a7a42{% endif %}" stroke-width="2.2">
+      {% if message.tags == 'error' %}
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      {% else %}
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      {% endif %}
+    </svg>
+    {{ message }}
+    <button type="button" class="btn-close ms-auto lista_usuarios__style-1" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+{% endif %}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h5 class="lista_usuarios__style-2">
+      Gestión de Usuarios
+    </h5>
+    <p class="lista_usuarios__style-3">
+      SENA · Centro Minero · Regional Boyacá
+    </p>
+  </div>
+  <div class="lista_usuarios__style-4">
+    <span class="lista_usuarios__style-5">
+      {{ total }} usuario{{ total|pluralize:",s" }}
+    </span>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body lista_usuarios__style-6">
+    <form method="get" id="filtroForm" class="d-flex flex-wrap gap-3 align-items-end">
+
+      <div class="lista_usuarios__style-7">
+        <label class="form-label">Buscar</label>
+        <div class="lista_usuarios__style-8">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               style="position:absolute;left:10px;top:50%;transform:translateY(-50%);
+                      color:var(--text-muted);pointer-events:none;">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" name="q" id="qInput" value="{{ q }}" class="form-control lista_usuarios__style-9" placeholder="Nombre, documento, correo…">
+        </div>
+      </div>
+
+      <div class="lista_usuarios__style-10">
+        <label class="form-label">Rol</label>
+        <select name="rol" class="form-select" onchange="this.form.submit()">
+          <option value="">Todos los roles</option>
+          {% for rol in roles %}
+            <option value="{{ rol.id }}" {% if rol_id == rol.id|stringformat:"s" %}selected{% endif %}>
+              {{ rol.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="lista_usuarios__style-11">
+        <label class="form-label">Tipo de documento</label>
+        <select name="tipo_doc" class="form-select" onchange="this.form.submit()">
+          <option value="">Todos los tipos</option>
+          {% for val, label in tipos_doc %}
+            <option value="{{ val }}" {% if tipo_doc == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="lista_usuarios__style-12">
+        <button type="submit" class="btn-primary-mine">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Filtrar
+        </button>
+        {% if q or rol_id or tipo_doc %}
+        <a href="{% url 'lista_usuarios' %}" class="btn-outline-mine">✕</a>
+        {% endif %}
+      </div>
+
+      <div class="lista_usuarios__style-13">
+        <button type="button" id="btnLista" class="btn-primary-mine lista_usuarios__style-14" onclick="setVista('lista')" title="Vista lista">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+        </button>
+        <button type="button" id="btnFichas" class="btn-outline-mine lista_usuarios__style-15" onclick="setVista('fichas')" title="Vista fichas">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{% if usuarios %}
+
+<div id="vistaLista">
+  <div class="card table-card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <span class="card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Usuarios registrados
+      </span>
+      <span class="lista_usuarios__style-16">
+        {{ total }} registro{{ total|pluralize:"s" }}
+      </span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-app datatable-custom" id="usuarios-table" style="width:100%;border-collapse:collapse;font-size:.9rem;">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Documento</th>
+            <th>Correo</th>
+            <th class="d-none d-md-table-cell">Teléfono</th>
+            <th>Tipo</th>
+            <th>Rol</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in usuarios %}
+          <tr>
+            <td>
+              <div class="lista_usuarios__style-17">
+                <div style="width:32px;height:32px;min-width:32px;border-radius:50%;
+                             background:rgba(9,77,146,.1);color:var(--navy);
+                             display:flex;align-items:center;justify-content:center;
+                             font-family:var(--font-ui);font-weight:700;font-size:.68rem;
+                             letter-spacing:.03em;flex-shrink:0;">
+                  {{ u.nombre_completo|slice:":2"|upper }}
+                </div>
+                <span class="lista_usuarios__style-18">{{ u.nombre_completo }}</span>
+              </div>
+            </td>
+            <td class="lista_usuarios__style-19">
+              {{ u.numero_documento }}
+            </td>
+            <td class="lista_usuarios__style-20">{{ u.correo }}</td>
+            <td class="d-none d-md-table-cell lista_usuarios__style-21">
+              {{ u.telefono|default:"—" }}
+            </td>
+            <td>
+              <span class="lista_usuarios__style-22">
+                {{ u.get_tipo_documento_display }}
+              </span>
+            </td>
+            <td>
+              <span style="background:{% if u.rol == 'Administrador' %}rgba(152,71,62,.1){% else %}rgba(113,129,109,.1){% endif %};
+                           color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--sage){% endif %};
+                           font-family:var(--font-ui);font-size:.78rem;font-weight:700;
+                           padding:.15rem .55rem;border-radius:20px;
+                           border:1px solid {% if u.rol == 'Administrador' %}rgba(152,71,62,.2){% else %}rgba(113,129,109,.2){% endif %};">
+                {{ u.rol }}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="lista_usuarios__style-23">
+                <button type="button" class="btn-ghost lista_usuarios__style-24" onclick="verUsuario('{{ u.numero_documento }}')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  Ver
+                </button>
+                <button type="button" class="btn-ghost lista_usuarios__style-25" onclick="abrirEditar( '{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}' )">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  Editar
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="vistaFichas" class="d-none">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
+    {% for u in usuarios %}
+    <div class="col">
+      <div class="card h-100 lista_usuarios__style-26" onmouseover="this.style.boxShadow='0 6px 24px rgba(27,32,33,.12)'" onmouseout="this.style.boxShadow=''">
+        <div style="height:3px;background:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--navy){% endif %};"></div>
+        <div class="card-body lista_usuarios__style-27">
+          <div class="lista_usuarios__style-28">
+            <div style="width:44px;height:44px;border-radius:50%;flex-shrink:0;
+                         background:{% if u.rol == 'Administrador' %}rgba(152,71,62,.12){% else %}rgba(9,77,146,.1){% endif %};
+                         color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--navy){% endif %};
+                         display:flex;align-items:center;justify-content:center;
+                         font-family:var(--font-ui);font-weight:700;font-size:.9rem;
+                         letter-spacing:.04em;border:2px solid {% if u.rol == 'Administrador' %}rgba(152,71,62,.2){% else %}rgba(9,77,146,.15){% endif %};">
+              {{ u.nombre_completo|slice:":2"|upper }}
+            </div>
+            <div class="lista_usuarios__style-29">
+              <div class="lista_usuarios__style-30">
+                {{ u.nombre_completo }}
+              </div>
+              <span style="background:{% if u.rol == 'Administrador' %}rgba(152,71,62,.1){% else %}rgba(113,129,109,.1){% endif %};
+                           color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--sage){% endif %};
+                           font-size:.7rem;font-weight:700;padding:.1rem .45rem;border-radius:10px;
+                           font-family:var(--font-ui);">
+                {{ u.rol }}
+              </span>
+            </div>
+          </div>
+          <hr class="lista_usuarios__style-31">
+          <div class="lista_usuarios__style-32">
+            <div class="lista_usuarios__style-33">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <span class="lista_usuarios__style-34">{{ u.correo }}</span>
+            </div>
+            <div class="lista_usuarios__style-35">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
+                <rect x="2" y="3" width="20" height="4"/><rect x="2" y="10" width="20" height="4"/>
+                <rect x="2" y="17" width="20" height="4"/>
+              </svg>
+              <span class="lista_usuarios__style-36">
+                {{ u.get_tipo_documento_display }} · {{ u.numero_documento }}
+              </span>
+            </div>
+            {% if u.numero_ficha %}
+            <div class="lista_usuarios__style-37">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              <span class="lista_usuarios__style-38">Ficha {{ u.numero_ficha }}{% if u.nombre_programa %} · {{ u.nombre_programa }}{% endif %}</span>
+            </div>
+            {% endif %}
+            {% if u.telefono %}
+            <div class="lista_usuarios__style-39">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.38 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.93-.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.72 17z"/>
+              </svg>
+              <span class="lista_usuarios__style-40">{{ u.telefono }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="card-footer lista_usuarios__style-41">
+          <button type="button" class="btn-ghost lista_usuarios__style-42" onclick="verUsuario('{{ u.numero_documento }}')">Ver</button>
+          <button type="button" class="btn-primary-mine lista_usuarios__style-43" onclick="abrirEditar( '{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}' )">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Editar
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% else %}
+<div class="card">
+  <div class="card-body lista_usuarios__style-44">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.3" class="lista_usuarios__style-45">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+    </svg>
+    <p class="lista_usuarios__style-46">
+      No se encontraron usuarios con los filtros aplicados.
+    </p>
+    {% if q or rol_id or tipo_doc %}
+    <a href="{% url 'lista_usuarios' %}" class="btn-outline-mine">Limpiar filtros</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+
+{# ══ MODAL VER USUARIO ══ #}
+<div class="modal fade" id="modalUsuario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header lista_usuarios__style-47">
+        <div class="lista_usuarios__style-48">
+          <div id="modalAvatar"
+               style="width:38px;height:38px;border-radius:50%;
+                      background:rgba(152,71,62,.25);color:var(--cream);
+                      display:flex;align-items:center;justify-content:center;
+                      font-family:var(--font-ui);font-weight:700;font-size:.78rem;flex-shrink:0;">
+          </div>
+          <div>
+            <h5 class="modal-title" id="modalUsuarioLabel"></h5>
+            <span class="badge ms-0 lista_usuarios__style-49" id="modalRol"></span>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body lista_usuarios__style-50" id="modalCuerpo">
+        <div id="modalSkeleton">
+          <div class="placeholder-glow mb-3">
+            <span class="placeholder col-4 me-2"></span><span class="placeholder col-6"></span>
+          </div>
+          <div class="placeholder-glow mb-3">
+            <span class="placeholder col-3 me-2"></span><span class="placeholder col-7"></span>
+          </div>
+          <div class="placeholder-glow">
+            <span class="placeholder col-5 me-2"></span><span class="placeholder col-5"></span>
+          </div>
+        </div>
+
+        <div id="modalDatos" class="d-none">
+          <div class="lista_usuarios__style-51">
+            Datos personales
+          </div>
+          <div class="row g-3 mb-4">
+            <div class="col-6">
+              <div class="lista_usuarios__style-52">Tipo</div>
+              <span id="mTipoDoc" class="lista_usuarios__style-53"></span>
+            </div>
+            <div class="col-6">
+              <div class="lista_usuarios__style-54">Documento</div>
+              <span id="mNumDoc" class="lista_usuarios__style-55"></span>
+            </div>
+            <div class="col-12">
+              <div class="lista_usuarios__style-56">Correo electrónico</div>
+              <span id="mCorreo" class="lista_usuarios__style-57"></span>
+            </div>
+            <div class="col-6">
+              <div class="lista_usuarios__style-58">Teléfono</div>
+              <span id="mTelefono" class="lista_usuarios__style-59"></span>
+            </div>
+            <div class="col-6">
+              <div class="lista_usuarios__style-60">Número de ficha</div>
+              <span id="mNumFicha" class="lista_usuarios__style-61"></span>
+            </div>
+            <div class="col-6">
+              <div class="lista_usuarios__style-62">Programa</div>
+              <span id="mPrograma" class="lista_usuarios__style-63"></span>
+            </div>
+          </div>
+
+          <div class="lista_usuarios__style-64">
+            Préstamos
+          </div>
+          <div class="row g-2 mb-4">
+            <div class="col-6 col-md-3">
+              <div class="lista_usuarios__style-65">
+                <div class="lista_usuarios__style-66">Total</div>
+                <div id="mPrestamosTotal" class="lista_usuarios__style-67">0</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="lista_usuarios__style-68">
+                <div class="lista_usuarios__style-69">Activos</div>
+                <div id="mPrestamosActivos" class="lista_usuarios__style-70">0</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="lista_usuarios__style-71">
+                <div class="lista_usuarios__style-72">Parciales</div>
+                <div id="mPrestamosPendientes" class="lista_usuarios__style-73">0</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="lista_usuarios__style-74">
+                <div class="lista_usuarios__style-75">Vencidos</div>
+                <div id="mPrestamosVencidos" class="lista_usuarios__style-76">0</div>
+              </div>
+            </div>
+          </div>
+          <div id="mPrestamosList" class="mb-4"></div>
+
+          <div class="lista_usuarios__style-77">
+            Relaciones
+          </div>
+          <div class="row g-3" id="mRelaciones"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer lista_usuarios__style-78">
+        <small id="mIdDoc" class="text-muted font-monospace me-auto lista_usuarios__style-79"></small>
+        <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn-primary-mine" id="btnEditarDesdeModal">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Editar usuario
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{# ══ MODAL EDITAR USUARIO ══ #}
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header lista_usuarios__style-80">
+        <div class="lista_usuarios__style-81">
+          <div id="editAvatar"
+               style="width:36px;height:36px;border-radius:50%;
+                      background:rgba(152,71,62,.3);color:var(--cream);
+                      display:flex;align-items:center;justify-content:center;
+                      font-family:var(--font-ui);font-weight:700;font-size:.75rem;flex-shrink:0;">
+          </div>
+          <div>
+            <h5 class="modal-title">Editar usuario</h5>
+            <span class="lista_usuarios__style-82" id="editDocLabel"></span>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form method="post" action="{% url 'lista_usuarios' %}" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar_usuario">
+        <input type="hidden" name="numero_documento" id="edit_doc_hidden">
+
+        <div class="modal-body lista_usuarios__style-83">
+
+          <div class="lista_usuarios__style-84">
+            Información personal
+          </div>
+
+          <div class="row g-3">
+
+            <div class="col-md-4">
+              <label class="form-label">Tipo de documento</label>
+              <input type="text" id="edit_tipo_doc_display" class="form-control lista_usuarios__style-85" disabled>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Número de documento</label>
+              <input type="text" id="edit_num_doc_display" class="form-control lista_usuarios__style-86" disabled>
+              <div class="lista_usuarios__style-87">
+                El documento no puede modificarse.
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Nombre completo *</label>
+              <input type="text" name="nombre_completo" id="edit_nombre"
+                     class="form-control" placeholder="Nombre completo" required>
+            </div>
+
+            <div class="col-md-7">
+              <label class="form-label">Correo electrónico *</label>
+              <input type="email" name="correo" id="edit_correo"
+                     class="form-control" placeholder="correo@ejemplo.com" required>
+            </div>
+
+            <div class="col-md-5">
+              <label class="form-label">Teléfono</label>
+              <input type="text" name="telefono" id="edit_telefono"
+                     class="form-control" placeholder="Ej: 3001234567" maxlength="20">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Número de ficha</label>
+              <select name="numero_ficha" id="edit_ficha" class="form-select">
+                <option value="">-- Seleccionar Ficha --</option>
+                <option value="2758369">2758369</option>
+                <option value="2827435">2827435</option>
+                <option value="2895642">2895642</option>
+                <option value="2910384">2910384</option>
+                <option value="3021948">3021948</option>
+                <option value="3196477">3196477</option>
+                <option value="ADMIN-001">ADMIN-001</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Nombre del programa</label>
+              <select name="nombre_programa" id="edit_programa" class="form-select">
+                <option value="">-- Seleccionar Programa --</option>
+                <option value="Análisis y Desarrollo de Software (ADSO)">Análisis y Desarrollo de Software (ADSO)</option>
+                <option value="Sistemas">Sistemas</option>
+                <option value="Electricidad Industrial">Electricidad Industrial</option>
+                <option value="Mantenimiento Electromecánico">Mantenimiento Electromecánico</option>
+                <option value="Supervisión de Labores Mineras">Supervisión de Labores Mineras</option>
+                <option value="Topografía">Topografía</option>
+                <option value="Soldadura">Soldadura</option>
+                <option value="Gestión Ambiental">Gestión Ambiental</option>
+                <option value="Administración">Administración</option>
+              </select>
+            </div>
+
+            <div class="col-12 lista_usuarios__style-88">
+              <div class="lista_usuarios__style-89">
+                Acceso y permisos
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Rol *</label>
+              <select name="rol" id="edit_rol" class="form-select" required>
+                {% for rol in roles %}
+                <option value="{{ rol.id }}">{{ rol.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">
+                Nueva contraseña
+                <span class="lista_usuarios__style-90">(dejar vacío para no cambiar)</span>
+              </label>
+              <div class="lista_usuarios__style-91">
+                <input type="password" name="nueva_password" id="edit_password"
+                       class="form-control" placeholder="Mínimo 8 caracteres" minlength="8">
+                <button type="button" id="toggleEditPw"
+                        style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
+                               background:none;border:none;cursor:pointer;color:var(--text-muted);padding:0;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="lista_usuarios__style-92">
+                Solo si deseas cambiar la contraseña del usuario.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer lista_usuarios__style-93">
+          <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn-primary-mine">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function setVista(v) {
+  var esLista = v === 'lista';
+  document.getElementById('vistaLista').classList.toggle('d-none', !esLista);
+  document.getElementById('vistaFichas').classList.toggle('d-none', esLista);
+  var btnL = document.getElementById('btnLista');
+  var btnF = document.getElementById('btnFichas');
+  if (esLista) {
+    btnL.classList.add('btn-primary-mine');    btnL.classList.remove('btn-outline-mine');
+    btnF.classList.add('btn-outline-mine');    btnF.classList.remove('btn-primary-mine');
+  } else {
+    btnF.classList.add('btn-primary-mine');    btnF.classList.remove('btn-outline-mine');
+    btnL.classList.add('btn-outline-mine');    btnL.classList.remove('btn-primary-mine');
+  }
+  localStorage.setItem('gu_vista', v);
+}
+var _pref = localStorage.getItem('gu_vista');
+if (_pref) setVista(_pref);
+
+var _timer;
+document.getElementById('qInput').addEventListener('input', function () {
+  clearTimeout(_timer);
+  _timer = setTimeout(function () { document.getElementById('filtroForm').submit(); }, 500);
+});
+
+var _modalVerUsuario = null;
+var _datosUsuarioActual = null;
+
+function verUsuario(doc) {
+  document.getElementById('modalSkeleton').classList.remove('d-none');
+  document.getElementById('modalDatos').classList.add('d-none');
+  document.getElementById('modalUsuarioLabel').textContent = '';
+  document.getElementById('modalRol').textContent = '';
+  document.getElementById('modalAvatar').textContent = '';
+  document.getElementById('btnEditarDesdeModal').onclick = null;
+
+  if (!_modalVerUsuario) _modalVerUsuario = new bootstrap.Modal(document.getElementById('modalUsuario'));
+  _modalVerUsuario.show();
+
+  fetch('/usuario/usuarios/' + doc + '/json/')
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(d) {
+      _datosUsuarioActual = d;
+      var iniciales = d.nombre_completo.slice(0, 2).toUpperCase();
+
+      document.getElementById('modalAvatar').textContent       = iniciales;
+      document.getElementById('modalUsuarioLabel').textContent = d.nombre_completo;
+
+      var rolEl = document.getElementById('modalRol');
+      rolEl.textContent  = d.rol;
+      rolEl.style.cssText = d.rol === 'Administrador'
+        ? 'background:rgba(152,71,62,.2);color:var(--rust);font-size:.7rem;padding:.2rem .55rem;border-radius:20px;font-family:var(--font-ui);font-weight:700;'
+        : 'background:rgba(113,129,109,.15);color:var(--sage);font-size:.7rem;padding:.2rem .55rem;border-radius:20px;font-family:var(--font-ui);font-weight:700;';
+
+      document.getElementById('mTipoDoc').textContent  = d.tipo_documento_display;
+      document.getElementById('mNumDoc').textContent   = d.numero_documento;
+      document.getElementById('mCorreo').textContent   = d.correo;
+      document.getElementById('mTelefono').textContent = d.telefono || '—';
+      document.getElementById('mNumFicha').textContent = d.numero_ficha || '—';
+      document.getElementById('mPrograma').textContent = d.nombre_programa || '—';
+      document.getElementById('mIdDoc').textContent    = 'doc · ' + d.numero_documento;
+
+      document.getElementById('mPrestamosTotal').textContent      = d.prestamos_totales;
+      document.getElementById('mPrestamosActivos').textContent    = d.prestamos_activos;
+      document.getElementById('mPrestamosPendientes').textContent = d.prestamos_parciales;
+      document.getElementById('mPrestamosVencidos').textContent   = d.prestamos_vencidos;
+      document.getElementById('mPrestamosList').innerHTML         = renderPrestamosUsuario(d.prestamos);
+
+      var rel = '';
+      if (d.destinado) {
+        rel += '<div class="col-6">'
+          + '<div class="lista_usuarios__style-94">Destinado a</div>'
+          + '<button class="btn-ghost p-0 lista_usuarios__style-95" onclick="verUsuario(\'' + d.destinado_doc + '\')">' + d.destinado + '</button>'
+          + '</div>';
+      }
+      if (d.solicitado) {
+        rel += '<div class="col-6">'
+          + '<div class="lista_usuarios__style-96">Solicitado por</div>'
+          + '<button class="btn-ghost p-0 lista_usuarios__style-97" onclick="verUsuario(\'' + d.solicitado_doc + '\')">' + d.solicitado + '</button>'
+          + '</div>';
+      }
+      document.getElementById('mRelaciones').innerHTML =
+        rel || '<div class="col-12"><small class="lista_usuarios__style-98">Sin relaciones asignadas.</small></div>';
+
+      document.getElementById('btnEditarDesdeModal').onclick = function() {
+        _modalVerUsuario.hide();
+        setTimeout(function() {
+          abrirEditar(d.numero_documento, d.nombre_completo, d.correo, d.telefono || '', d.rol, d.tipo_documento_display.slice(0,2), d.numero_ficha || '', d.nombre_programa || '');
+        }, 350);
+      };
+
+      document.getElementById('modalSkeleton').classList.add('d-none');
+      document.getElementById('modalDatos').classList.remove('d-none');
+    })
+    .catch(function() {
+      document.getElementById('modalSkeleton').innerHTML =
+        '<p class="lista_usuarios__style-99">Error al cargar los datos del usuario.</p>';
+    });
+}
+
+function escapeHtml(value) {
+  return String(value || '').replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function renderPrestamosUsuario(prestamos) {
+  if (!prestamos || prestamos.length === 0) {
+    return '<div class="lista_usuarios__style-100">No tiene préstamos registrados.</div>';
+  }
+  return prestamos.map(function(p) {
+    var estadoColor = '#0f766e', estadoBg = 'rgba(22,101,52,.08)';
+    if (p.estado === 'parcial')   { estadoColor = '#92400e'; estadoBg = 'rgba(196,144,10,.1)'; }
+    else if (p.estado === 'vencido')  { estadoColor = '#b91c1c'; estadoBg = 'rgba(185,28,28,.08)'; }
+    else if (p.estado === 'pendiente'){ estadoColor = '#164e63'; estadoBg = 'rgba(14,165,233,.08)'; }
+
+    var itemsHtml = p.items.map(function(item) {
+      return '<div class="lista_usuarios__style-101">'
+        + '<div class="lista_usuarios__style-102">' + escapeHtml(item.nombre) + '</div>'
+        + '<div class="lista_usuarios__style-103">×' + item.cantidad + '</div>'
+        + '</div>';
+    }).join('');
+
+    return '<div class="lista_usuarios__style-104">'
+      + '<div class="lista_usuarios__style-105">'
+      + '<div><div class="lista_usuarios__style-106">Préstamo #' + p.pk + '</div>'
+      + '<div class="lista_usuarios__style-107">' + escapeHtml(p.fecha_prestamo) + '</div></div>'
+      + '<span class="lista_usuarios__style-108">' + escapeHtml(p.estado_display) + '</span>'
+      + '</div>'
+      + '<div class="lista_usuarios__style-109">'
+      + '<div class="lista_usuarios__style-110">Vencimiento</div>'
+      + '<div class="lista_usuarios__style-111">' + escapeHtml(p.fecha_vencimiento) + '</div>'
+      + '<div class="lista_usuarios__style-112">Observaciones</div>'
+      + '<textarea id="obs_prestamo_' + p.pk + '" rows="3" style="width:100%;padding:.65rem;border:1px solid rgba(9,77,146,.12);border-radius:12px;font-size:.88rem;margin-bottom:.65rem;">' + escapeHtml(p.observaciones) + '</textarea>'
+      + '<button type="button" id="obs_btn_' + p.pk + '" onclick="guardarObservacionPrestamo(' + p.pk + ')" class="lista_usuarios__style-113">Guardar observación</button>'
+      + '<div class="lista_usuarios__style-114">Ítems del préstamo</div>'
+      + itemsHtml + '</div></div>';
+  }).join('');
+}
+
+function guardarObservacionPrestamo(pk) {
+  var textarea = document.getElementById('obs_prestamo_' + pk);
+  var button   = document.getElementById('obs_btn_' + pk);
+  if (!textarea || !button) return;
+  button.disabled = true;
+  button.textContent = 'Guardando...';
+  fetch('/prestamo/' + pk + '/observacion/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': getCookie('csrftoken') },
+    body: 'observaciones=' + encodeURIComponent(textarea.value.trim()),
+  })
+  .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+  .then(function(data) {
+    button.textContent = data.ok ? 'Guardado' : 'Error';
+    setTimeout(function() { button.textContent = 'Guardar observación'; }, 1500);
+  })
+  .catch(function() {
+    button.textContent = 'Error';
+    setTimeout(function() { button.textContent = 'Guardar observación'; }, 1500);
+  })
+  .finally(function() { button.disabled = false; });
+}
+
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    document.cookie.split(';').forEach(function(c) {
+      c = c.trim();
+      if (c.startsWith(name + '=')) cookieValue = decodeURIComponent(c.substring(name.length + 1));
+    });
+  }
+  return cookieValue;
+}
+
+function abrirEditar(doc, nombre, correo, telefono, rol, tipoDot, ficha, programa) {
+  document.getElementById('editAvatar').textContent       = nombre.slice(0, 2).toUpperCase();
+  document.getElementById('editDocLabel').textContent     = doc;
+  document.getElementById('edit_doc_hidden').value        = doc;
+  document.getElementById('edit_tipo_doc_display').value  = tipoDot || '';
+  document.getElementById('edit_num_doc_display').value   = doc;
+  document.getElementById('edit_nombre').value    = nombre;
+  document.getElementById('edit_correo').value    = correo;
+  document.getElementById('edit_telefono').value  = telefono;
+  document.getElementById('edit_ficha').value     = ficha || '';
+  document.getElementById('edit_programa').value  = programa || '';
+  document.getElementById('edit_password').value  = '';
+
+  var selRol = document.getElementById('edit_rol');
+  for (var i = 0; i < selRol.options.length; i++) {
+    selRol.options[i].selected = (selRol.options[i].value === rol || selRol.options[i].text === rol);
+  }
+  new bootstrap.Modal(document.getElementById('modalEditarUsuario')).show();
+}
+
+document.getElementById('toggleEditPw').addEventListener('click', function() {
+  var inp = document.getElementById('edit_password');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+});
+
+document.getElementById('edit_telefono').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g, '');
+});
+
+// document.getElementById('edit_ficha').addEventListener('input', function() {
+//   this.value = this.value.replace(/\D/g, '');
+// });
+</script>
+
+{% endblock %}  {# ← cierra el block content AQUÍ #}
+
+{% block js %}  {# ← DESPUÉS del endblock content #}
+<script src="{% static 'js/tables/usuarios_table.js' %}"></script>
+{% endblock js %}

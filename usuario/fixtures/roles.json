@@ -1,0 +1,16 @@
+[
+  {
+    "model": "usuario.rol",
+    "pk": 1,
+    "fields": {
+      "nombre": "Admin"
+    }
+  },
+  {
+    "model": "usuario.rol",
+    "pk": 2,
+    "fields": {
+      "nombre": "Usuario"
+    }
+  }
+]

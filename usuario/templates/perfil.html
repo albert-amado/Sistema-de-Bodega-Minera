@@ -1,0 +1,519 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- ══ CABECERA ══ -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h5 class="perfil__style-1">
+      Mi Perfil
+    </h5>
+    <p class="perfil__style-2">
+      Información personal y configuración de la cuenta
+    </p>
+  </div>
+  <button class="btn-primary-mine" id="btn-abrir-perfil">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+    Editar perfil
+  </button>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3 perfil__style-3" role="alert">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a7a42" stroke-width="2.2">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+    {{ message }}
+    <button type="button" class="btn-close ms-auto perfil__style-4" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+{% endif %}
+
+<!-- ══ TARJETA PRINCIPAL ══ -->
+<div class="row g-4">
+
+  <!-- Columna izquierda: avatar + datos clave -->
+  <div class="col-12 col-md-4">
+    <div class="card h-100">
+      <div class="card-body perfil__style-5">
+
+        <div id="avatar-display"
+             style="width:88px;height:88px;border-radius:50%;
+                    background:var(--rust);color:#fff;
+                    display:flex;align-items:center;justify-content:center;
+                    font-family:var(--font-ui);font-weight:700;font-size:1.8rem;
+                    letter-spacing:.04em;margin:0 auto 1.25rem;
+                    border:3px solid rgba(152,71,62,.25);
+                    box-shadow:0 4px 16px rgba(152,71,62,.2);">
+          {{ usuario.nombre_completo|slice:":2"|upper }}
+        </div>
+
+        <div class="perfil__style-6">
+          {{ usuario.nombre_completo }}
+        </div>
+        <div class="perfil__style-7">
+          {{ usuario.rol }}
+        </div>
+
+        <hr class="perfil__style-8">
+
+        <div class="perfil__style-9">
+          {% include "partials/_perfil_dato.html" with icono="envelope" label="Correo" valor=usuario.correo %}
+          {% include "partials/_perfil_dato.html" with icono="telephone" label="Teléfono" valor=usuario.telefono|default:"—" %}
+          {% include "partials/_perfil_dato.html" with icono="card-text" label="Documento" valor=usuario.get_tipo_documento_display|add:" · "|add:usuario.numero_documento %}
+          {% if usuario.numero_ficha %}
+            {% include "partials/_perfil_dato.html" with icono="hash" label="Ficha" valor=usuario.numero_ficha %}
+          {% endif %}
+          {% if usuario.nombre_programa %}
+            {% include "partials/_perfil_dato.html" with icono="mortarboard" label="Programa" valor=usuario.nombre_programa %}
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Columna derecha: actividad + configuración -->
+  <div class="col-12 col-md-8 d-flex flex-column gap-4">
+
+    <!-- Resumen de actividad -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Actividad reciente
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="row g-3 text-center">
+          <div class="col-4">
+            <div class="perfil__style-10">—</div>
+            <div class="perfil__style-11">Préstamos</div>
+          </div>
+          <div class="col-4">
+            <div class="perfil__style-12">—</div>
+            <div class="perfil__style-13">Devoluciones</div>
+          </div>
+          <div class="col-4">
+            <div class="perfil__style-14">—</div>
+            <div class="perfil__style-15">Vencidos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configuración de notificaciones -->
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <span class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          Notificaciones
+        </span>
+        <button class="btn-ghost perfil__style-16" id="btn-abrir-config">Configurar</button>
+      </div>
+      <div class="card-body perfil__style-17">
+        <div class="perfil__style-18">
+          {% include "partials/_notif_row.html" with activa=cfg_notif_prestamos label="Nuevos préstamos asignados" %}
+          {% include "partials/_notif_row.html" with activa=cfg_notif_vencimientos label="Préstamos próximos a vencer" %}
+          {% include "partials/_notif_row.html" with activa=cfg_notif_devoluciones label="Devoluciones pendientes de revisión" %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     MODAL DE PERFIL (3 pestañas)
+══════════════════════════════════════════════════ -->
+<div class="modal fade" id="modalPerfil" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header perfil__style-19">
+        <div class="perfil__style-20">
+          <div style="width:36px;height:36px;border-radius:50%;
+                      background:rgba(152,71,62,.35);color:var(--cream);
+                      display:flex;align-items:center;justify-content:center;
+                      font-family:var(--font-ui);font-weight:700;font-size:.75rem;
+                      flex-shrink:0;">
+            {{ usuario.nombre_completo|slice:":2"|upper }}
+          </div>
+          <h5 class="modal-title">Editar perfil</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Pestañas -->
+      <div class="perfil__style-21">
+        {% for tab_id, tab_label, tab_icon in tab_list %}
+        <button type="button" class="modal-tab {% if forloop.first %}modal-tab--active{% endif %} perfil__style-22" data-tab="{{ tab_id }}">
+          {{ tab_label }}
+        </button>
+        {% endfor %}
+      </div>
+
+      <!-- Pestaña 1: Datos personales -->
+      <div class="modal-tab-panel perfil__style-23" id="tab-datos">
+        <form method="post" action="{% url 'perfil' %}" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="editar_perfil">
+          <div class="modal-body perfil__style-24">
+
+            <div class="perfil__style-25">
+              Información personal
+            </div>
+
+            <div class="row g-3">
+
+              <!-- Documento (solo lectura) -->
+              <div class="col-md-6">
+                <label class="form-label">Tipo de documento</label>
+                <input type="text" class="form-control perfil__style-26" value="{{ usuario.get_tipo_documento_display }}" disabled>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Número de documento</label>
+                <input type="text" class="form-control perfil__style-27" value="{{ usuario.numero_documento }}" disabled>
+                <div class="perfil__style-28">
+                  El documento no puede modificarse.
+                </div>
+              </div>
+
+              <!-- Nombre -->
+              <div class="col-12">
+                <label class="form-label">Nombre completo *</label>
+                <input type="text" name="nombre_completo" class="form-control
+                       {% if errores.nombre_completo %}is-invalid{% endif %}"
+                       value="{{ usuario.nombre_completo }}"
+                       placeholder="Tu nombre completo" required>
+                {% if errores.nombre_completo %}
+                <div class="form-error">{{ errores.nombre_completo }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Correo -->
+              <div class="col-md-7">
+                <label class="form-label">Correo electrónico *</label>
+                <input type="email" name="correo" class="form-control
+                       {% if errores.correo %}is-invalid{% endif %}"
+                       value="{{ usuario.correo }}"
+                       placeholder="tu@correo.com" required>
+                {% if errores.correo %}
+                <div class="form-error">{{ errores.correo }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Teléfono -->
+              <div class="col-md-5">
+                <label class="form-label">Teléfono</label>
+                <input type="text" name="telefono" class="form-control
+                       {% if errores.telefono %}is-invalid{% endif %}"
+                       value="{{ usuario.telefono|default:'' }}"
+                       placeholder="Ej: 3001234567" maxlength="20">
+                {% if errores.telefono %}
+                <div class="form-error">{{ errores.telefono }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Número de ficha -->
+              <div class="col-md-5">
+                <label class="form-label">Número de ficha</label>
+                <select name="numero_ficha" class="form-select">
+                  <option value="">-- Seleccionar Ficha --</option>
+                  <option value="2758369" {% if usuario.numero_ficha == "2758369" %}selected{% endif %}>2758369</option>
+                  <option value="2827435" {% if usuario.numero_ficha == "2827435" %}selected{% endif %}>2827435</option>
+                  <option value="2895642" {% if usuario.numero_ficha == "2895642" %}selected{% endif %}>2895642</option>
+                  <option value="2910384" {% if usuario.numero_ficha == "2910384" %}selected{% endif %}>2910384</option>
+                  <option value="3021948" {% if usuario.numero_ficha == "3021948" %}selected{% endif %}>3021948</option>
+                  <option value="3196477" {% if usuario.numero_ficha == "3196477" %}selected{% endif %}>3196477</option>
+                  <option value="ADMIN-001" {% if usuario.numero_ficha == "ADMIN-001" %}selected{% endif %}>ADMIN-001</option>
+                </select>
+              </div>
+
+              <!-- Nombre del programa -->
+              <div class="col-md-7">
+                <label class="form-label">Nombre del programa</label>
+                <select name="nombre_programa" class="form-select">
+                  <option value="">-- Seleccionar Programa --</option>
+                  <option value="Análisis y Desarrollo de Software (ADSO)" {% if usuario.nombre_programa == "Análisis y Desarrollo de Software (ADSO)" %}selected{% endif %}>Análisis y Desarrollo de Software (ADSO)</option>
+                  <option value="Sistemas" {% if usuario.nombre_programa == "Sistemas" %}selected{% endif %}>Sistemas</option>
+                  <option value="Electricidad Industrial" {% if usuario.nombre_programa == "Electricidad Industrial" %}selected{% endif %}>Electricidad Industrial</option>
+                  <option value="Mantenimiento Electromecánico" {% if usuario.nombre_programa == "Mantenimiento Electromecánico" %}selected{% endif %}>Mantenimiento Electromecánico</option>
+                  <option value="Supervisión de Labores Mineras" {% if usuario.nombre_programa == "Supervisión de Labores Mineras" %}selected{% endif %}>Supervisión de Labores Mineras</option>
+                  <option value="Topografía" {% if usuario.nombre_programa == "Topografía" %}selected{% endif %}>Topografía</option>
+                  <option value="Soldadura" {% if usuario.nombre_programa == "Soldadura" %}selected{% endif %}>Soldadura</option>
+                  <option value="Gestión Ambiental" {% if usuario.nombre_programa == "Gestión Ambiental" %}selected{% endif %}>Gestión Ambiental</option>
+                  <option value="Administración" {% if usuario.nombre_programa == "Administración" %}selected{% endif %}>Administración</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn-primary-mine">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/>
+                <polyline points="7 3 7 8 15 8"/>
+              </svg>
+              Guardar cambios
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Pestaña 2: Contraseña -->
+      <div class="modal-tab-panel" id="tab-password" class="d-none">
+        <form method="post" action="{% url 'perfil' %}" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="cambiar_password">
+          <div class="modal-body perfil__style-29">
+
+            <div class="perfil__style-30">
+              Cambiar contraseña
+            </div>
+
+            <div class="perfil__style-31">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="perfil__style-32">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              Usa al menos 8 caracteres combinando letras y números.
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Contraseña actual *</label>
+                <input type="password" name="password_actual" id="pw-actual"
+                       class="form-control {% if errores.password_actual %}is-invalid{% endif %}"
+                       placeholder="Tu contraseña actual" required>
+                {% if errores.password_actual %}
+                <div class="form-error">{{ errores.password_actual }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Nueva contraseña *</label>
+                <input type="password" name="password_nueva" id="pw-nueva"
+                       class="form-control {% if errores.password_nueva %}is-invalid{% endif %}"
+                       placeholder="Mínimo 8 caracteres" required minlength="8">
+                <div id="strength-bar" class="perfil__style-33">
+                  <div id="strength-fill" style="height:100%;width:0;transition:width .3s,background .3s;"></div>
+                </div>
+                <div id="strength-label" class="perfil__style-34"></div>
+                {% if errores.password_nueva %}
+                <div class="form-error">{{ errores.password_nueva }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Confirmar nueva *</label>
+                <input type="password" name="password_confirma" id="pw-confirma"
+                       class="form-control {% if errores.password_confirma %}is-invalid{% endif %}"
+                       placeholder="Repite la contraseña" required>
+                <div id="match-label" class="perfil__style-35"></div>
+                {% if errores.password_confirma %}
+                <div class="form-error">{{ errores.password_confirma }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn-primary-mine">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              Actualizar contraseña
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Pestaña 3: Notificaciones -->
+      <div class="modal-tab-panel" id="tab-config" class="d-none">
+        <form method="post" action="{% url 'perfil' %}" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="guardar_config">
+          <div class="modal-body perfil__style-36">
+
+            <div class="perfil__style-37">
+              Preferencias de notificaciones
+            </div>
+
+            <div class="perfil__style-38">
+              {% for notif_name, notif_label, notif_desc, notif_val in notificaciones_lista %}
+              <div class="perfil__style-39">
+                <div>
+                  <div class="perfil__style-40">{{ notif_label }}</div>
+                  <div class="perfil__style-41">{{ notif_desc }}</div>
+                </div>
+                <label class="toggle-switch perfil__style-42">
+                  <input type="checkbox" name="{{ notif_name }}"
+                         {% if notif_val %}checked{% endif %}>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn-primary-mine">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              Guardar configuración
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<style>
+.modal-tab { color: var(--text-muted); }
+.modal-tab:hover { color: var(--text-main); }
+.modal-tab--active {
+  color: var(--navy) !important;
+  border-bottom-color: var(--navy) !important;
+  font-weight: 700 !important;
+}
+.toggle-switch { position:relative; display:inline-block; width:42px; height:24px; cursor:pointer; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider {
+  position:absolute; inset:0; background:rgba(0,0,0,.15);
+  border-radius:24px; transition:background .2s;
+}
+.toggle-slider::before {
+  content:''; position:absolute;
+  width:18px; height:18px; left:3px; bottom:3px;
+  background:#fff; border-radius:50%;
+  transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.toggle-switch input:checked + .toggle-slider { background:var(--navy); }
+.toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px); }
+</style>
+<script>
+(function () {
+
+  const modal = new bootstrap.Modal(document.getElementById('modalPerfil'));
+
+  document.getElementById('btn-abrir-perfil').addEventListener('click', function () {
+    activarTab('tab-datos');
+    modal.show();
+  });
+
+  const btnConfig = document.getElementById('btn-abrir-config');
+  if (btnConfig) {
+    btnConfig.addEventListener('click', function () {
+      activarTab('tab-config');
+      modal.show();
+    });
+  }
+
+  {% if errores and accion_activa %}
+    const accionMap = {
+      'editar_perfil':    'tab-datos',
+      'cambiar_password': 'tab-password',
+      'guardar_config':   'tab-config',
+    };
+    const tabDestino = accionMap['{{ accion_activa }}'] || 'tab-datos';
+    document.addEventListener('DOMContentLoaded', function () {
+      activarTab(tabDestino);
+      modal.show();
+    });
+  {% endif %}
+
+  function activarTab(id) {
+    document.querySelectorAll('.modal-tab').forEach(function (btn) {
+      btn.classList.toggle('modal-tab--active', btn.dataset.tab === id);
+    });
+    document.querySelectorAll('.modal-tab-panel').forEach(function (panel) {
+      panel.style.display = panel.id === id ? 'block' : 'none';
+    });
+  }
+
+  document.querySelectorAll('.modal-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () { activarTab(btn.dataset.tab); });
+  });
+
+  // Barra de fortaleza de contraseña
+  const pwNueva    = document.getElementById('pw-nueva');
+  const pwConfirma = document.getElementById('pw-confirma');
+  const fillEl     = document.getElementById('strength-fill');
+  const labelEl    = document.getElementById('strength-label');
+  const matchEl    = document.getElementById('match-label');
+
+  function calcFuerza(pw) {
+    let score = 0;
+    if (pw.length >= 8)  score++;
+    if (pw.length >= 12) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+    return score;
+  }
+
+  const niveles = [
+    { pct: '20%',  color: '#ef4444', label: 'Muy débil'  },
+    { pct: '40%',  color: '#f97316', label: 'Débil'      },
+    { pct: '60%',  color: '#eab308', label: 'Regular'    },
+    { pct: '80%',  color: '#3b82f6', label: 'Buena'      },
+    { pct: '100%', color: '#22c55e', label: 'Muy fuerte' },
+  ];
+
+  if (pwNueva) {
+    pwNueva.addEventListener('input', function () {
+      const pw = this.value;
+      if (!pw) { fillEl.style.width = '0'; labelEl.textContent = ''; return; }
+      const n = niveles[Math.min(calcFuerza(pw) - 1, 4)] || niveles[0];
+      fillEl.style.width      = n.pct;
+      fillEl.style.background = n.color;
+      labelEl.textContent     = n.label;
+      labelEl.style.color     = n.color;
+      checkMatch();
+    });
+  }
+
+  function checkMatch() {
+    if (!pwNueva || !pwConfirma || !pwConfirma.value) return;
+    if (pwNueva.value === pwConfirma.value) {
+      matchEl.textContent = '✓ Las contraseñas coinciden';
+      matchEl.style.color = '#22c55e';
+    } else {
+      matchEl.textContent = '✗ No coinciden';
+      matchEl.style.color = '#ef4444';
+    }
+  }
+
+  if (pwConfirma) pwConfirma.addEventListener('input', checkMatch);
+
+  const telInput = document.querySelector('[name="telefono"]');
+  if (telInput) {
+    telInput.addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, '');
+    });
+  }
+
+})();
+</script>
+{% endblock js %}

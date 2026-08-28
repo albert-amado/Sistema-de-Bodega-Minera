@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Gestor</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 350px;
+            margin: auto;
+            box-shadow: 0px 0px 10px #ccc;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .mensaje {
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Registrar Gestor</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Guardar</button>
+    </form>
+
+    {% if mensaje %}
+        <div class="mensaje">
+            {{ mensaje }}
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
