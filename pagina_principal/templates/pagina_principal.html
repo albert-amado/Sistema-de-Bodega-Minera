@@ -17,7 +17,6 @@
     <p class="text-muted small mb-0">Indicadores clave y distribución gráfica en tiempo real</p>
   </div>
   <div class="d-flex gap-2">
-    <a href="{% url 'inventario:inventario' %}" class="btn-outline-mine text-decoration-none">
       <i class="bi bi-boxes me-1"></i> Ver inventario
     </a>
     <a href="{% url 'prestamo' %}" class="btn-primary-mine text-decoration-none">
@@ -107,7 +106,7 @@
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <span class="card-title"><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Actividad por Mes</span>
-        <a href="{% url 'inventario:inventario' %}" class="btn-ghost text-decoration-none">Ver inventario</a>
+        <a href="{% url 'inventario' %}" class="btn-ghost text-decoration-none">Ver inventario</a>
       </div>
       <div class="card-body">
         <div class="chart-container">
@@ -174,7 +173,7 @@
           <!-- Accesos Rápidos Directos -->
           <div class="col-md-5 d-flex flex-column gap-2 justify-content-center">
             <h6 class="text-muted small fw-bold mb-2 text-uppercase">Accesos Rápidos</h6>
-            <a href="{% url 'inventario:inventario' %}" class="quick-action-link">
+            <a href="{% url 'inventario' %}" class="quick-action-link">
               <div class="quick-action-icon" style="background: rgba(91,141,238,0.15); color: #2563eb;">
                 <i class="bi bi-boxes"></i>
               </div>

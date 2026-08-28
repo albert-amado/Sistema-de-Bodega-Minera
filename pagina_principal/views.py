@@ -65,11 +65,11 @@ def home_usuario_view(request):
     except Usuario.DoesNotExist:
         return redirect('login')
 
-    # ── Query única con jerarquía completa + conteo de items (evita N+1 y {{ p.items.count }}) ──
+    # ── Query única con jerarquía completa + conteo de detalles ──
     all_prestamos = (
         Prestamo.objects
-        .prefetch_related('items__codigo_herramienta__codigo_categoria')
-        .annotate(num_items=Count('items'))
+        .prefetch_related('detalles__herramienta__codigo_categoria')
+        .annotate(num_items=Count('detalles'))
         .filter(documento=doc)
         .order_by('-fecha')
     )
