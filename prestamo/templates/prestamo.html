@@ -120,15 +120,15 @@
           </td>
           <td><span class="font-monospace fw-semibold text-muted">#{{ p.pk }}</span></td>
           <td>
-            <div class="fw-semibold text-dark">{{ p.usuario.get_full_name|default:p.nombre_usuario|default:p.usuario|default:p.documento }}</div>
+            <div class="fw-semibold text-dark">{{ p.documento.nombre_completo|default:p.documento }}</div>
             <div class="small text-muted font-monospace">Doc: {{ p.documento }}</div>
           </td>
           <td><span class="badge bg-light text-dark border font-monospace">{{ p.ficha }}</span></td>
           <td>
             <div class="d-flex flex-wrap gap-1">
-              {% for item in p.detalles.all|default:p.items.all %}
+              {% for item in p.detalles.all %}
               <span class="badge bg-secondary-subtle text-dark border small">
-                {{ item.herramienta.nombre|default:item.producto.nombre }} ×{{ item.cantidad }}
+                {{ item.herramienta.nombre }} ×{{ item.cantidad }}
               </span>
               {% endfor %}
             </div>
@@ -145,23 +145,23 @@
             {% elif p.estado == 'CANCELADO' or p.estado == 'cancelado' or p.estado == 'rechazado' %}
               <span class="badge bg-danger-subtle text-danger">Cancelado</span>
             {% else %}
-              <span class="badge bg-secondary-subtle text-secondary">{{ p.get_estado_display|default:p.estado }}</span>
+              <span class="badge bg-secondary-subtle text-secondary">{{ p.get_estado_display }}</span>
             {% endif %}
           </td>
-          <td class="font-monospace small">{{ p.fecha|default:p.fecha_prestamo|date:"d/m/Y" }}</td>
+          <td class="font-monospace small">{{ p.fecha|date:"d/m/Y" }}</td>
           <td class="text-center">
             <div class="btn-group btn-group-sm">
               {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
-              <button type="button" class="btn btn-outline-success btn-aprobar-solicitud" data-pk="{{ p.pk }}" data-nombre="{{ p.usuario.get_full_name|default:p.nombre_usuario|default:p.usuario|escapejs }}" data-usuario="{{ p.documento|escapejs }}" data-motivo="{% if p.observaciones %}{{ p.observaciones|escapejs }}{% endif %}" data-fecha="{{ p.fecha|default:p.fecha_prestamo|date:'d/m/Y' }}">
+              <button type="button" class="btn btn-outline-success btn-aprobar-solicitud" data-pk="{{ p.pk }}" data-nombre="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" data-usuario="{{ p.documento|escapejs }}" data-motivo="{% if p.observaciones %}{{ p.observaciones|escapejs }}{% endif %}" data-fecha="{{ p.fecha|date:'d/m/Y' }}">
                 <span class="items-json d-none">
                   [
-                    {% for item in p.detalles.all|default:p.items.all %}
+                    {% for item in p.detalles.all %}
                       {
                         "id": {{ item.pk }},
-                        "nombre": "{{ item.herramienta.nombre|default:item.producto.nombre|escapejs }}",
-                        "sku": "{{ item.herramienta.codigo|default:item.producto.codigo_sku|escapejs }}",
+                        "nombre": "{{ item.herramienta.nombre|escapejs }}",
+                        "sku": "{{ item.herramienta.codigo|escapejs }}",
                         "cantidad": {{ item.cantidad }},
-                        "stock": {{ item.herramienta.stock_disponible|default:item.producto.stock|default:0 }}
+                        "stock": {{ item.herramienta.stock_disponible|default:0 }}
                       }{% if not forloop.last %},{% endif %}
                     {% endfor %}
                   ]
@@ -170,7 +170,7 @@
               </button>
               {% endif %}
               {% if p.estado in 'ENTREGADO,PARCIAL,activo,parcial' %}
-              <button type="button" class="btn btn-outline-primary btn-devolver-prestamo" data-pk="{{ p.pk }}" data-usuario="{{ p.usuario.get_full_name|default:p.documento|escapejs }}">
+              <button type="button" class="btn btn-outline-primary btn-devolver-prestamo" data-pk="{{ p.pk }}" data-usuario="{{ p.documento.nombre_completo|default:p.documento|escapejs }}">
                 <i class="bi bi-arrow-return-left"></i> Devolver
               </button>
               {% endif %}
@@ -187,11 +187,11 @@
             <div class="row g-3">
               <div class="col-md-6">
                 <h6 class="fw-bold small text-muted text-uppercase mb-2">Herramientas Solicitadas</h6>
-                {% for item in p.detalles.all|default:p.items.all %}
+                {% for item in p.detalles.all %}
                 <div class="d-flex align-items-center justify-content-between p-2 mb-1 bg-white border rounded small">
                   <div>
-                    <div class="fw-semibold">{{ item.herramienta.nombre|default:item.producto.nombre }}</div>
-                    <div class="font-monospace text-muted extra-small">Código: {{ item.herramienta.codigo|default:item.producto.codigo_sku }}</div>
+                    <div class="fw-semibold">{{ item.herramienta.nombre }}</div>
+                    <div class="font-monospace text-muted extra-small">Código: {{ item.herramienta.codigo }}</div>
                   </div>
                   <span class="badge bg-primary">×{{ item.cantidad }}</span>
                 </div>
@@ -377,8 +377,8 @@
                 <select name="usuario" id="id_usuario" class="form-select form-select-sm">
                   <option value="">— Selecciona usuario —</option>
                   {% for u in usuarios_sistema %}
-                  <option value="{{ u.pk }}" data-doc="{{ u.numero_documento|default:u.documento|default:u.username }}" data-nombre="{{ u.nombre_completo|default:u.get_full_name|default:u.username }}">
-                    {{ u.nombre_completo|default:u.get_full_name|default:u.username }} — {{ u.numero_documento|default:u.documento|default:u.username }}
+                  <option value="{{ u.pk }}" data-doc="{{ u.documento }}" data-nombre="{{ u.nombre_completo|default:u.documento }}">
+                    {{ u.nombre_completo|default:u.documento }} — {{ u.documento }}
                   </option>
                   {% endfor %}
                 </select>
@@ -398,8 +398,8 @@
                   <select name="herramienta[]" class="form-select form-select-sm crear-prod-sel" required>
                     <option value="">— Selecciona herramienta —</option>
                     {% for h in herramientas|default:productos %}
-                    <option value="{{ h.pk }}" data-stock="{{ h.stock_disponible|default:h.stock|default:0 }}">
-                      [{{ h.codigo|default:h.codigo_sku }}] {{ h.nombre }} — Stock: {{ h.stock_disponible|default:h.stock|default:0 }}
+                    <option value="{{ h.pk }}" data-stock="{{ h.stock_disponible|default:0 }}">
+                      [{{ h.codigo }}] {{ h.nombre }} — Stock: {{ h.stock_disponible|default:0 }}
                     </option>
                     {% endfor %}
                   </select>

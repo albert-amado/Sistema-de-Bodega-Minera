@@ -6,7 +6,7 @@
   'use strict';
 
   let chartPrestamosInst = null;
-  let chartCategoriasInst = null;
+  let chartMesesInst = null;
   let chartSaludInst = null;
 
   function isDarkMode() {
@@ -47,10 +47,10 @@
       chartPrestamosInst = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: rawData.labels || ['Activos', 'Vencidos', 'Devueltos', 'Parciales'],
+          labels: rawData.labels || ['Activos', 'Devueltos', 'Vencidos'],
           datasets: [{
-            data: rawData.data || [0, 0, 0, 0],
-            backgroundColor: [tc.activo, tc.vencido, tc.devuelto, tc.parcial],
+            data: rawData.data || [0, 0, 0],
+            backgroundColor: [tc.activo, tc.devuelto, tc.vencido],
             borderWidth: 2,
             borderColor: tc.borderColor
           }]
@@ -87,15 +87,15 @@
     }
   }
 
-  // ── 2. Gráfica de Stock por Categoría (Bar) ──
-  function initChartCategorias() {
-    const el = document.getElementById('chart-categorias-data');
-    const canvas = document.getElementById('chartCategorias');
+  // ── 2. Gráfica de Actividad por Mes (Bar / Line) ──
+  function initChartMeses() {
+    const el = document.getElementById('chart-meses-data');
+    const canvas = document.getElementById('chartMeses');
     if (!el || !canvas) return;
 
-    if (chartCategoriasInst) {
-      chartCategoriasInst.destroy();
-      chartCategoriasInst = null;
+    if (chartMesesInst) {
+      chartMesesInst.destroy();
+      chartMesesInst = null;
     }
 
     try {
@@ -103,13 +103,13 @@
       const ctx = canvas.getContext('2d');
       const tc = getThemeColors();
 
-      chartCategoriasInst = new Chart(ctx, {
+      chartMesesInst = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: rawData.labels || [],
+          labels: rawData.labels || ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago'],
           datasets: [{
-            label: 'Herramientas',
-            data: rawData.data || [],
+            label: 'Solicitudes / Préstamos',
+            data: rawData.data || [0, 0, 0, 0, 0, 0, 0, 0],
             backgroundColor: 'rgba(59, 130, 246, 0.85)',
             borderColor: '#2563eb',
             borderWidth: 1,
@@ -119,7 +119,6 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          indexAxis: 'y',
           animation: { duration: 600 },
           plugins: {
             legend: { display: false },
@@ -138,18 +137,19 @@
               ticks: { color: tc.textColor, font: { family: tc.fontFamily, weight: '500' } }
             },
             y: {
-              grid: { display: false },
-              ticks: { color: tc.yTickColor, font: { family: tc.fontFamily, weight: '600' } }
+              beginAtZero: true,
+              grid: { color: tc.gridColor },
+              ticks: { color: tc.yTickColor, font: { family: tc.fontFamily, weight: '600' }, precision: 0 }
             }
           }
         }
       });
     } catch (e) {
-      console.error('Error iniciando chartCategorias:', e);
+      console.error('Error iniciando chartMeses:', e);
     }
   }
 
-  // ── 3. Gráfica de Salud de Inventario (Pie) ──
+  // ── 3. Gráfica de Salud de Inventario (Pie / Doughnut) ──
   function initChartSalud() {
     const el = document.getElementById('chart-salud-data');
     const canvas = document.getElementById('chartSalud');
@@ -168,10 +168,10 @@
       chartSaludInst = new Chart(ctx, {
         type: 'pie',
         data: {
-          labels: rawData.labels || ['Disponible', 'En Préstamo', 'No disponible'],
+          labels: rawData.labels || ['Disponible', 'No disponible'],
           datasets: [{
-            data: rawData.data || [0, 0, 0],
-            backgroundColor: [tc.activo, tc.parcial, tc.vencido],
+            data: rawData.data || [0, 0],
+            backgroundColor: [tc.activo, tc.vencido],
             borderWidth: 2,
             borderColor: tc.borderColor
           }]
@@ -209,45 +209,57 @@
 
   function renderAllCharts() {
     initChartPrestamos();
-    initChartCategorias();
+    initChartMeses();
     initChartSalud();
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
-    renderAllCharts();
+  // Animación contadores KPI
+  function animateKpis() {
+    const kpiElements = document.querySelectorAll('.kpi-number');
+    kpiElements.forEach(el => {
+      const target = parseInt(el.getAttribute('data-target') || '0', 10);
+      let start = 0;
+      const duration = 600;
+      const stepTime = 25;
+      const steps = duration / stepTime;
+      const increment = target / steps;
 
-    // Observador reactivo para conmutar colores si cambia la clase dark-mode en el body
-    const observer = new MutationObserver(function (mutations) {
-      mutations.forEach(function (m) {
-        if (m.attributeName === 'class') {
-          renderAllCharts();
+      if (target === 0) {
+        el.textContent = '0';
+        return;
+      }
+
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= target) {
+          el.textContent = target;
+          clearInterval(timer);
+        } else {
+          el.textContent = Math.floor(start);
         }
-      });
+      }, stepTime);
     });
-    observer.observe(document.body, { attributes: true });
+  }
+
+  function init() {
+    renderAllCharts();
+    animateKpis();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Observador reactivo para conmutar colores si cambia la clase dark-mode en el body
+  const observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (m) {
+      if (m.attributeName === 'class') {
+        renderAllCharts();
+      }
+    });
   });
+  observer.observe(document.body, { attributes: true });
 
 })();
-
-/* ── Modal ver producto ── */
-function verProducto(sku, nombre, desc, stock, cat) {
-  var vpSku    = document.getElementById('vpd-sku');
-  var vpNombre = document.getElementById('vpd-nombre');
-  var vpCat    = document.getElementById('vpd-cat');
-  var vpStock  = document.getElementById('vpd-stock');
-  var vpDesc   = document.getElementById('vpd-desc');
-  var vpLink   = document.getElementById('vpd-link');
-
-  if (vpSku)    vpSku.textContent    = sku;
-  if (vpNombre) vpNombre.textContent = nombre;
-  if (vpCat)    vpCat.textContent    = cat || '—';
-  if (vpStock) {
-    vpStock.textContent = stock;
-    vpStock.style.color = stock === 0 ? '#ef4444' : stock < 3 ? '#f59e0b' : '#10b981';
-  }
-  if (vpDesc)  vpDesc.textContent  = desc || '—';
-  if (vpLink)  vpLink.href         = '/inventario/' + encodeURIComponent(sku) + '/editar/';
-
-  var modal = document.getElementById('modalVerProducto');
-  if (modal) new bootstrap.Modal(modal).show();
-}

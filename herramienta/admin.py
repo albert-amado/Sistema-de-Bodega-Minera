@@ -1,11 +1,28 @@
 from django.contrib import admin
 
 from .models import (
+    BitacoraEstado,
     CategoriaHerramienta,
+    DetalleMantenimiento,
     DetalleTraslado,
     Herramienta,
+    Mantenimiento,
+    Proveedor,
+    Suministro,
     Traslado,
 )
+
+
+@admin.register(Proveedor)
+class ProveedorAdmin(admin.ModelAdmin):
+    list_display = ("codigo_proveedor", "nit_proveedor", "telefono_contacto", "correo_proveedor")
+    search_fields = ("nit_proveedor", "correo_proveedor")
+
+
+@admin.register(Suministro)
+class SuministroAdmin(admin.ModelAdmin):
+    list_display = ("codigo_suministro", "codigo_proveedor", "fecha", "cantidad")
+    list_filter = ("fecha",)
 
 
 @admin.register(Herramienta)
@@ -44,3 +61,20 @@ class DetalleTrasladoAdmin(admin.ModelAdmin):
         "codigo_herramienta",
         "cantidad",
     )
+
+
+@admin.register(Mantenimiento)
+class MantenimientoAdmin(admin.ModelAdmin):
+    list_display = ("num_mantenimiento", "codigo_herramienta", "tipo_mantenimiento", "fecha_ingreso", "fecha_salida")
+    list_filter = ("tipo_mantenimiento", "fecha_ingreso")
+
+
+@admin.register(DetalleMantenimiento)
+class DetalleMantenimientoAdmin(admin.ModelAdmin):
+    list_display = ("detalle_mantenimiento", "num_mantenimiento", "codigo_detalle_traslado", "fecha_mantenimiento")
+
+
+@admin.register(BitacoraEstado)
+class BitacoraEstadoAdmin(admin.ModelAdmin):
+    list_display = ("codigo_bitacora", "codigo_herramienta", "documento", "es_inutilisable")
+    list_filter = ("es_inutilisable",)

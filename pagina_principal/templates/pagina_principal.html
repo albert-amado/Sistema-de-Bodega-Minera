@@ -17,6 +17,7 @@
     <p class="text-muted small mb-0">Indicadores clave y distribución gráfica en tiempo real</p>
   </div>
   <div class="d-flex gap-2">
+    <a href="{% url 'inventario' %}" class="btn-outline-mine text-decoration-none">
       <i class="bi bi-boxes me-1"></i> Ver inventario
     </a>
     <a href="{% url 'prestamo' %}" class="btn-primary-mine text-decoration-none">
@@ -216,8 +217,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Datos JSON inyectados de forma segura desde la vista -->
-<script id="chart-estados-data" type="application/json">{{ chart_estados_json|safe }}</script>
+<script id="chart-prestamos-data" type="application/json">{{ chart_estados_json|safe }}</script>
 <script id="chart-meses-data" type="application/json">{{ chart_meses_json|safe }}</script>
+<script id="chart-salud-data" type="application/json">{{ chart_salud_json|safe }}</script>
 
 <!-- Lógica modularizada -->
 <script defer src="{% static 'js/pagina_principal.js' %}"></script>

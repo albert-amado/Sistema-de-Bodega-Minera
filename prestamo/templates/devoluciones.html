@@ -119,18 +119,18 @@
           <td><span class="devoluciones__style-12">#{{ d.pk }}</span></td>
           <td>
             <div class="prestamo__style-41">Préstamo #{{ d.prestamo.pk }}</div>
-            <div class="prestamo__style-42">{{ d.prestamo.usuario.get_full_name|default:d.prestamo.usuario|default:d.prestamo.documento }}</div>
+            <div class="prestamo__style-42">{{ d.prestamo.documento.nombre_completo|default:d.prestamo.documento }}</div>
             <small class="text-muted font-monospace">Ficha: {{ d.prestamo.ficha }}</small>
           </td>
           <td>
-            <div class="fw-semibold text-dark">{{ d.recibido_por.get_full_name|default:d.recibido_por|default:d.codigo_recibe }}</div>
+            <div class="fw-semibold text-dark">{{ d.codigo_recibe.nombre_completo|default:d.codigo_recibe }}</div>
             <small class="text-muted font-monospace">Doc: {{ d.codigo_recibe }}</small>
           </td>
           <td>
             <div class="prestamo__style-43">
-              {% for item in d.prestamo.detalles.all|default:d.items.all %}
+              {% for item in d.prestamo.detalles.all %}
               <span class="prestamo__style-44">
-                {{ item.herramienta.nombre|default:item.producto.nombre }} ×{{ item.cantidad }}
+                {{ item.herramienta.nombre }} ×{{ item.cantidad }}
               </span>
               {% empty %}
               <span class="text-muted small">Sin herramientas</span>
@@ -145,11 +145,11 @@
             {% elif d.prestamo.estado == 'ENTREGADO' %}
               <span class="badge bg-primary-subtle text-primary border">Entregado</span>
             {% else %}
-              <span class="badge bg-secondary-subtle text-secondary border">{{ d.prestamo.get_estado_display|default:d.prestamo.estado }}</span>
+              <span class="badge bg-secondary-subtle text-secondary border">{{ d.prestamo.get_estado_display }}</span>
             {% endif %}
           </td>
           <td class="prestamo__style-47">
-            {{ d.fecha|default:d.fecha_creacion|date:"d/m/Y" }}
+            {{ d.fecha|date:"d/m/Y" }}
           </td>
 
           <td class="text-center">
@@ -173,33 +173,33 @@
                 </div>
                 <div class="col-6 col-md-3">
                   <div class="devoluciones__style-26">Solicitante</div>
-                  <div class="devoluciones__style-27">{{ d.prestamo.usuario.get_full_name|default:d.prestamo.usuario|default:d.prestamo.documento }}</div>
+                  <div class="devoluciones__style-27">{{ d.prestamo.documento.nombre_completo|default:d.prestamo.documento }}</div>
                 </div>
                 <div class="col-6 col-md-2">
                   <div class="devoluciones__style-28">Recibido Por</div>
-                  <div class="devoluciones__style-27">{{ d.recibido_por.get_full_name|default:d.recibido_por|default:d.codigo_recibe }}</div>
+                  <div class="devoluciones__style-27">{{ d.codigo_recibe.nombre_completo|default:d.codigo_recibe }}</div>
                 </div>
                 <div class="col-6 col-md-2">
                   <div class="devoluciones__style-28">Estado Préstamo</div>
-                  <div class="devoluciones__style-29">{{ d.prestamo.get_estado_display|default:d.prestamo.estado }}</div>
+                  <div class="devoluciones__style-29">{{ d.prestamo.get_estado_display }}</div>
                 </div>
                 <div class="col-6 col-md-3">
                   <div class="devoluciones__style-31">Fecha Devolución</div>
-                  <div class="devoluciones__style-32">{{ d.fecha|default:d.fecha_creacion|date:"d/m/Y" }}</div>
+                  <div class="devoluciones__style-32">{{ d.fecha|date:"d/m/Y" }}</div>
                 </div>
                 <div class="col-12">
                   <div class="devoluciones__style-33">Observaciones</div>
-                  <div class="devoluciones__style-34">{{ d.observaciones|default:d.motivo|default:"Sin observaciones." }}</div>
+                  <div class="devoluciones__style-34">{{ d.observaciones|default:"Sin observaciones." }}</div>
                 </div>
                 <div class="col-12">
                   <div class="devoluciones__style-35">
                     Detalle de herramientas reintegradas
                   </div>
                   <div class="devoluciones__style-36">
-                    {% for item in d.prestamo.detalles.all|default:d.items.all %}
+                    {% for item in d.prestamo.detalles.all %}
                       <div class="devoluciones__style-37">
                         <div class="devoluciones__style-38">
-                           <div class="devoluciones__style-39">{{ item.herramienta.nombre|default:item.producto.nombre }} (Código: {{ item.herramienta.codigo|default:item.producto.codigo_sku }})</div>
+                           <div class="devoluciones__style-39">{{ item.herramienta.nombre }} (Código: {{ item.herramienta.codigo }})</div>
                         </div>
                         <div class="devoluciones__style-43">×{{ item.cantidad }}</div>
                       </div>
@@ -238,8 +238,8 @@
 [{% for p in prestamos_activos %}
 {
   "id": {{ p.pk }},
-  "usuario": "{{ p.usuario.get_full_name|default:p.usuario|default:p.documento|escapejs }}",
-  "nombre_usuario": "{{ p.usuario.get_full_name|default:''|escapejs }}",
+  "usuario": "{{ p.documento.nombre_completo|default:p.documento|escapejs }}",
+  "nombre_usuario": "{{ p.documento.nombre_completo|default:''|escapejs }}",
   "documento": "{{ p.documento|escapejs }}",
   "ficha": "{{ p.ficha|escapejs }}",
   "estado": "{{ p.estado }}",

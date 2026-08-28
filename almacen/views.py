@@ -3,9 +3,6 @@ from django.db.models import Count
 from .forms import EstanteForm, AlmacenForm
 from .models import Estante, Almacen
 from common.mixins import sesion_requerida
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
 from django.http import HttpResponse
 from django.conf import settings
 
@@ -52,7 +49,7 @@ def vista_almacenes(request):
     }
 
 
-    return render(request, 'almacenes.html', context)
+    return render(request, 'almacen.html', context)
 
 
 @sesion_requerida
@@ -97,7 +94,7 @@ def vista_estantes(request):
     }
 
 
-    return render(request, 'estantes.html', context)
+    return render(request, 'estante.html', context)
 
 
 @sesion_requerida

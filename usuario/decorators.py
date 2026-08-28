@@ -23,7 +23,7 @@ def admin_required(view_func):
             return redirect('login')
         if request.session.get('usuario_rol', '').lower() not in ('admin', 'administrador'):
             messages.error(request, 'No tienes permisos para acceder a esta sección.')
-            return redirect('home')
+            return redirect('pagina_principal')
         return view_func(request, *args, **kwargs)
     return wrapper
 
