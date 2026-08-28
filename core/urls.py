@@ -9,7 +9,7 @@ urlpatterns = [
     path('', include('usuario.urls')),
 
     # Rutas de la aplicación de Préstamos
-    path('home-usuario/', prestamo_views.prestamo_usuario_lista, name='home_usuario'),
+    path('pagina_principal/', prestamo_views.prestamo_usuario_lista, name='pagina_principal'),
     path('prestamo/', include('prestamo.urls')),
     # path('herramienta/', include('herramienta.urls')),  # descomentar cuando exista la app
 

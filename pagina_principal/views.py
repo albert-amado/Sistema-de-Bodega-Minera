@@ -7,13 +7,13 @@ from django.db.models.functions import TruncMonth
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from devoluciones.models import Devolucion
-from inventario.models import Producto
-from prestamo.models import Prestamo
+#from devoluciones.models import Devolucion
+#from inventario.models import Producto
+from prestamo.models import Prestamo, productos_disponibles, Producto
 
 MESES_ABREV = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
-
+me
 def _rango_ultimos_6_meses(hoy: date) -> list[tuple[int, int]]:
     """[(año, mes), ...] de los últimos 6 meses (incluye actual), orden cronológico."""
     meses: list[tuple[int, int]] = []
@@ -100,12 +100,14 @@ def home_usuario_view(request):
     # ── Querysets filtrados (reusan all_prestamos ya optimizado, sin nueva query hasta evaluar) ──
     prestamos_activos = all_prestamos.filter(estado__in=['activo', 'parcial'])
     historial_reciente = all_prestamos.filter(estado='devuelto')
+    
 
     productos_disponibles = Producto.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
     alertas_stock = list(
         Producto.objects.filter(disponibilidad='No disponible')
         .values_list('nombre_herramienta', flat=True)
     )
+
     hay_alertas = len(alertas_stock) > 0
 
     # ── Gráficas ──
