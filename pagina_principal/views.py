@@ -131,4 +131,4 @@ def home_usuario_view(request):
         'chart_meses_json': chart_meses_json,
     }
 
-    return render(request, 'home_usuario.html', context)
+    return render(request, 'pagina_principal.html', context)
