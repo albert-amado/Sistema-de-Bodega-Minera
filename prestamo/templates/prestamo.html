@@ -538,40 +538,9 @@
 <script id="herramientas-data" type="application/json">{{ herramientas_json|default:productos_json|safe }}</script>
 <script id="productos-data" type="application/json">{{ herramientas_json|default:productos_json|safe }}</script>
 <script id="usuarios-data" type="application/json">{{ usuarios_json|safe }}</script>
-<script>window.PRESTAMO_URL = "{% url 'prestamo' %}";</script>
 {% endblock %}
 
 {% block js %}
 <script src="{% static 'js/prestamos.js' %}"></script>
 <script src="{% static 'js/tables/prestamos_table.js' %}?v=1.3"></script>
-<script>
-  document.addEventListener('click', function (e) {
-    var btnAprobar = e.target.closest('.btn-aprobar-solicitud');
-    if (btnAprobar) {
-      e.preventDefault();
-      var pk = btnAprobar.getAttribute('data-pk');
-      var nombre = btnAprobar.getAttribute('data-nombre');
-      var doc = btnAprobar.getAttribute('data-usuario');
-      var motivo = btnAprobar.getAttribute('data-motivo');
-      var fecha = btnAprobar.getAttribute('data-fecha');
-      var jsonSpan = btnAprobar.querySelector('.items-json');
-      var items = [];
-      if (jsonSpan) {
-        try { items = JSON.parse(jsonSpan.textContent); } catch (err) {}
-      }
-      if (typeof abrirAprobar === 'function') {
-        abrirAprobar(pk, nombre, doc, motivo, fecha, items);
-      }
-      return;
-    }
-    var btnDevolver = e.target.closest('.btn-devolver-prestamo');
-    if (btnDevolver) {
-      e.preventDefault();
-      var pk = btnDevolver.getAttribute('data-pk');
-      var usuario = btnDevolver.getAttribute('data-usuario');
-      if (typeof abrirDevolver === 'function') abrirDevolver(pk, usuario);
-      return;
-    }
-  });
-</script>
 {% endblock js %}

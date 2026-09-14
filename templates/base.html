@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}?v=30">
+  <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=1">
 {% block css %}{% endblock css %}
 </head>
 
@@ -58,100 +59,8 @@
   <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
   <script defer src="{% static 'js/datatables-init.js' %}?v=4"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var overlay = document.getElementById('page-loading-overlay');
-      if (!overlay) return;
-
-      function showLoading() {
-        overlay.style.display = 'flex';
-      }
-
-      function hideLoading() {
-        overlay.style.display = 'none';
-      }
-
-      window.showLoading = showLoading;
-      window.hideLoading = hideLoading;
-
-      window.addEventListener('pageshow', function (e) {
-        hideLoading();
-      });
-
-      function isSamePageAnchor(anchor) {
-        if (!anchor.href) return false;
-        try {
-          var url = new URL(anchor.href, location.href);
-          return url.origin === location.origin && url.pathname === location.pathname && (url.hash || anchor.getAttribute('href') === '#');
-        } catch (e) {
-          return false;
-        }
-      }
-
-      document.addEventListener('click', function (event) {
-        var anchor = event.target.closest('a');
-        if (!anchor) return;
-        if (anchor.target === '_blank' || anchor.hasAttribute('download')) return;
-        if (isSamePageAnchor(anchor)) return;
-        if (anchor.href && anchor.href !== location.href) {
-          showLoading();
-        }
-      });
-
-      document.addEventListener('submit', function (e) {
-        if (e.defaultPrevented) return;
-        setTimeout(function () {
-          if (!e.defaultPrevented) {
-            showLoading();
-          }
-        }, 50);
-      });
-
-      window.addEventListener('beforeunload', function () {
-        showLoading();
-      });
-
-      // Aplicar colores de fondo dinámicos desde atributos de datos (evita problemas de parser CSS)
-      document.querySelectorAll('[data-dynamic-bg]').forEach(function (el) {
-        var color = el.getAttribute('data-dynamic-bg');
-        if (color) el.style.backgroundColor = color;
-      });
-
-      // ── Control del Aside / Sidebar en dispositivos móviles ──
-      var toggleBtn = document.getElementById('btnToggleSidebar');
-      var asideOverlay = document.getElementById('asideOverlay');
-      var asideEl = document.querySelector('aside');
-
-      function openAside() {
-        if (asideEl) asideEl.classList.add('aside-open');
-        if (asideOverlay) asideOverlay.classList.add('active');
-      }
-
-      function closeAside() {
-        if (asideEl) asideEl.classList.remove('aside-open');
-        if (asideOverlay) asideOverlay.classList.remove('active');
-      }
-
-      if (toggleBtn) {
-        toggleBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          if (asideEl && asideEl.classList.contains('aside-open')) {
-            closeAside();
-          } else {
-            openAside();
-          }
-        });
-      }
-
-      if (asideOverlay) {
-        asideOverlay.addEventListener('click', closeAside);
-      }
-
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeAside();
-      });
-    });
-  </script>
+  <script defer src="{% static 'js/base.js' %}?v=1"></script>
+  <script defer src="{% static 'js/notificaciones.js' %}?v=1"></script>
   {% block js %}{% endblock %}
 </body>
 
