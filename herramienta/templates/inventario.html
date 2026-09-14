@@ -362,7 +362,7 @@
               <select name="categoria" class="form-select" id="select-categoria-nueva">
                 <option value="">-- Sin Categoría --</option>
                 {% for cat in categorias %}
-                <option value="{{ cat.pk }}" {% if post_categoria|slugify == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
+                <option value="{{ cat.pk }}" {% if post_categoria|slugify == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre_categoria }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -430,7 +430,7 @@
               <select name="categoria" id="edit_categoria" class="form-select">
                 <option value="">-- Sin Categoría --</option>
                 {% for cat in categorias %}
-                <option value="{{ cat.pk }}">{{ cat.nombre }}</option>
+                <option value="{{ cat.pk }}">{{ cat.nombre_categoria }}</option>
                 {% endfor %}
               </select>
             </div>
