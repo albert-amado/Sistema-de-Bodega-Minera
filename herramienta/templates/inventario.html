@@ -667,7 +667,7 @@
     selectEstanteEl.innerHTML = '<option value="">Cargando...</option>';
     selectEstanteEl.disabled = true;
 
-    fetch(`{% url 'api_estantes' %}?almacen_id=${almacenId}`)
+    fetch(`{% url 'herramienta:api_estantes' %}?almacen_id=${almacenId}`)
       .then(res => res.json())
       .then(data => {
         selectEstanteEl.innerHTML = '<option value="">-- Selecciona estante --</option>';
