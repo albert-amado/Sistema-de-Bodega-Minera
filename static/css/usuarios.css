@@ -1,0 +1,352 @@
+/* ==========================================================================
+   MÓDULO DE GESTIÓN DE USUARIOS - SENA CENTRO MINERO
+   Hoja de estilos desacoplada y modular
+   ========================================================================== */
+
+/* ── Encabezado de Página ── */
+.gu-page-header {
+  margin-bottom: 1.5rem;
+}
+.gu-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+.gu-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0;
+}
+.gu-count-badge {
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+}
+
+/* ── Barra de Filtros y Búsqueda ── */
+.gu-filter-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  margin-bottom: 1.5rem;
+}
+.gu-search-wrap {
+  position: relative;
+  flex: 1 1 260px;
+}
+.gu-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+.gu-search-input {
+  padding-left: 36px !important;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.gu-search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.gu-select {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.88rem;
+  color: #334155;
+  min-width: 170px;
+}
+.gu-btn-action {
+  height: 42px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 1.1rem;
+  transition: all 0.2s ease;
+}
+.gu-btn-filter {
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #0f172a;
+}
+.gu-btn-filter:hover {
+  background: #1e293b;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+.gu-btn-clear {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+.gu-btn-clear:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.gu-toggle-group {
+  display: inline-flex;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+.gu-toggle-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 7px;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.gu-toggle-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Grid de Tarjetas (Cards) ── */
+.gu-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  overflow: hidden;
+  position: relative;
+}
+.gu-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  border-color: #cbd5e1;
+}
+.gu-card-accent-bar {
+  height: 4px;
+  width: 100%;
+}
+.gu-card-accent-admin {
+  background: linear-gradient(90deg, #991b1b, #dc2626);
+}
+.gu-card-accent-user {
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+}
+
+.gu-card-inner {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+/* Header de la Tarjeta */
+.gu-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+.gu-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+.gu-avatar-admin {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #fecaca;
+}
+.gu-avatar-user {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 2px solid #bae6fd;
+}
+.gu-user-meta {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.gu-user-name {
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+.gu-badge-role {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
+.gu-badge-admin {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+.gu-badge-user {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Cuerpo de la Tarjeta */
+.gu-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding-top: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex: 1 1 auto;
+}
+.gu-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  font-size: 0.86rem;
+  color: #475569;
+}
+.gu-info-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+}
+.gu-info-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  color: #1e293b;
+}
+.gu-info-email {
+  color: #2563eb;
+}
+.gu-info-badge-ficha {
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 0.78rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Footer Anclado al Fondo */
+.gu-card-footer {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 0.5rem;
+}
+.gu-btn-view {
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.42rem 0.75rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 1;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.gu-btn-view:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+.gu-btn-edit {
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #0f172a;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.42rem 0.75rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 1;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.gu-btn-edit:hover {
+  background: #1e293b;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+}
+
+/* ── Tabla de Usuarios ── */
+.gu-table-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+.gu-table thead th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+.gu-table tbody td {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.88rem;
+}
+.gu-table tbody tr:hover td {
+  background: #f8fafc;
+}

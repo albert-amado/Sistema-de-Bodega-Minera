@@ -11,6 +11,8 @@ from prestamo.models import Prestamo, DevolucionHerramienta, EstadoPrestamo
 from herramienta.models import Herramienta
 from usuario.models import Usuario
 
+from common.mixins import sesion_requerida
+
 MESES_ABREV = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
 
@@ -54,6 +56,7 @@ def _tendencia_meses(qs, hoy: date) -> dict[str, list]:
     }
 
 
+@sesion_requerida
 def home_usuario_view(request):
     """Home principal — muestra préstamos, KPIs, gráficas y devoluciones."""
     doc = request.session.get('usuario_documento')

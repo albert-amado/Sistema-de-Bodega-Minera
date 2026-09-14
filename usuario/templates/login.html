@@ -110,16 +110,5 @@
     <script defer src="{% static 'js/usuario.js' %}?v=4"></script>
     <script defer src="{% static 'js/form-validation.js' %}?v=1"></script>
     <script defer src="{% static 'js/accesibilidad.js' %}?v=4"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var loginForm = document.getElementById('loginForm');
-        if (loginForm) {
-          loginForm.addEventListener('submit', function () {
-            localStorage.setItem('acc_light', 'true');
-            localStorage.setItem('acc_dark', 'false');
-          });
-        }
-      });
-    </script>
   </body>
 </html>

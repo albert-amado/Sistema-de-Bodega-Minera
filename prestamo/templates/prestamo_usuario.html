@@ -335,36 +335,5 @@
 {% endblock %}
 
 {% block js %}
-<script>
-  document.querySelectorAll('[data-bs-target^="#pu-detail-"]').forEach(function (btn) {
-    var target = document.querySelector(btn.getAttribute('data-bs-target'));
-    if (!target) return;
-    target.addEventListener('show.bs.collapse', function () {
-      var icon = btn.querySelector('.pu-chevron');
-      if (icon) icon.style.transform = 'rotate(90deg)';
-    });
-    target.addEventListener('hide.bs.collapse', function () {
-      var icon = btn.querySelector('.pu-chevron');
-      if (icon) icon.style.transform = 'rotate(0deg)';
-    });
-  });
-
-  function puFiltrar(estado, btn) {
-    document.querySelectorAll('.pu-filter-btn').forEach(function (b) {
-      b.classList.remove('btn-primary');
-      b.classList.add('btn-outline-secondary');
-    });
-    btn.classList.remove('btn-outline-secondary');
-    btn.classList.add('btn-primary');
-
-    document.querySelectorAll('#pu-tabla .pu-row').forEach(function (tr) {
-      var mostrar = estado === 'todos' || tr.dataset.estado === estado || (estado === 'activo' && tr.dataset.estado === 'ENTREGADO');
-      tr.style.display = mostrar ? '' : 'none';
-      var siguiente = tr.nextElementSibling;
-      if (siguiente && siguiente.querySelector('.collapse')) {
-        siguiente.style.display = mostrar ? '' : 'none';
-      }
-    });
-  }
-</script>
+<script defer src="{% static 'js/prestamo_usuario.js' %}?v=1"></script>
 {% endblock %}
