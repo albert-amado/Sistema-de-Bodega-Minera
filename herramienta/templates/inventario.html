@@ -498,6 +498,106 @@
   </div>
 </div>
 
+<script>
+  function cargarEstantes(almacenId, selectEstanteEl, estanteSeleccionado) {
+    if (!almacenId) {
+      selectEstanteEl.innerHTML = '<option value="">-- Selecciona un almacén primero --</option>';
+      selectEstanteEl.disabled = true;
+      return;
+    }
+    selectEstanteEl.innerHTML = '<option value="">Cargando...</option>';
+    selectEstanteEl.disabled = true;
+
+    fetch(`{% url 'herramienta:api_estantes' %}?almacen_id=${almacenId}`)
+      .then(res => res.json())
+      .then(data => {
+        selectEstanteEl.innerHTML = '<option value="">-- Selecciona estante --</option>';
+        (data.estantes || []).forEach(est => {
+          let opt = document.createElement('option');
+          opt.value = est.id;
+          opt.textContent = `${est.codigo} (${est.ubicacion})`;
+          if (estanteSeleccionado && String(est.id) === String(estanteSeleccionado)) {
+            opt.selected = true;
+          }
+          selectEstanteEl.appendChild(opt);
+        });
+        selectEstanteEl.disabled = false;
+      })
+      .catch(() => {
+        selectEstanteEl.innerHTML = '<option value="">Error al cargar estantes</option>';
+        selectEstanteEl.disabled = true;
+      });
+  }
+
+  document.getElementById('nueva_almacen').addEventListener('change', function() {
+    cargarEstantes(this.value, document.getElementById('nueva_estante'));
+  });
+
+  document.getElementById('edit_almacen').addEventListener('change', function() {
+    cargarEstantes(this.value, document.getElementById('edit_estante'));
+  });
+
+  function abrirEditar(id, sku, nombre, descripcion, stock, categoria, almacenId, estanteId) {
+    document.getElementById('edit_producto_id').value = id;
+    document.getElementById('edit_sku').value = sku;
+    document.getElementById('edit_nombre').value = nombre;
+    document.getElementById('edit_descripcion').value = descripcion;
+    document.getElementById('edit_stock').value = stock;
+    
+    let catSelect = document.getElementById('edit_categoria');
+    if (categoria && categoria !== 'None' && categoria !== '') {
+      catSelect.value = categoria;
+    } else {
+      catSelect.value = "";
+    }
+
+    let almacenSelect = document.getElementById('edit_almacen');
+    let estanteSelect = document.getElementById('edit_estante');
+    if (almacenId && almacenId !== 'None' && almacenId !== '') {
+      almacenSelect.value = almacenId;
+      cargarEstantes(almacenId, estanteSelect, estanteId);
+    } else {
+      almacenSelect.value = "";
+      estanteSelect.innerHTML = '<option value="">-- Selecciona un almacén primero --</option>';
+      estanteSelect.disabled = true;
+    }
+    
+    var modalEdit = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditarHerramienta'), { backdrop: 'static' });
+    modalEdit.show();
+  }
+
+  // Flujo puente: Abrir categoría desde el modal de producto conservando datos
+  function abrirCategoriaDesdeProducto() {
+    // Cerramos el modal de herramientas temporalmente
+    var modalProdElement = document.getElementById('modalNuevaHerramienta');
+    var modalProd = bootstrap.Modal.getInstance(modalProdElement);
+    if(modalProd) modalProd.hide();
+
+    // Sincronizamos los inputs actuales del producto hacia el formulario del modal de categoría
+    var formCat = document.querySelector('#modalNuevaCategoria form');
+    formCat.querySelector('input[name="codigo_sku"]').value = modalProdElement.querySelector('input[name="codigo_sku"]').value;
+    formCat.querySelector('input[name="nombre"]').value = modalProdElement.querySelector('input[name="nombre"]').value;
+    formCat.querySelector('input[name="descripcion"]').value = modalProdElement.querySelector('textarea[name="descripcion"]').value;
+    formCat.querySelector('input[name="stock"]').value = modalProdElement.querySelector('input[name="stock"]').value;
+
+    // Abrimos el modal de categoría
+    var modalCat = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaCategoria'));
+    modalCat.show();
+  }
+
+// Control de Reapertura automática mediante banderas del backend
+  document.addEventListener("DOMContentLoaded", function() {
+    {% if form_modal_errors or request.session.abrir_modal_producto %}
+      // Usamos getOrCreateInstance para evitar crear múltiples instancias del mismo modal y bugs visuales
+      var modalProd = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaHerramienta'));
+      modalProd.show();
+    {% elif modal_categoria_errors %}
+      var modalCat = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaCategoria'));
+      modalCat.show();
+    {% endif %}
+  });
+</script>
+
 {# ══ MODAL KARDEX HISTORIAL ══ #}
 <div class="modal fade" id="modalKardexHistorial" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
