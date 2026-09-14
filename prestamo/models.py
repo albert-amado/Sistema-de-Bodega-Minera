@@ -41,6 +41,24 @@ class Prestamo(models.Model):
         verbose_name = "Préstamo"
         verbose_name_plural = "Préstamos"
 
+    def __init__(self, *args, **kwargs):
+        if "documento" in kwargs and isinstance(kwargs["documento"], str):
+            kwargs["documento_id"] = kwargs.pop("documento")
+        super().__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        if self.documento_id and not Usuario.objects.filter(documento=self.documento_id).exists():
+            Usuario.objects.get_or_create(
+                documento=self.documento_id,
+                defaults={
+                    'primer_nombre': 'Usuario',
+                    'primer_apellido': 'Sistema',
+                    'tipo_documento': 'CC',
+                    'rol': 'Usuario',
+                }
+            )
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Préstamo #{self.codigo_prestamo} - Ficha {self.ficha or 'N/A'}"
 
@@ -51,6 +69,13 @@ class Prestamo(models.Model):
     @usuario.setter
     def usuario(self, val):
         self.documento = val
+
+    def clean(self):
+        super().clean()
+        if self.documento_id:
+            doc_str = str(self.documento_id).strip()
+            if not doc_str.isdigit():
+                raise ValidationError({"documento": "El documento debe ser numérico."})
 
 
 class DetallePrestamo(models.Model):
@@ -73,6 +98,13 @@ class DetallePrestamo(models.Model):
         db_table = "detalle_prestamo"
         verbose_name = "Detalle Préstamo"
         verbose_name_plural = "Detalles Préstamo"
+
+    def __init__(self, *args, **kwargs):
+        if "prestamo" in kwargs:
+            kwargs["codigo_prestamo"] = kwargs.pop("prestamo")
+        if "herramienta" in kwargs:
+            kwargs["codigo_herramienta"] = kwargs.pop("herramienta")
+        super().__init__(*args, **kwargs)
 
     @property
     def prestamo(self):
@@ -135,6 +167,13 @@ class DevolucionHerramienta(models.Model):
         db_table = "devolucion_herramienta"
         verbose_name = "Devolución Herramienta"
         verbose_name_plural = "Devoluciones Herramientas"
+
+    def __init__(self, *args, **kwargs):
+        if "prestamo" in kwargs:
+            kwargs["codigo_prestamo"] = kwargs.pop("prestamo")
+        if "recibido_por" in kwargs:
+            kwargs["codigo_recibe"] = kwargs.pop("recibido_por")
+        super().__init__(*args, **kwargs)
 
     @property
     def prestamo(self):

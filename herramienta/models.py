@@ -53,13 +53,73 @@ class CategoriaHerramienta(models.Model):
         verbose_name_plural = "Categorías Herramienta"
 
 
+class HerramientaQuerySet(models.QuerySet):
+    def _remap_kwargs(self, kwargs):
+        new_kwargs = {}
+        for k, v in kwargs.items():
+            if k == 'codigo':
+                new_kwargs['codigo_sku'] = v
+            elif k.startswith('codigo__'):
+                new_kwargs['codigo_sku' + k[6:]] = v
+            elif k == 'nombre':
+                new_kwargs['nombre_herramienta'] = v
+            elif k.startswith('nombre__'):
+                new_kwargs['nombre_herramienta' + k[6:]] = v
+            else:
+                new_kwargs[k] = v
+        return new_kwargs
+
+    def filter(self, *args, **kwargs):
+        return super().filter(*args, **self._remap_kwargs(kwargs))
+
+    def get(self, *args, **kwargs):
+        return super().get(*args, **self._remap_kwargs(kwargs))
+
+    def get_or_create(self, defaults=None, **kwargs):
+        remapped_defaults = {}
+        if defaults:
+            for k, v in defaults.items():
+                if k == 'codigo':
+                    remapped_defaults['codigo_sku'] = v
+                elif k == 'nombre':
+                    remapped_defaults['nombre_herramienta'] = v
+                elif k == 'stock_disponible':
+                    remapped_defaults['disponibilidad'] = str(v)
+                else:
+                    remapped_defaults[k] = v
+        return super().get_or_create(defaults=remapped_defaults, **self._remap_kwargs(kwargs))
+
+    def create(self, **kwargs):
+        remapped = {}
+        for k, v in kwargs.items():
+            if k == 'codigo':
+                remapped['codigo_sku'] = v
+            elif k == 'nombre':
+                remapped['nombre_herramienta'] = v
+            elif k == 'stock_disponible':
+                remapped['disponibilidad'] = str(v)
+            else:
+                remapped[k] = v
+        return super().create(**remapped)
+
+
 class Herramienta(models.Model):
+    objects = HerramientaQuerySet.as_manager()
     codigo_herramienta = models.AutoField(primary_key=True, db_column="codigo_herramienta")
-    codigo_sku = models.CharField(max_length=50, blank=True, null=True)
+    codigo_sku = models.CharField(max_length=50, unique=True, blank=True, null=True)
     nombre_herramienta = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     disponibilidad = models.CharField(max_length=50, blank=True, null=True)
     fecha_ingreso = models.DateField(blank=True, null=True)
+
+    def __init__(self, *args, **kwargs):
+        if "codigo" in kwargs:
+            kwargs["codigo_sku"] = kwargs.pop("codigo")
+        if "nombre" in kwargs:
+            kwargs["nombre_herramienta"] = kwargs.pop("nombre")
+        if "stock_disponible" in kwargs:
+            kwargs["disponibilidad"] = str(kwargs.pop("stock_disponible"))
+        super().__init__(*args, **kwargs)
     codigo_categoria = models.ForeignKey(
         CategoriaHerramienta,
         on_delete=models.SET_NULL,
@@ -91,12 +151,29 @@ class Herramienta(models.Model):
         return self.nombre_herramienta
 
     @property
+    def id(self):
+        return self.codigo_herramienta
+
+    @property
     def codigo(self):
         return self.codigo_sku or f"HER-{self.codigo_herramienta}"
 
     @property
     def nombre(self):
         return self.nombre_herramienta
+
+    def clean(self):
+        super().clean()
+        if self.codigo_sku:
+            qs = Herramienta.objects.filter(codigo_sku=self.codigo_sku)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            if qs.exists():
+                raise ValidationError({"codigo_sku": "Ya existe una herramienta con este código / SKU."})
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     @property
     def stock_disponible(self):

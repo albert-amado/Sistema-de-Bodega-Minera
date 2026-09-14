@@ -320,3 +320,14 @@ if (fichaInput && fichaInput.tagName === 'INPUT') {
     fichaInput.value = fichaInput.value.replace(/\D/g, '');
   });
 }
+
+// Inicialización de preferencias en envío de formulario de Login
+document.addEventListener('DOMContentLoaded', function () {
+  var loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', function () {
+      localStorage.setItem('acc_light', 'true');
+      localStorage.setItem('acc_dark', 'false');
+    });
+  }
+});

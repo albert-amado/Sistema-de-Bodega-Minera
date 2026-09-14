@@ -501,5 +501,33 @@ function rchLimpiarError() {
     }
   }
 
+  // Delegación de eventos para botones de aceptar y rechazar devolución
+  document.addEventListener('click', function (e) {
+    var btnAceptar = e.target.closest('.btn-aceptar-click');
+    if (btnAceptar) {
+      e.preventDefault();
+      var pk = btnAceptar.getAttribute('data-pk');
+      var prestamoPk = btnAceptar.getAttribute('data-prestamo-pk');
+      var usuario = btnAceptar.getAttribute('data-usuario');
+      if (typeof abrirAceptar === 'function') {
+        abrirAceptar(pk, prestamoPk, usuario);
+      }
+      return;
+    }
+
+    var btnRechazar = e.target.closest('.btn-rechazar-click');
+    if (btnRechazar) {
+      e.preventDefault();
+      var pk = btnRechazar.getAttribute('data-pk');
+      var prestamoPk = btnRechazar.getAttribute('data-prestamo-pk');
+      var usuario = btnRechazar.getAttribute('data-usuario');
+      if (typeof abrirRechazar === 'function') {
+        abrirRechazar(pk, prestamoPk, usuario);
+      }
+      return;
+    }
+  });
+
 })();
+
 

@@ -5116,9 +5116,6 @@ body.dark-mode .badge-rechazada {
   box-shadow: 0 3px 6px rgba(0,0,0,0.08) !important;
 }
 
-<<<<<<< Updated upstream:static/css/style.css
-
-=======
 /* ==========================================================================
    2. SISTEMA DE NOTIFICACIONES Y BARRA INFERIOR DEL ASIDE
    ========================================================================== */
@@ -6560,4 +6557,3 @@ body.dark-mode .recent-dev-row {
 body.dark-mode .recent-dev-title {
   color: #f8fafc !important;
 }
->>>>>>> Stashed changes:static/css/styles.css
