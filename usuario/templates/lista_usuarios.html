@@ -191,10 +191,10 @@
 
           <!-- Footer Anclado al Fondo -->
           <div class="gu-card-footer">
-            <button type="button" class="gu-btn-view" onclick="verUsuario('{{ u.numero_documento }}')">
+            <button type="button" class="btn btn-sm btn-outline-secondary gu-btn-view" onclick="verUsuario('{{ u.numero_documento }}')">
               <i class="bi bi-eye"></i> Ver
             </button>
-            <button type="button" class="gu-btn-edit" onclick="abrirEditar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}', '{{ u.numero_ficha|default:''|escapejs }}', '{{ u.nombre_programa|default:''|escapejs }}')">
+            <button type="button" class="btn btn-sm gu-btn-edit" onclick="abrirEditar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}', '{{ u.numero_ficha|default:''|escapejs }}', '{{ u.nombre_programa|default:''|escapejs }}')">
               <i class="bi bi-pencil-square"></i> Editar
             </button>
           </div>
@@ -229,7 +229,7 @@
                 <div class="gu-avatar gu-avatar-{% if u.rol == 'Administrador' %}admin{% else %}user{% endif %}" style="width:34px;height:34px;font-size:0.8rem;">
                   {{ u.nombre_completo|slice:":2"|upper }}
                 </div>
-                <span class="fw-bold text-dark">{{ u.nombre_completo }}</span>
+                <span class="fw-bold gu-user-table-name">{{ u.nombre_completo }}</span>
               </div>
             </td>
             <td>
@@ -240,14 +240,14 @@
             </td>
             <td class="d-none d-md-table-cell">
               {% if u.numero_ficha %}
-                <span class="badge bg-light text-dark border">{{ u.numero_ficha }}</span>
+                <span class="gu-info-badge-ficha">{{ u.numero_ficha }}</span>
                 <small class="text-muted d-block text-truncate" style="max-width:200px;">{{ u.nombre_programa|default:"" }}</small>
               {% else %}
                 <span class="text-muted">—</span>
               {% endif %}
             </td>
-            <td class="d-none d-lg-table-cell text-muted">
-              {{ u.telefono|default:"—" }}
+            <td class="d-none d-lg-table-cell">
+              <span class="gu-info-text">{{ u.telefono|default:"—" }}</span>
             </td>
             <td>
               <span class="gu-badge-role {% if u.rol == 'Administrador' %}gu-badge-admin{% else %}gu-badge-user{% endif %}">
@@ -256,10 +256,10 @@
             </td>
             <td class="text-center">
               <div class="d-inline-flex gap-1">
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="verUsuario('{{ u.numero_documento }}')" title="Ver detalles">
+                <button type="button" class="btn btn-sm btn-outline-secondary gu-btn-view px-2" onclick="verUsuario('{{ u.numero_documento }}')" title="Ver detalles">
                   <i class="bi bi-eye"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-primary" onclick="abrirEditar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}', '{{ u.numero_ficha|default:''|escapejs }}', '{{ u.nombre_programa|default:''|escapejs }}')" title="Editar usuario">
+                <button type="button" class="btn btn-sm gu-btn-edit px-2" onclick="abrirEditar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}', '{{ u.numero_ficha|default:''|escapejs }}', '{{ u.nombre_programa|default:''|escapejs }}')" title="Editar usuario">
                   <i class="bi bi-pencil"></i>
                 </button>
               </div>
@@ -274,13 +274,13 @@
 
 {% else %}
 <!-- ESTADO VACÍO -->
-<div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4">
+<div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4 gu-filter-card">
   <div class="py-4">
-    <div class="mx-auto mb-3 text-muted" style="width:64px;height:64px;background:#f1f5f9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">
+    <div class="mx-auto mb-3" style="width:64px;height:64px;background:var(--gu-input-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--gu-text-muted);border:1px solid var(--gu-filter-border);">
       <i class="bi bi-person-x"></i>
     </div>
-    <h5 class="fw-bold text-dark">No se encontraron usuarios</h5>
-    <p class="text-muted small mb-3">No hay coincidencias para los criterios o filtros de búsqueda seleccionados.</p>
+    <h5 class="fw-bold" style="color:var(--gu-text-name);">No se encontraron usuarios</h5>
+    <p class="small mb-3" style="color:var(--gu-text-muted);">No hay coincidencias para los criterios o filtros de búsqueda seleccionados.</p>
     {% if q or rol_id or tipo_doc %}
     <a href="{% url 'lista_usuarios' %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
       <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar filtros

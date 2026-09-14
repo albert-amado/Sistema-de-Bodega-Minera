@@ -80,19 +80,12 @@ class Prestamo(models.Model):
 
 class DetallePrestamo(models.Model):
     numeros_detalle = models.AutoField(primary_key=True, db_column="numeros_detalle")
-    codigo_prestamo = models.ForeignKey(
-        Prestamo,
-        on_delete=models.CASCADE,
-        db_column="codigo_prestamo",
-        related_name="detalles",
-        null=True,
-        blank=True,
-    )
+    codigo_prestamo = models.ForeignKey(Prestamo, on_delete=models.CASCADE, db_column="codigo_prestamo", related_name="detalles", null=True, blank=True,)
     codigo_herramienta = models.ForeignKey(
         Herramienta,
         on_delete=models.PROTECT,
         db_column="codigo_herramienta",
-        related_name="detalles_prestamo",
+        related_name="detalle_prestamo",
         null=True,
         blank=True,
     )

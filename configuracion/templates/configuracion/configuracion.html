@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Configuración del Sistema – Inventario Mina{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0"><i class="bi bi-sliders text-primary me-2"></i>Configuración del Sistema</h3>
+      <p class="text-muted small mb-0">Gestión de origen de datos, parámetros globales y respaldos de entorno</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'configuracion:exportar_json' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-filetype-json me-1"></i> Exportar JSON
+      </a>
+      <a href="{% url 'configuracion:exportar_env' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-download me-1"></i> Descargar .env.backup
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- 1. CONMUTADOR DE BASE DE DATOS -->
+    <div class="col-lg-5">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white py-3">
+          <h5 class="card-title mb-0 fw-bold"><i class="bi bi-database-gear text-primary me-2"></i>Origen de Datos</h5>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="accion" value="conmutar_db">
+            
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Modo de Base de Datos Activo</label>
+              <div class="d-flex gap-3 mt-1">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="target" id="dbLocal" value="local" {% if active_target == 'local' %}checked{% endif %}>
+                  <label class="form-check-label fw-semibold" for="dbLocal">
+                    <i class="bi bi-hdd me-1"></i> Local (SQLite / Servidor)
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="target" id="dbCloud" value="cloud" {% if active_target == 'cloud' %}checked{% endif %}>
+                  <label class="form-check-label fw-semibold" for="dbCloud">
+                    <i class="bi bi-cloud-check me-1"></i> Nube (Supabase / RDS)
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" name="test_first" id="testFirst" checked>
+              <label class="form-check-label small" for="testFirst">Probar conexión ('Test Ping') antes de conmutar</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm w-100">
+              <i class="bi bi-arrow-repeat me-1"></i> Aplicar Cambio de Base de Datos
+            </button>
+          </form>
+
+          <hr>
+
+          <div class="bg-light p-3 rounded small">
+            <div class="fw-bold mb-1 text-muted">Estado Actual de Conexión:</div>
+            <div><strong>Modo Activo:</strong> <span class="badge bg-primary">{{ config.active_target|upper }}</span></div>
+            <div><strong>Motor:</strong> {% if active_target == 'cloud' %}{{ cloud_db.driver }}{% else %}{{ local_db.driver }}{% endif %}</div>
+            <div><strong>Host / Archivo:</strong> {% if active_target == 'cloud' %}{{ cloud_db.host }}:{{ cloud_db.port }}{% else %}{{ local_db.name }}{% endif %}</div>
+            <div><strong>Database Name:</strong> {% if active_target == 'cloud' %}{{ cloud_db.name }}{% else %}{{ local_db.name }}{% endif %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. CONFIGURACIÓN DEL PERFIL CLOUD -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0 fw-bold"><i class="bi bi-cloud-arrow-up text-primary me-2"></i>Parámetros Nube (Cloud DB)</h5>
+          <button type="button" class="btn btn-outline-info btn-sm" id="btnTestCloud" data-url="{% url 'configuracion:api_test_connection' %}">
+            <i class="bi bi-lightning-charge me-1"></i> Probar Conexión
+          </button>
+        </div>
+        <div class="card-body">
+          <form method="post" id="formCloudDb">
+            {% csrf_token %}
+            <input type="hidden" name="accion" value="guardar_cloud_db">
+
+            <div class="row g-2 mb-2">
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Motor</label>
+                <select name="driver" id="cloud_driver" class="form-select form-select-sm">
+                  <option value="postgresql" {% if cloud_db.driver == 'postgresql' %}selected{% endif %}>PostgreSQL</option>
+                  <option value="mysql" {% if cloud_db.driver == 'mysql' %}selected{% endif %}>MySQL</option>
+                </select>
+              </div>
+              <div class="col-md-5">
+                <label class="form-label small fw-semibold">Host / Servidor</label>
+                <input type="text" name="host" id="cloud_host" class="form-control form-control-sm" value="{{ cloud_db.host }}" required>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label small fw-semibold">Puerto</label>
+                <input type="number" name="port" id="cloud_port" class="form-control form-control-sm" value="{{ cloud_db.port }}" required>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2">
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Database Name</label>
+                <input type="text" name="name" id="cloud_name" class="form-control form-control-sm" value="{{ cloud_db.name }}" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Usuario</label>
+                <input type="text" name="user" id="cloud_user" class="form-control form-control-sm" value="{{ cloud_db.user }}" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Contraseña</label>
+                <input type="password" name="password" id="cloud_password" class="form-control form-control-sm" placeholder="••••••••">
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">SSL Mode</label>
+                <select name="ssl_mode" id="cloud_ssl" class="form-select form-select-sm">
+                  <option value="require" {% if cloud_db.ssl_mode == 'require' %}selected{% endif %}>Require (Recomendado Nube)</option>
+                  <option value="prefer" {% if cloud_db.ssl_mode == 'prefer' %}selected{% endif %}>Prefer</option>
+                  <option value="disable" {% if cloud_db.ssl_mode == 'disable' %}selected{% endif %}>Disable</option>
+                  <option value="verify-full" {% if cloud_db.ssl_mode == 'verify-full' %}selected{% endif %}>Verify Full</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="testResultAlert" class="alert d-none py-2 small mb-3"></div>
+
+            <button type="submit" class="btn btn-success btn-sm">
+              <i class="bi bi-check-circle me-1"></i> Guardar Parámetros Cloud
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 3. CONFIGURACIONES GENERALES DEL SISTEMA -->
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+          <h5 class="card-title mb-0 fw-bold"><i class="bi bi-gear text-primary me-2"></i>Parámetros Generales</h5>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="accion" value="guardar_sistema">
+
+            <div class="row g-2 mb-2">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Zona Horaria</label>
+                <input type="text" name="timezone" class="form-control form-control-sm" value="{{ system.timezone }}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Idioma / Localización</label>
+                <input type="text" name="language_code" class="form-control form-control-sm" value="{{ system.language_code }}" required>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Símbolo de Moneda</label>
+                <input type="text" name="currency_symbol" class="form-control form-control-sm" value="{{ system.currency_symbol }}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Nivel de Logs</label>
+                <select name="log_level" class="form-select form-select-sm">
+                  <option value="DEBUG" {% if system.log_level == 'DEBUG' %}selected{% endif %}>DEBUG</option>
+                  <option value="INFO" {% if system.log_level == 'INFO' %}selected{% endif %}>INFO</option>
+                  <option value="WARNING" {% if system.log_level == 'WARNING' %}selected{% endif %}>WARNING</option>
+                  <option value="ERROR" {% if system.log_level == 'ERROR' %}selected{% endif %}>ERROR</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i class="bi bi-save me-1"></i> Guardar Configuración General
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script defer src="{% static 'js/configuracion.js' %}?v=1"></script>
+{% endblock %}
