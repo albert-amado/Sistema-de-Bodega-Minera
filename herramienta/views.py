@@ -76,7 +76,11 @@ def inventario_view(request):
             cat_nombre = request.POST.get('cat_nombre', '').strip()
             cat_desc = request.POST.get('cat_descripcion', '').strip()
             if cat_nombre:
-                CategoriaHerramienta.objects.create(nombre=cat_nombre, descripcion=cat_desc)
+                CategoriaHerramienta.objects.create(
+                    nombre_categoria=cat_nombre, 
+                    tipo_herramienta="General", 
+                    descripcion=cat_desc
+                )
                 messages.success(request, f"Categoría '{cat_nombre}' creada con éxito.")
             return redirect('inventario')
 
