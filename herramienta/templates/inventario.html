@@ -315,6 +315,17 @@
               {{ producto.codigo_sku|default:producto.pk }}
             </span>
           </td>
+          <!-- Herramienta -->
+          <td>
+            <span class="fw-bold text-dark">{{ producto.nombre }}</span>
+          </td>
+          <!-- Descripción -->
+          <td>
+            <span class="text-muted small text-truncate d-inline-block" style="max-width: 220px;" title="{{ producto.descripcion|default:'' }}">
+              {{ producto.descripcion|default:"Sin descripción" }}
+            </span>
+          </td>
+          <!-- Categoría -->
           <td class="col-categoria" data-categoria-id="{{ producto.codigo_categoria.pk|default:'' }}">
             {% if producto.codigo_categoria %}
             <span class="badge-state badge-aprobada">{{ producto.codigo_categoria }}</span>
@@ -340,7 +351,8 @@
             <span class="text-muted small fst-italic">No asignada</span>
             {% endif %}
           </td>
-          <td data-order="{{ producto.stock_disponible }}">
+          <!-- Stock -->
+          <td class="text-center" data-order="{{ producto.stock_disponible }}">
             {% if producto.stock_disponible == 0 %}
             <span class="badge-state badge-rechazada">Sin stock</span>
             {% elif producto.stock_disponible <= 5 %}
@@ -349,7 +361,8 @@
             <span class="badge-state badge-aprobada">{{ producto.stock_disponible }} unidades</span>
             {% endif %}
           </td>
-          <td>
+          <!-- Acciones -->
+          <td class="text-center">
             <div class="d-flex gap-1 justify-content-center align-items-center">
               {% if producto.stock_disponible > 0 %}
               <button type="button" class="btn btn-sm btn-outline-success px-2 py-1 btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Registrar préstamo rápido" onclick="abrirPrestamo('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
