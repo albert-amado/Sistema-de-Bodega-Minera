@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pagina_usuario.css' %}">
+{% endblock %}
+
+{% block content %}
+{# ══ CABECERA PERSONALIZADA ══ #}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h5 class="extracted-style-13">
+      Bienvenido de nuevo,
+      <span class="extracted-style-137">{{ usuario.nombre_completo|truncatewords:2 }}</span>
+    </h5>
+    <p class="extracted-style-14">
+      Tu actividad personal en el inventario —
+      <span class="extracted-style-138">{{ usuario.numero_documento }}</span>
+    </p>
+  </div>
+  <div class="d-flex gap-06">
+    <div class="stock-notif-wrapper">
+      <button id="btn-stock-bell" type="button" class="btn-outline-mine btn-icon"
+              aria-expanded="false" aria-controls="stock-notif-panel">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M18 8a6 6 0 0 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        {% if alertas_stock %}
+          <span class="notif-count">{{ alertas_stock|length }}</span>
+        {% endif %}
+      </button>
+      <div id="stock-notif-panel" class="stock-notif-panel">
+        <div class="stock-notif-header">
+          <span>Alertas de stock</span>
+          <button type="button" id="btn-stock-close" class="stock-notif-close" aria-label="Cerrar alertas">×</button>
+        </div>
+        <div class="stock-notif-items">
+          {% if alertas_stock %}
+            {% for nombre, stock in alertas_stock %}
+              <div class="stock-notif-item">
+                <div class="stock-notif-name">{{ nombre }}</div>
+                <div class="stock-notif-value">
+                  {% if stock == 0 %}Sin stock{% else %}{{ stock }} ud.{% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="stock-notif-empty">No hay alertas de stock bajo.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <a href="{% url 'prestamo_usuario' %}" class="btn-primary-mine">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>
+      </svg>
+      Ver mis préstamos
+    </a>
+  </div>
+</div>
+
+{# ══ ALERTAS DE URGENCIA ══ #}
+{% if vencidos_count %}
+<div class="d-flex align-items-center gap-3 mb-3 px-4 py-3 extracted-style-139">
+  <svg class="extracted-style-74" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rust)" stroke-width="2.2">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+  <span class="extracted-style-140">
+    Tienes <strong>{{ vencidos_count }} préstamo{{ vencidos_count|pluralize }}</strong>
+    vencido{{ vencidos_count|pluralize }}. Contacta al administrador.
+  </span>
+</div>
+{% endif %}
+
+{# ══ KPI CARDS ══ #}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md col-lg">
+    <div class="card h-100 kpi-usr extracted-style-141" data-delay="0">
+      <div class="kpi-bar extracted-style-142"></div>
+      <div class="extracted-style-143">Total</div>
+      <div class="kpi-num extracted-style-144" data-val="{{ total_prestamos }}">0</div>
+      <div class="extracted-style-145">solicitados</div>
+    </div>
+  </div>
+  <div class="col-6 col-md col-lg">
+    <div class="card h-100 kpi-usr extracted-style-141" data-delay="80">
+      <div class="kpi-bar extracted-style-146"></div>
+      <div class="extracted-style-143">Activos</div>
+      <div class="kpi-num extracted-style-147" data-val="{{ activos_count }}">0</div>
+      <div class="extracted-style-145">en tu poder</div>
+    </div>
+  </div>
+  <div class="col-6 col-md col-lg">
+    <div class="card h-100 kpi-usr extracted-style-141" data-delay="160">
+      <div class="kpi-bar extracted-style-148"></div>
+      <div class="extracted-style-143">Devueltos</div>
+      <div class="kpi-num extracted-style-149" data-val="{{ devueltos_count }}">0</div>
+      <div class="extracted-style-145">completados</div>
+    </div>
+  </div>
+  <div class="col-6 col-md col-lg">
+    <div class="card h-100 kpi-usr extracted-style-150" data-delay="240">
+      <div class="kpi-bar extracted-style-76"></div>
+      <div class="extracted-style-143">Vencidos</div>
+      <div class="kpi-num extracted-style-151" data-val="{{ vencidos_count }}">0</div>
+      <div class="extracted-style-145">requieren atención</div>
+    </div>
+  </div>
+  <div class="col-6 col-md col-lg">
+    <div class="card h-100 kpi-usr extracted-style-141" data-delay="320">
+      <div class="kpi-bar extracted-style-152"></div>
+      <div class="extracted-style-143">Tasa devolución</div>
+      <div class="kpi-num extracted-style-147" data-val="{{ tasa_devolucion }}">0</div>
+      <div class="extracted-style-145">% completados</div>
+    </div>
+  </div>
+</div>
+
+{# ══ FILA DE GRÁFICAS ══ #}
+<div class="row g-3 mb-4"
+     id="dashboard-charts"
+     data-chart='{{ chart_data_json|escapejs }}'>
+  {# Gráfica estado de préstamos (Donut) #}
+  <div class="col-12 col-md-5">
+    <div class="card h-100">
+      <div class="card-header">
+        <span class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+            <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+          </svg>
+          Estado de mis préstamos
+        </span>
+      </div>
+      <div class="card-body d-flex flex-column align-items-center justify-content-center extracted-style-153">
+        <div class="extracted-style-154">
+          <canvas id="donutEstados" width="170" height="170"></canvas>
+          <div class="extracted-style-155" id="donut-center">
+            <span class="extracted-style-156">{{ total_prestamos }}</span>
+            <span class="extracted-style-157">total</span>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap gap-05 justify-content-center">
+          <span class="donut-legend extracted-style-158">
+            <span class="dot extracted-style-142"></span>Activos: <strong>{{ activos_count }}</strong>
+          </span>
+          <span class="donut-legend extracted-style-159">
+            <span class="dot extracted-style-146"></span>Devueltos: <strong>{{ devueltos_count }}</strong>
+          </span>
+          <span class="donut-legend extracted-style-160">
+            <span class="dot extracted-style-76"></span>Vencidos: <strong>{{ vencidos_count }}</strong>
+          </span>
+          <span class="donut-legend extracted-style-161">
+            <span class="dot extracted-style-152"></span>Pendientes: <strong>{{ pendientes_count }}</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Gráfica barras por mes #}
+  <div class="col-12 col-md-7">
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <span class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          Actividad — últimos 6 meses
+        </span>
+        <span class="extracted-style-162">préstamos</span>
+      </div>
+      <div class="card-body extracted-style-163">
+        <canvas id="barActividad" class="w-100" style="max-height:200px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ══ FILA INFERIOR: Progreso + Préstamos activos ══ #}
+<div class="row g-3 mb-4">
+  {# Panel de métricas personales #}
+  <div class="col-12 col-md-4">
+    <div class="card h-100">
+      <div class="card-header">
+        <span class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Métricas personales
+        </span>
+      </div>
+      <div class="card-body extracted-style-164">
+        {# Tasa de devolución #}
+        <div class="extracted-style-165">
+          <div class="d-flex justify-content-between align-items-center mb-04">
+            <span class="extracted-style-166">Tasa de devolución</span>
+            <span class="extracted-style-167" id="pct-devolucion" data-pct="{{ tasa_devolucion }}">
+              {{ tasa_devolucion }}%
+            </span>
+          </div>
+          <div class="extracted-style-168">
+            <div class="extracted-style-169" id="bar-devolucion"></div>
+          </div>
+          <div class="extracted-style-170">
+            {{ devueltos_count }} de {{ total_prestamos }} devueltos a tiempo
+          </div>
+        </div>
+
+        {# Herramientas activas #}
+        <div class="extracted-style-165">
+          <div class="d-flex justify-content-between align-items-center mb-04">
+            <span class="extracted-style-166">Herramientas activas</span>
+            <span class="extracted-style-171" id="pct-activos" data-pct="{{ pct_activos }}">
+              {{ pct_activos }}%
+            </span>
+          </div>
+          <div class="extracted-style-168">
+            <div class="extracted-style-172" id="bar-activos"></div>
+          </div>
+          <div class="extracted-style-170">
+            {{ activos_count }} préstamo{{ activos_count|pluralize }} en curso
+          </div>
+        </div>
+
+        {# Índice de incidencias #}
+        <div class="extracted-style-165">
+          <div class="d-flex justify-content-between align-items-center mb-04">
+            <span class="extracted-style-166">Índice de incidencias</span>
+            <span class="extracted-style-173" id="pct-vencidos" data-pct="{{ pct_vencidos }}">
+              {{ pct_vencidos }}%
+            </span>
+          </div>
+          <div class="extracted-style-168">
+            <div class="extracted-style-174" id="bar-vencidos"></div>
+          </div>
+          <div class="extracted-style-170">
+            {{ vencidos_count }} vencido{{ vencidos_count|pluralize }} de {{ total_prestamos }} préstamos
+          </div>
+        </div>
+
+        <hr class="extracted-style-175">
+
+        <div class="d-flex gap-075 align-items-center">
+          <div class="extracted-style-176">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="extracted-style-177">Herramientas disponibles</div>
+            <div class="extracted-style-178">
+              {{ productos_disponibles|length }} en stock actualmente
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Tabla de préstamos #}
+  <div class="col-12 col-md-8">
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <span class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>
+          </svg>
+          Préstamos activos y recientes
+        </span>
+        <a href="{% url 'prestamo_usuario' %}" class="btn-ghost extracted-style-179">Ver todos</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table-app datatable-disabled w-100" style="border-collapse:collapse; font-size:.86rem;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Herramienta</th>
+              <th>Estado</th>
+              <th>Vencimiento</th>
+              <th>Progreso</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in all_prestamos|slice:":8" %}
+            <tr>
+              <td><span class="extracted-style-180">#{{ p.pk }}</span></td>
+              <td>
+                {% for item in p.items.all|slice:":2" %}
+                  <div class="extracted-style-181">{{ item.producto.nombre }}</div>
+                {% endfor %}
+                {% if p.items.count > 2 %}
+                  <span class="extracted-style-182">+{{ p.items.count|add:"-2" }} más</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if p.estado == 'activo' %}
+                  <span class="badge-state badge-aprobada">Activo</span>
+                {% elif p.estado == 'devuelto' %}
+                  <span class="badge-state extracted-style-183">
+                    <span class="extracted-style-184"></span> Devuelto
+                  </span>
+                {% elif p.estado == 'vencido' %}
+                  <span class="badge-state badge-rechazada">Vencido</span>
+                {% elif p.estado == 'pendiente' %}
+                  <span class="badge-state badge-pendiente">Pendiente</span>
+                {% elif p.estado == 'parcial' %}
+                  <span class="badge-state badge-pendiente">Parcial</span>
+                {% else %}
+                  <span class="badge-state">{{ p.estado }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if p.fecha_vencimiento %}
+                  <span class="badge state-vencido">
+                    {{ p.fecha_vencimiento|date:"d/m/Y" }}
+                    {% if p.dias_restantes is not None and p.dias_restantes >= 0 %}
+                      <br><span class="extracted-style-186">({{ p.dias_restantes }}d)</span>
+                    {% elif p.dias_restantes is not None and p.dias_restantes < 0 %}
+                      <br><span class="extracted-style-187">Venció</span>
+                    {% endif %}
+                  </span>
+                {% else %}
+                  <span class="extracted-style-188">—</span>
+                {% endif %}
+              </td>
+              <td class="extracted-style-189">
+                <div class="extracted-style-190">
+                  <div class="badge state-devuelto"></div>
+                </div>
+                <div class="extracted-style-192">
+                  {% if p.estado == 'devuelto' %}completo
+                  {% elif p.estado == 'parcial' %}parcial
+                  {% elif p.estado == 'activo' %}en uso
+                  {% elif p.estado == 'pendiente' %}esperando
+                  {% elif p.estado == 'vencido' %}vencido
+                  {% else %}—{% endif %}
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center home_usuario__style-1">
+                <svg class="extracted-style-193" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+                  <polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>
+                </svg>
+                No tienes préstamos registrados aún.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ══ TIMELINE DE ACTIVIDAD ══ #}
+<div class="row g-3">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <span class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Historial de actividad reciente
+        </span>
+        <span class="extracted-style-194">últimos 5 registros</span>
+      </div>
+      <div class="card-body extracted-style-195">
+        {% if all_prestamos %}
+        <div class="extracted-style-196">
+          <div class="extracted-style-197"></div>
+          {% for p in all_prestamos|slice:":5" %}
+          <div class="timeline-item extracted-style-198">
+            <div class="badge state-devuelto"></div>
+            <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
+              <div class="extracted-style-200">
+                <div class="extracted-style-201">
+                  Préstamo #{{ p.pk }}
+                  {% if p.estado == 'devuelto' %}
+                    <span class="extracted-style-202">✓ devuelto</span>
+                  {% elif p.estado == 'vencido' %}
+                    <span class="extracted-style-203">⚠ vencido</span>
+                  {% elif p.estado == 'pendiente' %}
+                    <span class="extracted-style-204">⏳ pendiente</span>
+                  {% endif %}
+                </div>
+                <div class="d-flex flex-wrap gap-022 mb-02">
+                  {% for item in p.items.all %}
+                  <span class="extracted-style-205">
+                    {{ item.producto.nombre }} ×{{ item.cantidad }}
+                  </span>
+                  {% endfor %}
+                </div>
+                {% if p.observaciones %}
+                <div class="extracted-style-206">
+                  {{ p.observaciones|truncatechars:80 }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="extracted-style-207">
+                <div class="extracted-style-208">
+                  {{ p.fecha_prestamo|date:"d/m/Y" }}
+                </div>
+                {% if p.fecha_vencimiento %}
+                <div class="badge state-vencido">
+                  vence {{ p.fecha_vencimiento|date:"d/m/Y" }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% if all_prestamos|length > 5 %}
+          <div class="text-center pt-05">
+            <a href="{% url 'prestamo_usuario' %}" class="btn-outline-mine extracted-style-51">
+              Ver todos los {{ total_prestamos }} préstamos →
+            </a>
+          </div>
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="text-center home_usuario__style-2">
+          <svg class="extracted-style-210" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <div class="extracted-style-211">No hay actividad registrada aún.</div>
+          <a href="{% url 'prestamo_usuario' %}" class="btn-primary-mine extracted-style-212">
+            Solicitar mi primer préstamo
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script defer src="{% static 'js/pagina_usuario.js' %}"></script>
+{% endblock %}

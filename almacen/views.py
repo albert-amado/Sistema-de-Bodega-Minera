@@ -1,28 +1,36 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Count
+from django.db.models import ProtectedError, RestrictedError
+from django.contrib import messages
 from .forms import EstanteForm, AlmacenForm
 from .models import Estante, Almacen
 from common.mixins import sesion_requerida
-from django.http import HttpResponse
-from django.conf import settings
 
 
 @sesion_requerida
 def vista_almacenes(request):
     almacenes = Almacen.objects.all()
     form = AlmacenForm()
-    form_editar = None          # ← para devolver errores al modal editar
-    show_modal_editar = False   # ← para reabrir el modal editar
+    form_editar = None
+    show_modal_editar = False
+    es_admin = request.session.get('usuario_rol', '').lower() in ['admin', 'administrador']
 
     if request.method == 'POST':
+        if not es_admin:
+            messages.error(request, 'No tienes permisos de administrador para realizar modificaciones en almacenes.')
+            return redirect('almacenes')
+
         accion = request.POST.get('accion')
 
         if accion == 'crear':
             form = AlmacenForm(request.POST)
             if form.is_valid():
                 form.save()
+                messages.success(request, 'Almacén creado exitosamente.')
                 return redirect('almacenes')
-            # si hay errores, show_modal=True abre el modal crear
+            else:
+                for f, errs in form.errors.items():
+                    for err in errs:
+                        messages.error(request, f"{f}: {err}")
 
         elif accion == 'editar':
             pk = request.POST.get('almacen_id')
@@ -30,13 +38,18 @@ def vista_almacenes(request):
             form_editar = AlmacenForm(request.POST, instance=almacen)
             if form_editar.is_valid():
                 form_editar.save()
+                messages.success(request, 'Almacén actualizado correctamente.')
                 return redirect('almacenes')
-            # si hay errores, se devuelve form_editar con mensajes
             show_modal_editar = True
 
         elif accion == 'eliminar':
             pk = request.POST.get('almacen_id')
-            get_object_or_404(Almacen, pk=pk).delete()
+            almacen = get_object_or_404(Almacen, pk=pk)
+            try:
+                almacen.delete()
+                messages.success(request, 'Almacén eliminado correctamente.')
+            except (ProtectedError, RestrictedError):
+                messages.error(request, 'No se puede eliminar el almacén porque contiene estantes o herramientas asociadas.')
             return redirect('almacenes')
 
     context = {
@@ -47,27 +60,37 @@ def vista_almacenes(request):
         'show_modal_editar': show_modal_editar,
         'total_almacenes': almacenes.count(),
         'total_estantes': Estante.objects.count(),
+        'es_admin': es_admin,
     }
-
 
     return render(request, 'almacen.html', context)
 
 
 @sesion_requerida
 def vista_estantes(request):
-    estantes = Estante.objects.all()
+    estantes = Estante.objects.select_related('codigo_almacen').all()
     form = EstanteForm()
-    form_editar = None          # ← para devolver errores al modal editar
+    form_editar = None
     show_modal_editar = False
+    es_admin = request.session.get('usuario_rol', '').lower() in ['admin', 'administrador']
 
     if request.method == 'POST':
+        if not es_admin:
+            messages.error(request, 'No tienes permisos de administrador para realizar modificaciones en estantes.')
+            return redirect('estantes')
+
         accion = request.POST.get('accion')
 
         if accion == 'crear':
             form = EstanteForm(request.POST)
             if form.is_valid():
                 form.save()
+                messages.success(request, 'Estante creado exitosamente.')
                 return redirect('estantes')
+            else:
+                for f, errs in form.errors.items():
+                    for err in errs:
+                        messages.error(request, f"{f}: {err}")
 
         elif accion == 'editar':
             pk = request.POST.get('estante_id')
@@ -75,12 +98,18 @@ def vista_estantes(request):
             form_editar = EstanteForm(request.POST, instance=estante)
             if form_editar.is_valid():
                 form_editar.save()
+                messages.success(request, 'Estante actualizado correctamente.')
                 return redirect('estantes')
             show_modal_editar = True
 
         elif accion == 'eliminar':
             pk = request.POST.get('estante_id')
-            get_object_or_404(Estante, pk=pk).delete()
+            estante = get_object_or_404(Estante, pk=pk)
+            try:
+                estante.delete()
+                messages.success(request, 'Estante eliminado correctamente.')
+            except (ProtectedError, RestrictedError):
+                messages.error(request, 'No se puede eliminar el estante porque tiene herramientas asignadas.')
             return redirect('estantes')
 
     context = {
@@ -90,10 +119,10 @@ def vista_estantes(request):
         'form_editar': form_editar,
         'show_modal': bool(form.errors),
         'show_modal_editar': show_modal_editar,
-        'total_estantes': estantes.count(),           # ← agregar
-        'total_almacenes': Almacen.objects.count(),   # ← agregar
+        'total_estantes': estantes.count(),
+        'total_almacenes': Almacen.objects.count(),
+        'es_admin': es_admin,
     }
-
 
     return render(request, 'estante.html', context)
 
@@ -102,6 +131,8 @@ def vista_estantes(request):
 def crear_estante(request):
     return redirect('estantes')
 
+
+@sesion_requerida
 def detalle_almacen(request, pk):
     almacen = get_object_or_404(Almacen, pk=pk)
     estantes = Estante.objects.filter(codigo_almacen=almacen)
@@ -110,4 +141,4 @@ def detalle_almacen(request, pk):
         'estantes': estantes,
     }
 
-    return render(request, 'detalle_almacen.html', context)
+    return render(request, 'detalle_almacen.html', context)

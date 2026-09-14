@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}?v=1">
+{% endblock css %}
+
 {% block content %}
 
 <!-- ══ CABECERA ══ -->
@@ -388,132 +392,5 @@
 {% endblock %}
 
 {% block js %}
-<style>
-.modal-tab { color: var(--text-muted); }
-.modal-tab:hover { color: var(--text-main); }
-.modal-tab--active {
-  color: var(--navy) !important;
-  border-bottom-color: var(--navy) !important;
-  font-weight: 700 !important;
-}
-.toggle-switch { position:relative; display:inline-block; width:42px; height:24px; cursor:pointer; }
-.toggle-switch input { opacity:0; width:0; height:0; }
-.toggle-slider {
-  position:absolute; inset:0; background:rgba(0,0,0,.15);
-  border-radius:24px; transition:background .2s;
-}
-.toggle-slider::before {
-  content:''; position:absolute;
-  width:18px; height:18px; left:3px; bottom:3px;
-  background:#fff; border-radius:50%;
-  transition:transform .2s;
-  box-shadow:0 1px 3px rgba(0,0,0,.2);
-}
-.toggle-switch input:checked + .toggle-slider { background:var(--navy); }
-.toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px); }
-</style>
-<script>
-(function () {
-
-  const modal = new bootstrap.Modal(document.getElementById('modalPerfil'));
-
-  document.getElementById('btn-abrir-perfil').addEventListener('click', function () {
-    activarTab('tab-datos');
-    modal.show();
-  });
-
-  const btnConfig = document.getElementById('btn-abrir-config');
-  if (btnConfig) {
-    btnConfig.addEventListener('click', function () {
-      activarTab('tab-config');
-      modal.show();
-    });
-  }
-
-  {% if errores and accion_activa %}
-    const accionMap = {
-      'editar_perfil':    'tab-datos',
-      'cambiar_password': 'tab-password',
-      'guardar_config':   'tab-config',
-    };
-    const tabDestino = accionMap['{{ accion_activa }}'] || 'tab-datos';
-    document.addEventListener('DOMContentLoaded', function () {
-      activarTab(tabDestino);
-      modal.show();
-    });
-  {% endif %}
-
-  function activarTab(id) {
-    document.querySelectorAll('.modal-tab').forEach(function (btn) {
-      btn.classList.toggle('modal-tab--active', btn.dataset.tab === id);
-    });
-    document.querySelectorAll('.modal-tab-panel').forEach(function (panel) {
-      panel.style.display = panel.id === id ? 'block' : 'none';
-    });
-  }
-
-  document.querySelectorAll('.modal-tab').forEach(function (btn) {
-    btn.addEventListener('click', function () { activarTab(btn.dataset.tab); });
-  });
-
-  // Barra de fortaleza de contraseña
-  const pwNueva    = document.getElementById('pw-nueva');
-  const pwConfirma = document.getElementById('pw-confirma');
-  const fillEl     = document.getElementById('strength-fill');
-  const labelEl    = document.getElementById('strength-label');
-  const matchEl    = document.getElementById('match-label');
-
-  function calcFuerza(pw) {
-    let score = 0;
-    if (pw.length >= 8)  score++;
-    if (pw.length >= 12) score++;
-    if (/[A-Z]/.test(pw)) score++;
-    if (/[0-9]/.test(pw)) score++;
-    if (/[^A-Za-z0-9]/.test(pw)) score++;
-    return score;
-  }
-
-  const niveles = [
-    { pct: '20%',  color: '#ef4444', label: 'Muy débil'  },
-    { pct: '40%',  color: '#f97316', label: 'Débil'      },
-    { pct: '60%',  color: '#eab308', label: 'Regular'    },
-    { pct: '80%',  color: '#3b82f6', label: 'Buena'      },
-    { pct: '100%', color: '#22c55e', label: 'Muy fuerte' },
-  ];
-
-  if (pwNueva) {
-    pwNueva.addEventListener('input', function () {
-      const pw = this.value;
-      if (!pw) { fillEl.style.width = '0'; labelEl.textContent = ''; return; }
-      const n = niveles[Math.min(calcFuerza(pw) - 1, 4)] || niveles[0];
-      fillEl.style.width      = n.pct;
-      fillEl.style.background = n.color;
-      labelEl.textContent     = n.label;
-      labelEl.style.color     = n.color;
-      checkMatch();
-    });
-  }
-
-  function checkMatch() {
-    if (!pwNueva || !pwConfirma || !pwConfirma.value) return;
-    if (pwNueva.value === pwConfirma.value) {
-      matchEl.textContent = '✓ Las contraseñas coinciden';
-      matchEl.style.color = '#22c55e';
-    } else {
-      matchEl.textContent = '✗ No coinciden';
-      matchEl.style.color = '#ef4444';
-    }
-  }
-
-  if (pwConfirma) pwConfirma.addEventListener('input', checkMatch);
-
-  const telInput = document.querySelector('[name="telefono"]');
-  if (telInput) {
-    telInput.addEventListener('input', function () {
-      this.value = this.value.replace(/\D/g, '');
-    });
-  }
-
-})();
-</script>
+<script defer src="{% static 'js/perfil.js' %}?v=1"></script>
 {% endblock js %}
