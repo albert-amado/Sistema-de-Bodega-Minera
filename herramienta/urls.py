@@ -51,4 +51,9 @@ urlpatterns = [
         views.ProveedorCreateView.as_view(),
         name="proveedor_create",
     ),
+    path(
+        "api/estantes/",
+        views.api_estantes,
+        name="api_estantes",
+    ),
 ]

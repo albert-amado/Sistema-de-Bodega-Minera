@@ -1,64 +1,32 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registrar Gestor</title>
+{% extends "base.html" %}
+{% load static %}
 
-    <style>
-        body {
-            font-family: Arial;
-            background-color: #f4f4f4;
-            padding: 40px;
-        }
-
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 350px;
-            margin: auto;
-            box-shadow: 0px 0px 10px #ccc;
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .mensaje {
-            margin-top: 10px;
-            text-align: center;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>Registrar Gestor</h2>
-
-    <form method="POST">
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        <button type="submit">Guardar</button>
-    </form>
-
-    {% if mensaje %}
-        <div class="mensaje">
-            {{ mensaje }}
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-primary text-white py-3 rounded-top-4">
+          <h5 class="mb-0 fw-bold text-center"><i class="bi bi-person-plus-fill me-2"></i>Registrar Gestor</h5>
         </div>
-    {% endif %}
-</div>
+        <div class="card-body p-4">
+          {% if mensaje %}
+          <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-info-circle-fill"></i>
+            <div>{{ mensaje }}</div>
+          </div>
+          {% endif %}
 
-</body>
-</html>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Guardar Gestor</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

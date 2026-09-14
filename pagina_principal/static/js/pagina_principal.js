@@ -1,7 +1,3 @@
-/* ─────────────────────────────────────────────────────────────
-   PÁGINA PRINCIPAL - DASHBOARD DE GRÁFICAS (SOPORTE MODO CLARO/OSCURO)
-   ───────────────────────────────────────────────────────────── */
-
 (function () {
   'use strict';
 
