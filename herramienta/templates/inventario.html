@@ -4,7 +4,7 @@
 {% block css %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-<link rel="stylesheet" href="{% static 'css/inventario.css' %}?v=1" />
+<link rel="stylesheet" href="{% static 'css/inventario.css' %}?v=2" />
 {% endblock css %}
 
 {% block content %}
@@ -82,28 +82,46 @@
 </div>
 
 <!-- Filter Bar -->
-<div class="inv-filter-bar mb-4">
-  <div class="inv-filter-search">
-    <i class="bi bi-search inv-search-icon"></i>
-    <input type="text" id="inventario-busqueda" class="inv-search-input" placeholder="Buscar por SKU o nombre de herramienta…" value="{{ request.GET.busqueda|default:'' }}">
+<div class="sfb-wrap sfb-wrap--stacked mb-4">
+
+  <!-- FILA 1: Búsqueda ocupa todo el ancho -->
+  <div class="sfb-search-group">
+    <i class="bi bi-search sfb-search-icon"></i>
+    <input type="text" id="inventario-busqueda" class="sfb-search-input"
+           placeholder="Buscar por SKU o nombre de herramienta…"
+           value="{{ request.GET.busqueda|default:'' }}"
+           autocomplete="off">
   </div>
 
-  <div class="inv-cat-wrap">
-    <select id="inventario-categoria" class="inv-cat-select">
+  <!-- FILA 2: Filtros y acciones compactos -->
+  <div class="sfb-row2">
+    <!-- Selector de categoría -->
+    <select id="inventario-categoria" class="sfb-select sfb-select--grow">
       <option value="">— Todas las Categorías —</option>
       {% for cat in categorias %}
       <option value="{{ cat.pk }}" {% if request.GET.categoria == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
       {% endfor %}
     </select>
-    <button type="button" class="btn-add-cat" data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria" title="Nueva categoría">
+
+    <!-- Spacer -->
+    <span class="sfb-row2-spacer"></span>
+
+    <!-- Botón nueva categoría -->
+    <button type="button" class="sfb-btn-add"
+            data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria"
+            title="Nueva categoría">
       <i class="bi bi-plus-lg"></i>
+    </button>
+
+    <!-- Limpiar -->
+    <button type="button" id="btn-limpiar-filtros" class="sfb-btn-secondary" title="Limpiar filtros">
+      <i class="bi bi-x-circle"></i> Limpiar
     </button>
   </div>
 
-  <button type="button" id="btn-limpiar-filtros" class="btn-clear" title="Limpiar filtros">
-    <i class="bi bi-x-circle"></i> Limpiar
-  </button>
 </div>
+
+
 
 
 

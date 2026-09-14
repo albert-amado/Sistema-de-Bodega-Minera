@@ -14,8 +14,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=30">
-  <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=1">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=40">
+  <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=5">
 {% block css %}{% endblock css %}
 </head>
 
@@ -44,8 +44,6 @@
     <main>{% block content %}{% endblock %}</main>
   </div>
 
-  {% include "partials/accesibilidad.html" %}
-
   <div id="page-loading-overlay" class="page-loading-overlay" aria-hidden="true">
     <div class="page-loading-inner">
       <div class="spinner-border text-light" role="status" aria-hidden="true"></div>
@@ -54,7 +52,6 @@
   </div>
 
   <script defer src="{% static 'js/bootstrap.bundle.min.js' %}?v=3"></script>
-  <script defer src="{% static 'js/accesibilidad.js' %}?v=3"></script>
   <script defer src="{% static 'js/form-validation.js' %}?v=2"></script>
   <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
@@ -62,6 +59,7 @@
   <script defer src="{% static 'js/base.js' %}?v=1"></script>
   <script defer src="{% static 'js/notificaciones.js' %}?v=1"></script>
   {% block js %}{% endblock %}
+  <script src="https://cdn.jsdelivr.net/gh/PrabothCharith/accessibility-plugin@main/accessibility-menu.min.js"></script>
 </body>
 
 </html>
