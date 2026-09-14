@@ -88,7 +88,7 @@
           <th class="text-center" style="width: 60px;"># ID</th>
           <th>Código Estante</th>
           <th>Almacén Asignado</th>
-          <th>Dimensiones / Capacidad</th>
+          <th>Dimensiones</th>
           <th class="text-center">Herramientas</th>
           <th class="text-center" style="width: 120px;">Acciones</th>
         </tr>
@@ -97,10 +97,9 @@
         {% for estante in estantes %}
         <tr
           data-est-id="{{ estante.pk }}"
-          data-est-almacen="{{ estante.codigo_almacen.nombre|default:estante.almacen }}"
+          data-est-almacen="{{ estante.codigo_almacen.nombre }}"
           data-est-codigo="{{ estante.codigo|escapejs }}"
-          data-est-detalles="{{ estante.dimensiones|default:estante.detalles|default:''|escapejs }}"
-          data-est-capacidad="{{ estante.dimensiones|default:estante.capacidad|default:'' }}"
+          data-est-detalles="{{ estante.dimensiones|default:''|escapejs }}"
         >
           <!-- ID -->
           <td class="text-center">
@@ -130,15 +129,15 @@
           <td>
             <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-size: 0.75rem;">
               <i class="bi bi-building text-primary"></i>
-              <span>{{ estante.codigo_almacen.nombre|default:estante.almacen }}</span>
+              <span>{{ estante.codigo_almacen.nombre }}</span>
             </span>
           </td>
 
-          <!-- Dimensiones / Capacidad -->
+          <!-- Dimensiones -->
           <td>
-            {% if estante.dimensiones or estante.detalles or estante.capacidad %}
+            {% if estante.dimensiones %}
             <span class="badge bg-light text-secondary border px-2 py-1 font-monospace" style="font-size: 0.75rem;">
-              <i class="bi bi-arrows-fullscreen text-primary me-1"></i>{{ estante.dimensiones|default:estante.detalles|default:estante.capacidad }}
+              <i class="bi bi-arrows-fullscreen text-primary me-1"></i>{{ estante.dimensiones }}
             </span>
             {% else %}
             <span class="text-muted small">—</span>
@@ -159,7 +158,7 @@
               <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs btn-ver-detalle-estante" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles rápidos" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
                 <i class="bi bi-eye text-primary"></i>
               </button>
-              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditarEstante('{{ estante.pk }}','{{ estante.codigo_almacen.pk|default:estante.almacen.pk }}','{{ estante.codigo|escapejs }}','{{ estante.dimensiones|default:estante.detalles|default:''|escapejs }}','{{ estante.dimensiones|default:estante.capacidad|default:'' }}')">
+              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditarEstante('{{ estante.pk }}','{{ estante.codigo_almacen.pk }}','{{ estante.codigo|escapejs }}','{{ estante.dimensiones|default:''|escapejs }}')">
                 <i class="bi bi-pencil text-secondary"></i>
               </button>
               <button type="button" class="btn btn-sm btn-light border text-danger rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar estante" onclick="abrirEliminarEstante('{{ estante.pk }}','{{ estante.codigo|escapejs }}')">
@@ -203,17 +202,9 @@
           <span class="label-caps">Código</span>
           <span class="value-text font-monospace" id="det_est_codigo">—</span>
         </div>
-        <div class="detalle-row">
-          <span class="label-caps">Descripción</span>
-          <span class="value-text" id="det_est_detalles">—</span>
-        </div>
-        <div class="detalle-row">
-          <span class="label-caps">Capacidad</span>
-          <span class="value-text" id="det_est_capacidad">—</span>
-        </div>
         <div class="detalle-row border-bottom-0">
-          <span class="label-caps">Fecha creación</span>
-          <span class="value-text font-monospace" id="det_est_fecha">—</span>
+          <span class="label-caps">Dimensiones</span>
+          <span class="value-text" id="det_est_detalles">—</span>
         </div>
       </div>
       <div class="modal-footer">
@@ -251,19 +242,15 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén *</label>
-              {{ form.almacen }}
+              {{ form.codigo_almacen }}
             </div>
             <div class="col-md-6">
               <label class="form-label text-muted fw-bold small uppercase mb-1">Código *</label>
               {{ form.codigo }}
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Detalles</label>
-              {{ form.detalles }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Capacidad</label>
-              {{ form.capacidad }}
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Dimensiones</label>
+              {{ form.dimensiones }}
             </div>
           </div>
         </div>
@@ -303,7 +290,7 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén *</label>
-              <select name="almacen" id="edit_estante_almacen" class="form-select">
+              <select name="codigo_almacen" id="edit_estante_almacen" class="form-select">
                 {% for almacen in almacenes %}
                 <option value="{{ almacen.pk }}">{{ almacen.nombre }}</option>
                 {% endfor %}
@@ -314,12 +301,8 @@
               <input type="text" name="codigo" id="edit_estante_codigo" class="form-control" required>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Detalles</label>
-              <textarea name="detalles" id="edit_estante_detalles" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Capacidad</label>
-              <input type="number" name="capacidad" id="edit_estante_capacidad" class="form-control" min="0">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Dimensiones</label>
+              <textarea name="dimensiones" id="edit_estante_detalles" class="form-control" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -372,10 +355,9 @@
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('edit_estante_id').value        = '{{ request.POST.estante_id }}';
     document.getElementById('edit_estante_codigo').value    = '{{ request.POST.codigo|escapejs }}';
-    document.getElementById('edit_estante_detalles').value  = '{{ request.POST.detalles|escapejs }}';
-    document.getElementById('edit_estante_capacidad').value = '{{ request.POST.capacidad }}';
+    document.getElementById('edit_estante_detalles').value  = '{{ request.POST.dimensiones|escapejs }}';
     const sel = document.getElementById('edit_estante_almacen');
-    const almacenPk = '{{ request.POST.almacen }}';
+    const almacenPk = '{{ request.POST.codigo_almacen }}';
     for (let opt of sel.options) { opt.selected = opt.value == almacenPk; }
     new bootstrap.Modal(document.getElementById('modalEditarEstante')).show();
   });
@@ -391,16 +373,13 @@
     document.getElementById('det_est_almacen').textContent   = tr.dataset.estAlmacen || '';
     document.getElementById('det_est_codigo').textContent    = tr.dataset.estCodigo || '';
     document.getElementById('det_est_detalles').textContent  = tr.dataset.estDetalles || '—';
-    document.getElementById('det_est_capacidad').textContent = tr.dataset.estCapacidad || '—';
-    document.getElementById('det_est_fecha').textContent     = tr.dataset.estFecha || '';
     new bootstrap.Modal(document.getElementById('modalDetallesEstante')).show();
   });
 
-  function abrirEditarEstante(pk, almacenPk, codigo, detalles, capacidad) {
+  function abrirEditarEstante(pk, almacenPk, codigo, detalles) {
     document.getElementById('edit_estante_id').value        = pk;
     document.getElementById('edit_estante_codigo').value    = codigo;
     document.getElementById('edit_estante_detalles').value  = detalles;
-    document.getElementById('edit_estante_capacidad').value = capacidad;
     const sel = document.getElementById('edit_estante_almacen');
     for (let opt of sel.options) { opt.selected = opt.value == almacenPk; }
     new bootstrap.Modal(document.getElementById('modalEditarEstante')).show();
