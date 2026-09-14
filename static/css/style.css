@@ -4586,3 +4586,567 @@ aside .aside-profile-dropdown .dropdown-item.text-danger:focus i,
   color: #fca5a5 !important;
 }
 
+/* ═══════════════════════════════════════════════════════
+   PREMIUM TABLES & DATATABLES DESIGN SYSTEM
+   ═══════════════════════════════════════════════════════ */
+
+/* Card Table Container */
+.table-card {
+  background: #ffffff !important;
+  border-radius: 1rem !important;
+  border: 1px solid rgba(0, 0, 0, 0.07) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02) !important;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+body.dark-mode .table-card {
+  background: #1e2227 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4) !important;
+}
+
+.table-card .card-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+body.dark-mode .table-card .card-header {
+  background: #1e2227 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Modern Clean Table Core */
+table.dataTable,
+table.table-app,
+.table-app,
+.table {
+  margin-bottom: 0 !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  color: #1e293b !important;
+  width: 100% !important;
+}
+
+body.dark-mode table.dataTable,
+body.dark-mode table.table-app,
+body.dark-mode .table-app,
+body.dark-mode .table {
+  color: #e2e8f0 !important;
+}
+
+/* Table Header */
+table.dataTable thead th,
+table.table-app thead th,
+.table-app thead th,
+.table thead th,
+table.dataTable thead td,
+.table-light th {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  padding: 0.9rem 1rem !important;
+  border-top: none !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+body.dark-mode table.dataTable thead th,
+body.dark-mode table.table-app thead th,
+body.dark-mode .table-app thead th,
+body.dark-mode .table thead th,
+body.dark-mode table.dataTable thead td,
+body.dark-mode .table-light th {
+  background-color: #181d24 !important;
+  color: #94a3b8 !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Table Rows & Cells */
+table.dataTable tbody td,
+table.table-app tbody td,
+.table-app tbody td,
+.table tbody td {
+  padding: 0.85rem 1rem !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  border-top: none !important;
+  background-color: transparent !important;
+  font-size: 0.85rem !important;
+  transition: background-color 0.15s ease;
+}
+
+body.dark-mode table.dataTable tbody td,
+body.dark-mode table.table-app tbody td,
+body.dark-mode .table-app tbody td,
+body.dark-mode .table tbody td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Table Hover Effect */
+table.dataTable.table-hover tbody tr:hover td,
+table.table-app tbody tr:hover td,
+.table-app tbody tr:hover td,
+.table-hover tbody tr:hover td,
+table.dataTable.table-hover tbody tr:hover,
+.table-hover tbody tr:hover {
+  background-color: rgba(9, 77, 146, 0.035) !important;
+}
+
+body.dark-mode table.dataTable.table-hover tbody tr:hover td,
+body.dark-mode table.table-app tbody tr:hover td,
+body.dark-mode .table-app tbody tr:hover td,
+body.dark-mode .table-hover tbody tr:hover td,
+body.dark-mode table.dataTable.table-hover tbody tr:hover,
+body.dark-mode .table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* DataTables Controls & Toolbar Layout */
+div.dataTables_wrapper,
+div.dt-container {
+  padding-top: 0.25rem !important;
+}
+
+div.dataTables_wrapper .dataTables_filter,
+div.dt-container div.dt-search {
+  text-align: right !important;
+}
+
+div.dataTables_wrapper .dataTables_filter input,
+div.dt-container div.dt-search input {
+  border-radius: 0.5rem !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.82rem !important;
+  background: #f8fafc !important;
+  transition: all 0.2s ease !important;
+  outline: none !important;
+}
+
+div.dataTables_wrapper .dataTables_filter input:focus,
+div.dt-container div.dt-search input:focus {
+  border-color: #094D92 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(9, 77, 146, 0.15) !important;
+}
+
+body.dark-mode div.dataTables_wrapper .dataTables_filter input,
+body.dark-mode div.dt-container div.dt-search input {
+  background: #181d24 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* Export Buttons (.btn-dt-export) */
+.dt-buttons,
+div.dt-buttons {
+  display: inline-flex !important;
+  gap: 0.4rem !important;
+  align-items: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.btn-dt-export {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  padding: 0.38rem 0.85rem !important;
+  border-radius: 0.5rem !important;
+  border: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  letter-spacing: 0.02em !important;
+}
+
+.btn-dt-export:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14) !important;
+}
+
+.btn-dt-export:active {
+  transform: translateY(0) !important;
+}
+
+.btn-dt-export i {
+  font-size: 0.92rem !important;
+}
+
+.btn-dt-excel {
+  background: #107c41 !important;
+  color: #ffffff !important;
+}
+.btn-dt-excel:hover {
+  background: #0d6334 !important;
+  color: #ffffff !important;
+}
+
+.btn-dt-pdf {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+}
+.btn-dt-pdf:hover {
+  background: #b91c1c !important;
+  color: #ffffff !important;
+}
+
+.btn-dt-print {
+  background: #094D92 !important;
+  color: #ffffff !important;
+}
+.btn-dt-print:hover {
+  background: #063462 !important;
+  color: #ffffff !important;
+}
+
+/* Pagination Styling */
+div.dataTables_paginate,
+div.dt-container div.dt-paging {
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+div.dataTables_paginate ul.pagination,
+div.dt-container div.dt-paging ul.pagination {
+  margin: 0 !important;
+  gap: 3px !important;
+}
+
+.pagination .page-item .page-link,
+div.dt-container div.dt-paging ul.pagination .page-item .page-link {
+  border-radius: 0.5rem !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #475569 !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  padding: 0.38rem 0.75rem !important;
+  background: #ffffff !important;
+  transition: all 0.15s ease !important;
+  box-shadow: none !important;
+}
+
+.pagination .page-item.active .page-link,
+div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
+  background-color: #094D92 !important;
+  border-color: #094D92 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(9, 77, 146, 0.3) !important;
+}
+
+.pagination .page-item .page-link:hover:not(.active),
+div.dt-container div.dt-paging ul.pagination .page-item .page-link:hover:not(.active) {
+  background-color: #f1f5f9 !important;
+  color: #094D92 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.pagination .page-item.disabled .page-link,
+div.dt-container div.dt-paging ul.pagination .page-item.disabled .page-link {
+  opacity: 0.45 !important;
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed !important;
+}
+
+body.dark-mode .pagination .page-item .page-link,
+body.dark-mode div.dt-container div.dt-paging ul.pagination .page-item .page-link {
+  background: #181d24 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .pagination .page-item.active .page-link,
+body.dark-mode div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
+  background-color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+  color: #0f172a !important;
+}
+
+/* Info Summary */
+div.dataTables_info,
+div.dt-container div.dt-info {
+  font-size: 0.8rem !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+  padding-top: 0.5rem !important;
+}
+
+body.dark-mode div.dataTables_info,
+body.dark-mode div.dt-container div.dt-info {
+  color: #94a3b8 !important;
+}
+
+/* Expand / Collapse Circle Button */
+.btn-toggle-details {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #64748b !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn-toggle-details:hover {
+  background: #094D92 !important;
+  border-color: #094D92 !important;
+  color: #ffffff !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 3px 8px rgba(9, 77, 146, 0.25) !important;
+}
+
+.btn-toggle-details .row-chevron {
+  font-size: 0.8rem !important;
+  transition: transform 0.25s ease !important;
+}
+
+tr.shown .btn-toggle-details {
+  background: #094D92 !important;
+  border-color: #094D92 !important;
+  color: #ffffff !important;
+}
+
+tr.shown .btn-toggle-details .row-chevron {
+  transform: rotate(90deg) !important;
+}
+
+body.dark-mode .btn-toggle-details {
+  background: #181d24 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #94a3b8 !important;
+}
+
+body.dark-mode .btn-toggle-details:hover {
+  background: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+  color: #0f172a !important;
+}
+
+/* Modern Status & Pill Badges */
+.badge {
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+}
+
+.badge-subtle-success,
+.bg-success-subtle {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+.badge-subtle-primary,
+.bg-primary-subtle {
+  background-color: #eff6ff !important;
+  color: #1e40af !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+.badge-subtle-warning,
+.bg-warning-subtle {
+  background-color: #fffbeb !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a !important;
+}
+
+.badge-subtle-danger,
+.bg-danger-subtle {
+  background-color: #fef2f2 !important;
+  color: #991b1b !important;
+  border: 1px solid #fecaca !important;
+}
+
+.badge-subtle-info,
+.bg-info-subtle {
+  background-color: #f0fdfa !important;
+  color: #115e59 !important;
+  border: 1px solid #99f6e4 !important;
+}
+
+body.dark-mode .bg-success-subtle {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #6ee7b7 !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+body.dark-mode .bg-primary-subtle {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #93c5fd !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+body.dark-mode .bg-warning-subtle {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  color: #fcd34d !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+body.dark-mode .bg-danger-subtle {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/* DataTables Sorter Icons Overrides */
+table.dataTable thead > tr > th.dt-orderable-asc .dt-column-order:before,
+table.dataTable thead > tr > th.dt-ordering-asc .dt-column-order:before,
+table.dataTable thead > tr > th.dt-orderable-desc .dt-column-order:after,
+table.dataTable thead > tr > th.dt-ordering-desc .dt-column-order:after {
+  font-size: 0.65rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   UNIFIED CARD & TABLE COMPONENT UTILITIES
+   ═══════════════════════════════════════════════════════ */
+
+/* Card Headers, Titles and Counter Badges */
+.table-card .card-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  padding: 0.9rem 1.25rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+body.dark-mode .table-card .card-header {
+  background: #1e2227 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.table-card .card-title,
+.card-header .card-title {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  margin-bottom: 0 !important;
+}
+
+body.dark-mode .table-card .card-title,
+body.dark-mode .card-header .card-title {
+  color: #f1f5f9 !important;
+}
+
+.badge-count,
+.table-card .badge-count {
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  padding: 0.35rem 0.75rem !important;
+  border-radius: 50rem !important;
+  background: #f8fafc !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+
+body.dark-mode .badge-count,
+body.dark-mode .table-card .badge-count {
+  background: #181d24 !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* SKU text code badge */
+.sku-text {
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  padding: 0.2rem 0.55rem !important;
+  border-radius: 0.35rem !important;
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #e2e8f0 !important;
+  display: inline-block !important;
+}
+
+body.dark-mode .sku-text {
+  background: #181d24 !important;
+  color: #94a3b8 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Status Badges */
+.badge-state {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  padding: 0.3rem 0.7rem !important;
+  border-radius: 50rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+}
+
+.badge-aprobada {
+  background: #ecfdf5 !important;
+  color: #065f46 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+.badge-pendiente {
+  background: #fffbeb !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a !important;
+}
+
+.badge-rechazada {
+  background: #fef2f2 !important;
+  color: #991b1b !important;
+  border: 1px solid #fecaca !important;
+}
+
+body.dark-mode .badge-aprobada {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #6ee7b7 !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+body.dark-mode .badge-pendiente {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fcd34d !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+body.dark-mode .badge-rechazada {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Small Action Buttons */
+.btn-action-small {
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 0.45rem !important;
+  font-size: 0.85rem !important;
+  transition: all 0.18s ease !important;
+}
+
+.btn-action-small:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08) !important;
+}
+
+

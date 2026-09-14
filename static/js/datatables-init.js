@@ -49,8 +49,8 @@ window.obtenerBotonesDataTable = function (moduloName) {
   return [
     {
       extend: 'excelHtml5',
-      text: '<i class="bi bi-file-earmark-excel"></i>',
-      className: 'btn btn-sm btn-success px-3 me-2',
+      text: '<i class="bi bi-file-earmark-excel-fill"></i><span>Excel</span>',
+      className: 'btn btn-dt-export btn-dt-excel',
       titleAttr: 'Exportar a Excel',
       attr: {
         'data-bs-toggle': 'tooltip',
@@ -64,8 +64,8 @@ window.obtenerBotonesDataTable = function (moduloName) {
     },
     {
       extend: 'pdfHtml5',
-      text: '<i class="bi bi-file-earmark-pdf"></i>',
-      className: 'btn btn-sm btn-danger px-3 me-2',
+      text: '<i class="bi bi-file-earmark-pdf-fill"></i><span>PDF</span>',
+      className: 'btn btn-dt-export btn-dt-pdf',
       titleAttr: 'Exportar a PDF',
       attr: {
         'data-bs-toggle': 'tooltip',
@@ -85,8 +85,8 @@ window.obtenerBotonesDataTable = function (moduloName) {
     },
     {
       extend: 'print',
-      text: '<i class="bi bi-printer"></i>',
-      className: 'btn btn-sm btn-primary px-3',
+      text: '<i class="bi bi-printer-fill"></i><span>Imprimir</span>',
+      className: 'btn btn-dt-export btn-dt-print',
       titleAttr: 'Imprimir listado',
       attr: {
         'data-bs-toggle': 'tooltip',

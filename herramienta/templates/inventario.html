@@ -266,65 +266,78 @@
 
 
 
-<div class="card table-card p-3">
-  <div class="card-header d-flex align-items-center justify-content-between">
-    <span class="card-title">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-        <line x1="8" y1="21" x2="16" y2="21" />
-        <line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-      Herramientas registradas
-    </span>
+<div class="card table-card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+  <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+        <i class="bi bi-tools fs-5"></i>
+      </div>
+      <div>
+        <h6 class="fw-bold mb-0 text-dark">Herramientas registradas</h6>
+        <small class="text-muted">Catálogo completo de existencias, ubicaciones y control de stock</small>
+      </div>
+    </div>
 
     <div class="d-flex align-items-center gap-2">
-      <span class="badge-count">
-        {{ total }} registro{{ total|pluralize }}
+      <span class="badge bg-light text-dark border px-3 py-2 rounded-pill font-monospace small">
+        <i class="bi bi-layers me-1 text-primary"></i>{{ total }} registro{{ total|pluralize }}
       </span>
-      <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#modalKardexHistorial" title="Ver Historial Kardex">
-        <i class="bi bi-journal-text"></i> Kardex
+      <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 d-flex align-items-center gap-1 shadow-xs" data-bs-toggle="modal" data-bs-target="#modalKardexHistorial" title="Ver Historial Kardex">
+        <i class="bi bi-journal-text"></i>
+        <span>Kardex</span>
       </button>
-      <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#modalNuevaHerramienta" data-bs-placement="bottom" title="Registrar una nueva herramienta en el inventario">
-          <i class="bi bi-plus-lg"></i>
+      <button type="button" class="btn btn-success btn-sm rounded-pill px-3 d-flex align-items-center gap-1 shadow-xs" data-bs-toggle="modal" data-bs-target="#modalNuevaHerramienta" title="Registrar una nueva herramienta en el inventario">
+        <i class="bi bi-plus-lg"></i>
+        <span>Nueva Herramienta</span>
       </button>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table-app datatable-custom" id="inventario-table">
-      <thead>
-        <tr>
-          <th>SKU</th>
-          <th>Nombre</th>
+  <div class="table-responsive px-3 pb-3 pt-2">
+    <table class="table table-hover align-middle datatable-custom w-100" id="inventario-table">
+      <thead class="table-light">
+        <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
+          <th class="text-center" style="width: 70px;">SKU</th>
+          <th>Herramienta</th>
           <th>Descripción</th>
           <th>Categoría</th>
           <th>Ubicación</th>
-          <th>Stock</th>
-          <th class="text-center">Acciones</th>
+          <th class="text-center">Stock</th>
+          <th class="text-center" style="width: 120px;">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for producto in productos %}
         <tr>
-          <td><span class="sku-text">{{ producto.codigo_sku }}</span></td>
-          <td class="fw-semibold">{{ producto.nombre }}</td>
-          <td class="description-col">
-            <span class="text-truncate d-block description-text">{{ producto.descripcion|default:"—" }}</span>
+          <!-- SKU -->
+          <td class="text-center">
+            <span class="badge bg-light text-secondary border font-monospace px-2 py-1">
+              {{ producto.codigo_sku|default:producto.pk }}
+            </span>
           </td>
           <td class="col-categoria" data-categoria-id="{{ producto.codigo_categoria.pk|default:'' }}">
             {% if producto.codigo_categoria %}
             <span class="badge-state badge-aprobada">{{ producto.codigo_categoria }}</span>
             {% else %}
-            <span class="text-muted-small">Sin categoría</span>
+            <span class="text-muted small fst-italic">Sin categoría</span>
             {% endif %}
           </td>
+
+          <!-- Ubicación -->
           <td>
             {% if producto.estante %}
-            <button class="btn btn-outline-secondary btn-sm btn-reg-action btn-ver-ubicacion" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver ubicación física de la herramienta" data-almacen-nombre="{{ producto.estante.almacen.nombre|escapejs }}" data-almacen-pk="{{ producto.estante.almacen.pk }}" data-estante-codigo="{{ producto.estante.codigo|escapejs }}" data-estante-pk="{{ producto.estante.pk }}" data-producto-nombre="{{ producto.nombre|escapejs }}">
-              <i class="bi bi-geo-alt"></i> Ver
+            <button type="button" class="btn btn-sm btn-light border rounded-pill px-2 py-1 d-inline-flex align-items-center gap-1 shadow-xs btn-ver-ubicacion" 
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Ver ubicación en almacén" 
+                    data-almacen-nombre="{{ producto.estante.almacen.nombre|escapejs }}" 
+                    data-almacen-pk="{{ producto.estante.almacen.pk }}" 
+                    data-estante-codigo="{{ producto.estante.codigo|escapejs }}" 
+                    data-estante-pk="{{ producto.estante.pk }}" 
+                    data-producto-nombre="{{ producto.nombre|escapejs }}">
+              <i class="bi bi-geo-alt-fill text-danger"></i>
+              <span class="small font-monospace">{{ producto.estante.codigo }} ({{ producto.estante.almacen.nombre|truncatechars:12 }})</span>
             </button>
             {% else %}
-            <span class="text-muted-small">—</span>
+            <span class="text-muted small fst-italic">No asignada</span>
             {% endif %}
           </td>
           <td data-order="{{ producto.stock_disponible }}">
@@ -341,14 +354,15 @@
               {% if producto.stock_disponible > 0 %}
               <button type="button" class="btn btn-sm btn-outline-success px-2 py-1 btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Registrar préstamo rápido" onclick="abrirPrestamo('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
                 <i class="bi bi-arrow-left-right"></i>
+                <span class="d-none d-xl-inline">Prestar</span>
               </button>
               {% else %}
-              <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1 btn-action-small" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Sin existencias para préstamo" onclick="event.stopPropagation();">
+              <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1 d-inline-flex align-items-center gap-1 opacity-50" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Sin existencias" onclick="event.stopPropagation();">
                 <i class="bi bi-arrow-left-right"></i>
               </button>
               {% endif %}
 
-              <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock_disponible }}', '{% if producto.codigo_categoria %}{{ producto.codigo_categoria.pk }}{% endif %}')">
+              <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock_disponible }}', '{% if producto.codigo_categoria %}{{ producto.codigo_categoria.pk }}{% endif %}', '{% if producto.estante %}{{ producto.estante.almacen.pk }}{% endif %}', '{% if producto.estante %}{{ producto.estante.pk }}{% endif %}')">
                 <i class="bi bi-pencil"></i>
               </button>
             </div>
@@ -356,8 +370,10 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="7" class="text-center py-4 text-muted">
-            <i class="bi bi-box-seam display-6 d-block mb-2"></i> No se encontraron herramientas registradas.
+          <td colspan="7" class="text-center py-5 text-muted">
+            <i class="bi bi-tools display-6 d-block mb-2 opacity-50"></i>
+            <h6 class="fw-semibold">No se encontraron herramientas registradas</h6>
+            <p class="small text-muted mb-0">Usa el botón <strong>Nueva Herramienta</strong> para agregar una al inventario.</p>
           </td>
         </tr>
         {% endfor %}
@@ -505,6 +521,25 @@
               <textarea name="descripcion" class="form-control" rows="3" placeholder="Descripción (opcional)">{{ post_descripcion }}</textarea>
             </div>
           </div>
+
+          <div class="modal-section-title mt-4">Ubicación física</div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén</label>
+              <select id="nueva_almacen" class="form-select">
+                <option value="">-- Selecciona almacén --</option>
+                {% for alm in almacenes %}
+                <option value="{{ alm.pk }}">{{ alm.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Estante</label>
+              <select name="estante" id="nueva_estante" class="form-select" disabled>
+                <option value="">-- Selecciona un almacén primero --</option>
+              </select>
+            </div>
+          </div>
         </div>
         <div class="modal-footer bg-light border-0 px-4 py-3">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -543,6 +578,21 @@
                 {% for cat in categorias %}
                 <option value="{{ cat.pk }}">{{ cat.nombre }}</option>
                 {% endfor %}
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén</label>
+              <select id="edit_almacen" class="form-select">
+                <option value="">-- Selecciona almacén --</option>
+                {% for alm in almacenes %}
+                <option value="{{ alm.pk }}">{{ alm.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Estante</label>
+              <select name="estante" id="edit_estante" class="form-select" disabled>
+                <option value="">-- Selecciona un almacén primero --</option>
               </select>
             </div>
             <div class="col-12">
@@ -608,7 +658,45 @@
 </div>
 
 <script>
-  function abrirEditar(id, sku, nombre, descripcion, stock, categoria) {
+  function cargarEstantes(almacenId, selectEstanteEl, estanteSeleccionado) {
+    if (!almacenId) {
+      selectEstanteEl.innerHTML = '<option value="">-- Selecciona un almacén primero --</option>';
+      selectEstanteEl.disabled = true;
+      return;
+    }
+    selectEstanteEl.innerHTML = '<option value="">Cargando...</option>';
+    selectEstanteEl.disabled = true;
+
+    fetch(`{% url 'api_estantes' %}?almacen_id=${almacenId}`)
+      .then(res => res.json())
+      .then(data => {
+        selectEstanteEl.innerHTML = '<option value="">-- Selecciona estante --</option>';
+        (data.estantes || []).forEach(est => {
+          let opt = document.createElement('option');
+          opt.value = est.id;
+          opt.textContent = `${est.codigo} (${est.ubicacion})`;
+          if (estanteSeleccionado && String(est.id) === String(estanteSeleccionado)) {
+            opt.selected = true;
+          }
+          selectEstanteEl.appendChild(opt);
+        });
+        selectEstanteEl.disabled = false;
+      })
+      .catch(() => {
+        selectEstanteEl.innerHTML = '<option value="">Error al cargar estantes</option>';
+        selectEstanteEl.disabled = true;
+      });
+  }
+
+  document.getElementById('nueva_almacen').addEventListener('change', function() {
+    cargarEstantes(this.value, document.getElementById('nueva_estante'));
+  });
+
+  document.getElementById('edit_almacen').addEventListener('change', function() {
+    cargarEstantes(this.value, document.getElementById('edit_estante'));
+  });
+
+  function abrirEditar(id, sku, nombre, descripcion, stock, categoria, almacenId, estanteId) {
     document.getElementById('edit_producto_id').value = id;
     document.getElementById('edit_sku').value = sku;
     document.getElementById('edit_nombre').value = nombre;
@@ -620,6 +708,17 @@
       catSelect.value = categoria;
     } else {
       catSelect.value = "";
+    }
+
+    let almacenSelect = document.getElementById('edit_almacen');
+    let estanteSelect = document.getElementById('edit_estante');
+    if (almacenId && almacenId !== 'None' && almacenId !== '') {
+      almacenSelect.value = almacenId;
+      cargarEstantes(almacenId, estanteSelect, estanteId);
+    } else {
+      almacenSelect.value = "";
+      estanteSelect.innerHTML = '<option value="">-- Selecciona un almacén primero --</option>';
+      estanteSelect.disabled = true;
     }
     
     var modalEdit = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditarHerramienta'), { backdrop: 'static' });

@@ -151,17 +151,15 @@
             <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded border recent-dev-row">
               <div>
                 <div class="fw-semibold text-truncate small recent-dev-title">
-                  Préstamo #{{ d.prestamo.id }} — {{ d.prestamo.usuario }}
+                  Préstamo #{{ d.codigo_prestamo.pk }} — {{ d.codigo_prestamo.documento.nombre_completo|default:d.codigo_prestamo.documento.documento|default:d.codigo_prestamo.ficha|default:"Usuario" }}
                 </div>
                 <div class="text-muted" style="font-size: 0.75rem;">
                   <i class="bi bi-calendar-event me-1"></i>{{ d.fecha|date:"d M Y" }}
+                  {% if d.codigo_recibe %} · <i class="bi bi-person me-1"></i>{{ d.codigo_recibe.primer_nombre }}{% endif %}
                 </div>
               </div>
-              <span class="badge-state
-                {% if d.estado == 'pendiente' %}badge-pendiente
-                {% elif d.estado == 'aprobada' %}badge-aprobada
-                {% else %}badge-rechazada{% endif %}">
-                {{ d.get_estado_display }}
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small rounded-pill">
+                <i class="bi bi-check-circle me-1"></i>Devuelto
               </span>
             </div>
             {% empty %}

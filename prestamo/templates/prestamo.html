@@ -90,69 +90,125 @@
 </div>
 
 {# ══ TABLA DE PRÉSTAMOS ══ #}
-<div class="card p-3 border-0 shadow-sm">
-  <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between px-0 pb-3">
-    <h6 class="fw-bold mb-0"><i class="bi bi-journal-text me-2"></i>Registro de préstamos</h6>
-    <span class="badge bg-primary-subtle text-primary border font-monospace">{{ prestamos|length }} registros</span>
+<div class="card table-card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+  <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+        <i class="bi bi-journal-text fs-5"></i>
+      </div>
+      <div>
+        <h6 class="fw-bold mb-0 text-dark">Registro de préstamos</h6>
+        <small class="text-muted">Control de solicitudes, entregas y estados de préstamo</small>
+      </div>
+    </div>
+    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill font-monospace small">
+      <i class="bi bi-layers me-1 text-primary"></i>{{ prestamos|length }} registro{{ prestamos|length|pluralize }}
+    </span>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-hover align-middle datatable-custom" id="prestamo-table">
+  <div class="table-responsive px-3 pb-3 pt-2">
+    <table class="table table-hover align-middle datatable-custom w-100" id="prestamo-table">
       <thead class="table-light">
-        <tr>
-          <th></th>
-          <th>#</th>
-          <th>Solicitante / Doc</th>
-          <th>Ficha</th>
-          <th>Herramientas</th>
-          <th>Estado</th>
-          <th>Fecha</th>
-          <th class="text-center">Acciones</th>
+        <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
+          <th class="text-center" style="width: 40px;"></th>
+          <th class="text-center" style="width: 60px;"># ID</th>
+          <th>Solicitante / Documento</th>
+          <th>Ficha SENA</th>
+          <th>Herramientas Solicitadas</th>
+          <th class="text-center">Estado</th>
+          <th class="text-center">Fecha</th>
+          <th class="text-center" style="width: 140px;">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for p in prestamos %}
-        <tr class="{% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}table-warning{% endif %}">
+        <tr class="prestamo-row" style="cursor: pointer;" onclick="if(!event.target.closest('button') && !event.target.closest('a') && !event.target.closest('input')) { $(this).find('.btn-toggle-details').trigger('click'); }">
           <td class="text-center">
-            <button type="button" class="btn btn-sm btn-link text-muted p-0 btn-toggle-details" data-target-detail="detail-p-{{ p.pk }}">
-              <i class="bi bi-chevron-right row-chevron"></i>
+            <button type="button" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs" 
+                    style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
+                    data-target-detail="detail-p-{{ p.pk }}" title="Ver detalles desplegables">
+              <i class="bi bi-chevron-right row-chevron" style="transition: transform 0.2s ease;"></i>
             </button>
           </td>
-          <td><span class="font-monospace fw-semibold text-muted">#{{ p.pk }}</span></td>
-          <td>
-            <div class="fw-semibold text-dark">{{ p.documento.nombre_completo|default:p.documento }}</div>
-            <div class="small text-muted font-monospace">Doc: {{ p.documento }}</div>
+          <td class="text-center">
+            <span class="badge bg-light text-secondary border font-monospace px-2 py-1">
+              #{{ p.pk }}
+            </span>
           </td>
-          <td><span class="badge bg-light text-dark border font-monospace">{{ p.ficha }}</span></td>
           <td>
-            <div class="d-flex flex-wrap gap-1">
-              {% for item in p.detalles.all %}
-              <span class="badge bg-secondary-subtle text-dark border small">
-                {{ item.herramienta.nombre }} ×{{ item.cantidad }}
-              </span>
-              {% endfor %}
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                {{ p.documento.primer_nombre|slice:":1"|default:"P" }}
+              </div>
+              <div>
+                <div class="fw-semibold text-dark text-nowrap">
+                  {{ p.documento.nombre_completo|default:p.documento|default:"Solicitante" }}
+                </div>
+                <div class="text-muted extra-small font-monospace" style="font-size: 0.72rem;">
+                  Doc: {{ p.documento.tipo_documento }} {{ p.documento.documento }}
+                </div>
+              </div>
             </div>
           </td>
           <td>
-            {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
-              <span class="badge bg-warning-subtle text-warning-emphasis">Pendiente</span>
-            {% elif p.estado == 'ENTREGADO' or p.estado == 'entregado' or p.estado == 'activo' %}
-              <span class="badge bg-success-subtle text-success">Entregado</span>
-            {% elif p.estado == 'PARCIAL' or p.estado == 'parcial' %}
-              <span class="badge bg-info-subtle text-info">Parcial</span>
-            {% elif p.estado == 'DEVUELTO' or p.estado == 'devuelto' %}
-              <span class="badge bg-primary-subtle text-primary">Devuelto</span>
-            {% elif p.estado == 'CANCELADO' or p.estado == 'cancelado' or p.estado == 'rechazado' %}
-              <span class="badge bg-danger-subtle text-danger">Cancelado</span>
+            {% if p.ficha %}
+            <span class="badge bg-light text-muted border px-2 py-1 font-monospace" style="font-size: 0.75rem;">
+              <i class="bi bi-bookmark-fill text-warning me-1"></i>{{ p.ficha }}
+            </span>
             {% else %}
-              <span class="badge bg-secondary-subtle text-secondary">{{ p.get_estado_display }}</span>
+            <span class="text-muted small">—</span>
             {% endif %}
           </td>
-          <td class="font-monospace small">{{ p.fecha|date:"d/m/Y" }}</td>
+          <td>
+            <div class="d-flex flex-wrap gap-1 align-items-center" style="max-width: 280px;">
+              {% for item in p.detalles.all %}
+              <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-weight: 500; font-size: 0.75rem;" title="{{ item.herramienta.nombre }}">
+                <i class="bi bi-tools text-primary"></i>
+                <span class="text-truncate" style="max-width: 130px;">{{ item.herramienta.nombre }}</span>
+                <span class="badge bg-primary text-white rounded-pill ms-1 px-1">×{{ item.cantidad }}</span>
+              </span>
+              {% empty %}
+              <span class="text-muted small fst-italic">Sin herramientas</span>
+              {% endfor %}
+            </div>
+          </td>
           <td class="text-center">
-            <div class="btn-group btn-group-sm">
+            {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
+              <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                <i class="bi bi-hourglass-split"></i> Pendiente
+              </span>
+            {% elif p.estado == 'ENTREGADO' or p.estado == 'entregado' or p.estado == 'activo' %}
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                <i class="bi bi-box-seam"></i> Entregado
+              </span>
+            {% elif p.estado == 'PARCIAL' or p.estado == 'parcial' %}
+              <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                <i class="bi bi-clock-history"></i> Parcial
+              </span>
+            {% elif p.estado == 'DEVUELTO' or p.estado == 'devuelto' %}
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                <i class="bi bi-check-circle-fill"></i> Devuelto
+              </span>
+            {% elif p.estado == 'CANCELADO' or p.estado == 'cancelado' or p.estado == 'rechazado' %}
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                <i class="bi bi-x-circle-fill"></i> Cancelado
+              </span>
+            {% else %}
+              <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill">
+                {{ p.get_estado_display }}
+              </span>
+            {% endif %}
+          </td>
+          <td class="text-center text-nowrap">
+            <div class="d-inline-flex align-items-center gap-1 text-secondary font-monospace small px-2 py-1 rounded bg-light border">
+              <i class="bi bi-calendar3 text-muted"></i>
+              <span>{{ p.fecha|date:"d/m/Y" }}</span>
+            </div>
+          </td>
+          <td class="text-center text-nowrap">
+            <div class="d-inline-flex align-items-center gap-1">
               {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
-              <button type="button" class="btn btn-outline-success btn-aprobar-solicitud" data-pk="{{ p.pk }}" data-nombre="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" data-usuario="{{ p.documento|escapejs }}" data-motivo="{% if p.observaciones %}{{ p.observaciones|escapejs }}{% endif %}" data-fecha="{{ p.fecha|date:'d/m/Y' }}">
+              <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-2 py-1 btn-aprobar-solicitud d-inline-flex align-items-center gap-1 shadow-xs" data-pk="{{ p.pk }}" data-nombre="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" data-usuario="{{ p.documento|escapejs }}" data-motivo="{% if p.observaciones %}{{ p.observaciones|escapejs }}{% endif %}" data-fecha="{{ p.fecha|date:'d/m/Y' }}" title="Entregar préstamo">
                 <span class="items-json d-none">
                   [
                     {% for item in p.detalles.all %}
@@ -166,16 +222,18 @@
                     {% endfor %}
                   ]
                 </span>
-                <i class="bi bi-check-lg"></i> Entregar
+                <i class="bi bi-check-lg"></i>
+                <span>Entregar</span>
               </button>
               {% endif %}
               {% if p.estado in 'ENTREGADO,PARCIAL,activo,parcial' %}
-              <button type="button" class="btn btn-outline-primary btn-devolver-prestamo" data-pk="{{ p.pk }}" data-usuario="{{ p.documento.nombre_completo|default:p.documento|escapejs }}">
-                <i class="bi bi-arrow-return-left"></i> Devolver
+              <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-1 btn-devolver-prestamo d-inline-flex align-items-center gap-1 shadow-xs" data-pk="{{ p.pk }}" data-usuario="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" title="Registrar devolución">
+                <i class="bi bi-arrow-return-left"></i>
+                <span>Devolver</span>
               </button>
               {% endif %}
-              <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo" data-pk="{{ p.pk }}" data-observaciones="{{ p.observaciones|escapejs }}">
-                <i class="bi bi-pencil"></i>
+              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo" data-pk="{{ p.pk }}" data-observaciones="{{ p.observaciones|escapejs }}" title="Editar observaciones">
+                <i class="bi bi-pencil text-secondary"></i>
               </button>
             </div>
           </td>
@@ -183,40 +241,72 @@
 
         {# Fila de detalle colapsable #}
         <tr class="detail-row d-none" id="detail-p-{{ p.pk }}">
-          <td colspan="8" class="bg-light p-3">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <h6 class="fw-bold small text-muted text-uppercase mb-2">Herramientas Solicitadas</h6>
-                {% for item in p.detalles.all %}
-                <div class="d-flex align-items-center justify-content-between p-2 mb-1 bg-white border rounded small">
-                  <div>
-                    <div class="fw-semibold">{{ item.herramienta.nombre }}</div>
-                    <div class="font-monospace text-muted extra-small">Código: {{ item.herramienta.codigo }}</div>
+          <td colspan="8" class="p-0 border-0 bg-light">
+            <div class="p-4 mx-3 my-2 bg-white rounded-4 border shadow-sm">
+              <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-primary text-white rounded-pill px-2 py-1">Préstamo #{{ p.pk }}</span>
+                  <h6 class="fw-bold mb-0 text-dark">Información completa de la solicitud</h6>
+                </div>
+                <div class="small text-muted font-monospace">
+                  <i class="bi bi-clock me-1"></i>Fecha registrada: {{ p.fecha|date:"d/m/Y" }}
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-6 col-md-4">
+                  <div class="p-2 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Solicitante</span>
+                    <span class="fw-bold text-dark fs-6 text-truncate d-block">{{ p.documento.nombre_completo|default:p.documento }}</span>
+                    <span class="text-muted extra-small font-monospace">Doc: {{ p.documento.tipo_documento }} {{ p.documento.documento }}</span>
                   </div>
-                  <span class="badge bg-primary">×{{ item.cantidad }}</span>
                 </div>
-                {% endfor %}
-              </div>
-              <div class="col-md-3">
-                <h6 class="fw-bold small text-muted text-uppercase mb-2">Información</h6>
-                <div class="small">
-                  <div><strong>Ficha SENA:</strong> {{ p.ficha }}</div>
-                  <div><strong>Documento:</strong> {{ p.documento }}</div>
-                  {% if p.observaciones %}<div><strong>Observaciones:</strong> {{ p.observaciones }}</div>{% endif %}
+
+                <div class="col-6 col-md-4">
+                  <div class="p-2 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Ficha SENA</span>
+                    <span class="fw-semibold text-dark fs-6">{{ p.ficha|default:"Sin Ficha" }}</span>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-4">
+                  <div class="p-2 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Estado Actual</span>
+                    <span class="fw-semibold text-primary fs-6">{{ p.get_estado_display }}</span>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="p-3 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block mb-1">
+                      <i class="bi bi-chat-left-text me-1"></i>Observaciones del Préstamo
+                    </span>
+                    <p class="mb-0 text-secondary small">{{ p.observaciones|default:"Sin observaciones registradas." }}</p>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <h6 class="fw-bold text-dark small text-uppercase mb-2">
+                    <i class="bi bi-tools me-1 text-primary"></i>Herramientas Solicitadas
+                  </h6>
+                  <div class="d-flex flex-wrap gap-2">
+                    {% for item in p.detalles.all %}
+                    <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-3" style="min-width: 220px;">
+                      <div class="p-2 rounded bg-white text-primary border">
+                        <i class="bi bi-box-seam fs-5"></i>
+                      </div>
+                      <div class="flex-grow-1">
+                        <div class="fw-bold text-dark small">{{ item.herramienta.nombre }}</div>
+                        <div class="text-muted extra-small font-monospace">SKU: {{ item.herramienta.codigo }}</div>
+                      </div>
+                      <span class="badge bg-primary text-white rounded-pill fs-6 px-2 py-1">×{{ item.cantidad }}</span>
+                    </div>
+                    {% empty %}
+                    <div class="text-muted small">No hay herramientas asociadas.</div>
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
-              {% if p.devoluciones.all %}
-              <div class="col-md-3">
-                <h6 class="fw-bold small text-muted text-uppercase mb-2">Devoluciones Registradas</h6>
-                {% for dev in p.devoluciones.all %}
-                <div class="small p-2 bg-white rounded border mb-1">
-                  <div><strong>Fecha:</strong> {{ dev.fecha|date:"d/m/Y" }}</div>
-                  <div><strong>Recibió (Doc):</strong> {{ dev.codigo_recibe }}</div>
-                  {% if dev.observaciones %}<div><em>{{ dev.observaciones }}</em></div>{% endif %}
-                </div>
-                {% endfor %}
-              </div>
-              {% endif %}
             </div>
           </td>
         </tr>

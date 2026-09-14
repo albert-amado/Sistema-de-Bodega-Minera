@@ -77,132 +77,225 @@
 </div>
 
 <!-- ══ TABLA ══ -->
-<div class="card table-card p-3">
-  <div class="card-header d-flex align-items-center justify-content-between">
-    <span class="card-title">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="2">
-        <polyline points="1 4 1 10 7 10"/>
-        <path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
-      </svg>
-      Devoluciones registradas
-    </span>
-    <span class="badge-count">
-      {{ devoluciones|length }} registro{{ devoluciones|length|pluralize }}
+<!-- ══ TABLA ══ -->
+<div class="card table-card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+  <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+        <i class="bi bi-arrow-counterclockwise fs-5"></i>
+      </div>
+      <div>
+        <h6 class="fw-bold mb-0 text-dark">Devoluciones registradas</h6>
+        <small class="text-muted">Historial de reingreso y recepción de herramientas</small>
+      </div>
+    </div>
+    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill font-monospace small">
+      <i class="bi bi-layers me-1 text-primary"></i>{{ devoluciones|length }} registro{{ devoluciones|length|pluralize }}
     </span>
   </div>
 
-  <div class="table-responsive">
-    <table class="table-app datatable-custom" id="devoluciones-table">
-      <thead>
-        <tr>
-          <th class="devoluciones__style-8"></th>
-          <th>#</th>
-          <th>Préstamo</th>
+  <div class="table-responsive px-3 pb-3 pt-2">
+    <table class="table table-hover align-middle datatable-custom w-100" id="devoluciones-table">
+      <thead class="table-light">
+        <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
+          <th class="text-center" style="width: 40px;"></th>
+          <th class="text-center" style="width: 60px;"># ID</th>
+          <th>Préstamo / Solicitante</th>
           <th>Recibido Por</th>
-          <th>Herramientas</th>
-          <th>Estado Préstamo</th>
-          <th>Fecha Devolución</th>
-          <th class="devoluciones__style-9">Acciones</th>
+          <th>Herramientas Reintegradas</th>
+          <th class="text-center">Estado Préstamo</th>
+          <th class="text-center">Fecha Devolución</th>
+          <th class="text-center" style="width: 100px;">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for d in devoluciones %}
-        <tr class="devoluciones__style-10" onclick="if(!event.target.closest('button') && !event.target.closest('form')) { $(this).find('.btn-toggle-details').trigger('click'); }" onmouseover="this.style.background='rgba(9,77,146,.02)'" onmouseout="this.style.background='transparent'">
-          <td class="prestamo__style-37">
-            <button type="button" class="btn-toggle-details prestamo__style-38" data-target-detail="detail-{{ d.pk }}">
-              <svg class="row-chevron prestamo__style-39" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
+        <tr class="devolucion-row" style="cursor: pointer;" onclick="if(!event.target.closest('button') && !event.target.closest('a') && !event.target.closest('input')) { $(this).find('.btn-toggle-details').trigger('click'); }">
+          <!-- Columna 0: Botón Expandir -->
+          <td class="text-center">
+            <button type="button" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs" 
+                    style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
+                    data-target-detail="detail-{{ d.pk }}" title="Ver detalles desplegables">
+              <i class="bi bi-chevron-right row-chevron" style="transition: transform 0.2s ease;"></i>
             </button>
           </td>
-          <td><span class="devoluciones__style-12">#{{ d.pk }}</span></td>
-          <td>
-            <div class="prestamo__style-41">Préstamo #{{ d.prestamo.pk }}</div>
-            <div class="prestamo__style-42">{{ d.prestamo.documento.nombre_completo|default:d.prestamo.documento }}</div>
-            <small class="text-muted font-monospace">Ficha: {{ d.prestamo.ficha }}</small>
+
+          <!-- Columna 1: ID Devolución -->
+          <td class="text-center">
+            <span class="badge bg-light text-secondary border font-monospace px-2 py-1">
+              #{{ d.pk }}
+            </span>
           </td>
+
+          <!-- Columna 2: Préstamo & Solicitante -->
           <td>
-            <div class="fw-semibold text-dark">{{ d.codigo_recibe.nombre_completo|default:d.codigo_recibe }}</div>
-            <small class="text-muted font-monospace">Doc: {{ d.codigo_recibe }}</small>
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                {{ d.codigo_prestamo.documento.primer_nombre|slice:":1"|default:"P" }}
+              </div>
+              <div>
+                <div class="fw-bold text-dark text-nowrap">
+                  Préstamo #{{ d.codigo_prestamo.pk }}
+                </div>
+                <div class="small text-secondary fw-semibold text-truncate" style="max-width: 200px;">
+                  {{ d.codigo_prestamo.documento.nombre_completo|default:d.codigo_prestamo.documento.documento|default:"Solicitante" }}
+                </div>
+                <div class="text-muted extra-small font-monospace" style="font-size: 0.72rem;">
+                  Doc: {{ d.codigo_prestamo.documento.tipo_documento }} {{ d.codigo_prestamo.documento.documento }}
+                </div>
+                {% if d.codigo_prestamo.ficha %}
+                <span class="badge bg-light text-muted border px-1 py-0 extra-small font-monospace mt-1" style="font-size: 0.68rem;">
+                  <i class="bi bi-bookmark-fill text-warning me-1"></i>Ficha: {{ d.codigo_prestamo.ficha }}
+                </span>
+                {% endif %}
+              </div>
+            </div>
           </td>
+
+          <!-- Columna 3: Recibido Por -->
           <td>
-            <div class="prestamo__style-43">
-              {% for item in d.prestamo.detalles.all %}
-              <span class="prestamo__style-44">
-                {{ item.herramienta.nombre }} ×{{ item.cantidad }}
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                <i class="bi bi-shield-check fs-6"></i>
+              </div>
+              <div>
+                <div class="fw-semibold text-dark text-nowrap">
+                  {{ d.codigo_recibe.nombre_completo|default:d.codigo_recibe.documento|default:"Administrador" }}
+                </div>
+                <div class="text-muted small font-monospace" style="font-size: 0.72rem;">
+                  Doc: {{ d.codigo_recibe.tipo_documento }} {{ d.codigo_recibe.documento }}
+                </div>
+                <span class="badge bg-light text-secondary border px-1 py-0 extra-small font-monospace mt-1" style="font-size: 0.68rem;">
+                  {{ d.codigo_recibe.rol|default:"Admin" }}
+                </span>
+              </div>
+            </div>
+          </td>
+
+          <!-- Columna 4: Herramientas -->
+          <td>
+            <div class="d-flex flex-wrap gap-1 align-items-center" style="max-width: 280px;">
+              {% for item in d.codigo_prestamo.detalles.all %}
+              <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-weight: 500; font-size: 0.75rem;" title="{{ item.codigo_herramienta.nombre_herramienta }}">
+                <i class="bi bi-tools text-primary"></i>
+                <span class="text-truncate" style="max-width: 130px;">{{ item.codigo_herramienta.nombre_herramienta }}</span>
+                <span class="badge bg-primary text-white rounded-pill ms-1 px-1">×{{ item.cantidad }}</span>
               </span>
               {% empty %}
-              <span class="text-muted small">Sin herramientas</span>
+              <span class="text-muted small fst-italic">Sin herramientas</span>
               {% endfor %}
             </div>
           </td>
-          <td>
-            {% if d.prestamo.estado == 'DEVUELTO' or d.devolucion_total %}
-              <span class="badge bg-success-subtle text-success border">Devuelto</span>
-            {% elif d.prestamo.estado == 'PARCIAL' %}
-              <span class="badge bg-info-subtle text-info border">Parcial</span>
-            {% elif d.prestamo.estado == 'ENTREGADO' %}
-              <span class="badge bg-primary-subtle text-primary border">Entregado</span>
+
+          <!-- Columna 5: Estado Préstamo -->
+          <td class="text-center">
+            {% if d.codigo_prestamo.estado == 'DEVUELTO' or d.devolucion_total %}
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                <i class="bi bi-check-circle-fill"></i> Devuelto
+              </span>
+            {% elif d.codigo_prestamo.estado == 'PARCIAL' %}
+              <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                <i class="bi bi-clock-history"></i> Parcial
+              </span>
+            {% elif d.codigo_prestamo.estado == 'ENTREGADO' %}
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                <i class="bi bi-box-seam"></i> Entregado
+              </span>
             {% else %}
-              <span class="badge bg-secondary-subtle text-secondary border">{{ d.prestamo.get_estado_display }}</span>
+              <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill">
+                {{ d.codigo_prestamo.get_estado_display }}
+              </span>
             {% endif %}
           </td>
-          <td class="prestamo__style-47">
-            {{ d.fecha|date:"d/m/Y" }}
+
+          <!-- Columna 6: Fecha Devolución -->
+          <td class="text-center text-nowrap">
+            <div class="d-inline-flex align-items-center gap-1 text-secondary font-monospace small px-2 py-1 rounded bg-light border">
+              <i class="bi bi-calendar3 text-muted"></i>
+              <span>{{ d.fecha|date:"d/m/Y" }}</span>
+            </div>
           </td>
 
-          <td class="text-center">
-            <button type="button" class="btn btn-sm btn-outline-secondary btn-toggle-details px-2 py-1" data-target-detail="detail-{{ d.pk }}">
-              <i class="bi bi-eye"></i> Detalle
+          <!-- Columna 7: Acciones -->
+          <td class="text-center text-nowrap">
+            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 btn-toggle-details d-inline-flex align-items-center gap-1 shadow-xs" 
+                    data-target-detail="detail-{{ d.pk }}" title="Ver detalles completos">
+              <i class="bi bi-eye"></i>
+              <span>Detalle</span>
             </button>
           </td>
         </tr>
 
         <!-- DETALLE DESPLEGABLE -->
-        <tr class="detail-row d-none devoluciones__style-19" id="detail-{{ d.pk }}">
-          <td colspan="8" class="devoluciones__style-20">
-            <div class="devoluciones__style-21">
-              <p class="devoluciones__style-22">
-                Detalle completo Devolución #{{ d.pk }}
-              </p>
-              <div class="row g-3 devoluciones__style-23">
-                <div class="col-6 col-md-2">
-                  <div class="devoluciones__style-24">Préstamo</div>
-                  <div class="devoluciones__style-25">#{{ d.prestamo.pk }}</div>
+        <tr class="detail-row d-none" id="detail-{{ d.pk }}">
+          <td colspan="8" class="p-0 border-0 bg-light">
+            <div class="p-4 mx-3 my-2 bg-white rounded-4 border shadow-sm">
+              <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-primary text-white rounded-pill px-2 py-1">Devolución #{{ d.pk }}</span>
+                  <h6 class="fw-bold mb-0 text-dark">Información detallada del reintegro</h6>
                 </div>
+                <div class="small text-muted font-monospace">
+                  <i class="bi bi-clock me-1"></i>Fecha registrada: {{ d.fecha|date:"d/m/Y" }}
+                </div>
+              </div>
+
+              <div class="row g-3">
                 <div class="col-6 col-md-3">
-                  <div class="devoluciones__style-26">Solicitante</div>
-                  <div class="devoluciones__style-27">{{ d.prestamo.documento.nombre_completo|default:d.prestamo.documento }}</div>
-                </div>
-                <div class="col-6 col-md-2">
-                  <div class="devoluciones__style-28">Recibido Por</div>
-                  <div class="devoluciones__style-27">{{ d.codigo_recibe.nombre_completo|default:d.codigo_recibe }}</div>
-                </div>
-                <div class="col-6 col-md-2">
-                  <div class="devoluciones__style-28">Estado Préstamo</div>
-                  <div class="devoluciones__style-29">{{ d.prestamo.get_estado_display }}</div>
-                </div>
-                <div class="col-6 col-md-3">
-                  <div class="devoluciones__style-31">Fecha Devolución</div>
-                  <div class="devoluciones__style-32">{{ d.fecha|date:"d/m/Y" }}</div>
-                </div>
-                <div class="col-12">
-                  <div class="devoluciones__style-33">Observaciones</div>
-                  <div class="devoluciones__style-34">{{ d.observaciones|default:"Sin observaciones." }}</div>
-                </div>
-                <div class="col-12">
-                  <div class="devoluciones__style-35">
-                    Detalle de herramientas reintegradas
+                  <div class="p-2 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Número de Préstamo</span>
+                    <span class="fw-bold text-dark fs-6">Préstamo #{{ d.codigo_prestamo.pk }}</span>
                   </div>
-                  <div class="devoluciones__style-36">
-                    {% for item in d.prestamo.detalles.all %}
-                      <div class="devoluciones__style-37">
-                        <div class="devoluciones__style-38">
-                           <div class="devoluciones__style-39">{{ item.herramienta.nombre }} (Código: {{ item.herramienta.codigo }})</div>
-                        </div>
-                        <div class="devoluciones__style-43">×{{ item.cantidad }}</div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <div class="p-2 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Solicitante</span>
+                    <span class="fw-semibold text-dark text-truncate d-block">{{ d.codigo_prestamo.documento.nombre_completo|default:d.codigo_prestamo.documento.documento }}</span>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <div class="p-2 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Receptor de Almacén</span>
+                    <span class="fw-semibold text-dark text-truncate d-block">{{ d.codigo_recibe.nombre_completo|default:d.codigo_recibe.documento|default:"Administrador" }}</span>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <div class="p-2 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Estado del Préstamo</span>
+                    <span class="fw-semibold text-success">{{ d.codigo_prestamo.get_estado_display }}</span>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="p-3 rounded-3 bg-light border">
+                    <span class="text-uppercase text-muted extra-small font-monospace d-block mb-1">
+                      <i class="bi bi-chat-left-text me-1"></i>Observaciones y Notas
+                    </span>
+                    <p class="mb-0 text-secondary small">{{ d.observaciones|default:"Sin observaciones adicionales registradas en el reintegro." }}</p>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <h6 class="fw-bold text-dark small text-uppercase mb-2">
+                    <i class="bi bi-tools me-1 text-primary"></i>Herramientas asociadas al préstamo
+                  </h6>
+                  <div class="d-flex flex-wrap gap-2">
+                    {% for item in d.codigo_prestamo.detalles.all %}
+                    <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-3" style="min-width: 220px;">
+                      <div class="p-2 rounded bg-white text-primary border">
+                        <i class="bi bi-box-seam fs-5"></i>
                       </div>
+                      <div class="flex-grow-1">
+                        <div class="fw-bold text-dark small">{{ item.codigo_herramienta.nombre_herramienta }}</div>
+                        <div class="text-muted extra-small font-monospace">SKU: {{ item.codigo_herramienta.codigo }}</div>
+                      </div>
+                      <span class="badge bg-primary text-white rounded-pill fs-6 px-2 py-1">×{{ item.cantidad }}</span>
+                    </div>
+                    {% empty %}
+                    <div class="text-muted small">No hay herramientas asociadas.</div>
                     {% endfor %}
                   </div>
                 </div>
@@ -213,15 +306,10 @@
 
         {% empty %}
         <tr>
-          <td colspan="8" class="devoluciones__style-44">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.3" class="devoluciones__style-45">
-              <path d="M22 12H16L14 15H10L8 12H2"/>
-              <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
-            </svg>
-            <p class="devoluciones__style-46">
-              No hay devoluciones registradas aún.<br>
-              <span class="devoluciones__style-47">Usa <strong>Nueva Devolución</strong> para agregar una.</span>
-            </p>
+          <td colspan="8" class="text-center py-5 text-muted">
+            <i class="bi bi-inbox fs-1 d-block mb-2 text-muted opacity-50"></i>
+            <h6 class="fw-semibold">No hay devoluciones registradas aún</h6>
+            <p class="small text-muted mb-0">Usa el botón <strong>Nueva Devolución</strong> para ingresar un reingreso.</p>
           </td>
         </tr>
         {% endfor %}

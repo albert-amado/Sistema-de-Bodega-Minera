@@ -47,10 +47,10 @@
       chartPrestamosInst = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: rawData.labels || ['Activos', 'Devueltos', 'Vencidos'],
+          labels: rawData.labels || ['Activos', 'Devueltos', 'Pendientes', 'Cancelados'],
           datasets: [{
-            data: rawData.data || [0, 0, 0],
-            backgroundColor: [tc.activo, tc.devuelto, tc.vencido],
+            data: rawData.data || [0, 0, 0, 0],
+            backgroundColor: rawData.colors || [tc.activo, tc.devuelto, tc.parcial, tc.vencido],
             borderWidth: 2,
             borderColor: tc.borderColor
           }]

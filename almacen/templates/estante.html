@@ -58,85 +58,122 @@
   </div>
 </div>
 
-<div class="card table-card p-3">
-  <div class="card-header d-flex align-items-center justify-content-between">
-    <span class="card-title">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="2" y="3" width="20" height="4" rx="1" />
-        <rect x="2" y="10" width="20" height="4" rx="1" />
-        <rect x="2" y="17" width="20" height="4" rx="1" />
-        <line x1="6" y1="7" x2="6" y2="10" />
-        <line x1="18" y1="7" x2="18" y2="10" />
-        <line x1="6" y1="14" x2="6" y2="17" />
-        <line x1="18" y1="14" x2="18" y2="17" />
-      </svg>
-      Estantes registrados
-    </span>
+<div class="card table-card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+  <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+        <i class="bi bi-layout-three-columns fs-5"></i>
+      </div>
+      <div>
+        <h6 class="fw-bold mb-0 text-dark">Estantes registrados</h6>
+        <small class="text-muted">Control de secciones, estanterías y gavetas por almacén</small>
+      </div>
+    </div>
 
     <div class="d-flex align-items-center gap-2">
-      <span class="badge-count">
-        {{ estantes|length }} registro{{ estantes|length|pluralize }}
+      <span class="badge bg-light text-dark border px-3 py-2 rounded-pill font-monospace small">
+        <i class="bi bi-layers me-1 text-primary"></i>{{ estantes|length }} registro{{ estantes|length|pluralize }}
       </span>
-      <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#modalEstante" data-bs-placement="bottom" title="Registrar un nuevo estante">
+      <button type="button" class="btn btn-success btn-sm rounded-pill px-3 d-flex align-items-center gap-1 shadow-xs" data-bs-toggle="modal" data-bs-target="#modalEstante" title="Registrar un nuevo estante">
         <i class="bi bi-plus-lg"></i>
+        <span>Nuevo Estante</span>
       </button>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table-app datatable-custom" id="estantes-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Almacén</th>
-          <th>Código</th>
-          <th>Detalles</th>
-          <th>Capacidad</th>
-          <th>Fecha Creación</th>
-          <th class="text-center">Acciones</th>
+  <div class="table-responsive px-3 pb-3 pt-2">
+    <table class="table table-hover align-middle datatable-custom w-100" id="estantes-table">
+      <thead class="table-light">
+        <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
+          <th class="text-center" style="width: 60px;"># ID</th>
+          <th>Código Estante</th>
+          <th>Almacén Asignado</th>
+          <th>Dimensiones / Capacidad</th>
+          <th class="text-center">Herramientas</th>
+          <th class="text-center" style="width: 120px;">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for estante in estantes %}
         <tr
-          data-est-id="{{ estante.id }}"
-          data-est-almacen="{{ estante.almacen }}"
+          data-est-id="{{ estante.pk }}"
+          data-est-almacen="{{ estante.codigo_almacen.nombre|default:estante.almacen }}"
           data-est-codigo="{{ estante.codigo|escapejs }}"
-          data-est-detalles="{{ estante.detalles|default:''|escapejs }}"
-          data-est-capacidad="{{ estante.capacidad|default:'' }}"
-          data-est-fecha="{{ estante.fecha_creacion|date:'d/m/Y H:i' }}"
+          data-est-detalles="{{ estante.dimensiones|default:estante.detalles|default:''|escapejs }}"
+          data-est-capacidad="{{ estante.dimensiones|default:estante.capacidad|default:'' }}"
         >
-          <td><span class="sku-text">{{ estante.id }}</span></td>
-          <td>
-            <span class="badge-state badge-aprobada">{{ estante.almacen }}</span>
+          <!-- ID -->
+          <td class="text-center">
+            <span class="badge bg-light text-secondary border font-monospace px-2 py-1">
+              #{{ estante.pk }}
+            </span>
           </td>
-          <td class="fw-semibold">{{ estante.codigo }}</td>
-          <td class="description-col">
-            {% if estante.detalles %}
-            <button type="button" class="btn btn-outline-secondary btn-sm btn-action-small btn-ver-detalle-estante" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles del estante">
-              <i class="bi bi-eye"></i>
-            </button>
+
+          <!-- Código Estante -->
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                <i class="bi bi-grid-3x3-gap fs-6"></i>
+              </div>
+              <div>
+                <div class="fw-bold text-dark text-nowrap">
+                  {{ estante.codigo }}
+                </div>
+                <div class="text-muted extra-small font-monospace" style="font-size: 0.72rem;">
+                  ID: #{{ estante.pk }}
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Almacén Asignado -->
+          <td>
+            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-size: 0.75rem;">
+              <i class="bi bi-building text-primary"></i>
+              <span>{{ estante.codigo_almacen.nombre|default:estante.almacen }}</span>
+            </span>
+          </td>
+
+          <!-- Dimensiones / Capacidad -->
+          <td>
+            {% if estante.dimensiones or estante.detalles or estante.capacidad %}
+            <span class="badge bg-light text-secondary border px-2 py-1 font-monospace" style="font-size: 0.75rem;">
+              <i class="bi bi-arrows-fullscreen text-primary me-1"></i>{{ estante.dimensiones|default:estante.detalles|default:estante.capacidad }}
+            </span>
             {% else %}
-            <span class="text-muted-small">—</span>
+            <span class="text-muted small">—</span>
             {% endif %}
           </td>
-          <td>
-            {% if estante.capacidad %}
-            <span class="badge-state badge-aprobada">{{ estante.capacidad }}</span>
-            {% else %}
-            <span class="text-muted-small">—</span>
-            {% endif %}
+
+          <!-- Herramientas -->
+          <td class="text-center">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-wrench-adjustable"></i>
+              <span>{{ estante.herramientas.count|default:0 }} items</span>
+            </span>
           </td>
-          <td>{{ estante.fecha_creacion|date:"d/m/Y H:i" }}</td>
-          <td>
-            <div class="d-flex gap-1 justify-content-center align-items-center">
-              <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditarEstante('{{ estante.pk }}','{{ estante.almacen.pk }}','{{ estante.codigo|escapejs }}','{{ estante.detalles|default:''|escapejs }}','{{ estante.capacidad|default:'' }}')">
-                <i class="bi bi-pencil"></i>
+
+          <!-- Acciones -->
+          <td class="text-center text-nowrap">
+            <div class="d-inline-flex align-items-center gap-1">
+              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs btn-ver-detalle-estante" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles rápidos" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+                <i class="bi bi-eye text-primary"></i>
               </button>
-              <button type="button" class="btn btn-sm btn-light border text-danger btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar estante" onclick="abrirEliminarEstante('{{ estante.pk }}','{{ estante.codigo|escapejs }}')">
+              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditarEstante('{{ estante.pk }}','{{ estante.codigo_almacen.pk|default:estante.almacen.pk }}','{{ estante.codigo|escapejs }}','{{ estante.dimensiones|default:estante.detalles|default:''|escapejs }}','{{ estante.dimensiones|default:estante.capacidad|default:'' }}')">
+                <i class="bi bi-pencil text-secondary"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-light border text-danger rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar estante" onclick="abrirEliminarEstante('{{ estante.pk }}','{{ estante.codigo|escapejs }}')">
                 <i class="bi bi-trash"></i>
               </button>
             </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center py-5 text-muted">
+            <i class="bi bi-layout-three-columns display-6 d-block mb-2 opacity-50"></i>
+            <h6 class="fw-semibold">No hay estantes registrados</h6>
+            <p class="small text-muted mb-0">Usa el botón <strong>Nuevo Estante</strong> para crear una estantería en almacén.</p>
           </td>
         </tr>
         {% endfor %}

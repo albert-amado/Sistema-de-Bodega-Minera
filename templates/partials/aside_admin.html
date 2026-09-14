@@ -1,6 +1,6 @@
 <aside>
   <div class="aside-header">
-    <i class="bi bi-cloud-haze2-fill text-warning me-2"></i>
+    <i class="bi bi-gem text-warning me-2 fs-5"></i>
     <span class="aside-brand-name">Mine</span>
     <span class="aside-brand-sub">inventory</span>
   </div>
@@ -33,25 +33,11 @@
     <a href="{% url 'prestamo' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'prestamo' or request.resolver_match.url_name == 'prestamo_lista' %}active{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <polyline points="9 10 4 15 9 20" />
-        <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+        <path d="M9 14l2 2 4-4" />
       </svg>
       Préstamos
-    </a>
-
-    <!-- ANÁLISIS -->
-    <div class="px-3 pt-4 pb-1">
-      <span class="text-uppercase aside-section-label">Análisis</span>
-    </div>
-
-    <a href="{% url 'reportes' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'reportes' %}active{% endif %}">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <line x1="18" y1="20" x2="18" y2="10" />
-        <line x1="12" y1="20" x2="12" y2="4" />
-        <line x1="6" y1="20" x2="6" y2="14" />
-      </svg>
-      Reportes
     </a>
 
     <!-- DEVOLUCIONES -->
@@ -76,9 +62,10 @@
     <a href="{% url 'lista_usuarios' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'lista_usuarios' or request.resolver_match.url_name == 'usuarios' %}active{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-        <polyline points="10 17 15 12 10 7" />
-        <line x1="15" y1="12" x2="3" y2="12" />
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
       Lista de Usuarios
     </a>
@@ -109,13 +96,11 @@
     <div class="mx-2">
       <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium extracted-style-101 {% if request.resolver_match.url_name == 'almacen' or request.resolver_match.url_name == 'almacenes' or request.resolver_match.url_name == 'estantes' or request.resolver_match.url_name == 'vista_almacenes' or request.resolver_match.url_name == 'vista_estantes' %}active{% endif %}" data-bs-toggle="collapse" href="#menuAlmacen" role="button" aria-expanded="{% if request.resolver_match.url_name == 'almacen' or request.resolver_match.url_name == 'almacenes' or request.resolver_match.url_name == 'estantes' or request.resolver_match.url_name == 'vista_almacenes' or request.resolver_match.url_name == 'vista_estantes' %}true{% else %}false{% endif %}">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <rect x="2" y="7" width="20" height="14" rx="2" />
-          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-          <line x1="12" y1="12" x2="12" y2="17" />
-          <line x1="9.5" y1="14.5" x2="14.5" y2="14.5" />
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
         <span class="flex-grow-1">Almacén</span>
-        <i class="bi bi-chevron-down opacity-25 extracted-style-357"></i>
+        <i class="bi bi-chevron-down opacity-50 ms-auto"></i>
       </a>
       <div class="collapse {% if request.resolver_match.url_name == 'almacen' or request.resolver_match.url_name == 'almacenes' or request.resolver_match.url_name == 'estantes' or request.resolver_match.url_name == 'vista_almacenes' or request.resolver_match.url_name == 'vista_estantes' %}show{% endif %}" id="menuAlmacen">
         <ul class="list-unstyled ps-4 mb-0">
@@ -131,9 +116,9 @@
           <li>
             <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'estantes' or request.resolver_match.url_name == 'vista_estantes' %}active{% endif %}" href="{% url 'estantes' %}">
               <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <line x1="3" y1="9" x2="21" y2="9" />
+                <line x1="3" y1="15" x2="21" y2="15" />
               </svg>
               Estantes
             </a>

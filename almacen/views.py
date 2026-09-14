@@ -104,10 +104,10 @@ def crear_estante(request):
 
 def detalle_almacen(request, pk):
     almacen = get_object_or_404(Almacen, pk=pk)
-    estantes = Estante.objects.filter(almacen=almacen)
+    estantes = Estante.objects.filter(codigo_almacen=almacen)
     context = {
         'almacen': almacen,
         'estantes': estantes,
     }
 
-    return render(request, 'detalle_almacen.html', context)
+    return render(request, 'detalle_almacen.html', context)

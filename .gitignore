@@ -5,10 +5,10 @@ db.sqlite3
 db.sqlite3-journal
 media
 
-# Migraciones de Django (Ignorar archivos de migración excepto __init__.py)
-*/migrations/*.py
-!*/migrations/__init__.py
-*/migrations/*.pyc
+# Migraciones de Django
+*/migrations/
+**/migrations/
+
 
 # Assets
 node_modules/
@@ -32,10 +32,12 @@ __pycache__/
 # Static files recolectados
 staticfiles/
 
-# Testing / coverage
+# Testing / coverage / reports
 .pytest_cache/
 .coverage
 htmlcov/
+reporte_*.html
+
 
 # Editor / OS
 .vscode/

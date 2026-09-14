@@ -19,7 +19,7 @@ from usuario.models import Usuario
 @sesion_requerida
 def inventario_view(request):
     """Vista principal del Inventario de Herramientas y Catálogo de Equipos."""
-    herramientas = Herramienta.objects.select_related('codigo_categoria', 'codigo_suministro').all()
+    herramientas = Herramienta.objects.select_related('codigo_categoria', 'codigo_suministro', 'estante', 'estante__codigo_almacen').all()
     categorias = CategoriaHerramienta.objects.all()
     almacenes = Almacen.objects.all()
     estantes = Estante.objects.select_related('codigo_almacen').all()
@@ -33,14 +33,18 @@ def inventario_view(request):
             nombre = request.POST.get('nombre', '').strip()
             cat_id = request.POST.get('categoria')
             descripcion = request.POST.get('descripcion', '').strip()
+            estante_id = request.POST.get('estante')
 
             cat = CategoriaHerramienta.objects.filter(pk=cat_id).first() if cat_id else None
+            estante = Estante.objects.filter(pk=estante_id).first() if estante_id else None
+
             Herramienta.objects.create(
                 codigo_sku=sku,
                 nombre_herramienta=nombre,
                 codigo_categoria=cat,
                 descripcion=descripcion,
-                disponibilidad='Disponible'
+                disponibilidad='Disponible',
+                estante=estante,
             )
             messages.success(request, f"Herramienta '{nombre}' registrada con éxito en inventario.")
             return redirect('inventario')
@@ -54,6 +58,13 @@ def inventario_view(request):
             cat_id = request.POST.get('categoria')
             if cat_id:
                 herramienta.codigo_categoria = CategoriaHerramienta.objects.filter(pk=cat_id).first()
+
+            estante_id = request.POST.get('estante')
+            if estante_id:
+                herramienta.estante = Estante.objects.filter(pk=estante_id).first()
+            else:
+                herramienta.estante = None
+
             stock_val = request.POST.get('stock')
             if stock_val is not None and stock_val.strip():
                 herramienta.stock_disponible = stock_val

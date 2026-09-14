@@ -34,7 +34,7 @@ $(document).ready(function () {
     },
     order: [],
     columnDefs: [
-      { orderable: false, targets: [0, 4, 6] }
+      { orderable: false, targets: [0, 4, 7] }
     ],
     pageLength: 10,
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
@@ -57,14 +57,14 @@ $(document).ready(function () {
 
   $('#devoluciones-estado').on('change', function () {
     var val = $(this).val();
-    table.column(6).search(val ? val : '', true, false).draw();
+    table.column(5).search(val ? val : '', true, false).draw();
   });
 
   $('#btn-limpiar-filtros-dev').on('click', function (e) {
     e.preventDefault();
     $('#devoluciones-busqueda').val('');
     $('#devoluciones-estado').val('');
-    table.search('').column(6).search('').draw();
+    table.search('').column(5).search('').draw();
   });
 
   // ─── PASO 3: función toggle de detalles
