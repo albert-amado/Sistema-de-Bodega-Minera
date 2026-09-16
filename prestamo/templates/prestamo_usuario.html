@@ -59,24 +59,23 @@
 </div>
 
 {# ══ FILTROS ══ #}
-<div class="card border-0 shadow-sm mb-3">
-  <div class="card-body py-2 px-3">
-    <div class="d-flex gap-2 flex-wrap align-items-center">
-      <button class="btn btn-sm btn-primary pu-filter-btn" data-filter="todos" onclick="puFiltrar('todos', this)">
-        Todos <span class="badge bg-white text-primary ms-1 font-monospace">{{ total_prestamos }}</span>
-      </button>
-      <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="activo" onclick="puFiltrar('activo', this)">
-        Activos
-      </button>
-      <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="pendiente" onclick="puFiltrar('pendiente', this)">
-        Pendientes
-      </button>
-      <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="devuelto" onclick="puFiltrar('devuelto', this)">
-        Devueltos
-      </button>
-    </div>
+<div class="sfb-wrap mb-3">
+  <div class="sfb-pill-group">
+    <button class="sfb-pill active" data-filter="todos" onclick="puFiltrar('todos', this)">
+      Todos <span class="sfb-pill-badge">{{ total_prestamos }}</span>
+    </button>
+    <button class="sfb-pill" data-filter="activo" onclick="puFiltrar('activo', this)">
+      Activos
+    </button>
+    <button class="sfb-pill" data-filter="pendiente" onclick="puFiltrar('pendiente', this)">
+      Pendientes
+    </button>
+    <button class="sfb-pill" data-filter="devuelto" onclick="puFiltrar('devuelto', this)">
+      Devueltos
+    </button>
   </div>
 </div>
+
 
 {# ══ TABLA DE PRÉSTAMOS ══ #}
 {% if all_prestamos %}
@@ -335,36 +334,5 @@
 {% endblock %}
 
 {% block js %}
-<script>
-  document.querySelectorAll('[data-bs-target^="#pu-detail-"]').forEach(function (btn) {
-    var target = document.querySelector(btn.getAttribute('data-bs-target'));
-    if (!target) return;
-    target.addEventListener('show.bs.collapse', function () {
-      var icon = btn.querySelector('.pu-chevron');
-      if (icon) icon.style.transform = 'rotate(90deg)';
-    });
-    target.addEventListener('hide.bs.collapse', function () {
-      var icon = btn.querySelector('.pu-chevron');
-      if (icon) icon.style.transform = 'rotate(0deg)';
-    });
-  });
-
-  function puFiltrar(estado, btn) {
-    document.querySelectorAll('.pu-filter-btn').forEach(function (b) {
-      b.classList.remove('btn-primary');
-      b.classList.add('btn-outline-secondary');
-    });
-    btn.classList.remove('btn-outline-secondary');
-    btn.classList.add('btn-primary');
-
-    document.querySelectorAll('#pu-tabla .pu-row').forEach(function (tr) {
-      var mostrar = estado === 'todos' || tr.dataset.estado === estado || (estado === 'activo' && tr.dataset.estado === 'ENTREGADO');
-      tr.style.display = mostrar ? '' : 'none';
-      var siguiente = tr.nextElementSibling;
-      if (siguiente && siguiente.querySelector('.collapse')) {
-        siguiente.style.display = mostrar ? '' : 'none';
-      }
-    });
-  }
-</script>
+<script defer src="{% static 'js/prestamo_usuario.js' %}?v=1"></script>
 {% endblock %}

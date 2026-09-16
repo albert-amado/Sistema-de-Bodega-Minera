@@ -1,5 +1,6 @@
 import os
 import sys
+
 import django
 
 # Asegurar codificación utf-8 en consola
@@ -18,8 +19,13 @@ django.setup()
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
-from prestamo.models import Herramienta, Prestamo, DetallePrestamo, DevolucionHerramienta
-from prestamo.forms import PrestamoForm, DetallePrestamoForm, HerramientaForm
+
+from prestamo.forms import DetallePrestamoForm, PrestamoForm
+from prestamo.models import (
+    DetallePrestamo,
+    Herramienta,
+    Prestamo,
+)
 
 
 def run_security_audit():

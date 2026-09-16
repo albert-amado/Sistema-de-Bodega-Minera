@@ -1,6 +1,7 @@
 import re
-from django.db import models
+
 from django.core.exceptions import ValidationError
+from django.db import models
 
 
 def validar_numero_documento(value, tipo):

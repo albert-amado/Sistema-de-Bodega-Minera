@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from prestamo import views as prestamo_views
 from almacen import views as almacen_views
-from usuario import views as usuario_views
-from pagina_principal import views as pagina_principal_views
+from configuracion import views as configuracion_views
 from herramienta import views as herramienta_views
+from pagina_principal import views as pagina_principal_views
+from prestamo import views as prestamo_views
+from usuario import views as usuario_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -21,6 +22,7 @@ urlpatterns = [
     path('almacen/', almacen_views.vista_almacenes, name='almacen'),
     path('estantes/', almacen_views.vista_estantes, name='estantes'),
     path('usuarios/', usuario_views.lista_usuarios_view, name='lista_usuarios'),
+    path('configuracion/', configuracion_views.panel_configuracion_view, name='configuracion'),
 
     # Rutas por aplicación
     path('prestamo/', include('prestamo.urls')),

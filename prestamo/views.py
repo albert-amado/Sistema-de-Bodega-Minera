@@ -5,10 +5,14 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
+from common.mixins import sesion_requerida
 from herramienta.models import Herramienta
+from usuario.decorators import admin_required
 from usuario.models import Usuario
-from usuario.decorators import login_required, admin_required
 
+from .forms import (
+    EditarPrestamoObservacionesForm,
+)
 from .models import (
     DetallePrestamo,
     DevolucionHerramienta,
@@ -22,9 +26,65 @@ def notificaciones_json(request):
     return JsonResponse({"items": []})
 
 
-@login_required
+@sesion_requerida
 def prestamo_lista(request):
     """Vista principal para la gestión de préstamos (Admin)."""
+    es_admin = request.session.get('usuario_rol', '').lower() in ('admin', 'administrador')
+    if not es_admin:
+        return redirect('prestamo_usuario')
+
+    # Manejar acciones POST enviadas directamente a la ruta 'prestamo'
+    if request.method == "POST":
+        accion = request.POST.get("accion", "")
+
+        if accion in ("aprobar_pendiente_modal", "aprobar"):
+            pk = request.POST.get("prestamo_pk") or request.POST.get("pk")
+            prestamo = get_object_or_404(Prestamo, pk=pk)
+
+            with transaction.atomic():
+                # Validar stock antes de entregar
+                for detalle in prestamo.detalles.select_related("codigo_herramienta"):
+                    h = detalle.codigo_herramienta
+                    if h and h.stock_disponible < detalle.cantidad:
+                        messages.error(request, f"Stock insuficiente para {h.nombre}. Disponible: {h.stock_disponible}")
+                        return redirect("prestamo")
+
+                for detalle in prestamo.detalles.select_related("codigo_herramienta"):
+                    h = detalle.codigo_herramienta
+                    if h:
+                        h.stock_disponible = max(0, h.stock_disponible - detalle.cantidad)
+                        h.save()
+
+                prestamo.estado = EstadoPrestamo.ENTREGADO
+                prestamo.save()
+                messages.success(request, f"Préstamo #{prestamo.pk} aprobado y entregado con éxito.")
+            return redirect("prestamo")
+
+        elif accion in ("rechazar_pendiente", "rechazar"):
+            pk = request.POST.get("prestamo_pk") or request.POST.get("pk")
+            motivo = request.POST.get("motivo_rechazo", "").strip()
+            prestamo = get_object_or_404(Prestamo, pk=pk)
+
+            prestamo.estado = EstadoPrestamo.CANCELADO
+            if motivo:
+                prestamo.observaciones = (prestamo.observaciones or "") + f" | Cancelado: {motivo}"
+            prestamo.save()
+            messages.warning(request, f"Préstamo #{prestamo.pk} rechazado.")
+            return redirect("prestamo")
+
+        elif accion == "editar":
+            pk = request.POST.get("prestamo_pk") or request.POST.get("pk")
+            observaciones = request.POST.get("observaciones", "").strip()
+            prestamo = get_object_or_404(Prestamo, pk=pk)
+            prestamo.observaciones = observaciones
+            prestamo.save()
+            messages.success(request, f"Préstamo #{prestamo.pk} actualizado correctamente.")
+            return redirect("prestamo")
+
+        elif not accion or accion == "crear_prestamo":
+            # Wizard creación de préstamo desde admin
+            return crear_prestamo(request)
+
     prestamos_qs = (
         Prestamo.objects.prefetch_related(
             "detalles__codigo_herramienta", "devoluciones"
@@ -33,26 +93,19 @@ def prestamo_lista(request):
         .order_by("-pk")
     )
 
-    # Filtro opcional por estado
     estado_filtro = request.GET.get("estado")
     if estado_filtro:
         prestamos_qs = prestamos_qs.filter(estado=estado_filtro)
 
-    # Conteos para tarjetas KPI
     total_prestamos = Prestamo.objects.count()
     activos = Prestamo.objects.filter(estado=EstadoPrestamo.ENTREGADO).count()
-    pendientes = Prestamo.objects.filter(
-        estado=EstadoPrestamo.PENDIENTE
-    ).count()
+    pendientes = Prestamo.objects.filter(estado=EstadoPrestamo.PENDIENTE).count()
     devueltos = Prestamo.objects.filter(estado=EstadoPrestamo.DEVUELTO).count()
-    cancelados = Prestamo.objects.filter(
-        estado=EstadoPrestamo.CANCELADO
-    ).count()
+    cancelados = Prestamo.objects.filter(estado=EstadoPrestamo.CANCELADO).count()
 
     herramientas_qs = Herramienta.objects.all()
     usuarios_qs = Usuario.objects.all()
 
-    # Formateo JSON para scripts en plantilla
     herramientas_json = [
         {
             "pk": h.pk,
@@ -88,6 +141,7 @@ def prestamo_lista(request):
         "productos_disponibles": herramientas_qs,
         "productos": herramientas_qs,
         "usuarios": usuarios_qs,
+        "usuarios_sistema": usuarios_qs,
         "usuario": usuario_actual,
         "herramientas_json": json.dumps(herramientas_json),
         "productos_json": json.dumps(herramientas_json),
@@ -96,32 +150,23 @@ def prestamo_lista(request):
     return render(request, "prestamo.html", context)
 
 
-@login_required
+@sesion_requerida
 def prestamo_usuario_lista(request):
     """Vista de préstamos para la interfaz de Usuario."""
     doc_sesion = request.session.get('usuario_documento')
 
-    if doc_sesion:
-        prestamos_qs = (
-            Prestamo.objects.filter(documento_id=doc_sesion)
-            .prefetch_related("detalles__codigo_herramienta")
-            .order_by("-pk")
-        )
-    else:
-        prestamos_qs = (
-            Prestamo.objects.all()
-            .prefetch_related("detalles__codigo_herramienta")
-            .order_by("-pk")
-        )
+    prestamos_qs = (
+        Prestamo.objects.filter(documento_id=doc_sesion)
+        .prefetch_related("detalles__codigo_herramienta")
+        .order_by("-pk")
+    )
 
     total_prestamos = prestamos_qs.count()
-    total_activos = prestamos_qs.filter(
-        estado=EstadoPrestamo.ENTREGADO
-    ).count()
-    vencidos_count = 0
+    total_activos = prestamos_qs.filter(estado=EstadoPrestamo.ENTREGADO).count()
+    vencidos_count = prestamos_qs.filter(estado=EstadoPrestamo.CANCELADO).count()
     proximos_vencer = 0
 
-    herramientas_qs = Herramienta.objects.all()
+    herramientas_qs = Herramienta.objects.exclude(disponibilidad="0").exclude(disponibilidad="No disponible")
     usuario_obj = Usuario.objects.filter(documento=doc_sesion).first() if doc_sesion else None
 
     context = {
@@ -138,7 +183,7 @@ def prestamo_usuario_lista(request):
     return render(request, "prestamo_usuario.html", context)
 
 
-@login_required
+@admin_required
 @transaction.atomic
 def crear_prestamo(request):
     """Procesa la creación de un nuevo préstamo (Wizard Admin)."""
@@ -150,18 +195,33 @@ def crear_prestamo(request):
         cantidades = request.POST.getlist("cantidad[]")
 
         if not documento or not ficha:
-            messages.error(
-                request, "El documento y la ficha SENA son obligatorios."
-            )
-            return redirect("inventario")
-
-        if not herramientas_ids:
-            messages.error(
-                request, "Debes seleccionar al menos una herramienta."
-            )
-            return redirect("inventario")
+            messages.error(request, "El documento y la ficha SENA son obligatorios.")
+            return redirect("prestamo")
 
         usuario_obj = Usuario.objects.filter(documento=documento).first()
+        if not usuario_obj:
+            messages.error(request, "El usuario con el documento indicado no existe.")
+            return redirect("prestamo")
+
+        items_validos = []
+        for h_id, cant in zip(herramientas_ids, cantidades):
+            if not h_id:
+                continue
+            try:
+                cant_num = int(cant)
+                if cant_num <= 0:
+                    continue
+                herramienta = Herramienta.objects.get(pk=h_id)
+                if cant_num > herramienta.stock_disponible:
+                    messages.error(request, f"Stock insuficiente para {herramienta.nombre} (disponible: {herramienta.stock_disponible}).")
+                    return redirect("prestamo")
+                items_validos.append((herramienta, cant_num))
+            except (ValueError, Herramienta.DoesNotExist):
+                continue
+
+        if not items_validos:
+            messages.error(request, "Debes seleccionar al menos una herramienta válida con cantidad mayor a 0.")
+            return redirect("prestamo")
 
         nuevo_prestamo = Prestamo.objects.create(
             documento=usuario_obj,
@@ -170,76 +230,78 @@ def crear_prestamo(request):
             observaciones=observaciones,
         )
 
-        for h_id, cant in zip(herramientas_ids, cantidades):
-            if not h_id:
-                continue
-            try:
-                cant_num = int(cant)
-                herramienta = Herramienta.objects.get(pk=h_id)
-                DetallePrestamo.objects.create(
-                    codigo_prestamo=nuevo_prestamo,
-                    codigo_herramienta=herramienta,
-                    cantidad=cant_num,
-                )
-            except (ValueError, Herramienta.DoesNotExist):
-                continue
+        for herramienta, cant_num in items_validos:
+            DetallePrestamo.objects.create(
+                codigo_prestamo=nuevo_prestamo,
+                codigo_herramienta=herramienta,
+                cantidad=cant_num,
+            )
 
-        messages.success(
-            request, f"Préstamo #{nuevo_prestamo.pk} registrado con éxito."
-        )
-    return redirect("inventario")
+        messages.success(request, f"Préstamo #{nuevo_prestamo.pk} registrado con éxito.")
+    return redirect("prestamo")
 
 
-@login_required
+@admin_required
 def aprobar_prestamo(request):
     """Aprueba una solicitud de préstamo y descuenta stock."""
     if request.method == "POST":
-        pk = request.POST.get("pk")
+        pk = request.POST.get("pk") or request.POST.get("prestamo_pk")
         prestamo = get_object_or_404(Prestamo, pk=pk)
 
         with transaction.atomic():
             for detalle in prestamo.detalles.select_related("codigo_herramienta"):
                 h = detalle.codigo_herramienta
-                if h and h.stock_disponible >= detalle.cantidad:
-                    h.stock_disponible -= detalle.cantidad
+                if h and h.stock_disponible < detalle.cantidad:
+                    messages.error(request, f"Stock insuficiente para {h.nombre}.")
+                    return redirect("prestamo")
+
+            for detalle in prestamo.detalles.select_related("codigo_herramienta"):
+                h = detalle.codigo_herramienta
+                if h:
+                    h.stock_disponible = max(0, h.stock_disponible - detalle.cantidad)
                     h.save()
-                elif h:
-                    messages.error(
-                        request, f"Stock insuficiente para {h.nombre}."
-                    )
-                    return redirect("inventario")
 
             prestamo.estado = EstadoPrestamo.ENTREGADO
             prestamo.save()
-            messages.success(
-                request, f"Préstamo #{prestamo.pk} aprobado y entregado."
-            )
+            messages.success(request, f"Préstamo #{prestamo.pk} aprobado y entregado.")
 
-    return redirect("inventario")
+    return redirect("prestamo")
 
 
-@login_required
+@admin_required
 def rechazar_prestamo(request):
     """Rechaza / Cancela una solicitud de préstamo."""
     if request.method == "POST":
-        pk = request.POST.get("pk")
-        motivo = request.POST.get("motivo_rechazo", "")
+        pk = request.POST.get("pk") or request.POST.get("prestamo_pk")
+        motivo = request.POST.get("motivo_rechazo", "").strip()
         prestamo = get_object_or_404(Prestamo, pk=pk)
 
         prestamo.estado = EstadoPrestamo.CANCELADO
         if motivo:
-            prestamo.observaciones = (
-                prestamo.observaciones or ""
-            ) + f" | Cancelado: {motivo}"
+            prestamo.observaciones = (prestamo.observaciones or "") + f" | Cancelado: {motivo}"
         prestamo.save()
         messages.warning(request, f"Préstamo #{prestamo.pk} rechazado.")
 
-    return redirect("inventario")
+    return redirect("prestamo")
 
 
-@login_required
+@admin_required
 def devoluciones_lista(request):
     """Vista principal para la gestión de devoluciones (Admin)."""
+    if request.method == "POST":
+        action = request.POST.get("action")
+        dev_id = request.POST.get("devolucion_id")
+
+        if action == "aceptar" and dev_id:
+            dev = get_object_or_404(DevolucionHerramienta, pk=dev_id)
+            messages.success(request, f"Devolución #{dev.pk} confirmada.")
+            return redirect("devoluciones")
+
+        elif action == "rechazar" and dev_id:
+            dev = get_object_or_404(DevolucionHerramienta, pk=dev_id)
+            messages.warning(request, f"Devolución #{dev.pk} observada.")
+            return redirect("devoluciones")
+
     devoluciones_qs = (
         DevolucionHerramienta.objects.select_related(
             "codigo_prestamo__documento", "codigo_recibe"
@@ -267,7 +329,7 @@ def devoluciones_lista(request):
     return render(request, "devoluciones.html", context)
 
 
-@login_required
+@admin_required
 def devolver_prestamo(request):
     """Registra la devolución de herramientas de un préstamo."""
     if request.method == "POST":
@@ -282,9 +344,7 @@ def devolver_prestamo(request):
                         h.stock_disponible += detalle.cantidad
                         h.save()
 
-                devolucion_total = (
-                    request.POST.get("devolucion_total") != "false"
-                )
+                devolucion_total = request.POST.get("devolucion_total") != "false"
                 if devolucion_total:
                     prestamo.estado = EstadoPrestamo.DEVUELTO
                 else:
@@ -294,9 +354,10 @@ def devolver_prestamo(request):
                 obs = (
                     request.POST.get("observaciones")
                     or request.POST.get("motivo")
-                    or "Devolución registrada"
-                )
+                    or "Devolución registrada correctamente"
+                ).strip()
 
+                # Asignar estrictamente el usuario que recibe desde la sesión activa
                 doc_sesion = request.session.get('usuario_documento')
                 rec_por = Usuario.objects.filter(documento=doc_sesion).first() if doc_sesion else None
 
@@ -307,66 +368,83 @@ def devolver_prestamo(request):
                 )
                 messages.success(
                     request,
-                    f"Devolución del Préstamo #{prestamo.pk} completada.",
+                    f"Devolución del Préstamo #{prestamo.pk} completada exitosamente.",
                 )
 
     referer = request.META.get("HTTP_REFERER", "")
     if "devoluciones" in referer:
         return redirect("devoluciones")
-    return redirect("inventario")
+    return redirect("prestamo")
 
 
-@login_required
+@admin_required
 def editar_prestamo(request):
     """Actualiza las observaciones de un préstamo existente."""
     if request.method == "POST":
-        pk = request.POST.get("pk")
-        observaciones = request.POST.get("observaciones", "")
+        pk = request.POST.get("pk") or request.POST.get("prestamo_pk")
         prestamo = get_object_or_404(Prestamo, pk=pk)
-        prestamo.observaciones = observaciones
-        prestamo.save()
-        messages.success(request, f"Préstamo #{prestamo.pk} actualizado.")
-    return redirect("inventario")
+        form = EditarPrestamoObservacionesForm(request.POST, instance=prestamo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Préstamo #{prestamo.pk} actualizado.")
+        else:
+            messages.error(request, "Error al actualizar el préstamo.")
+    return redirect("prestamo")
 
 
-@login_required
+@sesion_requerida
 def usuario_solicitar_prestamo(request):
     """Procesa la solicitud de préstamo enviada desde el portal de usuario."""
     if request.method == "POST":
-        documento = request.POST.get("documento", "").strip()
-        ficha = request.POST.get("ficha", "").strip()
+        # SEGURIDAD: El documento se toma EXCLUSIVAMENTE de la sesión activa del usuario
+        doc_sesion = request.session.get('usuario_documento')
+        usuario_obj = get_object_or_404(Usuario, documento=doc_sesion)
+
+        ficha = request.POST.get("ficha", "").strip() or usuario_obj.ficha or ""
         observaciones = request.POST.get("observaciones", "").strip()
         herramientas_ids = request.POST.getlist("herramienta[]")
         cantidades = request.POST.getlist("cantidad[]")
 
-        if not documento or not ficha:
-            messages.error(request, "Documento y Ficha SENA son requeridos.")
-            return redirect("pagina_principal")
+        if not ficha:
+            messages.error(request, "La Ficha SENA es requerida.")
+            return redirect("prestamo_usuario")
+
+        items_solicitados = []
+        for h_id, cant in zip(herramientas_ids, cantidades):
+            if not h_id:
+                continue
+            try:
+                cant_num = int(cant)
+                if cant_num <= 0:
+                    continue
+                herramienta = Herramienta.objects.get(pk=h_id)
+                if cant_num > herramienta.stock_disponible:
+                    messages.error(request, f"Stock insuficiente para {herramienta.nombre} (disponible: {herramienta.stock_disponible}).")
+                    return redirect("prestamo_usuario")
+                items_solicitados.append((herramienta, cant_num))
+            except (ValueError, Herramienta.DoesNotExist):
+                continue
+
+        if not items_solicitados:
+            messages.error(request, "Debes seleccionar al menos una herramienta válida.")
+            return redirect("prestamo_usuario")
 
         with transaction.atomic():
-            usr = Usuario.objects.filter(documento=documento).first()
             nuevo = Prestamo.objects.create(
-                documento=usr,
+                documento=usuario_obj,
                 ficha=ficha,
                 estado=EstadoPrestamo.PENDIENTE,
                 observaciones=observaciones,
             )
 
-            for h_id, cant in zip(herramientas_ids, cantidades):
-                if not h_id:
-                    continue
-                try:
-                    cant_num = int(cant)
-                    herramienta = Herramienta.objects.get(pk=h_id)
-                    DetallePrestamo.objects.create(
-                        codigo_prestamo=nuevo,
-                        codigo_herramienta=herramienta,
-                        cantidad=cant_num,
-                    )
-                except (ValueError, Herramienta.DoesNotExist):
-                    continue
+            for herramienta, cant_num in items_solicitados:
+                DetallePrestamo.objects.create(
+                    codigo_prestamo=nuevo,
+                    codigo_herramienta=herramienta,
+                    cantidad=cant_num,
+                )
 
         messages.success(
-            request, f"Solicitud #{nuevo.pk} enviada correctamente."
+            request, f"Solicitud #{nuevo.pk} enviada correctamente. Espera la aprobación del administrador."
         )
-    return redirect("pagina_principal")
+    return redirect("prestamo_usuario")

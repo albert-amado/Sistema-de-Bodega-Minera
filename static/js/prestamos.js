@@ -391,3 +391,34 @@ function escapeHtml(str) {
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+
+window.PRESTAMO_URL = window.PRESTAMO_URL || '/prestamo/';
+
+document.addEventListener('click', function (e) {
+  var btnAprobar = e.target.closest('.btn-aprobar-solicitud');
+  if (btnAprobar) {
+    e.preventDefault();
+    var pk = btnAprobar.getAttribute('data-pk');
+    var nombre = btnAprobar.getAttribute('data-nombre');
+    var doc = btnAprobar.getAttribute('data-usuario');
+    var motivo = btnAprobar.getAttribute('data-motivo');
+    var fecha = btnAprobar.getAttribute('data-fecha');
+    var jsonSpan = btnAprobar.querySelector('.items-json');
+    var items = [];
+    if (jsonSpan) {
+      try { items = JSON.parse(jsonSpan.textContent); } catch (err) {}
+    }
+    if (typeof abrirAprobar === 'function') {
+      abrirAprobar(pk, nombre, doc, motivo, fecha, items);
+    }
+    return;
+  }
+  var btnDevolver = e.target.closest('.btn-devolver-prestamo');
+  if (btnDevolver) {
+    e.preventDefault();
+    var pk = btnDevolver.getAttribute('data-pk');
+    var usuario = btnDevolver.getAttribute('data-usuario');
+    if (typeof abrirDevolver === 'function') abrirDevolver(pk, usuario);
+    return;
+  }
+});

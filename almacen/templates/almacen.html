@@ -98,8 +98,8 @@
         <tr
           data-alm-id="{{ almacen.pk }}"
           data-alm-nombre="{{ almacen.nombre|escapejs }}"
-          data-alm-detalles="{{ almacen.ubicacion|default:almacen.detalles|default:''|escapejs }}"
-          data-alm-capacidad="{{ almacen.dimensiones|default:almacen.capacidad|default:'' }}"
+          data-alm-ubicacion="{{ almacen.ubicacion|default:''|escapejs }}"
+          data-alm-dimensiones="{{ almacen.dimensiones|default:''|escapejs }}"
         >
           <!-- ID -->
           <td class="text-center">
@@ -128,10 +128,10 @@
 
           <!-- Ubicación -->
           <td>
-            {% if almacen.ubicacion or almacen.detalles %}
+            {% if almacen.ubicacion %}
             <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-size: 0.75rem;">
               <i class="bi bi-geo-alt-fill text-danger"></i>
-              <span>{{ almacen.ubicacion|default:almacen.detalles }}</span>
+              <span>{{ almacen.ubicacion }}</span>
             </span>
             {% else %}
             <span class="text-muted small fst-italic">Sin ubicación especificada</span>
@@ -140,9 +140,9 @@
 
           <!-- Dimensiones -->
           <td>
-            {% if almacen.dimensiones or almacen.capacidad %}
+            {% if almacen.dimensiones %}
             <span class="badge bg-light text-secondary border px-2 py-1 font-monospace" style="font-size: 0.75rem;">
-              <i class="bi bi-arrows-fullscreen text-primary me-1"></i>{{ almacen.dimensiones|default:almacen.capacidad }}
+              <i class="bi bi-arrows-fullscreen text-primary me-1"></i>{{ almacen.dimensiones }}
             </span>
             {% else %}
             <span class="text-muted small">—</span>

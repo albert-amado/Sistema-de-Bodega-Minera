@@ -1,0 +1,36 @@
+{
+    "active_target": "local",
+    "local_db": {
+        "driver": "sqlite3",
+        "host": "localhost",
+        "port": 5432,
+        "name": "db.sqlite3",
+        "user": "",
+        "password": "",
+        "ssl_mode": "prefer",
+        "timeout_sec": 5,
+        "conn_max_age": 600
+    },
+    "cloud_db": {
+        "driver": "postgresql",
+        "host": "ep-crimson-glitter-at1wc2qg-pooler.c-9.us-east-1.aws.neon.tech",
+        "port": 5432,
+        "name": "mine_inventory",
+        "user": "neondb_owner",
+        "password": "npg_3SWYcRrA5aTz",
+        "ssl_mode": "require",
+        "timeout_sec": 5,
+        "conn_max_age": 600
+    },
+    "system": {
+        "debug": true,
+        "log_level": "INFO",
+        "timezone": "America/Bogota",
+        "language_code": "es-co",
+        "currency_symbol": "COP ($)",
+        "date_format": "%d/%m/%Y",
+        "storage_driver": "local",
+        "media_path": "media",
+        "cloud_bucket_name": null
+    }
+}

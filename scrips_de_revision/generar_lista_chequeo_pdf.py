@@ -8,20 +8,23 @@ funcionales del prototipo (SENA / Centro Minero) con estándares de calidad de s
 
 import os
 import re
-import sys
-from datetime import datetime
 from pathlib import Path
 
-from reportlab.lib.pagesizes import A4
+from reportlab.graphics.shapes import Drawing, Polygon, Rect
 from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepTogether
-)
 from reportlab.pdfgen import canvas
-from reportlab.graphics.shapes import Drawing, Rect, Polygon
+from reportlab.platypus import (
+    KeepTogether,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  PALETA DE COLORES Y ESTILOS INSTITUCIONALES
@@ -354,7 +357,7 @@ def construir_pdf(filename="Lista_de_Chequeo_Audit_FullStack.pdf"):
     ]
 
     header_col3 = [
-        Paragraph(f"<b>Fecha:</b> 30 de junio 2026", style_header_sub),
+        Paragraph("<b>Fecha:</b> 30 de junio 2026", style_header_sub),
         Spacer(1, 4),
         Paragraph("<b>Ficha:</b> 3063723", style_header_sub),
     ]
@@ -452,7 +455,7 @@ def construir_pdf(filename="Lista_de_Chequeo_Audit_FullStack.pdf"):
     story.append(Spacer(1, 10))
 
     # 4. SECCIÓN DE EVALUACIÓN FINAL Y FIRMAS
-    veredicto_txt = f"<b>APROBADO [ X ] &nbsp;&nbsp; DEFICIENTE [ &nbsp; ]</b>" if aprobado else "<b>APROBADO [ &nbsp; ] &nbsp;&nbsp; DEFICIENTE [ X ]</b>"
+    veredicto_txt = "<b>APROBADO [ X ] &nbsp;&nbsp; DEFICIENTE [ &nbsp; ]</b>" if aprobado else "<b>APROBADO [ &nbsp; ] &nbsp;&nbsp; DEFICIENTE [ X ]</b>"
     veredicto_color = "#2E7D32" if aprobado else "#C62828"
 
     style_sig_label = ParagraphStyle(

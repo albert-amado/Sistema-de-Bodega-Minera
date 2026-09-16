@@ -7,8 +7,9 @@ from django.db.models.functions import TruncMonth
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from prestamo.models import Prestamo, DevolucionHerramienta, EstadoPrestamo
+from common.mixins import sesion_requerida
 from herramienta.models import Herramienta
+from prestamo.models import DevolucionHerramienta, Prestamo
 from usuario.models import Usuario
 
 MESES_ABREV = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
@@ -54,6 +55,7 @@ def _tendencia_meses(qs, hoy: date) -> dict[str, list]:
     }
 
 
+@sesion_requerida
 def home_usuario_view(request):
     """Home principal — muestra préstamos, KPIs, gráficas y devoluciones."""
     doc = request.session.get('usuario_documento')

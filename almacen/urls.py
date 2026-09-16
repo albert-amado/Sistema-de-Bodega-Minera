@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import crear_estante, vista_estantes, vista_almacenes, detalle_almacen
+
+from .views import crear_estante, detalle_almacen, vista_almacenes, vista_estantes
 
 urlpatterns = [
     path('estantes/', vista_estantes, name='estantes'),
