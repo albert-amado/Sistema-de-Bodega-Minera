@@ -1,33 +1,33 @@
 import csv
-import time
 import logging
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+import time
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.conf import settings
-from django.utils.crypto import get_random_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
-from django.core.exceptions import ValidationError
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.crypto import get_random_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
-from usuario.decorators import admin_required, login_required
-from .models import Usuario, validar_numero_documento
-from .forms import (
-    UsuarioForm,
-    RegistroUsuarioForm,
-    EditarUsuarioAdminForm,
-    PerfilUsuarioForm,
-    CambiarPasswordForm,
-    DOC_PATTERNS,
-)
 from common.mixins import sesion_requerida
 from prestamo.models import Prestamo
+from usuario.decorators import admin_required, login_required
+
+from .forms import (
+    DOC_PATTERNS,
+    CambiarPasswordForm,
+    EditarUsuarioAdminForm,
+    PerfilUsuarioForm,
+    RegistroUsuarioForm,
+)
+from .models import Usuario
 
 logger = logging.getLogger(__name__)
 
@@ -192,7 +192,7 @@ def olvido_contrasena_view(request):
             messages.success(request, 'Te enviamos un enlace a tu correo. Tienes 15 minutos para usarlo.')
         except Exception as e:
             logger.error('Error al enviar correo de recuperación: %s', e)
-            messages.error(request, f'No se pudo enviar el correo.')
+            messages.error(request, 'No se pudo enviar el correo.')
 
     return render(request, 'olvido_contrasena.html')
 

@@ -1,21 +1,23 @@
 """
 manager.py - Gestor de persistencia en JSON, sincronización con .env y exportador de respaldos.
 """
-import os
 import json
+import os
 from dataclasses import asdict
-from typing import Dict, Any, Tuple
+from typing import Any
+
 from django.conf import settings
-from .schemas import (
-    GlobalConfig,
-    DatabaseProfile,
-    SystemSettings,
-    DatabaseTarget,
-    DatabaseDriver,
-    StorageDriver,
-    LogLevel,
-)
+
 from .db_tester import DatabaseConnectionTester
+from .schemas import (
+    DatabaseDriver,
+    DatabaseProfile,
+    DatabaseTarget,
+    GlobalConfig,
+    LogLevel,
+    StorageDriver,
+    SystemSettings,
+)
 
 
 class ConfigurationManager:
@@ -51,12 +53,12 @@ class ConfigurationManager:
             json.dump(asdict(self.config), f, indent=4, ensure_ascii=False)
         self.sync_env_file()
 
-    def get_active_django_db_dict(self) -> Dict[str, Any]:
+    def get_active_django_db_dict(self) -> dict[str, Any]:
         """Obtiene la configuración lista para asignar a DATABASES['default'] en settings.py."""
         active = self.config.cloud_db if self.config.active_target == DatabaseTarget.CLOUD else self.config.local_db
         return active.to_django_dict(self.base_dir)
 
-    def switch_target(self, target: DatabaseTarget, test_first: bool = True) -> Tuple[bool, str]:
+    def switch_target(self, target: DatabaseTarget, test_first: bool = True) -> tuple[bool, str]:
         """Alterna entre Local y Cloud con validación de conexión."""
         candidate = self.config.cloud_db if target == DatabaseTarget.CLOUD else self.config.local_db
 
@@ -95,7 +97,7 @@ class ConfigurationManager:
             f"DB_USER={active.user}",
             f"DB_PASSWORD={active.password}",
             f"DB_SSLMODE={active.ssl_mode}",
-            f"DEBUG={str(self.config.system.debug)}",
+            f"DEBUG={self.config.system.debug!s}",
             f"LOG_LEVEL={self.config.system.log_level.value}",
             f"TIME_ZONE={self.config.system.timezone}",
             f"LANGUAGE_CODE={self.config.system.language_code}",
@@ -112,7 +114,7 @@ class ConfigurationManager:
         except Exception:
             pass
 
-    def _deserialize(self, d: Dict[str, Any]) -> GlobalConfig:
+    def _deserialize(self, d: dict[str, Any]) -> GlobalConfig:
         loc = d.get("local_db", {})
         cld = d.get("cloud_db", {})
         sys = d.get("system", {})

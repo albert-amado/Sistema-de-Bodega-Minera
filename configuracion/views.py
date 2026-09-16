@@ -2,15 +2,18 @@
 views.py - Vistas y API protegidas por @admin_required.
 """
 import json
-from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
+
 from django.contrib import messages
-from django.views.decorators.http import require_POST, require_GET
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
+from django.views.decorators.http import require_GET, require_POST
+
 from usuario.decorators import admin_required
-from .manager import ConfigurationManager
-from .schemas import DatabaseTarget, DatabaseProfile, DatabaseDriver
-from .forms import ConmutadorDBForm, PerfilDatabaseForm, ParametrosSistemaForm
+
 from .db_tester import DatabaseConnectionTester
+from .forms import ConmutadorDBForm, ParametrosSistemaForm, PerfilDatabaseForm
+from .manager import ConfigurationManager
+from .schemas import DatabaseDriver, DatabaseProfile, DatabaseTarget
 
 cfg_mgr = ConfigurationManager()
 

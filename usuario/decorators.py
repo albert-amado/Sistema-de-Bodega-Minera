@@ -1,6 +1,7 @@
 from functools import wraps
-from django.shortcuts import redirect
+
 from django.contrib import messages
+from django.shortcuts import redirect
 
 
 def login_required(view_func):

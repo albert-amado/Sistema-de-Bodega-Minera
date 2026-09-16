@@ -1,17 +1,17 @@
 """
 db_tester.py - Comprobador de conectividad en vivo sin alterar el runtime activo.
 """
-import time
 import logging
-from typing import Tuple
-from .schemas import DatabaseProfile, DatabaseDriver
+import time
+
+from .schemas import DatabaseDriver, DatabaseProfile
 
 logger = logging.getLogger("configuracion.tester")
 
 
 class DatabaseConnectionTester:
     @staticmethod
-    def test_profile(profile: DatabaseProfile, base_dir=None) -> Tuple[bool, str, float]:
+    def test_profile(profile: DatabaseProfile, base_dir=None) -> tuple[bool, str, float]:
         """
         Prueba la conexión contra el motor objetivo.
         Retorna: (Éxito [bool], Mensaje descriptivo [str], Latencia ms [float])
@@ -69,4 +69,4 @@ class DatabaseConnectionTester:
         except Exception as exc:
             latency_ms = round((time.perf_counter() - start) * 1000, 2)
             logger.error("Error al probar conexión: %s", str(exc))
-            return False, f"Fallo de conexión ({latency_ms} ms): {str(exc)}", latency_ms
+            return False, f"Fallo de conexión ({latency_ms} ms): {exc!s}", latency_ms

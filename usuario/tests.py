@@ -1,14 +1,12 @@
-from django.test import TestCase, Client
+from django.contrib.auth.hashers import make_password
+from django.test import Client, TestCase
 from django.urls import reverse
-from django.contrib.auth.hashers import make_password, check_password
-from .models import Usuario
+
 from .forms import (
-    RegistroUsuarioForm,
-    UsuarioForm,
-    EditarUsuarioAdminForm,
     PerfilUsuarioForm,
-    CambiarPasswordForm,
+    RegistroUsuarioForm,
 )
+from .models import Usuario
 
 
 class UsuarioSecurityTests(TestCase):

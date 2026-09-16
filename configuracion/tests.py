@@ -1,8 +1,10 @@
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
+
 from usuario.models import Usuario
+
 from .manager import ConfigurationManager
-from .schemas import DatabaseTarget, DatabaseDriver, DatabaseProfile
+from .schemas import DatabaseTarget
 
 
 class ConfiguracionModuleTests(TestCase):
