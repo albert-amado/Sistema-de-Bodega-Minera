@@ -1,130 +1,155 @@
-"""
-views.py - Vistas y API protegidas por @admin_required.
-"""
-import json
-
+import re
+from pathlib import Path
+from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
-from django.views.decorators.http import require_GET, require_POST
-
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from django.conf import settings
 from usuario.decorators import admin_required
 
-from .db_tester import DatabaseConnectionTester
-from .forms import ConmutadorDBForm, ParametrosSistemaForm, PerfilDatabaseForm
-from .manager import ConfigurationManager
-from .schemas import DatabaseDriver, DatabaseProfile, DatabaseTarget
 
-cfg_mgr = ConfigurationManager()
+ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
+
+
+def _leer_env(clave: str, default: str = "") -> str:
+    """Lee el valor actual de una clave en el .env."""
+    if not ENV_PATH.exists():
+        return default
+    contenido = ENV_PATH.read_text(encoding="utf-8")
+    patron = re.compile(rf"^{re.escape(clave)}\s*=\s*(.+)$", re.MULTILINE)
+    match = patron.search(contenido)
+    return match.group(1).strip() if match else default
+
+
+def _actualizar_env(clave: str, valor: str):
+    
+    if not ENV_PATH.exists():
+        ENV_PATH.write_text(f"{clave}={valor}\n", encoding="utf-8")
+        return
+
+    contenido = ENV_PATH.read_text(encoding="utf-8")
+    patron = re.compile(rf"^{re.escape(clave)}\s*=.*$", re.MULTILINE)
+
+    if patron.search(contenido):
+        nuevo = patron.sub(f"{clave}={valor}", contenido)
+    else:
+        nuevo = contenido.rstrip("\n") + f"\n{clave}={valor}\n"
+
+    ENV_PATH.write_text(nuevo, encoding="utf-8")
+
+
+def _forzar_recarga():
+    """Toca settings.py y views.py para forzar recarga del runserver."""
+    base = Path(__file__).resolve().parent.parent
+    for path in [
+        base / "core" / "settings.py",
+        Path(__file__).resolve(),
+    ]:
+        if path.exists():
+            path.touch()
 
 
 @admin_required
-def panel_configuracion_view(request):
-    """Renderiza el panel de control de configuración del sistema."""
+def configuracion_view(request):
+    almacenamiento_actual = _leer_env("DB_ENGINE", default="nube")
+
     if request.method == "POST":
-        accion = request.POST.get("accion")
+        accion = request.POST.get("accion", "").strip()
 
-        # 1. Alternar Base de Datos (Local <-> Cloud)
-        if accion == "conmutar_db":
-            form = ConmutadorDBForm(request.POST)
-            if form.is_valid():
-                target = DatabaseTarget(form.cleaned_data["target"])
-                test_first = form.cleaned_data["test_first"]
-                ok, msg = cfg_mgr.switch_target(target, test_first=test_first)
-                if ok:
-                    messages.success(request, msg)
-                else:
-                    messages.error(request, msg)
-            return redirect("configuracion:panel")
+        # ── Botón manual: Subir todo de Local a Nube ──
+        if accion == "sincronizar_local_a_nube":
+            try:
+                from migrar_db import migrate_local_to_cloud
+                migrate_local_to_cloud()
+                messages.success(request, " Sincronización exitosa: Todos los datos locales (SQLite) se han subido a la Nube (Neon PostgreSQL).")
+            except Exception as e:
+                messages.error(request, f"Error al subir datos a la nube: {e}")
+            return redirect("configuracion")
 
-        # 2. Guardar perfil Cloud
-        elif accion == "guardar_cloud_db":
-            form = PerfilDatabaseForm(request.POST)
-            if form.is_valid():
-                cd = form.cleaned_data
-                cfg_mgr.config.cloud_db.driver = DatabaseDriver(cd["driver"])
-                cfg_mgr.config.cloud_db.host = cd["host"]
-                cfg_mgr.config.cloud_db.port = cd["port"]
-                cfg_mgr.config.cloud_db.name = cd["name"]
-                cfg_mgr.config.cloud_db.user = cd["user"]
-                if cd["password"]:
-                    cfg_mgr.config.cloud_db.password = cd["password"]
-                cfg_mgr.config.cloud_db.ssl_mode = cd["ssl_mode"]
-                cfg_mgr.save()
-                messages.success(request, "Perfil de base de datos Cloud actualizado.")
-            else:
-                for f, errs in form.errors.items():
-                    for err in errs:
-                        messages.error(request, f"{f}: {err}")
-            return redirect("configuracion:panel")
+        # ── Botón manual: Descargar todo de Nube a Local ──
+        elif accion == "sincronizar_nube_a_local":
+            try:
+                from migrar_db import migrate as run_db_migration
+                run_db_migration()
+                messages.success(request, " Sincronización exitosa: Todos los datos de la Nube (Neon PostgreSQL) se han descargado a Local (SQLite).")
+            except Exception as e:
+                messages.error(request, f"Error al descargar datos de la nube: {e}")
+            return redirect("configuracion")
 
-        # 3. Guardar parámetros generales
-        elif accion == "guardar_sistema":
-            form = ParametrosSistemaForm(request.POST)
-            if form.is_valid():
-                cd = form.cleaned_data
-                cfg_mgr.config.system.debug = cd["debug"]
-                cfg_mgr.config.system.log_level = cd["log_level"]
-                cfg_mgr.config.system.timezone = cd["timezone"]
-                cfg_mgr.config.system.language_code = cd["language_code"]
-                cfg_mgr.config.system.currency_symbol = cd["currency_symbol"]
-                cfg_mgr.config.system.storage_driver = cd["storage_driver"]
-                cfg_mgr.save()
-                messages.success(request, "Parámetros del sistema actualizados.")
-            else:
-                for f, errs in form.errors.items():
-                    for err in errs:
-                        messages.error(request, f"{f}: {err}")
-            return redirect("configuracion:panel")
+        # ── Cambio de Entorno Activo (con sincronización automática) ──
+        almacenamiento = request.POST.get("almacenamiento", "nube")
+        sincronizado_ok = False
 
-    context = {
-        "config": cfg_mgr.config,
-        "active_target": cfg_mgr.config.active_target.value,
-        "local_db": cfg_mgr.config.local_db,
-        "cloud_db": cfg_mgr.config.cloud_db,
-        "system": cfg_mgr.config.system,
-    }
-    return render(request, "configuracion/configuracion.html", context)
+        if almacenamiento == "local" and almacenamiento_actual == "nube":
+            try:
+                from migrar_db import migrate as run_db_migration
+                run_db_migration()
+                sincronizado_ok = True
+            except Exception as e:
+                messages.error(
+                    request,
+                    f"Error al sincronizar datos desde la nube: {e}."
+                )
+        elif almacenamiento == "nube" and almacenamiento_actual == "local":
+            try:
+                from migrar_db import migrate_local_to_cloud
+                migrate_local_to_cloud()
+                sincronizado_ok = True
+            except Exception as e:
+                messages.error(
+                    request,
+                    f"Error al sincronizar datos hacia la nube: {e}."
+                )
+        else:
+            sincronizado_ok = True
+
+        _actualizar_env("DB_ENGINE", almacenamiento)
+        _forzar_recarga()
+
+        nombre_bd = "Local (SQLite)" if almacenamiento == "local" else "Nube (Neon PostgreSQL)"
+
+        if sincronizado_ok:
+            messages.success(
+                request,
+                f"Base de datos activa cambiada a {nombre_bd} y sincronizada exitosamente."
+            )
+            return redirect("home")
+        else:
+            request.session.flush()
+            messages.success(
+                request,
+                f"Base de datos cambiada a {nombre_bd}. Inicia sesión nuevamente.",
+            )
+            return redirect("login")
+
+    class Config:
+        pass
+
+    config = Config()
+    config.almacenamiento = almacenamiento_actual
+    context = {"config": config}
+    return render(request, "configuracion.html", context)
 
 
 @admin_required
-@require_POST
-def api_test_connection(request):
-    """Endpoint AJAX para validar credenciales en vivo antes de guardar."""
+@require_GET
+def probar_conexion_neon(request):
     try:
-        data = json.loads(request.body)
-        profile = DatabaseProfile(
-            driver=DatabaseDriver(data.get("driver", "postgresql")),
-            host=data.get("host", "localhost"),
-            port=int(data.get("port", 5432)),
-            name=data.get("name", "postgres"),
-            user=data.get("user", ""),
-            password=data.get("password", "") or (cfg_mgr.config.cloud_db.password if data.get("target") == "cloud" else ""),
-            ssl_mode=data.get("ssl_mode", "require"),
-            timeout_sec=int(data.get("timeout_sec", 5)),
+        import psycopg2
+        import environ
+        env = environ.Env()
+        environ.Env.read_env(settings.BASE_DIR / ".env")
+
+        conn = psycopg2.connect(
+            dbname=env("DB_NAME", default=""),
+            user=env("DB_USER", default=""),
+            password=env("DB_PASSWORD", default=""),
+            host=env("DB_HOST", default=""),
+            port=env("DB_PORT", default="5432"),
+            connect_timeout=5,
+            sslmode="require",
         )
-        ok, msg, latency = DatabaseConnectionTester.test_profile(profile, cfg_mgr.base_dir)
-        return JsonResponse({"success": ok, "message": msg, "latency_ms": latency}, status=200 if ok else 400)
-    except Exception as exc:
-        return JsonResponse({"success": False, "message": str(exc)}, status=400)
-
-
-@admin_required
-@require_GET
-def descargar_backup_env(request):
-    """Genera y descarga el archivo .env.backup."""
-    content = cfg_mgr.generate_env_backup()
-    res = HttpResponse(content, content_type="text/plain; charset=utf-8")
-    res["Content-Disposition"] = 'attachment; filename=".env.backup"'
-    return res
-
-
-@admin_required
-@require_GET
-def descargar_config_json(request):
-    """Exporta y descarga el archivo JSON de configuración del sistema."""
-    include_pw = request.GET.get("include_passwords", "false").lower() == "true"
-    content = cfg_mgr.export_json(include_passwords=include_pw)
-    res = HttpResponse(content, content_type="application/json; charset=utf-8")
-    res["Content-Disposition"] = 'attachment; filename="system_configuration.json"'
-    return res
+        conn.close()
+        return JsonResponse({"ok": True})
+    except Exception as e:
+        return JsonResponse({"ok": False, "error": str(e)})
