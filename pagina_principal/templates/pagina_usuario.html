@@ -290,12 +290,11 @@
             <tr>
               <td><span class="extracted-style-180">#{{ p.pk }}</span></td>
               <td>
-                {% for item in p.items.all|slice:":2" %}
-                  <div class="extracted-style-181">{{ item.producto.nombre }}</div>
+                {% for item in p.detalles.all %}
+                  <div class="extracted-style-181">{{ item.codigo_herramienta.nombre_herramienta }} <span class="badge bg-primary text-white rounded-pill px-1" style="font-size:0.7rem;">×{{ item.cantidad }}</span></div>
+                {% empty %}
+                  <span class="text-muted small">—</span>
                 {% endfor %}
-                {% if p.items.count > 2 %}
-                  <span class="extracted-style-182">+{{ p.items.count|add:"-2" }} más</span>
-                {% endif %}
               </td>
               <td>
                 {% if p.estado == 'activo' %}

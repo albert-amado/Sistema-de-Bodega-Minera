@@ -26,7 +26,7 @@ $(document).ready(function() {
 
     var table = $('#inventario-table').DataTable({
         responsive: true,
-        dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6">>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
+        dom: '<"row mb-3 align-items-center g-2"<"col-md-4"l><"col-md-8 text-md-end"B>>t<"row mt-3 align-items-center g-2"<"col-md-6"i><"col-md-6"p>>',
         buttons: window.obtenerBotonesDataTable('inventario'),
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'

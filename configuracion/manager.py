@@ -87,7 +87,7 @@ class ConfigurationManager:
         lines = [
             "# ─────────────────────────────────────────────────────────────",
             "# RESPALDO DE VARIABLES DE ENTORNO (.env.backup)",
-            "# Generado por Inventario-Mina Configuration Manager",
+            "# Generado por Sistema de Bodega Minera Configuration Manager",
             "# ─────────────────────────────────────────────────────────────",
             f"DB_TARGET={self.config.active_target.value}",
             f"DB_DRIVER={active.driver.value}",
