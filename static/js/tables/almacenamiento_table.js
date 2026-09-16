@@ -15,7 +15,7 @@ $(document).ready(function () {
 
     $('#almacenes-table').DataTable({
       responsive: true,
-      dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
+      dom: '<"row mb-3 align-items-center g-2"<"col-md-3"l><"col-md-5 text-md-center"B><"col-md-4 text-md-end"f>>t<"row mt-3 align-items-center g-2"<"col-md-6"i><"col-md-6"p>>',
       buttons: window.obtenerBotonesDataTable('almacenamiento'),
       language: {
         url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
@@ -51,7 +51,7 @@ $(document).ready(function () {
 
     $('#estantes-table').DataTable({
       responsive: true,
-      dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
+      dom: '<"row mb-3 align-items-center g-2"<"col-md-3"l><"col-md-5 text-md-center"B><"col-md-4 text-md-end"f>>t<"row mt-3 align-items-center g-2"<"col-md-6"i><"col-md-6"p>>',
       buttons: window.obtenerBotonesDataTable('almacenamiento'),
       language: {
         url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'

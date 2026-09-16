@@ -32,7 +32,7 @@ $(document).ready(function() {
 
     var table = $('#reportes-table').DataTable({
         responsive: true,
-        dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
+        dom: '<"row mb-3 align-items-center g-2"<"col-md-3"l><"col-md-5 text-md-center"B><"col-md-4 text-md-end"f>>t<"row mt-3 align-items-center g-2"<"col-md-6"i><"col-md-6"p>>',
         buttons: [
             {
                 extend: 'excelHtml5',

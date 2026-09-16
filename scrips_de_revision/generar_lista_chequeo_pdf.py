@@ -2,7 +2,7 @@
 generar_lista_chequeo_pdf.py
 
 Script en Python que realiza una AUDITORÍA RIGUROSA DE ALTO CRITERIO TÉCNICO (Senior QA)
-al proyecto web Mine Inventory, evaluando objetivamente cada uno de los 21 aspectos
+al proyecto web Sistema de Bodega Minera, evaluando objetivamente cada uno de los 21 aspectos
 funcionales del prototipo (SENA / Centro Minero) con estándares de calidad de software.
 """
 
@@ -375,7 +375,7 @@ def construir_pdf(filename="Lista_de_Chequeo_Audit_FullStack.pdf"):
     # 2. METADATOS DEL PROYECTO
     meta_table_data = [
         [
-            Paragraph("<b>NOMBRE DEL PROYECTO:</b> MINE INVENTORY", style_meta_label),
+            Paragraph("<b>NOMBRE DEL PROYECTO:</b> SISTEMA DE BODEGA MINERA", style_meta_label),
             Paragraph("<b>INTEGRANTES DEL GRUPO:</b> Equipo de Desarrollo ADSI", style_meta_label)
         ]
     ]
