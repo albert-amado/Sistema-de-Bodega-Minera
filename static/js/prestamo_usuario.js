@@ -5,13 +5,15 @@
  */
 
 function puFiltrar(estado, btn) {
-  document.querySelectorAll('.pu-filter-btn').forEach(function (b) {
-    b.classList.remove('btn-primary');
+  // Soporta tanto la clase antigua (pu-filter-btn) como la nueva (sfb-pill)
+  var pills = document.querySelectorAll('.sfb-pill, .pu-filter-btn');
+  pills.forEach(function (b) {
+    b.classList.remove('active', 'btn-primary');
     b.classList.add('btn-outline-secondary');
   });
   if (btn) {
     btn.classList.remove('btn-outline-secondary');
-    btn.classList.add('btn-primary');
+    btn.classList.add('active', 'btn-primary');
   }
 
   document.querySelectorAll('#pu-tabla .pu-row').forEach(function (tr) {
@@ -40,9 +42,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Delegación para botones de filtro
-  document.querySelectorAll('.pu-filter-btn').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
+  // Delegación para botones de filtro (sfb-pill y legacy pu-filter-btn)
+  document.querySelectorAll('.sfb-pill, .pu-filter-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
       var estado = btn.getAttribute('data-filter') || 'todos';
       puFiltrar(estado, btn);
     });

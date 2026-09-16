@@ -1,5 +1,18 @@
 /* ── static/css/notificaciones.css ── */
 /* ── Bottom Bar Layout & Buttons ── */
+.nav-bottom,
+aside .nav-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: #08172B !important;
+}
+.nav-bottom hr,
+aside .nav-bottom hr,
+aside hr {
+  border: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.08) !important;
+  opacity: 1 !important;
+}
 .aside-bottom-bar {
   display: flex !important;
   flex-direction: row !important;
@@ -23,13 +36,13 @@
   height: 38px !important;
   min-width: 38px !important;
   min-height: 38px !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 50% !important;
-  color: #ffffff !important;
+  color: #D0DBEA !important;
   cursor: pointer !important;
   flex-shrink: 0 !important;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease !important;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, color 0.18s ease !important;
   position: relative !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -38,26 +51,35 @@
   appearance: none !important;
   -webkit-appearance: none !important;
 }
-.btn-notif-bell:hover {
-  background: rgba(255, 255, 255, 0.14) !important;
-  border-color: rgba(255, 255, 255, 0.24) !important;
+.btn-notif-bell:hover,
+.btn-notif-bell:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
   transform: scale(1.04) !important;
 }
 .btn-notif-bell svg {
   width: 18px !important;
   height: 18px !important;
-  stroke: #ffffff !important;
+  stroke: #D0DBEA !important;
+  color: #D0DBEA !important;
   fill: none !important;
   display: block !important;
+  transition: stroke 0.18s ease !important;
+}
+.btn-notif-bell:hover svg,
+.btn-notif-bell:focus svg {
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
 }
 .aside-notif-badge {
   position: absolute !important;
   top: -2px !important;
   right: -2px !important;
-  background: #ffffff !important;
-  color: #111111 !important;
+  background: #EF4444 !important;
+  color: #ffffff !important;
   font-size: 0.65rem !important;
-  font-weight: 800 !important;
+  font-weight: 700 !important;
   font-family: var(--font-mono, monospace) !important;
   border-radius: 50% !important;
   width: 16px !important;
@@ -66,18 +88,19 @@
   align-items: center !important;
   justify-content: center !important;
   line-height: 1 !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+  border: 2px solid #0B1E36 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25) !important;
 }
 .btn-profile-pill {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 12px !important;
-  color: #EFECCA !important;
+  color: #FFFFFF !important;
   padding: 0.25rem 0.65rem 0.25rem 0.35rem !important;
-  transition: background 0.18s ease, border-color 0.18s ease !important;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease !important;
   height: 38px !important;
   min-height: 38px !important;
   width: 100% !important;
@@ -92,9 +115,9 @@
 .btn-profile-pill:hover,
 .btn-profile-pill:focus,
 .btn-profile-pill[aria-expanded="true"] {
-  background: rgba(255, 255, 255, 0.14) !important;
-  border-color: rgba(255, 255, 255, 0.24) !important;
-  color: #EFECCA !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
 }
 .profile-avatar-circle {
   width: 28px !important;
@@ -102,7 +125,7 @@
   min-width: 28px !important;
   min-height: 28px !important;
   border-radius: 50% !important;
-  background: #e63946 !important;
+  background: #094D92 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -115,53 +138,112 @@
 .profile-pill-name {
   font-size: 0.85rem !important;
   font-weight: 600 !important;
-  color: #EFECCA !important;
+  color: #FFFFFF !important;
   letter-spacing: 0.01em !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
 }
 .profile-pill-caret {
-  color: #EFECCA !important;
-  fill: #EFECCA !important;
+  color: #8CA4C4 !important;
+  fill: #8CA4C4 !important;
+  transition: color 0.18s ease, fill 0.18s ease !important;
+}
+.btn-profile-pill:hover .profile-pill-caret,
+.btn-profile-pill:focus .profile-pill-caret,
+.btn-profile-pill[aria-expanded="true"] .profile-pill-caret {
+  color: #FFFFFF !important;
+  fill: #FFFFFF !important;
 }
 
-/* Modo Claro (Default): Sidebar oscuro (#094D92) -> Letras crema (#EFECCA) */
-body:not(.dark-mode) .btn-profile-pill,
-body:not(.dark-mode) .profile-pill-name,
-body:not(.dark-mode) .btn-profile-pill span,
-body:not(.dark-mode) .btn-profile-pill div {
-  color: #EFECCA !important;
+/* Modo Oscuro & Temas: Aside Footer en tono Deep Navy armonioso y legible */
+body.dark-mode .nav-bottom,
+body.dark-theme .nav-bottom,
+[data-theme="dark"] .nav-bottom,
+aside[data-acc-dark="1"] .nav-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: #070F1E !important;
 }
-body:not(.dark-mode) .btn-profile-pill .profile-pill-caret {
-  color: #EFECCA !important;
-  fill: #EFECCA !important;
+body.dark-mode aside hr,
+body.dark-theme aside hr,
+[data-theme="dark"] aside hr,
+aside[data-acc-dark="1"] hr {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.08) !important;
 }
-body:not(.dark-mode) .btn-notif-bell svg {
-  stroke: #EFECCA !important;
+body.dark-mode .btn-notif-bell,
+body.dark-theme .btn-notif-bell,
+[data-theme="dark"] .btn-notif-bell,
+aside[data-acc-dark="1"] .btn-notif-bell {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #D0DBEA !important;
 }
-
-/* Modo Oscuro (body.dark-mode): Sidebar claro/crema (#EFECCA) -> Elementos oscuros/negros */
-body.dark-mode .btn-notif-bell {
-  background: rgba(27, 32, 33, 0.08) !important;
-  border: 1px solid rgba(27, 32, 33, 0.2) !important;
+body.dark-mode .btn-notif-bell:hover,
+body.dark-mode .btn-notif-bell:focus,
+body.dark-theme .btn-notif-bell:hover,
+[data-theme="dark"] .btn-notif-bell:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
 }
-body.dark-mode .btn-notif-bell svg {
-  stroke: #1B2021 !important;
+body.dark-mode .btn-notif-bell svg,
+body.dark-theme .btn-notif-bell svg,
+[data-theme="dark"] .btn-notif-bell svg,
+aside[data-acc-dark="1"] .btn-notif-bell svg {
+  stroke: #D0DBEA !important;
+  color: #D0DBEA !important;
+}
+body.dark-mode .btn-notif-bell:hover svg,
+body.dark-mode .btn-notif-bell:focus svg {
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+body.dark-mode .aside-notif-badge,
+body.dark-theme .aside-notif-badge,
+[data-theme="dark"] .aside-notif-badge {
+  background: #EF4444 !important;
+  color: #ffffff !important;
+  border: 2px solid #070F1E !important;
 }
 body.dark-mode .btn-profile-pill,
+body.dark-theme .btn-profile-pill,
+[data-theme="dark"] .btn-profile-pill,
+aside[data-acc-dark="1"] .btn-profile-pill {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #FFFFFF !important;
+}
+body.dark-mode .btn-profile-pill:hover,
+body.dark-mode .btn-profile-pill:focus,
+body.dark-mode .btn-profile-pill[aria-expanded="true"],
+body.dark-theme .btn-profile-pill:hover,
+[data-theme="dark"] .btn-profile-pill:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
+}
+body.dark-mode .profile-pill-name,
 body.dark-mode .btn-profile-pill span,
-body.dark-mode .btn-profile-pill div {
-  background: rgba(27, 32, 33, 0.08) !important;
-  border-color: rgba(27, 32, 33, 0.2) !important;
-  color: #1B2021 !important;
+body.dark-mode .btn-profile-pill div,
+body.dark-theme .profile-pill-name,
+[data-theme="dark"] .profile-pill-name,
+aside[data-acc-dark="1"] .profile-pill-name {
+  color: #FFFFFF !important;
 }
-body.dark-mode .profile-pill-name {
-  color: #1B2021 !important;
+body.dark-mode .profile-pill-caret,
+body.dark-theme .profile-pill-caret,
+[data-theme="dark"] .profile-pill-caret,
+aside[data-acc-dark="1"] .profile-pill-caret {
+  color: #8CA4C4 !important;
+  fill: #8CA4C4 !important;
 }
-body.dark-mode .profile-pill-caret {
-  color: #1B2021 !important;
-  fill: #1B2021 !important;
+body.dark-mode .profile-avatar-circle,
+body.dark-theme .profile-avatar-circle,
+[data-theme="dark"] .profile-avatar-circle,
+aside[data-acc-dark="1"] .profile-avatar-circle {
+  background: #094D92 !important;
+  color: #ffffff !important;
 }
 
 /* ── Profile Dropdown Menu (High Contrast & Clear Icons) ── */

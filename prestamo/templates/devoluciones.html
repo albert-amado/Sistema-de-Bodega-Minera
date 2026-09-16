@@ -50,31 +50,33 @@
 </div>
 
 <!-- ══ FILTROS DEVOLUCIONES ══ -->
-<div class="card p-3 border-0 shadow-sm mb-4 bg-white">
-  <div class="row g-2 align-items-center">
-    <div class="col-12 col-md-7">
-      <div class="input-group input-group-sm">
-        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
-        <input type="text" id="devoluciones-busqueda" data-no-validate autocomplete="off" class="form-control bg-light border-start-0" placeholder="Buscar devolución por préstamo, usuario o observaciones…">
-      </div>
-    </div>
-    <div class="col-12 col-md-4">
-      <select id="devoluciones-estado" data-no-validate class="form-select form-select-sm bg-light">
-        <option value="">-- Todos los Estados --</option>
-        <option value="DEVUELTO">Devuelto</option>
-        <option value="PARCIAL">Devolución Parcial</option>
-        <option value="ENTREGADO">Entregado</option>
-        <option value="PENDIENTE">Pendiente</option>
-        <option value="CANCELADO">Cancelado</option>
-      </select>
-    </div>
-    <div class="col-12 col-md-1">
-      <button type="button" id="btn-limpiar-filtros-dev" class="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center" title="Limpiar filtros">
-        <i class="bi bi-brush"></i>
-      </button>
-    </div>
+<div class="sfb-wrap mb-4">
+  <!-- Búsqueda -->
+  <div class="sfb-search-group">
+    <i class="bi bi-search sfb-search-icon"></i>
+    <input type="text" id="devoluciones-busqueda" data-no-validate autocomplete="off"
+           class="sfb-search-input"
+           placeholder="Buscar por préstamo, usuario u observaciones…">
   </div>
+
+  <div class="sfb-divider"></div>
+
+  <!-- Estado -->
+  <select id="devoluciones-estado" data-no-validate class="sfb-select">
+    <option value="">— Todos los Estados —</option>
+    <option value="DEVUELTO">Devuelto</option>
+    <option value="PARCIAL">Devolución Parcial</option>
+    <option value="ENTREGADO">Entregado</option>
+    <option value="PENDIENTE">Pendiente</option>
+    <option value="CANCELADO">Cancelado</option>
+  </select>
+
+  <!-- Limpiar -->
+  <button type="button" id="btn-limpiar-filtros-dev" class="sfb-btn-secondary" title="Limpiar filtros">
+    <i class="bi bi-x-circle"></i> Limpiar
+  </button>
 </div>
+
 
 <!-- ══ TABLA ══ -->
 <!-- ══ TABLA ══ -->

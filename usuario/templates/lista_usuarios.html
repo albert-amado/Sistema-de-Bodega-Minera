@@ -50,56 +50,50 @@
 </div>
 
 <!-- BARRA DE FILTROS Y CONTROLES -->
-<div class="gu-filter-card">
-  <form method="get" id="filtroForm" class="row g-3 align-items-end">
+<div class="sfb-wrap mb-4">
+  <form method="get" id="filtroForm" style="display:contents;">
 
-    <div class="col-12 col-md-4">
-      <label class="form-label small fw-bold text-muted mb-1">Buscar usuario</label>
-      <div class="gu-search-wrap">
-        <svg class="gu-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input type="text" name="q" id="qInput" value="{{ q }}" class="form-control gu-search-input" placeholder="Nombre, documento, correo, ficha…">
-      </div>
+    <!-- Búsqueda -->
+    <div class="sfb-search-group">
+      <i class="bi bi-search sfb-search-icon"></i>
+      <input type="text" name="q" id="qInput" value="{{ q }}"
+             class="sfb-search-input"
+             placeholder="Nombre, documento, correo, ficha…">
     </div>
 
-    <div class="col-6 col-md-3">
-      <label class="form-label small fw-bold text-muted mb-1">Filtrar por Rol</label>
-      <select name="rol" class="form-select gu-select" onchange="this.form.submit()">
-        <option value="">Todos los roles</option>
-        {% for rol in roles %}
-          <option value="{{ rol.id }}" {% if rol_id == rol.id|stringformat:"s" %}selected{% endif %}>
-            {{ rol.nombre }}
-          </option>
-        {% endfor %}
-      </select>
-    </div>
+    <div class="sfb-divider"></div>
 
-    <div class="col-6 col-md-3">
-      <label class="form-label small fw-bold text-muted mb-1">Tipo de documento</label>
-      <select name="tipo_doc" class="form-select gu-select" onchange="this.form.submit()">
-        <option value="">Todos los tipos</option>
-        {% for val, label in tipos_doc %}
-          <option value="{{ val }}" {% if tipo_doc == val %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
-    </div>
+    <!-- Filtro por Rol -->
+    <select name="rol" class="sfb-select" onchange="this.form.submit()">
+      <option value="">Todos los roles</option>
+      {% for rol in roles %}
+        <option value="{{ rol.id }}" {% if rol_id == rol.id|stringformat:"s" %}selected{% endif %}>
+          {{ rol.nombre }}
+        </option>
+      {% endfor %}
+    </select>
 
-    <div class="col-12 col-md-2 d-flex align-items-center justify-content-between justify-content-md-end gap-2">
-      <div class="d-flex gap-2">
-        <button type="submit" class="btn gu-btn-action gu-btn-filter">
-          <i class="bi bi-search"></i>
-          <span>Filtrar</span>
-        </button>
-        {% if q or rol_id or tipo_doc %}
-        <a href="{% url 'lista_usuarios' %}" class="btn gu-btn-action gu-btn-clear" title="Limpiar filtros">
-          <i class="bi bi-x-lg"></i>
-        </a>
-        {% endif %}
-      </div>
+    <!-- Filtro por tipo de documento -->
+    <select name="tipo_doc" class="sfb-select" onchange="this.form.submit()">
+      <option value="">Todos los tipos</option>
+      {% for val, label in tipos_doc %}
+        <option value="{{ val }}" {% if tipo_doc == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
 
-      <!-- ALTERNADOR DE VISTAS (Lista / Cuadrícula) -->
-      <div class="gu-toggle-group ms-md-2">
+    <!-- Acciones + alternador de vista -->
+    <div class="sfb-actions">
+      <button type="submit" class="sfb-btn-primary">
+        <i class="bi bi-search"></i> Filtrar
+      </button>
+      {% if q or rol_id or tipo_doc %}
+      <a href="{% url 'lista_usuarios' %}" class="sfb-btn-secondary" title="Limpiar filtros">
+        <i class="bi bi-x-circle"></i> Limpiar
+      </a>
+      {% endif %}
+
+      <!-- Alternador de vistas (Lista / Cuadrícula) -->
+      <div class="gu-toggle-group ms-1">
         <button type="button" id="btnFichas" class="gu-toggle-btn active" onclick="setVista('fichas')" title="Vista en tarjetas (Grid)">
           <i class="bi bi-grid-fill"></i>
         </button>
@@ -111,6 +105,7 @@
 
   </form>
 </div>
+
 
 {% if usuarios %}
 
