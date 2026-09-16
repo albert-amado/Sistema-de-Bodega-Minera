@@ -1,0 +1,131 @@
+
+.kpi-usr {
+  position: relative;
+  overflow: hidden;
+  transition: transform .18s, box-shadow .18s;
+  opacity: 0;
+  transform: translateY(14px);
+}
+.kpi-usr.kpi-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .45s ease, transform .45s ease,
+              box-shadow .18s, transform .18s;
+}
+.kpi-usr:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(27,32,33,.12); }
+.kpi-bar {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; border-radius: 0;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .7s ease .2s;
+}
+.kpi-usr.kpi-visible .kpi-bar { transform: scaleX(1); }
+
+/* ── Donut legend ── */
+.donut-legend {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-family: var(--font-ui); font-size: .72rem; font-weight: 600;
+  padding: .18rem .55rem; border-radius: 20px; border: 1px solid;
+}
+.donut-legend .dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* ── Timeline ── */
+.timeline-item:last-child { border-bottom: none !important; margin-bottom: 0 !important; padding-bottom: 0 !important; }
+
+/* ── Campana de alertas de stock ── */
+.stock-notif-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.notif-count {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  background: #d64541;
+  color: #fff;
+}
+.stock-notif-panel {
+  position: absolute;
+  top: calc(100% + .55rem);
+  right: 0;
+  width: min(330px, 100vw - 2rem);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(46,61,73,.14);
+  padding: .85rem;
+  display: none;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 30;
+}
+.stock-notif-panel.open {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stock-notif-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  margin-bottom: .8rem;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: .9rem;
+}
+.stock-notif-close {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+.stock-notif-items {
+  max-height: 320px;
+  overflow-y: auto;
+  display: grid;
+  gap: .5rem;
+}
+.stock-notif-item {
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  align-items: center;
+  padding: .75rem .85rem;
+  border-radius: 14px;
+  background: rgba(245, 241, 237, .8);
+  font-size: .88rem;
+  color: var(--text-main);
+}
+.stock-notif-item:last-child {
+  margin-bottom: 0;
+}
+.stock-notif-value {
+  font-weight: 700;
+  color: #b46414;
+  white-space: nowrap;
+}
+.stock-notif-empty {
+  padding: .9rem .85rem;
+  border-radius: 14px;
+  background: rgba(245,245,245,.9);
+  color: var(--text-muted);
+  font-size: .88rem;
+  text-align: center;
+}
