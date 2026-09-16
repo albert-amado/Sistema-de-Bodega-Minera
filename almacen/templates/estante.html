@@ -85,12 +85,12 @@
     <table class="table table-hover align-middle datatable-custom w-100" id="estantes-table">
       <thead class="table-light">
         <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 60px;"># ID</th>
-          <th>Código Estante</th>
-          <th>Almacén Asignado</th>
-          <th>Dimensiones</th>
-          <th class="text-center">Herramientas</th>
-          <th class="text-center" style="width: 120px;">Acciones</th>
+          <th class="text-center" style="width: 60px;" data-priority="1"># ID</th>
+          <th data-priority="1">Código Estante</th>
+          <th data-priority="2">Almacén Asignado</th>
+          <th data-priority="3">Dimensiones</th>
+          <th class="text-center" data-priority="1">Herramientas</th>
+          <th class="text-center" style="width: 140px;" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -154,14 +154,27 @@
 
           <!-- Acciones -->
           <td class="text-center text-nowrap">
-            <div class="d-inline-flex align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs btn-ver-detalle-estante" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles rápidos" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
-                <i class="bi bi-eye text-primary"></i>
+            <div class="sbm-actions-group justify-content-center">
+              <button type="button" class="sbm-action-btn sbm-btn-view" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles de estante {{ estante.codigo }}" aria-label="Ver detalles de estante {{ estante.codigo }}"
+                      onclick="window.mostrarModalDetalles({
+                        title: 'Estante {{ estante.codigo|escapejs }}',
+                        subtitle: 'Ubicado en {{ estante.codigo_almacen.nombre|escapejs }}',
+                        badge: 'ESTANTERÍA',
+                        icon: 'bi-grid-3x3-gap',
+                        fields: [
+                          { label: 'Identificador', value: '#{{ estante.pk }}' },
+                          { label: 'Código de Estante', value: '{{ estante.codigo|escapejs }}' },
+                          { label: 'Almacén Perteneciente', value: '{{ estante.codigo_almacen.nombre|escapejs }}' },
+                          { label: 'Dimensiones / Capacidad', value: '{{ estante.dimensiones|default:"No especificado"|escapejs }}' },
+                          { label: 'Herramientas Almacenadas', value: '{{ estante.herramientas.count|default:0 }} items', isBadge: true, badgeClass: 'bg-primary-subtle text-primary border border-primary-subtle' }
+                        ]
+                      })">
+                <i class="bi bi-eye"></i>
               </button>
-              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditarEstante('{{ estante.pk }}','{{ estante.codigo_almacen.pk }}','{{ estante.codigo|escapejs }}','{{ estante.dimensiones|default:''|escapejs }}')">
-                <i class="bi bi-pencil text-secondary"></i>
+              <button type="button" class="sbm-action-btn sbm-btn-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar estante" aria-label="Modificar estante {{ estante.codigo }}" onclick="abrirEditarEstante('{{ estante.pk }}','{{ estante.codigo_almacen.pk }}','{{ estante.codigo|escapejs }}','{{ estante.dimensiones|default:''|escapejs }}')">
+                <i class="bi bi-pencil"></i>
               </button>
-              <button type="button" class="btn btn-sm btn-light border text-danger rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar estante" onclick="abrirEliminarEstante('{{ estante.pk }}','{{ estante.codigo|escapejs }}')">
+              <button type="button" class="sbm-action-btn sbm-btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar estante" aria-label="Eliminar estante {{ estante.codigo }}" onclick="abrirEliminarEstante('{{ estante.pk }}','{{ estante.codigo|escapejs }}')">
                 <i class="bi bi-trash"></i>
               </button>
             </div>

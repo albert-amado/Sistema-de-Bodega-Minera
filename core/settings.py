@@ -158,3 +158,19 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='desarrollo@local.com'
 
 LOGIN_URL = '/'
 
+# =============================================================================
+# POLÍTICAS DE VERIFICACIÓN SOFIAPLUS EN REGISTRO DE USUARIOS
+# =============================================================================
+# TODO: [DECISIÓN DE NEGOCIO PENDIENTE] ALLOW_MANUAL_REGISTRATION
+# Define si se permite el registro de usuarios cuyo documento no se encuentre en SofiaPlus.
+# - False (por defecto): Bloquea la creación; solo aprendices oficiales del SENA pueden crear cuenta.
+# - True: Permite registro manual excepcional (se guardará con verificado_sofia_plus = False).
+ALLOW_MANUAL_REGISTRATION = config('ALLOW_MANUAL_REGISTRATION', default=False, cast=bool)
+
+# TODO: [DECISIÓN DE NEGOCIO PENDIENTE] SOFIAPLUS_FALLBACK_POLICY
+# Define la política de registro cuando el servicio externo de SofiaPlus no responda (timeout o caída):
+# - 'ALLOW_PENDING' (por defecto): Permite crear la cuenta en estado provisional
+#   (verificado_sofia_plus = False) para no bloquear al aprendiz en terreno, pendiente de confirmación.
+# - 'REJECT': Bloquea temporalmente el registro con mensaje de reintento.
+SOFIAPLUS_FALLBACK_POLICY = config('SOFIAPLUS_FALLBACK_POLICY', default='ALLOW_PENDING')
+

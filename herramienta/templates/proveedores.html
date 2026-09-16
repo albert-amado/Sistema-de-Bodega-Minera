@@ -51,13 +51,14 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table-app datatable-custom" id="proveedores-table">
+        <table class="table-app datatable-custom w-100" id="proveedores-table">
             <thead>
                 <tr>
-                    <th>NIT</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
-                    <th>Descripción</th>
+                    <th data-priority="1">NIT</th>
+                    <th data-priority="2">Teléfono</th>
+                    <th data-priority="2">Correo</th>
+                    <th data-priority="3">Descripción</th>
+                    <th class="text-center" data-priority="1" style="width: 70px;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,14 +66,35 @@
                 <tr>
                     <td><span class="sku-text">{{ prov.nit_proveedor }}</span></td>
                     <td>{{ prov.telefono_contacto }}</td>
-                    <td>{{ prov.correo_proveedor }}</td>
+                    <td><a href="mailto:{{ prov.correo_proveedor }}" class="text-decoration-none text-dark">{{ prov.correo_proveedor }}</a></td>
                     <td class="description-col">
                         <span class="text-truncate d-block description-text">{{ prov.descripcion|default:"—" }}</span>
+                    </td>
+                    <td class="text-center">
+                        <div class="sbm-actions-group justify-content-center">
+                            <button type="button" class="sbm-action-btn sbm-btn-view"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles del proveedor"
+                                    aria-label="Ver detalles de proveedor {{ prov.nit_proveedor }}"
+                                    onclick="window.mostrarModalDetalles({
+                                      title: 'Proveedor Registrado',
+                                      subtitle: 'NIT: {{ prov.nit_proveedor|escapejs }}',
+                                      badge: 'PROVEEDOR',
+                                      icon: 'bi-truck',
+                                      fields: [
+                                        { label: 'NIT / Identificación', value: '{{ prov.nit_proveedor|escapejs }}' },
+                                        { label: 'Teléfono de Contacto', value: '{{ prov.telefono_contacto|escapejs }}' },
+                                        { label: 'Correo Electrónico', value: '{{ prov.correo_proveedor|escapejs }}' },
+                                        { label: 'Descripción / Especialidad', value: '{{ prov.descripcion|default:"Sin descripción registrada"|escapejs }}', col: 12 }
+                                      ]
+                                    })">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center py-4 text-muted">
+                    <td colspan="5" class="text-center py-4 text-muted">
                         <i class="bi bi-truck display-6 d-block mb-2"></i> No hay proveedores registrados.
                     </td>
                 </tr>
@@ -126,6 +148,17 @@
 {% endblock %}
 
 {% block js %}
-<script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof window.initSBMDataTable === 'function') {
+        window.initSBMDataTable('#proveedores-table', {
+            modulo: 'proveedores',
+            order: [[0, 'asc']],
+            columnDefs: [
+                { orderable: false, targets: [4] }
+            ]
+        });
+    }
+});
+</script>
 {% endblock %}

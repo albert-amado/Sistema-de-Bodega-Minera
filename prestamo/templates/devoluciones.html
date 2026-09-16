@@ -100,14 +100,14 @@
     <table class="table table-hover align-middle datatable-custom w-100" id="devoluciones-table">
       <thead class="table-light">
         <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 40px;"></th>
-          <th class="text-center" style="width: 60px;"># ID</th>
-          <th>Préstamo / Solicitante</th>
-          <th>Recibido Por</th>
-          <th>Herramientas Reintegradas</th>
-          <th class="text-center">Estado Préstamo</th>
-          <th class="text-center">Fecha Devolución</th>
-          <th class="text-center" style="width: 100px;">Acciones</th>
+          <th class="text-center" style="width: 40px;" data-priority="1"></th>
+          <th class="text-center" style="width: 60px;" data-priority="1"># ID</th>
+          <th data-priority="1">Préstamo / Solicitante</th>
+          <th data-priority="3">Recibido Por</th>
+          <th data-priority="1">Herramientas Reintegradas</th>
+          <th class="text-center" data-priority="1">Estado Préstamo</th>
+          <th class="text-center" data-priority="2">Fecha Devolución</th>
+          <th class="text-center" style="width: 80px;" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -117,7 +117,7 @@
           <td class="text-center">
             <button type="button" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs" 
                     style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
-                    data-target-detail="detail-{{ d.pk }}" title="Ver detalles desplegables">
+                    data-target-detail="detail-{{ d.pk }}" title="Ver detalles desplegables" aria-label="Expandir fila de devolución #{{ d.pk }}">
               <i class="bi bi-chevron-right row-chevron" style="transition: transform 0.2s ease;"></i>
             </button>
           </td>
@@ -220,11 +220,29 @@
 
           <!-- Columna 7: Acciones -->
           <td class="text-center text-nowrap">
-            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 btn-toggle-details d-inline-flex align-items-center gap-1 shadow-xs" 
-                    data-target-detail="detail-{{ d.pk }}" title="Ver detalles completos">
-              <i class="bi bi-eye"></i>
-              <span>Detalle</span>
-            </button>
+            <div class="sbm-actions-group justify-content-center">
+              <button type="button" class="sbm-action-btn sbm-btn-view"
+                      data-bs-toggle="tooltip" data-bs-placement="top" title="Ver ficha completa de devolución"
+                      aria-label="Ver ficha de devolución #{{ d.pk }}"
+                      onclick="window.mostrarModalDetalles({
+                        title: 'Devolución #{{ d.pk }}',
+                        subtitle: 'Préstamo #{{ d.codigo_prestamo.pk }} - {{ d.codigo_prestamo.documento.nombre_completo|default:d.codigo_prestamo.documento|escapejs }}',
+                        badge: 'REINTEGRO',
+                        icon: 'bi-arrow-return-left',
+                        fields: [
+                          { label: 'ID Devolución', value: '#{{ d.pk }}' },
+                          { label: 'Préstamo Asociado', value: 'Préstamo #{{ d.codigo_prestamo.pk }}' },
+                          { label: 'Solicitante', value: '{{ d.codigo_prestamo.documento.nombre_completo|default:d.codigo_prestamo.documento|escapejs }}' },
+                          { label: 'Documento', value: '{{ d.codigo_prestamo.documento.tipo_documento }} {{ d.codigo_prestamo.documento.documento }}' },
+                          { label: 'Recibido Por', value: '{{ d.codigo_recibe.nombre_completo|default:d.codigo_recibe.documento|escapejs }} ({{ d.codigo_recibe.rol|default:"Admin" }})' },
+                          { label: 'Fecha de Devolución', value: '{{ d.fecha|date:"d/m/Y" }}' },
+                          { label: 'Estado del Préstamo', value: '{{ d.codigo_prestamo.get_estado_display }}', isBadge: true, badgeClass: 'bg-light text-dark border' },
+                          { label: 'Observaciones', value: '{{ d.observaciones|default:"Sin observaciones registradas"|escapejs }}', col: 12 }
+                        ]
+                      })">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
           </td>
         </tr>
 

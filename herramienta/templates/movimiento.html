@@ -52,15 +52,16 @@
   </div>
 
   <div class="table-responsive">
-    <table class="table-app datatable-custom" id="movimientos-table">
+    <table class="table-app datatable-custom w-100" id="movimientos-table">
       <thead>
         <tr>
-          <th>Fecha</th>
-          <th>Herramienta</th>
-          <th>Estante</th>
-          <th>Proveedor</th>
-          <th>Tipo</th>
-          <th>Cantidad</th>
+          <th data-priority="1">Fecha</th>
+          <th data-priority="1">Herramienta</th>
+          <th data-priority="2">Estante</th>
+          <th data-priority="3">Proveedor</th>
+          <th data-priority="1">Tipo</th>
+          <th data-priority="1">Cantidad</th>
+          <th class="text-center" data-priority="1" style="width: 70px;">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -86,10 +87,33 @@
             {% endif %}
           </td>
           <td data-order="{{ mov.cantidad }}">{{ mov.cantidad }} unidades</td>
+          <td class="text-center">
+            <div class="sbm-actions-group justify-content-center">
+              <button type="button" class="sbm-action-btn sbm-btn-view"
+                      data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles del movimiento"
+                      aria-label="Ver detalles de movimiento de {{ mov.inventario.producto.nombre }}"
+                      onclick="window.mostrarModalDetalles({
+                        title: 'Movimiento de Inventario',
+                        subtitle: '{{ mov.inventario.producto.nombre|escapejs }} ({{ mov.fecha_movimiento|date:"d/m/Y H:i" }})',
+                        badge: '{{ mov.tipo_de_movimiento|upper }}',
+                        icon: 'bi-arrow-left-right',
+                        fields: [
+                          { label: 'Herramienta', value: '{{ mov.inventario.producto.nombre|escapejs }}' },
+                          { label: 'Tipo de Movimiento', value: '{{ mov.tipo_de_movimiento|capfirst }}' },
+                          { label: 'Cantidad', value: '{{ mov.cantidad }} unidades', isBadge: true, badgeClass: 'bg-primary text-white' },
+                          { label: 'Ubicación / Estante', value: '{{ mov.inventario.id_estante|default:"Sin estante"|escapejs }}' },
+                          { label: 'Fecha y Hora', value: '{{ mov.fecha_movimiento|date:"d/m/Y H:i" }}' },
+                          { label: 'Proveedor', value: '{% if mov.proveedor %}{{ mov.proveedor.nit_proveedor }} - {{ mov.proveedor.descripcion|default:"" }}{% else %}No aplica{% endif %}' }
+                        ]
+                      })">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="6" class="text-center py-4 text-muted">
+          <td colspan="7" class="text-center py-4 text-muted">
             <i class="bi bi-arrow-left-right display-6 d-block mb-2"></i> No hay movimientos registrados.
           </td>
         </tr>
@@ -111,7 +135,7 @@
         <div class="modal-body p-4">
           <div class="modal-section-title">Datos del movimiento</div>
           <div class="row g-3">
-            <div class="col-md-6">
+            <div class="col-12">
               <label class="form-label text-muted fw-bold small uppercase mb-1">Registro de inventario *</label>
               {{ form.inventario }}
             </div>
@@ -141,6 +165,17 @@
 {% endblock %}
 
 {% block js %}
-<script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof window.initSBMDataTable === 'function') {
+    window.initSBMDataTable('#movimientos-table', {
+      modulo: 'movimientos',
+      order: [[0, 'desc']], // Fecha descendente
+      columnDefs: [
+        { orderable: false, targets: [6] } // Acciones no ordenable
+      ]
+    });
+  }
+});
+</script>
 {% endblock %}

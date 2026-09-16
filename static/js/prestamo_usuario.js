@@ -49,4 +49,16 @@ document.addEventListener('DOMContentLoaded', function () {
       puFiltrar(estado, btn);
     });
   });
+
+  // Inicializar DataTables Responsive si la función compartida existe
+  if (typeof window.initSBMDataTable === 'function') {
+    window.initSBMDataTable('#pu-tabla', {
+      modulo: 'prestamos',
+      order: [[1, 'desc']],
+      columnDefs: [
+        { orderable: false, targets: [0, 2, 6] }
+      ],
+      pageLength: 10
+    });
+  }
 });
