@@ -22,7 +22,7 @@ def _leer_env(clave: str, default: str = "") -> str:
 
 
 def _actualizar_env(clave: str, valor: str):
-    """Reemplaza o agrega una clave en el archivo .env."""
+    
     if not ENV_PATH.exists():
         ENV_PATH.write_text(f"{clave}={valor}\n", encoding="utf-8")
         return
