@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'usuario',
     "herramienta",
     "almacen",
+    "configuracion",
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 extracted-style-3">
+
+  <!-- Encabezado -->
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-3 text-white p-3 bg-navy">
+      <i class="bi bi-sliders2 fs-4"></i>
+    </div>
+    <div>
+      <h1 class="h4 fw-bold mb-0">Configuración del Sistema</h1>
+      <p class="small text-secondary mb-0">Gestión de entorno de base de datos (Local vs Nube) y sincronización de datos</p>
+    </div>
+  </div>
+
+  <!-- Mensajes Django -->
+  {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}success{% endif %} d-flex align-items-center gap-2 rounded-3 py-2 px-3 mb-3 small fw-semibold" role="alert">
+      <i class="bi bi-{% if msg.tags == 'error' %}exclamation-triangle-fill{% else %}check-circle-fill{% endif %}"></i>
+      {{ msg }}
+      <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- 1. CAMBIO DE ENTORNO ACTIVO -->
+  <form method="POST" action="{% url 'configuracion' %}" class="mb-4">
+    {% csrf_token %}
+    <input type="hidden" name="accion" value="cambiar_entorno">
+
+    <div class="card rounded-4 shadow-sm mb-4">
+      <div class="card-body p-4">
+
+        <div class="d-flex align-items-start justify-content-between mb-4">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-database-gear fs-4 text-primary"></i>
+            <div>
+              <h2 class="h6 fw-bold mb-0">Motor de Base de Datos Activo</h2>
+              <p class="small text-secondary mb-0">Selecciona el entorno en el que opera el sistema en tiempo real</p>
+            </div>
+          </div>
+          <span class="badge bg-opacity-10 text-primary border border-primary px-3 py-2 rounded-pill small fw-bold">
+            Entorno Activo: {{ config.almacenamiento|upper }}
+          </span>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <!-- Local -->
+          <div class="col-12 col-md-6">
+            <input type="radio" class="btn-check" name="almacenamiento"
+                   id="opt-local" value="local" autocomplete="off"
+                   {% if config.almacenamiento == 'local' %}checked{% endif %}>
+            <label class="card h-100 p-3 border-2 w-100 text-start storage-card" for="opt-local">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="p-2 rounded bg-light text-dark">
+                  <i class="bi bi-hdd-fill fs-4"></i>
+                </div>
+                {% if config.almacenamiento == 'local' %}
+                <span class="badge rounded-pill bg-success">
+                  <i class="bi bi-check-circle-fill me-1"></i>En uso
+                </span>
+                {% endif %}
+              </div>
+              <div class="fw-bold mb-1">Local <span class="badge bg-secondary">SQLite3</span></div>
+              <p class="small text-secondary mb-0">
+                Almacenamiento local en `db.sqlite3`. Rápido, no requiere conexión a internet.
+              </p>
+            </label>
+          </div>
+
+          <!-- Nube -->
+          <div class="col-12 col-md-6">
+            <input type="radio" class="btn-check" name="almacenamiento"
+                   id="opt-nube" value="nube" autocomplete="off"
+                   {% if config.almacenamiento == 'nube' %}checked{% endif %}>
+            <label class="card h-100 p-3 border-2 w-100 text-start storage-card" for="opt-nube">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="p-2 rounded bg-light text-primary">
+                  <i class="bi bi-cloud-fill fs-4"></i>
+                </div>
+                {% if config.almacenamiento == 'nube' %}
+                <span class="badge rounded-pill bg-success">
+                  <i class="bi bi-check-circle-fill me-1"></i>En uso
+                </span>
+                {% endif %}
+              </div>
+              <div class="fw-bold mb-1">Nube <span class="badge bg-info text-dark">Neon PostgreSQL</span></div>
+              <p class="small text-secondary mb-0">
+                Base de datos PostgreSQL hospedada en Neon Tech. Acceso global en la nube.
+              </p>
+            </label>
+          </div>
+        </div>
+
+        
+
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn fw-bold px-4 btn-save">
+            <i class="bi bi-floppy-fill me-2"></i>Guardar y Sincronizar Entorno
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
+
+
+{% block js %}
+<style>
+  .btn-save       { background-color:#98473E; color:#EFECCA; border-radius:10px; }
+  .btn-save:hover { background-color:#7a3730; color:#EFECCA; }
+  .storage-card   { cursor:pointer; transition:border-color .15s; }
+  .btn-check:checked + .storage-card { border-color:#094D92 !important; background-color:#f0f5fc !important; }
+</style>
+{% endblock %}

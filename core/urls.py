@@ -26,9 +26,9 @@ urlpatterns = [
     path('prestamo/', include('prestamo.urls')),
     path('almacen_app/', include('almacen.urls')),
     path('herramienta/', include('herramienta.urls')),
+    path('configuracion/', include('configuracion.urls')),
 
     # Rutas auxiliares de navegación
     path('reportes/', prestamo_views.prestamo_lista, name='reportes'),
-    path('configuracion/', prestamo_views.prestamo_lista, name='configuracion'),
     path('api/notificaciones/', prestamo_views.notificaciones_json, name='notificaciones_json'),
 ]
