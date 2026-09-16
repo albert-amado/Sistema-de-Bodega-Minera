@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 script_verificaccion_LC3.py
 ===================
@@ -186,7 +185,7 @@ def check_routing():
         return {
             "status": "GREEN",
             "score": 100,
-            "msg": f"Enrutamiento correcto mediante urls.py centralizado y modular en Django.",
+            "msg": "Enrutamiento correcto mediante urls.py centralizado y modular en Django.",
             "details": details
         }
     else:

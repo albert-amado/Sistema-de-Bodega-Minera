@@ -1,19 +1,19 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
+
+from almacen.models import Almacen, Estante
 from common.mixins import sesion_requerida
+from usuario.models import Usuario
 
 from .models import (
     CategoriaHerramienta,
     DetalleTraslado,
     Herramienta,
-    Traslado,
     Proveedor,
-    Suministro,
+    Traslado,
 )
-from almacen.models import Almacen, Estante
-from usuario.models import Usuario
 
 
 @sesion_requerida
@@ -156,6 +156,7 @@ class DetalleTrasladoDetailView(DetailView):
 
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
+
 
 class ProveedorListView(ListView):
     model = Proveedor

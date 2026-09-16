@@ -1,7 +1,8 @@
 # mantenimiento/mixins.py
+from functools import wraps
+
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from functools import wraps
 
 
 class SesionRequeridaMixin:

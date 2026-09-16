@@ -1,7 +1,7 @@
-from django.db import models
-from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.db import models
+from django.utils import timezone
 
 from herramienta.models import Herramienta
 from usuario.models import Usuario

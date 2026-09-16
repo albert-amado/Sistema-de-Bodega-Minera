@@ -3,7 +3,7 @@ schemas.py - Modelos de datos tipados y enumeraciones del módulo de configuraci
 """
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional, Dict, Any
+from typing import Any
 
 
 class DatabaseDriver(str, Enum):
@@ -43,7 +43,7 @@ class DatabaseProfile:
     timeout_sec: int = 5
     conn_max_age: int = 600
 
-    def to_django_dict(self, base_dir=None) -> Dict[str, Any]:
+    def to_django_dict(self, base_dir=None) -> dict[str, Any]:
         """Transforma el perfil a la estructura nativa de DATABASES['default'] de Django."""
         if self.driver == DatabaseDriver.SQLITE:
             db_path = str(base_dir / self.name) if (base_dir and not self.name.startswith("/")) else self.name
@@ -87,7 +87,7 @@ class SystemSettings:
     date_format: str = "%d/%m/%Y"
     storage_driver: StorageDriver = StorageDriver.LOCAL
     media_path: str = "media"
-    cloud_bucket_name: Optional[str] = None
+    cloud_bucket_name: str | None = None
 
 
 @dataclass

@@ -7,11 +7,10 @@ from django.db.models.functions import TruncMonth
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from prestamo.models import Prestamo, DevolucionHerramienta, EstadoPrestamo
-from herramienta.models import Herramienta
-from usuario.models import Usuario
-
 from common.mixins import sesion_requerida
+from herramienta.models import Herramienta
+from prestamo.models import DevolucionHerramienta, Prestamo
+from usuario.models import Usuario
 
 MESES_ABREV = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
