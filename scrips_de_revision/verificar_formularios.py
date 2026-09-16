@@ -1,6 +1,6 @@
-import os
-import ast
 import argparse
+import ast
+import os
 
 STATUS_FIELDS = {'estado', 'estado_registro', 'activo', 'disponible', 'status', 'active', 'is_active'}
 
@@ -23,9 +23,7 @@ def extract_model_status_fields(filepath):
             # Check if it is a Django model
             is_model = False
             for base in node.bases:
-                if isinstance(base, ast.Name) and base.id == 'Model':
-                    is_model = True
-                elif isinstance(base, ast.Attribute) and base.attr == 'Model':
+                if isinstance(base, ast.Name) and base.id == 'Model' or isinstance(base, ast.Attribute) and base.attr == 'Model':
                     is_model = True
 
             # If not explicitly inheriting from Model, look for field assignments as a heuristic
@@ -88,9 +86,7 @@ def process_forms_file(filepath, all_model_status_fields):
         if isinstance(node, ast.ClassDef):
             is_model_form = False
             for base in node.bases:
-                if isinstance(base, ast.Name) and base.id == 'ModelForm':
-                    is_model_form = True
-                elif isinstance(base, ast.Attribute) and base.attr == 'ModelForm':
+                if isinstance(base, ast.Name) and base.id == 'ModelForm' or isinstance(base, ast.Attribute) and base.attr == 'ModelForm':
                     is_model_form = True
             
             if not is_model_form and node.name.endswith('Form'):
@@ -136,9 +132,7 @@ def process_forms_file(filepath, all_model_status_fields):
                                                 fields_list.append(elt.value)
                                             elif isinstance(elt, ast.Str):
                                                 fields_list.append(elt.s)
-                                    elif isinstance(fields_node, ast.Constant) and fields_node.value == '__all__':
-                                        is_all_fields = True
-                                    elif isinstance(fields_node, ast.Str) and fields_node.s == '__all__':
+                                    elif isinstance(fields_node, ast.Constant) and fields_node.value == '__all__' or isinstance(fields_node, ast.Str) and fields_node.s == '__all__':
                                         is_all_fields = True
 
             # If we don't have a model, we can't check its model-level fields, but let's check class-level forms fields

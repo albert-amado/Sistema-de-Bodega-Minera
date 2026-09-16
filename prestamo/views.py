@@ -5,23 +5,19 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from herramienta.models import Herramienta
-from usuario.models import Usuario
-from usuario.decorators import login_required, admin_required
 from common.mixins import sesion_requerida
+from herramienta.models import Herramienta
+from usuario.decorators import admin_required
+from usuario.models import Usuario
 
+from .forms import (
+    EditarPrestamoObservacionesForm,
+)
 from .models import (
     DetallePrestamo,
     DevolucionHerramienta,
     EstadoPrestamo,
     Prestamo,
-)
-from .forms import (
-    PrestamoForm,
-    DetallePrestamoForm,
-    SolicitudPrestamoUsuarioForm,
-    DevolucionHerramientaForm,
-    EditarPrestamoObservacionesForm,
 )
 
 

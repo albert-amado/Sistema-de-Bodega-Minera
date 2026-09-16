@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import ProtectedError, RestrictedError
 from django.contrib import messages
-from .forms import EstanteForm, AlmacenForm
-from .models import Estante, Almacen
+from django.db.models import ProtectedError, RestrictedError
+from django.shortcuts import get_object_or_404, redirect, render
+
 from common.mixins import sesion_requerida
+
+from .forms import AlmacenForm, EstanteForm
+from .models import Almacen, Estante
 
 
 @sesion_requerida

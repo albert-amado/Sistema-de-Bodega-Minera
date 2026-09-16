@@ -1,8 +1,10 @@
 import re
+
 from django import forms
+from django.contrib.auth.hashers import check_password, make_password
 from django.core.exceptions import ValidationError
-from django.contrib.auth.hashers import make_password, check_password
-from .models import Usuario, validar_numero_documento
+
+from .models import Usuario
 
 DOC_PATTERNS = {
     'CC': (r'^\d{6,10}$', 'La Cédula de Ciudadanía debe contener entre 6 y 10 dígitos numéricos.'),

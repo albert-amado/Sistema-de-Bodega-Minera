@@ -1,10 +1,10 @@
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
+
 from herramienta.models import Herramienta
 from usuario.models import Usuario
 
 from .models import DetallePrestamo, EstadoPrestamo, Prestamo
-from .forms import PrestamoForm, DetallePrestamoForm, SolicitudPrestamoUsuarioForm
 
 
 class PrestamoModelTest(TestCase):

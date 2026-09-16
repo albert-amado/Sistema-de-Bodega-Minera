@@ -4,7 +4,6 @@ from django.forms import inlineformset_factory
 from django.utils import timezone
 
 from herramienta.models import Herramienta
-from usuario.models import Usuario
 
 from .models import (
     DetallePrestamo,

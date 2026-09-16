@@ -12,10 +12,10 @@
   function getThemeColors() {
     const dark = isDarkMode();
     return {
-      activo: '#10b981',        // Verde esmeralda
-      vencido: '#ef4444',       // Rojo
-      devuelto: '#3b82f6',      // Azul
-      parcial: '#f59e0b',       // Amarillo/Ámbar
+      activo: '#10b981',
+      vencido: '#ef4444',
+      devuelto: '#3b82f6',
+      parcial: '#f59e0b',
       gridColor: dark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
       textColor: dark ? '#cbd5e1' : '#334155',
       yTickColor: dark ? '#f1f5f9' : '#0f172a',
@@ -83,7 +83,7 @@
     }
   }
 
-  // ── 2. Gráfica de Actividad por Mes (Bar / Line) ──
+  // ── 2. Gráfica de Actividad por Mes (Bar) ──
   function initChartMeses() {
     const el = document.getElementById('chart-meses-data');
     const canvas = document.getElementById('chartMeses');
@@ -145,7 +145,7 @@
     }
   }
 
-  // ── 3. Gráfica de Salud de Inventario (Pie / Doughnut) ──
+  // ── 3. Gráfica de Salud de Inventario (Pie) ──
   function initChartSalud() {
     const el = document.getElementById('chart-salud-data');
     const canvas = document.getElementById('chartSalud');
@@ -209,31 +209,59 @@
     initChartSalud();
   }
 
-  // Animación contadores KPI
+  // ── Animación KPI (números + entrada de tarjetas) ──
   function animateKpis() {
-    const kpiElements = document.querySelectorAll('.kpi-number');
-    kpiElements.forEach(el => {
-      const target = parseInt(el.getAttribute('data-target') || '0', 10);
-      let start = 0;
-      const duration = 600;
-      const stepTime = 25;
-      const steps = duration / stepTime;
-      const increment = target / steps;
+    const cards = document.querySelectorAll('.kpi-card');
+
+    cards.forEach(card => {
+      const delay = parseInt(card.getAttribute('data-kpi-delay') || '0', 10);
+
+      // 1. Hacer visible la tarjeta con el delay
+      setTimeout(() => {
+        card.classList.add('kpi-visible');
+      }, delay);
+
+      // 2. Animar el número dentro de la tarjeta
+      const numberEl = card.querySelector('.kpi-number');
+      if (!numberEl) return;
+
+      const target = parseInt(numberEl.getAttribute('data-target') || '0', 10);
 
       if (target === 0) {
-        el.textContent = '0';
+        numberEl.textContent = '0';
         return;
       }
 
-      const timer = setInterval(() => {
-        start += increment;
-        if (start >= target) {
-          el.textContent = target;
-          clearInterval(timer);
-        } else {
-          el.textContent = Math.floor(start);
+      const duration = 700; // ms
+      const startTime = performance.now() + delay;
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function tick(now) {
+        // Si el elemento ya no está en el DOM → cancelar
+        if (!document.body.contains(numberEl)) return;
+
+        const elapsed = now - startTime;
+        if (elapsed < 0) {
+          requestAnimationFrame(tick);
+          return;
         }
-      }, stepTime);
+
+        const progress = Math.min(elapsed / duration, 1);
+        const value = Math.floor(easeOutCubic(progress) * target);
+
+        numberEl.textContent = value;
+
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          numberEl.textContent = target; // asegurar valor final exacto
+        }
+      }
+
+      requestAnimationFrame(tick);
     });
   }
 
@@ -248,7 +276,7 @@
     init();
   }
 
-  // Observador reactivo para conmutar colores si cambia la clase dark-mode en el body
+  // Observador reactivo para redibujar charts al cambiar dark-mode
   const observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (m) {
       if (m.attributeName === 'class') {

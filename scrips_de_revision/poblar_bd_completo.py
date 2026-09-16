@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Script para poblar la base de datos con datos de ejemplo completos.
 Cubre todas las 15 tablas del sistema acorde al MER actualizado,
@@ -18,19 +17,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-import django  # noqa: E402
+import django
 
 # Configurar Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-from django.contrib.auth.hashers import make_password  # noqa: E402
-from django.core.management import call_command  # noqa: E402
-from django.db import transaction  # noqa: E402
-from django.utils import timezone  # noqa: E402
+from django.contrib.auth.hashers import make_password
+from django.core.management import call_command
+from django.db import transaction
+from django.utils import timezone
 
-from almacen.models import Almacen, Estante  # noqa: E402
-from herramienta.models import (  # noqa: E402
+from almacen.models import Almacen, Estante
+from herramienta.models import (
     BitacoraEstado,
     CategoriaHerramienta,
     DetalleMantenimiento,
@@ -41,12 +40,12 @@ from herramienta.models import (  # noqa: E402
     Suministro,
     Traslado,
 )
-from prestamo.models import (  # noqa: E402
+from prestamo.models import (
     DetallePrestamo,
     DevolucionHerramienta,
     Prestamo,
 )
-from usuario.models import Usuario  # noqa: E402
+from usuario.models import Usuario
 
 
 def crear_usuarios():
@@ -719,8 +718,7 @@ def crear_prestamos_y_devoluciones(usuarios, herramientas):
             recibe_usr = random.choice(receptores)
             dias_despues = random.randint(0, min(dias_pres, 3))
             fecha_dev = fecha_pres + timedelta(days=dias_despues)
-            if fecha_dev > timezone.now().date():
-                fecha_dev = timezone.now().date()
+            fecha_dev = min(fecha_dev, timezone.now().date())
 
             obs_dev = random.choice(observaciones_devolucion)
             if estado == 'PARCIAL':

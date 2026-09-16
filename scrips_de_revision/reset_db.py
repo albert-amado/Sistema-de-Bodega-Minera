@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Script para reiniciar la base de datos SQLite y eliminar los archivos de migración.
 """
 
-import os
 import shutil
 from pathlib import Path
 
