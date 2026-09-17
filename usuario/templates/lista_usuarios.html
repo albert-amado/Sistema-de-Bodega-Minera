@@ -204,16 +204,16 @@
 <div id="vistaLista" class="d-none">
   <div class="gu-table-card">
     <div class="table-responsive">
-      <table class="table gu-table mb-0" id="usuarios-table">
+      <table class="table gu-table mb-0 w-100" id="usuarios-table">
         <thead>
           <tr>
-            <th>Usuario</th>
-            <th>Documento</th>
-            <th>Correo Electrónico</th>
-            <th class="d-none d-md-table-cell">Ficha / Programa</th>
-            <th class="d-none d-lg-table-cell">Teléfono</th>
-            <th>Rol</th>
-            <th class="text-center">Acciones</th>
+            <th data-priority="1">Usuario</th>
+            <th data-priority="1">Documento</th>
+            <th data-priority="3">Correo Electrónico</th>
+            <th data-priority="2">Ficha / Programa</th>
+            <th data-priority="3">Teléfono</th>
+            <th data-priority="1">Rol</th>
+            <th class="text-center" data-priority="1" style="width: 100px;">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -233,7 +233,7 @@
             <td>
               <a href="mailto:{{ u.correo }}" class="text-decoration-none gu-info-email">{{ u.correo }}</a>
             </td>
-            <td class="d-none d-md-table-cell">
+            <td>
               {% if u.numero_ficha %}
                 <span class="gu-info-badge-ficha">{{ u.numero_ficha }}</span>
                 <small class="text-muted d-block text-truncate" style="max-width:200px;">{{ u.nombre_programa|default:"" }}</small>
@@ -241,7 +241,7 @@
                 <span class="text-muted">—</span>
               {% endif %}
             </td>
-            <td class="d-none d-lg-table-cell">
+            <td>
               <span class="gu-info-text">{{ u.telefono|default:"—" }}</span>
             </td>
             <td>
@@ -250,11 +250,11 @@
               </span>
             </td>
             <td class="text-center">
-              <div class="d-inline-flex gap-1">
-                <button type="button" class="btn btn-sm btn-outline-secondary gu-btn-view px-2" onclick="verUsuario('{{ u.numero_documento }}')" title="Ver detalles">
+              <div class="sbm-actions-group justify-content-center">
+                <button type="button" class="sbm-action-btn sbm-btn-view" onclick="verUsuario('{{ u.numero_documento }}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles de {{ u.nombre_completo }}" aria-label="Ver detalles de {{ u.nombre_completo }}">
                   <i class="bi bi-eye"></i>
                 </button>
-                <button type="button" class="btn btn-sm gu-btn-edit px-2" onclick="abrirEditar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}', '{{ u.numero_ficha|default:''|escapejs }}', '{{ u.nombre_programa|default:''|escapejs }}')" title="Editar usuario">
+                <button type="button" class="sbm-action-btn sbm-btn-edit" onclick="abrirEditar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}', '{{ u.numero_ficha|default:''|escapejs }}', '{{ u.nombre_programa|default:''|escapejs }}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar a {{ u.nombre_completo }}" aria-label="Editar a {{ u.nombre_completo }}">
                   <i class="bi bi-pencil"></i>
                 </button>
               </div>

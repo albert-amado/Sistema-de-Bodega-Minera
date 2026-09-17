@@ -56,11 +56,15 @@
     </div>
   </div>
 
+  {% include "partials/modal_ver_detalle.html" %}
+
   <script defer src="{% static 'js/bootstrap.bundle.min.js' %}?v=3"></script>
   <script defer src="{% static 'js/form-validation.js' %}?v=2"></script>
   <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
   <script defer src="{% static 'js/datatables-init.js' %}?v=4"></script>
+  <script defer src="{% static 'js/sbm-datatable.js' %}?v=1"></script>
+  <script defer src="{% static 'js/sbm-actions.js' %}?v=1"></script>
   <script defer src="{% static 'js/base.js' %}?v=1"></script>
   <script defer src="{% static 'js/notificaciones.js' %}?v=1"></script>
   {% block js %}{% endblock %}

@@ -185,6 +185,240 @@ const DOC_RULES = new Map([
 })();
 
 
+// ══════════════════════════════════════════════════════════════════════════════
+// INTEGRACIÓN SOFIAPLUS: VERIFICACIÓN EN TIEMPO REAL CON DEBOUNCE (REGISTRO)
+// ══════════════════════════════════════════════════════════════════════════════
+(function initSofiaVerification() {
+  const docInput     = document.getElementById('documento');
+  const tipoInput    = document.getElementById('tipo_documento');
+  const statusBox    = document.getElementById('sofia-status-container');
+  const regForm      = document.getElementById('regForm');
+  const submitBtn    = document.getElementById('btn-submit-reg');
+
+  const firstNameInp = document.getElementById('first_name');
+  const lastNameInp  = document.getElementById('last_name');
+  const fichaInp     = document.getElementById('numero_ficha');
+  const progInp      = document.getElementById('nombre_programa');
+
+  const lblNombres   = document.getElementById('lbl-nombres-info');
+  const lblApellidos = document.getElementById('lbl-apellidos-info');
+  const lblFicha     = document.getElementById('lbl-ficha-info');
+  const lblProg      = document.getElementById('lbl-prog-info');
+
+  if (!docInput || !regForm) return;
+
+  let debounceTimer = null;
+  let activeAbortController = null;
+  let lastCheckedDoc = '';
+  let lastCheckedTipo = '';
+  let isDocVerified = false;
+  let isDocBlocked = false;
+
+  function setFieldsReadOnly(locked, data = null) {
+    const fields = [firstNameInp, lastNameInp, fichaInp, progInp];
+    fields.forEach(f => {
+      if (!f) return;
+      if (locked) {
+        f.readOnly = true;
+        f.classList.add('is-locked-sofia');
+      } else {
+        f.readOnly = false;
+        f.classList.remove('is-locked-sofia');
+      }
+    });
+
+    if (locked && data) {
+      if (firstNameInp) firstNameInp.value = data.primer_nombre || '';
+      if (lastNameInp)  lastNameInp.value  = data.primer_apellido || '';
+      if (fichaInp)     fichaInp.value     = data.numero_ficha || '';
+      if (progInp)      progInp.value      = data.programa_formacion || '';
+
+      if (lblNombres)   lblNombres.textContent   = '(SofiaPlus ✓)';
+      if (lblApellidos) lblApellidos.textContent = '(SofiaPlus ✓)';
+      if (lblFicha)     lblFicha.textContent     = '(SofiaPlus ✓)';
+      if (lblProg)      lblProg.textContent      = '(SofiaPlus ✓)';
+    } else if (!locked) {
+      if (lblNombres)   lblNombres.textContent   = '';
+      if (lblApellidos) lblApellidos.textContent = '';
+      if (lblFicha)     lblFicha.textContent     = '';
+      if (lblProg)      lblProg.textContent      = '';
+    }
+  }
+
+  function renderStatus(type, message, htmlContent = null) {
+    if (!statusBox) return;
+    statusBox.innerHTML = '';
+    const badge = document.createElement('div');
+    if (type === 'loading') {
+      badge.className = 'sofia-badge-loading';
+      badge.innerHTML = `<span class="spinner-sofia"></span> ${message}`;
+    } else if (type === 'success') {
+      badge.className = 'sofia-badge-success';
+      badge.innerHTML = htmlContent || `✓ ${message}`;
+    } else if (type === 'warning') {
+      badge.className = 'sofia-badge-warning';
+      badge.innerHTML = htmlContent || `⚠ ${message}`;
+    } else if (type === 'error') {
+      badge.className = 'sofia-badge-error';
+      badge.innerHTML = htmlContent || `✕ ${message}`;
+    }
+    statusBox.appendChild(badge);
+  }
+
+  function clearStatus() {
+    if (statusBox) statusBox.innerHTML = '';
+    isDocVerified = false;
+    isDocBlocked = false;
+    if (submitBtn) submitBtn.disabled = false;
+  }
+
+  async function checkSofiaPlus() {
+    const doc = docInput.value.trim();
+    const tipo = tipoInput ? tipoInput.value : 'CC';
+
+    if (!doc || doc.length < 5) {
+      clearStatus();
+      setFieldsReadOnly(false);
+      lastCheckedDoc = '';
+      return;
+    }
+
+    if (doc === lastCheckedDoc && tipo === lastCheckedTipo) {
+      return; // No re-consultar el mismo valor
+    }
+
+    lastCheckedDoc = doc;
+    lastCheckedTipo = tipo;
+
+    if (activeAbortController) {
+      activeAbortController.abort();
+    }
+    activeAbortController = new AbortController();
+
+    renderStatus('loading', 'Verificando documento con SofiaPlus...');
+    isDocBlocked = false;
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const url = `/api/aprendices/verificar-documento/?tipo_documento=${encodeURIComponent(tipo)}&documento=${encodeURIComponent(doc)}`;
+      const res = await fetch(url, {
+        signal: activeAbortController.signal,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      const data = await res.json();
+
+      if (data.already_registered) {
+        // Cuenta duplicada
+        isDocVerified = false;
+        isDocBlocked = true;
+        setFieldsReadOnly(false);
+        renderStatus('error', '', `<span>⚠ Ya existe una cuenta con este documento. <a href="/" class="text-danger fw-bold text-decoration-underline ms-1">Iniciar sesión</a></span>`);
+        if (submitBtn) submitBtn.disabled = true;
+        return;
+      }
+
+      if (data.success && data.verificado && data.aprendiz) {
+        // Aprendiz verificado exitosamente
+        isDocVerified = true;
+        isDocBlocked = false;
+        setFieldsReadOnly(true, data.aprendiz);
+        const estadoDesc = data.aprendiz.estado_programa || 'ACTIVO';
+        renderStatus('success', '', `<span>✓ Aprendiz Verificado en SofiaPlus · <strong>${data.aprendiz.nombre_completo}</strong> (${estadoDesc})</span>`);
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+
+      if (data.not_found) {
+        isDocVerified = false;
+        if (data.allow_manual) {
+          // Excepción manual permitida (TODO: decisión de negocio)
+          isDocBlocked = false;
+          setFieldsReadOnly(false);
+          renderStatus('warning', '', `<span>⚠ Documento no registrado en SofiaPlus. Registro manual habilitado por excepción.</span>`);
+          if (submitBtn) submitBtn.disabled = false;
+        } else {
+          // Bloqueo estricto
+          isDocBlocked = true;
+          setFieldsReadOnly(false);
+          renderStatus('error', '', `<span>✕ ${data.error || 'Documento no registrado en SofiaPlus. Solo aprendices autorizados pueden crear cuenta.'}</span>`);
+          if (submitBtn) submitBtn.disabled = true;
+        }
+        return;
+      }
+
+      if (data.service_unavailable) {
+        isDocVerified = false;
+        if (data.allow_pending) {
+          // Contingencia: registro provisional permitido (TODO: decisión de negocio)
+          isDocBlocked = false;
+          setFieldsReadOnly(false);
+          renderStatus('warning', '', `<span>⚠ Servicio del SENA no disponible. Puedes completar los datos; tu cuenta quedará registrada provisionalmente.</span>`);
+          if (submitBtn) submitBtn.disabled = false;
+        } else {
+          isDocBlocked = true;
+          setFieldsReadOnly(false);
+          renderStatus('error', '', `<span>✕ ${data.error || 'Servicio del SENA fuera de línea. Intenta de nuevo más tarde.'}</span>`);
+          if (submitBtn) submitBtn.disabled = true;
+        }
+        return;
+      }
+
+      // Otros errores (ej. formato inválido)
+      isDocVerified = false;
+      isDocBlocked = true;
+      setFieldsReadOnly(false);
+      renderStatus('error', data.error || 'Error al validar documento.');
+      if (submitBtn) submitBtn.disabled = true;
+
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      console.error('Error en consulta de SofiaPlus:', err);
+      // Fallback ante fallo de red
+      renderStatus('warning', '', `<span>⚠ Sin conexión al servicio de verificación. Continúa completando los campos.</span>`);
+      setFieldsReadOnly(false);
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  }
+
+  // Eventos con debounce de 500ms
+  docInput.addEventListener('input', function () {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(checkSofiaPlus, 500);
+  });
+
+  docInput.addEventListener('change', function () {
+    clearTimeout(debounceTimer);
+    checkSofiaPlus();
+  });
+
+  // Si cambia el tipo de documento en el selector personalizado
+  const docDropdown = document.getElementById('docDropdown');
+  if (docDropdown) {
+    docDropdown.querySelectorAll('a').forEach(item => {
+      item.addEventListener('click', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(checkSofiaPlus, 100);
+      });
+    });
+  }
+
+  // Validación final al enviar formulario
+  regForm.addEventListener('submit', function (e) {
+    if (isDocBlocked) {
+      e.preventDefault();
+      const area = document.getElementById('msg-area');
+      showError(area, 'No es posible registrar la cuenta: el documento no cumple con los requisitos de verificación en SofiaPlus o ya existe.');
+    }
+  });
+
+  // Ejecutar verificación inicial si el documento ya venía lleno (ej. tras error de validación)
+  if (docInput.value.trim().length >= 5) {
+    checkSofiaPlus();
+  }
+})();
+
+
+
   //mostrar error
 
 function showError(area, msg) {

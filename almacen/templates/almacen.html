@@ -85,12 +85,12 @@
     <table class="table table-hover align-middle datatable-custom w-100" id="almacenes-table">
       <thead class="table-light">
         <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 60px;"># ID</th>
-          <th>Nombre del Almacén</th>
-          <th>Ubicación</th>
-          <th>Dimensiones</th>
-          <th class="text-center">Estantes</th>
-          <th class="text-center" style="width: 120px;">Acciones</th>
+          <th class="text-center" style="width: 60px;" data-priority="1"># ID</th>
+          <th data-priority="1">Nombre del Almacén</th>
+          <th data-priority="2">Ubicación</th>
+          <th data-priority="3">Dimensiones</th>
+          <th class="text-center" data-priority="1">Estantes</th>
+          <th class="text-center" style="width: 140px;" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -159,14 +159,27 @@
 
           <!-- Acciones -->
           <td class="text-center text-nowrap">
-            <div class="d-inline-flex align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs btn-ver-detalle" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles rápidos" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
-                <i class="bi bi-eye text-primary"></i>
+            <div class="sbm-actions-group justify-content-center">
+              <button type="button" class="sbm-action-btn sbm-btn-view" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles de {{ almacen.nombre }}" aria-label="Ver detalles de {{ almacen.nombre }}"
+                      onclick="window.mostrarModalDetalles({
+                        title: '{{ almacen.nombre|escapejs }}',
+                        subtitle: 'Almacén #{{ almacen.pk }}',
+                        badge: 'ALMACÉN',
+                        icon: 'bi-building',
+                        fields: [
+                          { label: 'Identificador', value: '#{{ almacen.pk }}' },
+                          { label: 'Nombre del Almacén', value: '{{ almacen.nombre|escapejs }}' },
+                          { label: 'Ubicación Física', value: '{{ almacen.ubicacion|default:"Sin ubicación especificada"|escapejs }}' },
+                          { label: 'Dimensiones / Capacidad', value: '{{ almacen.dimensiones|default:"No especificado"|escapejs }}' },
+                          { label: 'Estantes Instalados', value: '{{ almacen.estantes.count|default:0 }} estante{{ almacen.estantes.count|pluralize }}', isBadge: true, badgeClass: 'bg-info-subtle text-info border border-info-subtle' }
+                        ]
+                      })">
+                <i class="bi bi-eye"></i>
               </button>
-              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}','{{ almacen.ubicacion|default:''|escapejs }}','{{ almacen.dimensiones|default:''|escapejs }}')">
-                <i class="bi bi-pencil text-secondary"></i>
+              <button type="button" class="sbm-action-btn sbm-btn-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar {{ almacen.nombre }}" aria-label="Modificar {{ almacen.nombre }}" onclick="abrirEditarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}','{{ almacen.ubicacion|default:''|escapejs }}','{{ almacen.dimensiones|default:''|escapejs }}')">
+                <i class="bi bi-pencil"></i>
               </button>
-              <button type="button" class="btn btn-sm btn-light border text-danger rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar almacén" onclick="abrirEliminarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}')">
+              <button type="button" class="sbm-action-btn sbm-btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar {{ almacen.nombre }}" aria-label="Eliminar {{ almacen.nombre }}" onclick="abrirEliminarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}')">
                 <i class="bi bi-trash"></i>
               </button>
             </div>

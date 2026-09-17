@@ -25,29 +25,13 @@ $(document).ready(function () {
   });
 
   // ─── PASO 2: inicializar DataTable sobre el tbody ya limpio
-  var table = $('#prestamo-table').DataTable({
-    responsive: true,
-    dom: '<"row mb-3 align-items-center g-2"<"col-md-4"l><"col-md-8 text-md-end"B>>t<"row mt-3 align-items-center g-2"<"col-md-6"i><"col-md-6"p>>',
-    buttons: window.obtenerBotonesDataTable('prestamos'),
-    language: {
-      url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
-    },
-    order: [],
+  var table = window.initSBMDataTable('#prestamo-table', {
+    modulo: 'prestamos',
+    order: [[1, 'desc']], // ID descendente por defecto
     columnDefs: [
-      { orderable: false, targets: [0, 3, 7] } // expand (0), tools (3), actions (7)
+      { orderable: false, targets: [0, 4, 7] } // expand (0), tools (4), actions (7)
     ],
-    pageLength: 10,
-    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
-    drawCallback: function (settings) {
-      if (settings.aiDisplay.length === 0 && emptyStateHtml) {
-        $(this).find('.dataTables_empty').html(emptyStateHtml);
-      }
-      var tooltipTriggerList = this.api().table().container()
-            .querySelectorAll('[data-bs-toggle="tooltip"]');
-      [...tooltipTriggerList].forEach(function (el) {
-        bootstrap.Tooltip.getOrCreateInstance(el);
-      });
-    }
+    pageLength: 10
   });
 
   // ─── Real-time live filtering ───

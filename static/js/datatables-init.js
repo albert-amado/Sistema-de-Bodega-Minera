@@ -126,25 +126,8 @@ $(document).ready(function () {
       }
     });
 
-    $(this).DataTable({
-      responsive: true,
-      dom: '<"row mb-3 align-items-center g-2"<"col-md-3"l><"col-md-5 text-md-center"B><"col-md-4 text-md-end"f>>t<"row mt-3 align-items-center g-2"<"col-md-6"i><"col-md-6"p>>',
-      buttons: window.obtenerBotonesDataTable(moduloName),
-      language: {
-        url: languageUrl
-      },
-      pageLength: 10,
-      lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
-      order: [],
-      drawCallback: function (settings) {
-        if (settings.aiDisplay.length === 0 && emptyStateHtml) {
-          $(this).find('.dataTables_empty').html(emptyStateHtml);
-        }
-        var tooltipTriggerList = this.api().table().container().querySelectorAll('[data-bs-toggle="tooltip"]');
-        var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
-          return bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl);
-        });
-      }
-    });
+    if (typeof window.initSBMDataTable === 'function') {
+      window.initSBMDataTable(this, { modulo: moduloName });
+    }
   });
 });
