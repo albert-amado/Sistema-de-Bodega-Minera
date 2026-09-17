@@ -42,30 +42,29 @@ $(document).ready(function() {
         });
     }
 
-    // Real-time search filter
-    $('#inventario-busqueda').on('keyup input', function() {
-        table.search(this.value).draw();
-    });
-
-    // Category filter
+    // Filtro de categoría
     $('#inventario-categoria').on('change', function() {
         table.draw();
     });
 
-    // Clear filters
+    // Limpiar todos los filtros (búsqueda y categoría)
     $('#btn-limpiar-filtros').on('click', function(e) {
         e.preventDefault();
         $('#inventario-busqueda').val('');
+        $('#inventario-busqueda').closest('.sfb-search-group').find('.sbm-search-clear').addClass('d-none');
         $('#inventario-categoria').val('');
-        table.search('').draw();
-        table.draw();
+        if (table) {
+            var settings = table.settings()[0];
+            if (settings) {
+                settings._sbmSearchQuery = '';
+                settings._sbmSearchTokens = [];
+                settings._sbmSearchRaw = '';
+            }
+            table.search('').page('first').draw();
+        }
     });
 
-    // Apply initial filters if values exist (e.g. pre-populated from GET params)
-    var initialSearch = $('#inventario-busqueda').val();
-    if (initialSearch) {
-        table.search(initialSearch).draw();
-    }
+    // Aplicar filtro inicial de categoría si vino por GET
     var initialCat = $('#inventario-categoria').val();
     if (initialCat) {
         table.draw();

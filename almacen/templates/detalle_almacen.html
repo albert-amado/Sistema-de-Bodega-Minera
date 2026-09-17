@@ -6,7 +6,7 @@
 <!-- ══ CABECERA ══ -->
 <div class="d-flex align-items-center justify-content-between mb-4">
   <div class="d-flex align-items-center gap-3">
-    <a href="{% url 'almacenes' %}" class="btn btn-light border rounded-circle shadow-xs" style="width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;" title="Volver a almacenes">
+    <a href="{% url 'almacenes' %}" class="btn btn-light border rounded-circle shadow-xs sbm-icon-box-36" title="Volver a almacenes">
       <i class="bi bi-arrow-left text-dark fs-5"></i>
     </a>
     <div>
@@ -64,7 +64,7 @@
 <div class="card table-card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
   <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-2">
-      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center sbm-icon-box-34">
         <i class="bi bi-layout-three-columns fs-5"></i>
       </div>
       <div>
@@ -81,12 +81,12 @@
   <div class="table-responsive px-3 pb-3 pt-2">
     <table class="table table-hover align-middle datatable-custom w-100" id="detalle-almacen-table">
       <thead class="table-light">
-        <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 60px;" data-priority="1"># ID</th>
+        <tr class="text-secondary small fw-bold text-uppercase th-tracking">
+          <th class="text-center th-w-60" data-priority="1"># ID</th>
           <th data-priority="1">Código Estante</th>
           <th data-priority="2">Dimensiones</th>
           <th class="text-center" data-priority="1">Herramientas</th>
-          <th class="text-center" style="width: 70px;" data-priority="1">Acciones</th>
+          <th class="text-center th-w-70" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -102,14 +102,14 @@
           <!-- Código Estante -->
           <td>
             <div class="d-flex align-items-center gap-2">
-              <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.85rem;">
+              <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0 sbm-icon-box-36">
                 <i class="bi bi-grid-3x3-gap fs-6"></i>
               </div>
               <div>
                 <div class="fw-bold text-dark">
                   {{ estante.codigo }}
                 </div>
-                <div class="text-muted extra-small font-monospace" style="font-size: 0.72rem;">
+                <div class="text-muted extra-small font-monospace fs-xs">
                   ID: #{{ estante.pk }}
                 </div>
               </div>
@@ -119,7 +119,7 @@
           <!-- Dimensiones -->
           <td>
             {% if estante.dimensiones %}
-            <span class="badge bg-light text-secondary border px-2 py-1 font-monospace" style="font-size: 0.75rem;">
+            <span class="badge bg-light text-secondary border px-2 py-1 font-monospace fs-sm-badge">
               <i class="bi bi-arrows-fullscreen text-primary me-1"></i>{{ estante.dimensiones }}
             </span>
             {% else %}

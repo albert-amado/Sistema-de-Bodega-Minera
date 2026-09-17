@@ -31,7 +31,8 @@ $(document).ready(function() {
     });
 
     var table = window.initSBMDataTable('#reportes-table', {
-        modulo: 'inventario',
+        modulo: 'reportes',
+        searchPlaceholder: 'Buscar en reporte por producto, cliente, fecha…',
         pageLength: 10
     });
 

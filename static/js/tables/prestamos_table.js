@@ -1,101 +1,78 @@
-/* ═══════════════════════════════════════════
-   static/js/tables/prestamos_table.js
-   DataTable & Collapsible Details for Préstamos
-  ═══════════════════════════════════════════ */
-$(document).ready(function () {
-  var childRows = {};
-
-  // ─── PASO 1: extraer las filas de detalle ANTES de que DataTables
-  //            las cuente como filas de datos.
-  $('#prestamo-table tbody tr.detail-row').each(function () {
-    var id = $(this).attr('id');
-    if (id) {
-      childRows[id] = $(this).clone().removeClass('d-none');
-    }
-    $(this).remove();
-  });
-
-  // Extraer y remover la fila de estado vacío
-  var emptyStateHtml = '';
-  $('#prestamo-table tbody tr').each(function () {
-    if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
-      emptyStateHtml = $(this).find('td').html();
-      $(this).remove();
-    }
-  });
-
-  // ─── PASO 2: inicializar DataTable sobre el tbody ya limpio
-  var table = window.initSBMDataTable('#prestamo-table', {
-    modulo: 'prestamos',
-    order: [[1, 'desc']], // ID descendente por defecto
-    columnDefs: [
-      { orderable: false, targets: [0, 4, 7] } // expand (0), tools (4), actions (7)
-    ],
-    pageLength: 10
-  });
-
-  // ─── Real-time live filtering ───
-  $('input[name="q"]').on('keyup input', function () {
-    table.search(this.value).draw();
-  });
-
-  // ─── PASO 3: función toggle de detalles
-  function togglePrestamoDetail(btn) {
-    var targetId = btn.attr('data-target-detail');
-    var tr = btn.closest('tr');
-    if (!tr.length) return;
-
-    // 1. Si la fila de detalle se encuentra directamente en el DOM
-    var $domDetail = $('#' + targetId);
-    if ($domDetail.length && $domDetail.parent().is('tbody')) {
-      if ($domDetail.hasClass('d-none')) {
-        $domDetail.removeClass('d-none');
-        tr.addClass('shown');
-        btn.find('.row-chevron, svg').css('transform', 'rotate(90deg)');
-      } else {
-        $domDetail.addClass('d-none');
-        tr.removeClass('shown');
-        btn.find('.row-chevron, svg').css('transform', 'rotate(0deg)');
-      }
-      return;
-    }
-
-    // 2. Manejo mediante DataTables row.child
-    if (table && table.row) {
-      var row = table.row(tr);
-      if (row && row.child) {
-        if (row.child.isShown()) {
-          row.child.hide();
-          tr.removeClass('shown');
-          btn.find('.row-chevron, svg').css('transform', 'rotate(0deg)');
-        } else {
-          var $detailNode = childRows[targetId];
-          if ($detailNode) {
-            var $clone = $detailNode.clone().removeClass('d-none');
-            row.child($clone).show();
-            $(row.child()).find('td').first().attr('colspan', 8);
-          }
-          tr.addClass('shown');
-          btn.find('.row-chevron, svg').css('transform', 'rotate(90deg)');
+// Custom search filter for Estado in DataTables (only for prestamo-table)
+$.fn.dataTable.ext.search.push(
+    function(settings, data, dataIndex) {
+        if (settings.nTable.id !== 'prestamo-table') {
+            return true;
         }
+        var selectedEstado = $('#prestamo-estado').val();
+        if (!selectedEstado) {
+            return true;
+        }
+        var row = settings.aoData[dataIndex].nTr;
+        var rowEstado = $(row).find('td.col-estado').data('estado');
+        return String(rowEstado).toUpperCase() === String(selectedEstado).toUpperCase();
+    }
+);
+
+$(document).ready(function() {
+    // Extraer y remover la fila de estado vacío (evita warning TN/4)
+    var emptyStateHtml = '';
+    $('#prestamo-table tbody tr').each(function () {
+      if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+        emptyStateHtml = $(this).find('td').html();
+        $(this).remove();
       }
-    }
-  }
+    });
 
-  // Delegar clics en el botón de toggle y en la fila
-  $('#prestamo-table').on('click', '.btn-toggle-details', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    togglePrestamoDetail($(this));
-  });
+    var table = window.initSBMDataTable('#prestamo-table', {
+        modulo: 'prestamos',
+        dom: '<"row mb-3 align-items-center g-2"<"col-sm-6"l><"col-sm-6 text-sm-end"B>>t<"row mt-3 align-items-center g-2"<"col-md-6 col-sm-12 text-muted small"i><"col-md-6 col-sm-12 d-flex justify-content-md-end"p>>',
+        order: [[5, 'desc']], // Ordenar por fecha de solicitud descendente por defecto
+        columnDefs: [
+            { orderable: false, targets: [1, 6] } // Herramientas (1) y Acciones (6) no ordenables
+        ],
+        pageLength: 10
+    });
 
-  $('#prestamo-table').on('click', 'tbody > tr:not(.detail-row):not(.child)', function (e) {
-    if ($(e.target).closest('button, a, input, select, textarea, form, .badge').length) {
-      return;
+    // Filtro por Estado
+    $('#prestamo-estado').on('change', function() {
+        table.draw();
+    });
+
+    // Limpiar todos los filtros
+    $('#btn-limpiar-filtros').on('click', function(e) {
+        e.preventDefault();
+        $('#prestamo-busqueda').val('');
+        $('#prestamo-busqueda').closest('.sfb-search-group').find('.sbm-search-clear').addClass('d-none');
+        $('#prestamo-estado').val('');
+        if (table) {
+            var settings = table.settings()[0];
+            if (settings) {
+                settings._sbmSearchQuery = '';
+                settings._sbmSearchTokens = [];
+                settings._sbmSearchRaw = '';
+            }
+            table.search('').page('first').draw();
+        }
+    });
+
+    // Aplicar filtro inicial de estado si vino por GET
+    var initialEstado = $('#prestamo-estado').val();
+    if (initialEstado) {
+        table.draw();
     }
-    var btn = $(this).find('.btn-toggle-details');
-    if (btn.length) {
-      togglePrestamoDetail(btn);
-    }
-  });
+
+    // Initialize all tooltips on the page
+    var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"], .has-tooltip');
+    var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
+        return bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl);
+    });
+
+    // Hide tooltip when a button is clicked (to avoid lingering tooltips)
+    $(document).on('click', '[data-bs-toggle="tooltip"], .has-tooltip', function() {
+        var tooltip = bootstrap.Tooltip.getInstance(this);
+        if (tooltip) {
+            tooltip.hide();
+        }
+    });
 });

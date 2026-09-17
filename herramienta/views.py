@@ -24,8 +24,14 @@ def inventario_view(request):
     almacenes = Almacen.objects.all()
     estantes = Estante.objects.select_related('codigo_almacen').all()
     usuarios_sistema = Usuario.objects.all()
+    es_admin = str(request.session.get('usuario_rol', '')).lower() in ('admin', 'administrador')
 
     if request.method == 'POST':
+        # SEGURIDAD BACKEND: Evitar manipulación de DevTools por usuarios sin privilegios
+        if not es_admin:
+            messages.error(request, 'No tienes permisos de administrador para realizar modificaciones en el inventario.')
+            return redirect('inventario')
+
         accion = request.POST.get('accion')
 
         if accion == 'crear_producto':
@@ -34,16 +40,30 @@ def inventario_view(request):
             cat_id = request.POST.get('categoria')
             descripcion = request.POST.get('descripcion', '').strip()
             estante_id = request.POST.get('estante')
+            stock_raw = request.POST.get('stock', '1').strip()
+
+            if not nombre:
+                messages.error(request, 'El nombre de la herramienta es obligatorio.')
+                return redirect('inventario')
+
+            try:
+                stock_int = int(stock_raw)
+                if stock_int < 0 or stock_int > 10000:
+                    messages.error(request, 'El stock debe estar entre 0 y 10,000 unidades.')
+                    return redirect('inventario')
+            except ValueError:
+                messages.error(request, 'El stock inicial debe ser un número entero válido.')
+                return redirect('inventario')
 
             cat = CategoriaHerramienta.objects.filter(pk=cat_id).first() if cat_id else None
             estante = Estante.objects.filter(pk=estante_id).first() if estante_id else None
 
             Herramienta.objects.create(
-                codigo_sku=sku,
+                codigo_sku=sku or None,
                 nombre_herramienta=nombre,
                 codigo_categoria=cat,
                 descripcion=descripcion,
-                disponibilidad='Disponible',
+                disponibilidad=str(stock_int),
                 estante=estante,
             )
             messages.success(request, f"Herramienta '{nombre}' registrada con éxito en inventario.")
@@ -52,7 +72,9 @@ def inventario_view(request):
         elif accion == 'editar_producto':
             pk = request.POST.get('producto_id')
             herramienta = get_object_or_404(Herramienta, pk=pk)
-            herramienta.nombre_herramienta = request.POST.get('nombre', herramienta.nombre_herramienta)
+            nombre = request.POST.get('nombre', '').strip()
+            if nombre:
+                herramienta.nombre_herramienta = nombre
             herramienta.codigo_sku = request.POST.get('codigo_sku', herramienta.codigo_sku)
             herramienta.descripcion = request.POST.get('descripcion', herramienta.descripcion)
             cat_id = request.POST.get('categoria')
@@ -66,8 +88,16 @@ def inventario_view(request):
                 herramienta.estante = None
 
             stock_val = request.POST.get('stock')
-            if stock_val is not None and stock_val.strip():
-                herramienta.stock_disponible = stock_val
+            if stock_val is not None and str(stock_val).strip():
+                try:
+                    stock_int = int(str(stock_val).strip())
+                    if stock_int < 0 or stock_int > 10000:
+                        messages.error(request, 'El stock debe estar entre 0 y 10,000 unidades.')
+                        return redirect('inventario')
+                    herramienta.stock_disponible = stock_int
+                except ValueError:
+                    messages.error(request, 'El stock debe ser un número entero válido sin letras ni símbolos.')
+                    return redirect('inventario')
             herramienta.save()
             messages.success(request, f"Herramienta '{herramienta.nombre_herramienta}' actualizada.")
             return redirect('inventario')
@@ -75,18 +105,21 @@ def inventario_view(request):
         elif accion == 'crear_categoria':
             cat_nombre = request.POST.get('cat_nombre', '').strip()
             cat_desc = request.POST.get('cat_descripcion', '').strip()
-            if cat_nombre:
-                CategoriaHerramienta.objects.create(
-                    nombre_categoria=cat_nombre, 
-                    tipo_herramienta="General", 
-                    descripcion=cat_desc
-                )
-                messages.success(request, f"Categoría '{cat_nombre}' creada con éxito.")
+            if not cat_nombre:
+                messages.error(request, 'El nombre de la categoría es obligatorio.')
+                return redirect('inventario')
+
+            CategoriaHerramienta.objects.create(
+                nombre_categoria=cat_nombre, 
+                tipo_herramienta="General", 
+                descripcion=cat_desc
+            )
+            messages.success(request, f"Categoría '{cat_nombre}' creada con éxito.")
             return redirect('inventario')
 
     total_productos = herramientas.count()
-    sin_stock = herramientas.filter(disponibilidad='No disponible').count()
-    disponibles = herramientas.filter(disponibilidad='Disponible').count()
+    sin_stock = herramientas.filter(disponibilidad='0').count()
+    disponibles = total_productos - sin_stock
 
     context = {
         'productos': herramientas,
@@ -174,6 +207,7 @@ class ProveedorCreateView(CreateView):
         return super().form_valid(form)
 
 
+@sesion_requerida
 def api_estantes(request):
     """
     Devuelve los estantes de un almacén específico en formato JSON.

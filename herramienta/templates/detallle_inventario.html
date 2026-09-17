@@ -59,7 +59,7 @@
           <th data-priority="1">Cantidad</th>
           <th data-priority="2">Responsable</th>
           <th data-priority="3">Observaciones</th>
-          <th class="text-center" data-priority="1" style="width: 70px;">Acciones</th>
+          <th class="text-center th-w-70" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof window.initSBMDataTable === 'function') {
     window.initSBMDataTable('#inventario-detalle-table', {
       modulo: 'inventario',
+      searchPlaceholder: 'Buscar registro por herramienta, estante, responsable…',
       order: [[0, 'asc']],
       columnDefs: [
         { orderable: false, targets: [5] }

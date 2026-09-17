@@ -46,19 +46,6 @@ class Prestamo(models.Model):
             kwargs["documento_id"] = kwargs.pop("documento")
         super().__init__(*args, **kwargs)
 
-    def save(self, *args, **kwargs):
-        if self.documento_id and not Usuario.objects.filter(documento=self.documento_id).exists():
-            Usuario.objects.get_or_create(
-                documento=self.documento_id,
-                defaults={
-                    'primer_nombre': 'Usuario',
-                    'primer_apellido': 'Sistema',
-                    'tipo_documento': 'CC',
-                    'rol': 'Usuario',
-                }
-            )
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"Préstamo #{self.codigo_prestamo} - Ficha {self.ficha or 'N/A'}"
 
@@ -76,6 +63,20 @@ class Prestamo(models.Model):
             doc_str = str(self.documento_id).strip()
             if not doc_str.isdigit():
                 raise ValidationError({"documento": "El documento debe ser numérico."})
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        if self.documento_id and not Usuario.objects.filter(documento=self.documento_id).exists():
+            Usuario.objects.get_or_create(
+                documento=self.documento_id,
+                defaults={
+                    'primer_nombre': 'Usuario',
+                    'primer_apellido': 'Sistema',
+                    'tipo_documento': 'CC',
+                    'rol': 'Usuario',
+                }
+            )
+        super().save(*args, **kwargs)
 
 
 class DetallePrestamo(models.Model):

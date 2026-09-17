@@ -7,17 +7,17 @@
 <div class="sbm-verif-container">
 
   <!-- ENCABEZADO DE SECCIÓN -->
-  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-2 border-bottom">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
     <div>
       <div class="d-flex align-items-center gap-2 mb-1">
-        <span class="badge" style="background:#0F172A; color:#F59E0B; font-weight:700; font-size:0.75rem; letter-spacing:0.04em;">
+        <span class="badge sbm-badge-modulo">
           <i class="bi bi-shield-check me-1"></i>MÓDULO DE INTEGRACIÓN
         </span>
-        <span class="badge bg-light text-secondary border" style="font-size:0.75rem;">
+        <span class="badge bg-light text-secondary border fs-sm-badge">
           <i class="bi bi-lock-fill text-muted me-1"></i>Ley 1581 / Habeas Data
         </span>
       </div>
-      <h3 class="fw-bold text-dark mb-1" style="letter-spacing:-0.02em;">
+      <h3 class="fw-bold mb-1 sbm-title-heading">
         Verificación de Aprendices SENA
       </h3>
       <p class="text-muted mb-0 small">
@@ -37,11 +37,11 @@
   </div>
 
   <!-- AVISO DE TRATAMIENTO DE DATOS PERSONALES (HABEAS DATA / LEY 1581) -->
-  <div class="card border-0 mb-4 shadow-sm" style="background: #F8FAFC; border-left: 4px solid #F59E0B !important; border-radius: 8px;">
+  <div class="card border-0 mb-4 shadow-sm sbm-notice-card">
     <div class="card-body p-3">
       <div class="d-flex align-items-start gap-3">
         <div class="flex-shrink-0 mt-1">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--sbm-amber-500, #D97706)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             <path d="M12 8v4"/>
             <path d="M12 16h.01"/>
@@ -55,13 +55,15 @@
     </div>
   </div>
 
-  <div class="row g-4">
+  <!-- CONTENEDOR PRINCIPAL DOS COLUMNAS -->
+  <div class="row g-4 align-items-stretch">
+    
     <!-- COLUMNA IZQUIERDA: FORMULARIO DE CONSULTA -->
-    <div class="col-lg-5 col-xl-4">
-      <div class="card border-0 shadow-sm" style="border-radius: 12px; background: #FFFFFF;">
-        <div class="card-header bg-white border-bottom pt-3 pb-2 px-3">
+    <div class="col-12 col-lg-5 col-xl-4 d-flex flex-column">
+      <div class="card border-0 shadow-sm sbm-panel-card mb-4">
+        <div class="card-header bg-white border-bottom pt-3 pb-2 px-3 px-md-4">
           <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2">
+            <svg class="sbm-icon-amber" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"/>
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
@@ -69,19 +71,17 @@
           </h6>
         </div>
         <div class="card-body p-3 p-md-4">
-          <form id="formVerificarAprendiz" autocomplete="off" novalidate>
+          <!-- Formulario con data-no-validate para evitar inyecciones no deseadas -->
+          <form id="formVerificarAprendiz" data-no-validate autocomplete="off" novalidate>
             {% csrf_token %}
 
             <!-- TIPO DE DOCUMENTO -->
-            <div class="mb-3">
-              <label for="tipoDocumento" class="form-label fw-semibold text-dark small mb-1">
+            <div class="sbm-form-group mb-3">
+              <label for="tipoDocumento" class="sbm-label">
                 Tipo de Identificación
               </label>
-              <div class="input-group">
-                <span class="input-group-text bg-light border-end-0 text-muted">
-                  <i class="bi bi-card-text"></i>
-                </span>
-                <select id="tipoDocumento" name="tipo_documento" class="form-select border-start-0" required>
+              <div class="sbm-select-wrap">
+                <select id="tipoDocumento" name="tipo_documento" class="form-select sbm-select" required>
                   {% for code, label in tipos_documento %}
                     <option value="{{ code }}" {% if code == 'CC' %}selected{% endif %}>{{ label }}</option>
                   {% endfor %}
@@ -90,25 +90,24 @@
             </div>
 
             <!-- NÚMERO DE DOCUMENTO -->
-            <div class="mb-3">
+            <div class="sbm-form-group mb-3">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <label for="numeroDocumento" class="form-label fw-semibold text-dark small mb-0">
+                <label for="numeroDocumento" class="sbm-label mb-0">
                   Número de Documento <span class="text-danger">*</span>
                 </label>
-                <span id="docCounter" class="text-muted" style="font-size: 0.72rem;">0 dígitos</span>
+                <span id="docCounter" class="sbm-counter-badge">0 dígitos</span>
               </div>
               <div class="position-relative">
                 <input
                   type="text"
                   id="numeroDocumento"
                   name="documento"
-                  class="form-control form-control-lg pe-5"
+                  class="form-control sbm-input-doc"
                   placeholder="Ej. 1000000001"
                   maxlength="15"
                   pattern="[0-9]*"
                   inputmode="numeric"
                   required
-                  style="font-family: monospace; font-size: 1.1rem; letter-spacing: 0.05em;"
                 >
                 <button
                   type="button"
@@ -119,58 +118,79 @@
                   <i class="bi bi-x-circle-fill"></i>
                 </button>
               </div>
-              <div id="docValidationMsg" class="form-text small text-muted mt-1">
+              <div id="docValidationMsg" class="sbm-helper-text">
                 Ingrese entre 5 y 12 dígitos numéricos sin puntos ni comas.
               </div>
             </div>
 
-            <!-- BOTÓN DE CONSULTA -->
+            <!-- BOTÓN DE CONSULTA (CTA PRINCIPAL) -->
             <button
               type="submit"
               id="btnConsultar"
-              class="btn w-100 py-2 fw-bold text-white d-flex align-items-center justify-content-center gap-2 shadow-sm"
-              style="background: #0F172A; border-color: #0F172A; transition: all 0.2s;"
+              class="btn w-100 sbm-btn-cta mt-2"
               disabled
             >
-              <span id="btnIcon"><i class="bi bi-search"></i></span>
+              <span id="btnIcon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </span>
               <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
               <span id="btnText">Consultar Aprendiz</span>
             </button>
           </form>
 
-          <!-- ACCESOS DE PRUEBA RÁPIDA (DESARROLLO) -->
-          <div class="mt-4 pt-3 border-top">
-            <span class="d-block text-muted small fw-semibold mb-2">
-              <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Pruebas rápidas (Datos muestra):
-            </span>
-            <div class="d-flex flex-wrap gap-1">
-              <button type="button" class="btn btn-outline-secondary btn-sm quick-doc-btn py-0 px-2" style="font-size: 0.78rem;" data-doc="1000000001" data-tipo="CC">
-                1000000001 (Juan)
-              </button>
-              <button type="button" class="btn btn-outline-secondary btn-sm quick-doc-btn py-0 px-2" style="font-size: 0.78rem;" data-doc="1000000002" data-tipo="CC">
-                1000000002 (Maria)
-              </button>
-              <button type="button" class="btn btn-outline-secondary btn-sm quick-doc-btn py-0 px-2" style="font-size: 0.78rem;" data-doc="1000000003" data-tipo="CC">
-                1000000003 (Carlos)
-              </button>
-              <button type="button" class="btn btn-outline-secondary btn-sm quick-doc-btn py-0 px-2" style="font-size: 0.78rem;" data-doc="9999999999" data-tipo="CC">
-                9999999999 (No existe)
-              </button>
+          <!-- ACCESOS DE PRUEBA RÁPIDA (DATOS MUESTRA EN GRID UNIFORME) -->
+          <div class="sbm-quick-section mt-4 pt-3 border-top">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="sbm-quick-title">
+                <svg class="sbm-icon-amber me-1" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Pruebas rápidas (Datos muestra)
+              </span>
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <button type="button" class="sbm-quick-btn w-100 quick-doc-btn" data-doc="1000000001" data-tipo="CC" title="Probar aprendiz Juan">
+                  <span class="sbm-quick-doc">1000000001</span>
+                  <span class="sbm-quick-name">Juan Pérez</span>
+                </button>
+              </div>
+              <div class="col-6">
+                <button type="button" class="sbm-quick-btn w-100 quick-doc-btn" data-doc="1000000002" data-tipo="CC" title="Probar aprendiz María">
+                  <span class="sbm-quick-doc">1000000002</span>
+                  <span class="sbm-quick-name">María Gómez</span>
+                </button>
+              </div>
+              <div class="col-6">
+                <button type="button" class="sbm-quick-btn w-100 quick-doc-btn" data-doc="1000000003" data-tipo="CC" title="Probar aprendiz Carlos">
+                  <span class="sbm-quick-doc">1000000003</span>
+                  <span class="sbm-quick-name">Carlos Ruiz</span>
+                </button>
+              </div>
+              <div class="col-6">
+                <button type="button" class="sbm-quick-btn sbm-quick-btn--warn w-100 quick-doc-btn" data-doc="9999999999" data-tipo="CC" title="Probar documento inexistente">
+                  <span class="sbm-quick-doc">9999999999</span>
+                  <span class="sbm-quick-name sbm-quick-name--warn">No existe (404)</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- TARJETA INFORMATIVA DE FLUJO -->
-      <div class="card border-0 shadow-sm mt-3" style="border-radius: 12px; background: #FFFFFF;">
+      <div class="card border-0 shadow-sm sbm-panel-card mt-auto">
         <div class="card-body p-3 small text-secondary">
           <div class="fw-bold text-dark mb-2 d-flex align-items-center gap-2">
             <i class="bi bi-info-circle text-primary"></i>
             ¿Cómo funciona la integración?
           </div>
-          <ol class="ps-3 mb-0" style="line-height: 1.5;">
+          <ol class="ps-3 mb-0 sbm-list-guide">
             <li class="mb-1">El número es validado y sanitizado para evitar caracteres no válidos.</li>
-            <li class="mb-1">El servicio <code style="color:#d97706;">SofiaPlusClient</code> consulta el endpoint oficial con tokens seguros y caché efímera de 5 minutos.</li>
+            <li class="mb-1">El servicio <code class="sbm-code-tag">SofiaPlusClient</code> consulta el endpoint oficial con tokens seguros y caché efímera de 5 minutos.</li>
             <li>Si el aprendiz está <strong>ACTIVO / EN FORMACIÓN</strong>, puedes vincularlo directamente a un nuevo préstamo de bodega.</li>
           </ol>
         </div>
@@ -178,58 +198,57 @@
     </div>
 
     <!-- COLUMNA DERECHA: RESULTADO DE LA VERIFICACIÓN -->
-    <div class="col-lg-7 col-xl-8">
+    <div class="col-12 col-lg-7 col-xl-8 d-flex flex-column">
       
-      <!-- ESTADO 1: INICIAL / EN ESPERA -->
-      <div id="stateInitial" class="card border-0 shadow-sm text-center py-5 px-4" style="border-radius: 12px; background: #FFFFFF; min-height: 380px;">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <div class="p-3 rounded-circle mb-3" style="background: #F1F5F9; color: #64748B;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <!-- ESTADO 1: INICIAL / EN ESPERA (PERFECTAMENTE CENTRADO VERTICAL Y HORIZONTALMENTE) -->
+      <div id="stateInitial" class="card border-0 shadow-sm sbm-panel-card sbm-state-card h-100">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center p-4 p-md-5">
+          <div class="sbm-state-icon-wrap mb-3">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
               <path d="M20 8v6M23 11h-6"/>
             </svg>
           </div>
-          <h5 class="fw-bold text-dark mb-1">Esperando consulta de aprendiz</h5>
-          <p class="text-muted small mb-0" style="max-width: 420px;">
-            Ingresa el tipo y número de documento en el panel izquierdo para consultar en vivo la ficha, programa y estado académico del aprendiz.
+          <h5 class="fw-bold text-dark mb-2 sbm-tracking-tight">Esperando consulta de aprendiz</h5>
+          <p class="sbm-state-desc mb-0">
+            Ingresa el tipo y número de documento en el panel izquierdo para consultar en vivo la ficha, programa y estado formativo del aprendiz en SofiaPlus.
           </p>
         </div>
       </div>
 
-      <!-- ESTADO 2: CARGANDO (SPINNER Y ANIMACIÓN) -->
-      <div id="stateLoading" class="card border-0 shadow-sm text-center py-5 px-4 d-none" style="border-radius: 12px; background: #FFFFFF; min-height: 380px;">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <div class="spinner-border mb-3" style="width: 3.2rem; height: 3.2rem; color: #F59E0B;" role="status">
+      <!-- ESTADO 2: CARGANDO (SPINNER Y ANIMACIÓN CENTRADOS) -->
+      <div id="stateLoading" class="card border-0 shadow-sm sbm-panel-card sbm-state-card h-100 d-none">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center p-4 p-md-5">
+          <div class="spinner-border mb-3 sbm-spinner-amber" role="status">
             <span class="visually-hidden">Consultando...</span>
           </div>
-          <h5 class="fw-bold text-dark mb-1">Consultando servicio SofiaPlus...</h5>
-          <p class="text-muted small mb-0">
+          <h5 class="fw-bold text-dark mb-2">Consultando servicio SofiaPlus...</h5>
+          <p class="sbm-state-desc mb-0">
             Conectando con la base institucional del SENA. Esto puede tomar un par de segundos.
           </p>
         </div>
       </div>
 
       <!-- ESTADO 3: RESULTADO EXITOSO -->
-      <div id="stateSuccess" class="card border-0 shadow-sm d-none" style="border-radius: 12px; background: #FFFFFF; overflow: hidden;">
+      <div id="stateSuccess" class="card border-0 shadow-sm sbm-panel-card d-none overflow-hidden">
         
         <!-- CABECERA DEL APRENDIZ -->
-        <div class="p-4 text-white" style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-bottom: 3px solid #F59E0B;">
+        <div class="p-4 text-white sbm-result-header">
           <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
             <div class="d-flex align-items-center gap-3">
-              <div id="resAvatar" class="d-flex align-items-center justify-content-center rounded-circle fw-bold shadow"
-                   style="width: 58px; height: 58px; background: #F59E0B; color: #0F172A; font-size: 1.35rem; letter-spacing: 0.05em;">
+              <div id="resAvatar" class="d-flex align-items-center justify-content-center rounded-circle fw-bold shadow sbm-avatar">
                 AP
               </div>
               <div>
-                <span class="badge mb-1" style="background: rgba(245, 158, 11, 0.2); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 0.72rem;">
+                <span class="badge mb-1 sbm-badge-tag">
                   <i class="bi bi-person-badge-fill me-1"></i>APRENDIZ REGISTRADO
                 </span>
-                <h4 id="resNombreCompleto" class="fw-bold text-white mb-0 text-capitalize" style="letter-spacing: -0.01em;">
+                <h4 id="resNombreCompleto" class="fw-bold text-white mb-0 text-capitalize sbm-tracking-tight">
                   Nombre del Aprendiz
                 </h4>
-                <div class="d-flex align-items-center gap-2 mt-1 small" style="color: #CBD5E1;">
-                  <span id="resTipoYDoc" style="font-family: monospace;">CC 1000000001</span>
+                <div class="d-flex align-items-center gap-2 mt-1 small sbm-text-rock-light">
+                  <span id="resTipoYDoc" class="sbm-font-mono-bold">CC 1000000001</span>
                   <span>•</span>
                   <span id="resCentro">Centro Minero - Regional Boyacá</span>
                 </div>
@@ -238,7 +257,7 @@
 
             <!-- ESTADO BADGE -->
             <div>
-              <span id="resEstadoBadge" class="badge px-3 py-2 fs-6 shadow-sm" style="font-weight: 700; border-radius: 30px;">
+              <span id="resEstadoBadge" class="badge px-3 py-2 fs-6 shadow-sm sbm-badge-pill">
                 EN FORMACIÓN
               </span>
             </div>
@@ -246,16 +265,16 @@
         </div>
 
         <!-- CUERPO DETALLADO CON FICHAS Y PROGRAMA -->
-        <div class="card-body p-4">
+        <div class="card-body p-3 p-md-4">
           <div class="row g-3">
             
             <!-- PROGRAMA DE FORMACIÓN -->
             <div class="col-md-7">
-              <div class="p-3 rounded h-100" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
+              <div class="p-3 rounded h-100 sbm-detail-box">
                 <div class="text-muted small fw-bold text-uppercase mb-1 d-flex align-items-center gap-1">
                   <i class="bi bi-mortarboard-fill text-primary"></i> Programa de Formación
                 </div>
-                <div id="resPrograma" class="fw-bold text-dark fs-6" style="line-height: 1.3;">
+                <div id="resPrograma" class="fw-bold text-dark fs-6 sbm-program-title">
                   Supervisión de Labores Mineras
                 </div>
                 <div class="mt-2 text-muted small">
@@ -266,12 +285,12 @@
 
             <!-- NÚMERO Y NOMBRE DE FICHA -->
             <div class="col-md-5">
-              <div class="p-3 rounded h-100" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
+              <div class="p-3 rounded h-100 sbm-detail-box">
                 <div class="text-muted small fw-bold text-uppercase mb-1 d-flex align-items-center gap-1">
                   <i class="bi bi-hash text-warning"></i> Ficha Asociada
                 </div>
                 <div class="d-flex align-items-baseline gap-2">
-                  <span id="resFicha" class="fs-4 fw-bold text-dark font-monospace" style="color: #0F172A !important;">
+                  <span id="resFicha" class="fs-4 fw-bold text-dark sbm-ficha-num">
                     2694582
                   </span>
                 </div>
@@ -283,7 +302,7 @@
 
             <!-- DATOS DE CONTACTO INSTITUCIONAL -->
             <div class="col-12">
-              <div class="p-3 rounded" style="background: #F8FAFC; border: 1px solid #E2E8F0;">
+              <div class="p-3 rounded sbm-detail-box">
                 <div class="row g-2">
                   <div class="col-sm-6">
                     <div class="small text-muted mb-1"><i class="bi bi-envelope me-1"></i> Correo Institucional:</div>
@@ -299,7 +318,7 @@
 
             <!-- METADATOS DE SEGURIDAD / AUDITORÍA -->
             <div class="col-12">
-              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 p-2 rounded small" style="background: #F1F5F9; font-size: 0.76rem; color: #64748B;">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 p-2 rounded small sbm-audit-box">
                 <div>
                   <i class="bi bi-clock-history me-1"></i> Fecha de consulta: <span id="resFechaConsulta">2026-09-16 18:00</span>
                 </div>
@@ -313,9 +332,9 @@
 
           <!-- BOTONES DE ACCIÓN PARA BODEGUERO -->
           <div class="mt-4 pt-3 border-top d-flex flex-wrap align-items-center justify-content-between gap-2">
-            <div class="d-flex align-items-center gap-2">
-              <a id="btnIniciarPrestamo" href="{% url 'prestamo' %}" class="btn text-white fw-bold d-flex align-items-center gap-2 px-3 shadow-sm" style="background: #0F172A; border-color: #0F172A;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <a id="btnIniciarPrestamo" href="{% url 'prestamo' %}" class="btn text-white fw-bold d-flex align-items-center gap-2 px-3 shadow-sm sbm-btn-cta">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sbm-amber-400, #F59E0B)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
                   <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
                   <path d="M9 14l2 2 4-4"/>
@@ -334,23 +353,23 @@
       </div>
 
       <!-- ESTADO 4: APRENDIZ NO ENCONTRADO (404) -->
-      <div id="stateNotFound" class="card border-0 shadow-sm d-none" style="border-radius: 12px; background: #FFFFFF;">
-        <div class="card-body p-4 p-md-5 text-center">
-          <div class="p-3 rounded-circle d-inline-flex mb-3" style="background: #FEF3C7; color: #D97706;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div id="stateNotFound" class="card border-0 shadow-sm sbm-panel-card sbm-state-card h-100 d-none">
+        <div class="card-body p-4 p-md-5 text-center d-flex flex-column justify-content-center align-items-center">
+          <div class="p-3 rounded-circle d-inline-flex mb-3 sbm-alert-icon-wrap">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           </div>
           <h5 class="fw-bold text-dark mb-2">Aprendiz No Encontrado</h5>
-          <p id="msgNotFound" class="text-secondary small mb-4 mx-auto" style="max-width: 480px;">
+          <p id="msgNotFound" class="sbm-state-desc mb-4">
             No se encontró ningún aprendiz registrado con el documento especificado en SofiaPlus.
           </p>
 
-          <div class="card bg-light border-0 text-start p-3 mx-auto mb-4" style="max-width: 500px; border-radius: 8px;">
+          <div class="card bg-light border-0 text-start p-3 mx-auto mb-4 sbm-guide-box">
             <div class="small fw-bold text-dark mb-1"><i class="bi bi-check2-circle text-success me-1"></i>Sugerencias para el supervisor:</div>
-            <ul class="small text-muted mb-0 ps-3">
+            <ul class="small text-muted mb-0 ps-3 sbm-guide-list">
               <li>Verifique si el tipo de documento seleccionado coincide con el documento físico (CC, TI, CE, etc.).</li>
               <li>Asegúrese de haber digitado el número sin espacios, puntos ni guiones.</li>
               <li>Si es un aprendiz nuevo en el Centro Minero, confirme con la coordinación académica si su matrícula se encuentra en estado activa.</li>
@@ -364,22 +383,22 @@
       </div>
 
       <!-- ESTADO 5: SERVICIO NO DISPONIBLE O TIMEOUT (503) -->
-      <div id="stateServiceError" class="card border-0 shadow-sm d-none" style="border-radius: 12px; background: #FFFFFF;">
-        <div class="card-body p-4 p-md-5 text-center">
-          <div class="p-3 rounded-circle d-inline-flex mb-3" style="background: #FEE2E2; color: #DC2626;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div id="stateServiceError" class="card border-0 shadow-sm sbm-panel-card sbm-state-card h-100 d-none">
+        <div class="card-body p-4 p-md-5 text-center d-flex flex-column justify-content-center align-items-center">
+          <div class="p-3 rounded-circle d-inline-flex mb-3 sbm-danger-icon-wrap">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
               <line x1="12" y1="9" x2="12" y2="13"/>
               <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
           </div>
           <h5 class="fw-bold text-dark mb-2">Servicio del SENA No Disponible</h5>
-          <p id="msgServiceError" class="text-secondary small mb-4 mx-auto" style="max-width: 480px;">
+          <p id="msgServiceError" class="sbm-state-desc mb-4">
             El servicio de consulta externa de SofiaPlus no responde o se encuentra en mantenimiento temporal. Se intentaron reintentos con espera exponencial de forma automática.
           </p>
 
           <div class="d-flex justify-content-center gap-2">
-            <button type="button" id="btnReintentarConsulta" class="btn text-white btn-sm px-4 fw-bold" style="background:#0F172A;">
+            <button type="button" id="btnReintentarConsulta" class="btn text-white btn-sm px-4 fw-bold sbm-btn-cta">
               <i class="bi bi-arrow-repeat me-1"></i>Reintentar ahora
             </button>
             <a href="{% url 'lista_usuarios' %}" class="btn btn-outline-secondary btn-sm px-3">
@@ -394,18 +413,311 @@
 </div>
 
 <style>
+  /* ==========================================================================
+     SBM DISEÑO INDUSTRIAL & RESPONSIVE - CONSULTA POR DOCUMENTO
+     ========================================================================== */
   .sbm-verif-container {
-    max-width: 1200px;
+    max-width: 1240px;
     margin: 0 auto;
+    padding-bottom: 2rem;
   }
-  .quick-doc-btn:hover {
-    background-color: #0F172A;
-    color: #FFFFFF;
-    border-color: #0F172A;
+
+  /* Tarjeta de aviso legal */
+  .sbm-notice-card {
+    background: var(--sbm-rock-50, #F8FAFC);
+    border-left: 4px solid var(--sbm-amber-500, #D97706) !important;
+    border-radius: var(--sbm-radius-md, 8px);
   }
-  #numeroDocumento:focus {
-    border-color: #F59E0B;
-    box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.2);
+
+  /* Paneles base */
+  .sbm-panel-card {
+    border-radius: var(--sbm-radius-lg, 12px) !important;
+    background: var(--sbm-white, #FFFFFF);
+    border: 1px solid var(--sbm-rock-200, #E2E8F0) !important;
+    transition: box-shadow 0.2s ease;
+  }
+
+  /* Etiquetas de formulario */
+  .sbm-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--sbm-rock-900, #0F172A);
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.01em;
+  }
+
+  /* Contador numérico de caracteres */
+  .sbm-counter-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--sbm-rock-500, #64748B);
+    background: var(--sbm-rock-100, #F1F5F9);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  /* Selector de tipo de documento */
+  .sbm-select-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .sbm-select {
+    height: 44px;
+    width: 100%;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--sbm-rock-900, #0F172A);
+    background-color: var(--sbm-white, #FFFFFF) !important;
+    border: 1px solid var(--sbm-rock-200, #E2E8F0);
+    border-radius: var(--sbm-radius-md, 8px);
+    padding: 0.55rem 2.25rem 0.55rem 0.85rem;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    background-size: 14px 10px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .sbm-select:focus {
+    border-color: var(--sbm-amber-500, #D97706) !important;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2) !important;
+    outline: none;
+  }
+
+  /* Input de número de documento */
+  .sbm-input-doc {
+    height: 48px;
+    font-family: var(--font-mono, 'Share Tech Mono', monospace) !important;
+    font-size: 1.15rem !important;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--sbm-rock-900, #0F172A);
+    background-color: var(--sbm-white, #FFFFFF) !important;
+    border: 1px solid var(--sbm-rock-200, #E2E8F0);
+    border-radius: var(--sbm-radius-md, 8px);
+    padding-left: 0.85rem;
+    padding-right: 2.75rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .sbm-input-doc:focus {
+    border-color: var(--sbm-amber-500, #D97706) !important;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2) !important;
+    outline: none;
+  }
+
+  /* Texto de ayuda / validación */
+  .sbm-helper-text {
+    font-size: 0.75rem;
+    margin-top: 0.35rem;
+    transition: color 0.15s ease;
+  }
+
+  /* Botón de acción principal (CTA) */
+  .sbm-btn-cta {
+    height: 46px;
+    background-color: var(--sbm-rock-900, #0F172A) !important;
+    border: 1px solid var(--sbm-rock-900, #0F172A) !important;
+    color: var(--sbm-white, #FFFFFF) !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: var(--sbm-radius-md, 8px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+    transition: all 0.2s ease;
+  }
+
+  .sbm-btn-cta:hover:not(:disabled) {
+    background-color: var(--sbm-rock-800, #1E293B) !important;
+    border-color: var(--sbm-rock-800, #1E293B) !important;
+    color: var(--sbm-white, #FFFFFF) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+  }
+
+  .sbm-btn-cta:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .sbm-btn-cta:disabled {
+    background-color: var(--sbm-rock-200, #E2E8F0) !important;
+    border-color: var(--sbm-rock-200, #E2E8F0) !important;
+    color: var(--sbm-rock-500, #64748B) !important;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.75;
+  }
+
+  /* Sección Pruebas Rápidas */
+  .sbm-quick-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sbm-rock-500, #64748B);
+    display: flex;
+    align-items: center;
+  }
+
+  .sbm-icon-amber {
+    color: var(--sbm-amber-500, #D97706);
+  }
+
+  .sbm-quick-btn {
+    background-color: var(--sbm-rock-50, #F8FAFC);
+    border: 1px solid var(--sbm-rock-200, #E2E8F0);
+    border-radius: var(--sbm-radius-md, 8px);
+    padding: 0.5rem 0.65rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 48px;
+    transition: all 0.18s ease;
+    cursor: pointer;
+  }
+
+  .sbm-quick-btn:hover {
+    background-color: var(--sbm-rock-900, #0F172A);
+    border-color: var(--sbm-rock-900, #0F172A);
+  }
+
+  .sbm-quick-btn:hover .sbm-quick-doc {
+    color: var(--sbm-amber-400, #F59E0B);
+  }
+
+  .sbm-quick-btn:hover .sbm-quick-name {
+    color: var(--sbm-white, #FFFFFF);
+  }
+
+  .sbm-quick-doc {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--sbm-rock-900, #0F172A);
+    line-height: 1.2;
+    transition: color 0.15s ease;
+  }
+
+  .sbm-quick-name {
+    font-size: 0.72rem;
+    color: var(--sbm-rock-500, #64748B);
+    line-height: 1.2;
+    margin-top: 2px;
+    transition: color 0.15s ease;
+  }
+
+  /* Caso no existente (alerta sutil) */
+  .sbm-quick-btn--warn {
+    background-color: var(--sbm-stock-danger-bg, #FEF2F2);
+    border-color: var(--sbm-stock-danger-border, #FECACA);
+  }
+
+  .sbm-quick-btn--warn .sbm-quick-doc {
+    color: var(--sbm-stock-danger-text, #991B1B);
+  }
+
+  .sbm-quick-name--warn {
+    color: var(--sbm-stock-danger-solid, #DC2626);
+    font-weight: 600;
+  }
+
+  .sbm-quick-btn--warn:hover {
+    background-color: var(--sbm-stock-danger-solid, #DC2626);
+    border-color: var(--sbm-stock-danger-solid, #DC2626);
+  }
+
+  .sbm-quick-btn--warn:hover .sbm-quick-doc,
+  .sbm-quick-btn--warn:hover .sbm-quick-name {
+    color: var(--sbm-white, #FFFFFF);
+  }
+
+  /* Panel derecho - Tarjetas de estado */
+  .sbm-state-card {
+    min-height: 440px;
+  }
+
+  .sbm-state-icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: var(--sbm-rock-100, #F1F5F9);
+    color: var(--sbm-rock-500, #64748B);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sbm-state-desc {
+    max-width: 440px;
+    margin: 0 auto;
+    color: var(--sbm-rock-500, #64748B);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  /* Resultado exitoso */
+  .sbm-result-header {
+    background: linear-gradient(135deg, var(--sbm-rock-900, #0F172A) 0%, var(--sbm-rock-800, #1E293B) 100%);
+    border-bottom: 3px solid var(--sbm-amber-500, #D97706);
+  }
+
+  .sbm-avatar {
+    width: 56px;
+    height: 56px;
+    background: var(--sbm-amber-400, #F59E0B);
+    color: var(--sbm-rock-900, #0F172A);
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+  }
+
+  .sbm-badge-tag {
+    background: rgba(245, 158, 11, 0.2);
+    color: #FCD34D;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    font-size: 0.72rem;
+  }
+
+  .sbm-badge-pill {
+    font-weight: 700;
+    border-radius: 30px;
+  }
+
+  .sbm-detail-box {
+    background: var(--sbm-rock-50, #F8FAFC);
+    border: 1px solid var(--sbm-rock-200, #E2E8F0);
+  }
+
+  .sbm-audit-box {
+    background: var(--sbm-rock-100, #F1F5F9);
+    font-size: 0.76rem;
+    color: var(--sbm-rock-500, #64748B);
+  }
+
+  .sbm-code-tag {
+    color: var(--sbm-amber-600, #B45309);
+    background: rgba(180, 83, 9, 0.08);
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  /* Responsive layout adjustments */
+  @media (max-width: 991.98px) {
+    .sbm-state-card {
+      min-height: 340px;
+    }
+    .sbm-btn-cta {
+      height: 48px;
+    }
   }
 </style>
 
@@ -466,7 +778,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Validación de entrada en vivo
   function validarInput() {
     const rawVal = inputDoc.value;
-    // Sanitizar: dejar solo números para CC / TI
     const tipo = selectTipo.value;
     let cleanVal = rawVal;
     if (tipo === 'CC' || tipo === 'TI') {
@@ -497,13 +808,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (len === 0) {
       docValidationMsg.textContent = 'Ingrese entre 5 y 12 caracteres numéricos.';
-      docValidationMsg.className = 'form-text small text-muted mt-1';
+      docValidationMsg.className = 'sbm-helper-text text-muted';
     } else if (!esValido) {
       docValidationMsg.textContent = `Longitud actual: ${len}. El documento debe tener entre 5 y 12 dígitos.`;
-      docValidationMsg.className = 'form-text small text-warning mt-1';
+      docValidationMsg.className = 'sbm-helper-text text-warning';
     } else {
       docValidationMsg.textContent = 'Formato válido listo para consultar.';
-      docValidationMsg.className = 'form-text small text-success mt-1';
+      docValidationMsg.className = 'sbm-helper-text text-success';
     }
   }
 
