@@ -1,0 +1,416 @@
+/* ==========================================================================
+   SISTEMA DE BODEGA MINERA (SBM) — DESIGN TOKENS & INDUSTRIAL IDENTITY
+   Variables CSS centralizadas para ambiente minero e industrial.
+   Contraste certificado WCAG AA (mínimo 4.5:1 para luz difícil / terreno).
+   ========================================================================== */
+
+:root {
+  /* ── 1. SUPERFICIES TIPO ROCA / GRAFITO ── */
+  --sbm-rock-950: #080E18;   /* Fondo ultra-profundo / Sidebar principal */
+  --sbm-rock-900: #0F172A;   /* Roca grafito profunda / Headers & Cards oscuras */
+  --sbm-rock-850: #131E30;   /* Superficie secundaria oscura */
+  --sbm-rock-800: #1E293B;   /* Paneles y tarjetas en modo oscuro */
+  --sbm-rock-700: #334155;   /* Bordes de alta resistencia y divisores */
+  --sbm-rock-600: #475569;   /* Bordes sutiles y textos secundarios */
+  --sbm-rock-500: #64748B;   /* Texto neutral de soporte (contraste 4.8:1 s/ blanco) */
+  --sbm-rock-400: #94A3B8;   /* Texto claro en fondos oscuros (contraste 5.5:1) */
+  --sbm-rock-200: #E2E8F0;   /* Bordes claros de contención */
+  --sbm-rock-100: #F1F5F9;   /* Fondo de página de trabajo diurna */
+  --sbm-rock-50:  #F8FAFC;   /* Superficie de tarjetas claras */
+  --sbm-white:    #FFFFFF;   /* Blanco puro para tarjetas y textos destacados */
+
+  /* ── 2. ACENTOS INDUSTRIALES CÁLIDOS (COBRE & ÁMBAR DE SEGURIDAD) ── */
+  --sbm-amber-600: #B45309;  /* Ámbar de seguridad oscuro (contraste 4.7:1 s/ blanco) */
+  --sbm-amber-500: #D97706;  /* Ámbar de seguridad principal para acciones */
+  --sbm-amber-400: #F59E0B;  /* Oro/ámbar minero para elementos sobre fondos oscuros */
+  --sbm-amber-100: #FEF3C7;  /* Fondo suave ámbar */
+  --sbm-amber-50:  #FFFBEB;  /* Tinte sutil ámbar */
+  --sbm-copper-600:#9A3412;  /* Cobre minero profundo */
+  --sbm-copper-500:#C2410C;  /* Cobre de extracción para botones primarios */
+  --sbm-copper-400:#EA580C;  /* Cobre brillante hover */
+
+  /* ── 3. ESTADOS DE STOCK (ALTO CONTRASTE AA) ── */
+  /* Disponible / En óptimo estado */
+  --sbm-stock-ok-text:   #065F46; /* Verde bosque profundo (contraste 7.2:1 s/ fondo) */
+  --sbm-stock-ok-bg:     #ECFDF5;
+  --sbm-stock-ok-border: #A7F3D0;
+  --sbm-stock-ok-solid:  #059669;
+
+  /* Crítico / Mínimo / Por vencer */
+  --sbm-stock-warn-text:   #92400E; /* Ámbar tostado profundo (contraste 5.8:1 s/ fondo) */
+  --sbm-stock-warn-bg:     #FFFBEB;
+  --sbm-stock-warn-border: #FDE68A;
+  --sbm-stock-warn-solid:  #D97706;
+
+  /* Agotado / No disponible / Vencido */
+  --sbm-stock-danger-text:   #991B1B; /* Rojo rubí profundo (contraste 6.5:1 s/ fondo) */
+  --sbm-stock-danger-bg:     #FEF2F2;
+  --sbm-stock-danger-border: #FECACA;
+  --sbm-stock-danger-solid:  #DC2626;
+
+  /* ── 4. SISTEMA DE ESPACIADO MODULAR (MÚLTIPLOS DE 4px) ── */
+  --sbm-space-1:  4px;
+  --sbm-space-2:  8px;
+  --sbm-space-3:  12px;
+  --sbm-space-4:  16px;
+  --sbm-space-5:  20px;
+  --sbm-space-6:  24px;
+  --sbm-space-8:  32px;
+  --sbm-space-10: 40px;
+  --sbm-space-12: 48px;
+
+  /* ── 5. BORDES Y RADIOS INDUSTRIALES SUAVES ── */
+  --sbm-radius-xs: 4px;
+  --sbm-radius-sm: 6px;
+  --sbm-radius-md: 10px;
+  --sbm-radius-lg: 14px;
+  --sbm-radius-xl: 18px;
+  --sbm-radius-pill: 9999px;
+
+  /* ── 6. SOMBRAS INDUSTRIALES DISCRETAS ── */
+  --sbm-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --sbm-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --sbm-shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
+  --sbm-shadow-glow: 0 0 14px rgba(245, 158, 11, 0.28);
+
+  /* ── 7. TIPOGRAFÍA Y NÚMEROS TABULARES ── */
+  --sbm-font-sans: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  --sbm-font-mono: 'Share Tech Mono', 'Courier New', monospace;
+}
+
+/* ── APLICACIÓN DE NÚMEROS TABULARES PARA DATOS INDUSTRIALES ── */
+.tabular-nums,
+table td,
+.kpi-num,
+.font-monospace,
+.dataTables_info,
+.badge-stock {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ── ESTILOS DE STOCK DE ALTO CONTRASTE ── */
+.sbm-badge-disponible {
+  background-color: var(--sbm-stock-ok-bg) !important;
+  color: var(--sbm-stock-ok-text) !important;
+  border: 1px solid var(--sbm-stock-ok-border) !important;
+  font-weight: 700 !important;
+}
+
+.sbm-badge-critico {
+  background-color: var(--sbm-stock-warn-bg) !important;
+  color: var(--sbm-stock-warn-text) !important;
+  border: 1px solid var(--sbm-stock-warn-border) !important;
+  font-weight: 700 !important;
+}
+
+.sbm-badge-agotado {
+  background-color: var(--sbm-stock-danger-bg) !important;
+  color: var(--sbm-stock-danger-text) !important;
+  border: 1px solid var(--sbm-stock-danger-border) !important;
+  font-weight: 700 !important;
+}
+
+/* ── ESTADOS INTERACTIVOS ROBUSTOS (HOVER, FOCUS, DISABLED) ── */
+.btn-sbm-primary {
+  background-color: var(--sbm-amber-500);
+  color: #FFFFFF;
+  border: 1px solid var(--sbm-amber-600);
+  border-radius: var(--sbm-radius-sm);
+  font-weight: 600;
+  padding: var(--sbm-space-2) var(--sbm-space-4);
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.btn-sbm-primary:hover:not(:disabled) {
+  background-color: var(--sbm-amber-600);
+  color: #FFFFFF;
+  box-shadow: var(--sbm-shadow-glow);
+  transform: translateY(-1px);
+}
+
+.btn-sbm-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-sbm-primary:disabled,
+button:disabled,
+.btn:disabled {
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+}
+
+/* Foco visible ultra-claro para pantallas industriales y guantes */
+:focus-visible {
+  outline: 3px solid var(--sbm-amber-400) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.3) !important;
+}
+
+/* ── ESTADOS VACÍOS Y DE CARGA CON ÍCONO DEL SISTEMA ── */
+.sbm-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sbm-space-10) var(--sbm-space-4);
+  text-align: center;
+  color: var(--sbm-rock-500);
+}
+
+.sbm-empty-state-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--sbm-amber-500);
+  margin-bottom: var(--sbm-space-3);
+  opacity: 0.85;
+}
+
+.sbm-empty-state-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--sbm-rock-900);
+  margin-bottom: var(--sbm-space-1);
+}
+
+.sbm-empty-state-desc {
+  font-size: 0.875rem;
+  color: var(--sbm-rock-500);
+  max-width: 380px;
+}
+
+body.dark-mode .sbm-empty-state-title {
+  color: var(--sbm-rock-50);
+}
+
+body.dark-mode .sbm-empty-state-desc {
+  color: var(--sbm-rock-400);
+}
+
+/* ── DATATABLES RESPONSIVE OFICIAL (SBM PALETTE & CHILD ROWS) ── */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control,
+table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control,
+table.dataTable.dtr-column > tbody > tr > td.dtr-control,
+table.dataTable.dtr-column > tbody > tr > th.dtr-control {
+  position: relative;
+  cursor: pointer;
+}
+
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
+table.dataTable.dtr-column > tbody > tr > td.dtr-control:before {
+  content: "+";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background-color: var(--sbm-amber-500);
+  color: #0F172A;
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  margin-right: 8px;
+  transition: all 0.15s ease;
+}
+
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control:before,
+table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
+  content: "−";
+  background-color: #0F172A;
+  color: #F59E0B;
+}
+
+.sbm-child-row-wrapper {
+  background-color: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
+body.dark-mode .sbm-child-row-wrapper {
+  background-color: #1E293B !important;
+  border: 1px solid #334155 !important;
+}
+
+/* ── BOTONES DE ACCIÓN UNIFICADOS (36x36px TOUCH INDUSTRIAL) ── */
+.sbm-actions-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.sbm-action-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: #475569;
+  font-size: 1rem;
+  transition: all 0.15s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.sbm-action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.sbm-action-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Semántica de botones de acción */
+.sbm-btn-view {
+  color: #334155;
+  background-color: #F1F5F9;
+  border-color: #E2E8F0;
+}
+.sbm-btn-view:hover:not(:disabled) {
+  background-color: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+}
+
+.sbm-btn-edit {
+  color: #B45309;
+  background-color: #FEF3C7;
+  border-color: #FDE68A;
+}
+.sbm-btn-edit:hover:not(:disabled) {
+  background-color: #F59E0B;
+  color: #0F172A;
+  border-color: #F59E0B;
+}
+
+.sbm-btn-success {
+  color: #15803D;
+  background-color: #DCFCE7;
+  border-color: #BBF7D0;
+}
+.sbm-btn-success:hover:not(:disabled) {
+  background-color: #16A34A;
+  color: #FFFFFF;
+  border-color: #16A34A;
+}
+
+.sbm-btn-danger {
+  color: #B91C1C;
+  background-color: #FEE2E2;
+  border-color: #FECACA;
+}
+.sbm-btn-danger:hover:not(:disabled) {
+  background-color: #DC2626;
+  color: #FFFFFF;
+  border-color: #DC2626;
+}
+
+.sbm-btn-kebab {
+  color: #64748B;
+  background-color: #F8FAFC;
+  border-color: #E2E8F0;
+}
+.sbm-btn-kebab:hover:not(:disabled) {
+  background-color: #E2E8F0;
+  color: #0F172A;
+}
+
+.sbm-action-btn:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ── ESTILOS DE VERIFICACIÓN SOFIAPLUS EN REGISTRO ── */
+.sofia-verify-box {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  transition: all 0.25s ease;
+}
+
+.sofia-badge-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--sbm-amber-600, #D97706);
+  font-weight: 500;
+  padding: 4px 10px;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.sofia-badge-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #15803D;
+  font-weight: 600;
+  padding: 5px 12px;
+  background: #DCFCE7;
+  border-radius: 6px;
+  border: 1px solid #86EFAC;
+}
+
+.sofia-badge-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #B91C1C;
+  font-weight: 500;
+  padding: 5px 12px;
+  background: #FEE2E2;
+  border-radius: 6px;
+  border: 1px solid #FECACA;
+}
+
+.sofia-badge-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #B45309;
+  font-weight: 500;
+  padding: 5px 12px;
+  background: #FEF3C7;
+  border-radius: 6px;
+  border: 1px solid #FCD34D;
+}
+
+.mine-input.is-locked-sofia {
+  background-color: #F8FAFC !important;
+  color: #334155 !important;
+  border-color: #CBD5E1 !important;
+  cursor: not-allowed;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath d='M8 1a2 2 0 0 0-2 2v4H5a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1V3a2 2 0 0 0-2-2zm1 6V3a1 1 0 0 0-2 0v4h2z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  font-weight: 500;
+}
+
+.spinner-sofia {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin-sofia 0.75s linear infinite;
+}
+
+@keyframes spin-sofia {
+  to { transform: rotate(360deg); }
+}
+
+

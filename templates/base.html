@@ -4,8 +4,9 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mina inventory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Sistema de Bodega Minera</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet">
@@ -14,19 +15,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=40">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=1">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=41">
   <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=5">
 {% block css %}{% endblock css %}
 </head>
 
 <body>
 
+  <!-- Enlace accesible de salto al contenido para teclado y control remoto / D-pad -->
+  <a href="#main-content" class="skip-to-content">Saltar al contenido principal</a>
+
   <!-- Overlay móvil -->
   <div class="aside-overlay" id="asideOverlay"></div>
 
-  <!-- Botón flotante hamburguesa — solo visible en móvil -->
-  <button class="btn-sidebar-toggle" id="btnToggleSidebar" aria-label="Abrir menú">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <!-- Botón flotante hamburguesa — accesible con target táctil 44x44px mínimo -->
+  <button class="btn-sidebar-toggle" id="btnToggleSidebar" aria-controls="aside-sidebar" aria-expanded="false" aria-label="Abrir menú de navegación">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
       <line x1="3" y1="6" x2="21" y2="6" />
       <line x1="3" y1="12" x2="21" y2="12" />
       <line x1="3" y1="18" x2="21" y2="18" />
@@ -41,7 +46,7 @@
     {% include "partials/aside_usuario.html" %}
     {% endif %}
 
-    <main>{% block content %}{% endblock %}</main>
+    <main id="main-content" tabindex="-1">{% block content %}{% endblock %}</main>
   </div>
 
   <div id="page-loading-overlay" class="page-loading-overlay" aria-hidden="true">
@@ -51,11 +56,15 @@
     </div>
   </div>
 
+  {% include "partials/modal_ver_detalle.html" %}
+
   <script defer src="{% static 'js/bootstrap.bundle.min.js' %}?v=3"></script>
   <script defer src="{% static 'js/form-validation.js' %}?v=2"></script>
   <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
   <script defer src="{% static 'js/datatables-init.js' %}?v=4"></script>
+  <script defer src="{% static 'js/sbm-datatable.js' %}?v=1"></script>
+  <script defer src="{% static 'js/sbm-actions.js' %}?v=1"></script>
   <script defer src="{% static 'js/base.js' %}?v=1"></script>
   <script defer src="{% static 'js/notificaciones.js' %}?v=1"></script>
   {% block js %}{% endblock %}

@@ -58,6 +58,17 @@ class Usuario(models.Model):
     )
     reset_token        = models.CharField(max_length=64, blank=True, default='', verbose_name='Token de recuperación')
     reset_token_expira = models.FloatField(default=0, verbose_name='Expiración del token')
+    verificado_sofia_plus = models.BooleanField(
+        default=False,
+        verbose_name='Verificado en SofiaPlus',
+        help_text='Indica si la cuenta fue validada automáticamente contra SofiaPlus'
+    )
+    fecha_verificacion = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name='Fecha de Verificación',
+        help_text='Fecha y hora en que se realizó la verificación en SofiaPlus'
+    )
 
     class Meta:
         db_table = 'usuario'

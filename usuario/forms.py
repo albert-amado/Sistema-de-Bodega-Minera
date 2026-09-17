@@ -132,6 +132,77 @@ class RegistroUsuarioForm(forms.Form):
         p2 = cd.get('password2')
         if p1 and p2 and p1 != p2:
             self.add_error('password2', 'Las contraseñas no coinciden.')
+
+        doc = cd.get('documento')
+        tipo = cd.get('tipo_documento', 'CC')
+
+        if doc and not self.errors.get('documento'):
+            # Consulta aislada contra el servicio SofiaPlus (reutilización sin duplicar lógica)
+            from django.conf import settings
+            from django.utils import timezone
+            from services.sofia_plus_client import (
+                get_sofia_plus_client,
+                AprendizNotFoundError,
+                SofiaPlusServiceUnavailableError,
+                SofiaPlusInvalidInputError,
+                SofiaPlusError,
+            )
+
+            client = get_sofia_plus_client()
+            try:
+                aprendiz = client.consultar_aprendiz(tipo, doc)
+                # Aprendiz encontrado y verificado exitosamente
+                self._verificado_sofia_plus = True
+                self._fecha_verificacion = timezone.now()
+
+                # Asegurar nombres y datos académicos oficiales desde SofiaPlus (no editables manualmente)
+                cd['first_name'] = aprendiz.primer_nombre
+                cd['last_name'] = aprendiz.primer_apellido
+                cd['numero_ficha'] = aprendiz.numero_ficha
+                cd['nombre_programa'] = aprendiz.programa_formacion
+                self._aprendiz_info = aprendiz
+
+            except AprendizNotFoundError as exc:
+                # TODO: [DECISIÓN DE NEGOCIO PENDIENTE] ALLOW_MANUAL_REGISTRATION
+                # Define si permitimos registrar manualmente aprendices que no figuren en SofiaPlus
+                allow_manual = getattr(settings, 'ALLOW_MANUAL_REGISTRATION', False)
+                if allow_manual:
+                    self._verificado_sofia_plus = False
+                    self._fecha_verificacion = None
+                else:
+                    self.add_error(
+                        'documento',
+                        'El documento no se encuentra registrado en SofiaPlus. '
+                        'Solo aprendices verificados del SENA pueden crear una cuenta en el sistema.'
+                    )
+
+            except SofiaPlusServiceUnavailableError as exc:
+                # TODO: [DECISIÓN DE NEGOCIO PENDIENTE] SOFIAPLUS_FALLBACK_POLICY
+                # Define qué hacer si el servicio externo del SENA no responde durante el registro
+                policy = getattr(settings, 'SOFIAPLUS_FALLBACK_POLICY', 'ALLOW_PENDING')
+                if policy == 'ALLOW_PENDING':
+                    # Registro provisional sin verificación
+                    self._verificado_sofia_plus = False
+                    self._fecha_verificacion = None
+                else:
+                    self.add_error(
+                        None,
+                        'El servicio de verificación de SofiaPlus no está disponible en este momento. '
+                        'Por favor intenta nuevamente en unos minutos.'
+                    )
+
+            except SofiaPlusInvalidInputError as exc:
+                self.add_error('documento', exc.user_friendly_message)
+
+            except SofiaPlusError as exc:
+                # Error genérico del servicio
+                policy = getattr(settings, 'SOFIAPLUS_FALLBACK_POLICY', 'ALLOW_PENDING')
+                if policy == 'ALLOW_PENDING':
+                    self._verificado_sofia_plus = False
+                    self._fecha_verificacion = None
+                else:
+                    self.add_error(None, exc.user_friendly_message)
+
         return cd
 
     def save(self):
@@ -140,6 +211,9 @@ class RegistroUsuarioForm(forms.Form):
         partes = nombre_completo.split(' ', 1)
         p_nombre = partes[0]
         p_apellido = partes[1] if len(partes) > 1 else ''
+
+        verificado = getattr(self, '_verificado_sofia_plus', False)
+        fecha_verif = getattr(self, '_fecha_verificacion', None)
 
         usuario = Usuario(
             documento=cd['documento'],
@@ -152,6 +226,8 @@ class RegistroUsuarioForm(forms.Form):
             programa=cd.get('nombre_programa', ''),
             password=make_password(cd['password1']),
             rol='Usuario',  # Rol estrictamente forzado en backend
+            verificado_sofia_plus=verificado,
+            fecha_verificacion=fecha_verif,
         )
         usuario.save()
         return usuario

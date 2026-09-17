@@ -4,7 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
 
 /* ═══════════════════════════════════════════════════════
-   MINE INVENTORY — style.css
+   SISTEMA DE BODEGA MINERA — style.css
    Paleta:
      --cream  #EFECCA  texto / fondos claros
      --sage   #71816D  acento secundario
@@ -35,6 +35,12 @@
   --radius-lg: .85rem;
   --shadow-sm: 0 2px 8px rgba(15, 23, 42, .04);
   --shadow-md: 0 8px 24px rgba(15, 23, 42, .06);
+
+  /* Safe Area Insets para dispositivos móviles y TVs */
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
 }
 
 /* ── Utility Classes ── */
@@ -58,7 +64,8 @@
 }
 
 html {
-  font-size: calc(100% * var(--acc-font-scale, 1)) !important;
+  font-size: calc(clamp(15px, 0.92rem + 0.22vw, 17px) * var(--acc-font-scale, 1)) !important;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* --- Global Font Overrides --- */
@@ -89,6 +96,24 @@ input[type="button"],
 .logo-sup,
 .corner-note {
   font-family: var(--font-title) !important;
+}
+
+/* Tipografía fluida con clamp() en lugar de saltos bruscos */
+h1, .h1 { font-size: clamp(1.35rem, 2.4vw + 0.4rem, 2.25rem) !important; line-height: 1.25; }
+h2, .h2 { font-size: clamp(1.18rem, 1.8vw + 0.35rem, 1.85rem) !important; line-height: 1.3; }
+h3, .h3 { font-size: clamp(1.05rem, 1.35vw + 0.25rem, 1.5rem) !important; line-height: 1.35; }
+h4, .h4 { font-size: clamp(0.95rem, 1vw + 0.2rem, 1.25rem) !important; line-height: 1.4; }
+h5, .h5 { font-size: clamp(0.88rem, 0.7vw + 0.15rem, 1.1rem) !important; line-height: 1.45; }
+h6, .h6 { font-size: clamp(0.8rem, 0.5vw + 0.15rem, 0.95rem) !important; line-height: 1.5; }
+
+/* Imágenes, videos, canvas y elementos embebidos fluidos */
+img,
+video,
+canvas,
+picture,
+svg:not(.nav-icon):not(.bi):not([class*="bi-"]):not([class*="ti-"]) {
+  max-width: 100%;
+  height: auto;
 }
 
 body,
@@ -267,7 +292,7 @@ ul {
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
   background: var(--bg-body);
   color: var(--text-main);
   font-family: var(--font-ui);
@@ -385,10 +410,12 @@ header .dropdown-item-text {
 ════════════════════════════════════ */
 .body-wrap {
   display: flex;
-  height: 100vh;
-  /* ocupa toda la pantalla */
-  overflow: hidden;
-  /* el scroll lo maneja main internamente */
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* ════════════════════════════════════
@@ -396,20 +423,18 @@ header .dropdown-item-text {
 ════════════════════════════════════ */
 main {
   flex: 1;
-  height: 100%;
-  overflow-y: auto;
+  width: 100%;
+  max-width: 100%;
   background: var(--bg-body);
-  padding: 2.5rem 4rem;
-  /* aire vertical y lateral uniforme en todas las páginas */
 }
 
 main::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* Wrapper interior — centrado con aire lateral estilo dashboard */
+/* Wrapper interior — centrado con aire lateral fluido estilo dashboard */
 main>*:not(.modal):not(.modal-backdrop) {
-  max-width: 1280px;
+  max-width: min(1280px, 100%);
   margin-left: auto;
   margin-right: auto;
 }
@@ -417,7 +442,7 @@ main>*:not(.modal):not(.modal-backdrop) {
 /* Sobreescribe los paddings de Bootstrap para respetar el nuestro */
 main .container-fluid,
 main .container {
-  max-width: 1280px;
+  max-width: min(1280px, 100%);
   padding-left: 0;
   padding-right: 0;
 }
@@ -2088,74 +2113,7 @@ body.dark-mode .icon-box-critical {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-@media (max-width: 768px) {
-
-  /* Mostrar botón hamburguesa */
-  .btn-sidebar-toggle {
-    display: flex;
-    align-items: center;
-  }
-
-  /* El aside se convierte en drawer fixed */
-  aside {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 270px;
-    z-index: 1035;
-    transform: translateX(-100%);
-    visibility: hidden;
-    pointer-events: none;
-    transition: transform .25s ease, visibility .25s ease;
-  }
-
-  /* Cuando está abierto */
-  aside.aside-open {
-    transform: translateX(0);
-    visibility: visible;
-    pointer-events: auto;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, .35);
-  }
-
-  /* El main ocupa todo el ancho */
-  main {
-    width: 100%;
-    padding: 1.5rem 1.2rem;
-    padding-top: 4rem;
-    /* espacio para botón flotante */
-    height: 100vh;
-    overflow-y: auto;
-  }
-
-  /* Mostrar botón hamburguesa flotante */
-  .btn-sidebar-toggle {
-    display: flex;
-  }
-
-  /* Tablas: scroll horizontal */
-  .table-responsive {
-    overflow-x: auto;
-  }
-
-  /* Stats cards: 2 columnas en móvil (ya usa col-6) */
-  main>* {
-    max-width: 100%;
-  }
-}
-
-@media (min-width: 769px) {
-
-  /* Asegurar que en desktop el aside esté siempre visible */
-  aside {
-    transform: none !important;
-    position: relative !important;
-  }
-
-  .aside-overlay {
-    display: none !important;
-  }
-}
+/* Reglas responsivas del layout y aside unificadas en el MASTER RESPONSIVE SYSTEM */
 
 
 body.auth-page {
@@ -3848,214 +3806,490 @@ aside .nav-link.active .nav-icon {
   color: #38BDF8 !important;
 }
 
-/* Mobile responsive layout fixes */
-@media (max-width: 768px) {
-  .btn-sidebar-toggle {
-    display: flex !important;
-    position: fixed !important;
-    top: 0.75rem !important;
-    left: 0.75rem !important;
-    z-index: 1045 !important;
-    width: 2.35rem !important;
-    height: 2.35rem !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
-  }
-
-  /* Prevent hamburger button from overlapping logo/icon inside sidebar */
-  aside .aside-header {
-    padding-left: 3.6rem !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .btn-sidebar-toggle {
-    display: none !important;
-  }
-
-  aside .aside-header {
-    padding-left: 1rem !important;
-  }
-}
-
 /* ════════════════════════════════════════════════════════════
-   MASTER RESPONSIVE SYSTEM (All Devices & Screen Sizes)
+   SISTEMA RESPONSIVO INTEGRAL Y ACCESIBILIDAD MULTI-DISPOSITIVO
    ════════════════════════════════════════════════════════════ */
 
-/* Prevent global horizontal scroll overflow on mobile */
+/* --- RESET GLOBAL DE DESBORDAMIENTO (Cero scroll horizontal) --- */
 html, body {
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: hidden !important;
+  overflow-y: auto;
   position: relative !important;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 .body-wrap {
   width: 100% !important;
   max-width: 100% !important;
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden !important;
   position: relative !important;
 }
 
-/* Base table responsive container */
+/* Enlace accesible de salto al contenido para teclado y D-pad / control remoto */
+.skip-to-content {
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0284C7;
+  color: #FFFFFF !important;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  border-radius: 0 0 10px 10px;
+  z-index: 99999;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: top 0.2s ease-in-out;
+}
+.skip-to-content:focus,
+.skip-to-content:focus-visible {
+  top: 0;
+  outline: 3px solid #F8FAFC;
+}
+
+/* --- CONTENEDORES DE TABLAS FLUIDOS --- */
 .table-responsive,
 .dataTables_wrapper {
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: auto !important;
   -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin;
+  margin-bottom: 1rem;
 }
 
-/* Prevent inputs auto-zoom on iOS */
+/* Prevenir zoom automático intrusivo en navegadores móviles */
 input, select, textarea, .form-control, .form-select {
   font-size: 16px;
 }
 
-/* --- SMALL SCREENS & MOBILE (< 768px) --- */
-@media (max-width: 768px) {
-  /* Main content container spacing, side margins & top clearance */
-  main {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding-top: 5.2rem !important; /* Spacious top clearance so page title is never covered by hamburger button */
-    padding-left: 1.25rem !important; /* Clean framing side margins */
-    padding-right: 1.25rem !important;
-    padding-bottom: 3.5rem !important;
-    height: auto !important;
-    min-height: 100vh !important;
-    overflow-x: hidden !important;
-    box-sizing: border-box !important;
-  }
+/* ════════════════════════════════════════════════════════════
+   1. BASE: MÓVIL (320px – 639px)
+   ════════════════════════════════════════════════════════════ */
 
-  /* Page titles & headings breathing room on mobile */
-  main h1:first-child,
-  main h2:first-child,
-  main h3:first-child,
-  main .page-title,
-  main .page-header,
-  main > div:first-child h1,
-  main > div:first-child h2,
-  main > div:first-child h3 {
-    margin-top: 0.25rem !important;
-    margin-bottom: 1.25rem !important;
-  }
-
-  /* Prevent Bootstrap negative margins from creating horizontal scrollbar */
-  .row {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .container, .container-fluid {
-    padding-left: 0.35rem !important;
-    padding-right: 0.35rem !important;
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-  }
-
-  /* Page titles & header flex rows */
-  .page-header,
-  .d-flex.justify-content-between,
-  .d-flex.justify-content-between.align-items-center {
-    flex-wrap: wrap !important;
-    gap: 0.65rem !important;
-    max-width: 100% !important;
-  }
-
-  /* Action buttons inside headers */
-  .page-header .btn,
-  .page-header a.btn,
-  main .d-flex > .btn,
-  main .d-flex > a.btn {
-    font-size: 0.82rem !important;
-    padding: 0.45rem 0.75rem !important;
-  }
-
-  /* Stat & KPI Cards grid tuning */
-  .card {
-    margin-bottom: 0.85rem !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .card-body {
-    padding: 0.95rem 0.85rem !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* KPI metric numbers scaling */
-  .display-4, .display-5, .display-6,
-  .card-body h2, .card-body h3, .card-body .fw-bold {
-    word-break: break-word !important;
-  }
-
-  /* DataTables controls responsiveness */
-  .dataTables_wrapper .dataTables_length,
-  .dataTables_wrapper .dataTables_filter,
-  .dataTables_wrapper .dataTables_info,
-  .dataTables_wrapper .dataTables_paginate {
-    float: none !important;
-    text-align: center !important;
-    margin: 0.4rem 0 !important;
-    width: 100% !important;
-  }
-
-  .dataTables_wrapper .dataTables_filter input {
-    width: 100% !important;
-    margin-left: 0 !important;
-    margin-top: 0.25rem !important;
-  }
-
-  .dataTables_wrapper .dataTables_paginate .paginate_button {
-    padding: 0.3em 0.5em !important;
-    font-size: 0.78rem !important;
-  }
-
-  /* Tables cell sizing on small screens */
-  table, .table {
-    max-width: 100% !important;
-  }
-
-  .table td, .table th {
-    padding: 0.55rem 0.5rem !important;
-    font-size: 0.82rem !important;
-    white-space: nowrap !important;
-  }
-
-
-
-  /* Modals responsiveness */
-  .modal-dialog {
-    margin: 0.5rem !important;
-    max-width: calc(100% - 1rem) !important;
-  }
-
-  .modal-content {
-    padding: 0.25rem !important;
-  }
+/* Botón flotante hamburguesa táctil (>= 44x44px) */
+.btn-sidebar-toggle {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: fixed !important;
+  top: max(0.75rem, calc(var(--sat) + 0.5rem)) !important;
+  left: max(0.75rem, calc(var(--sal) + 0.5rem)) !important;
+  z-index: 1045 !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  background: #0B1E36 !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
-/* --- EXTRA SMALL SCREENS (< 576px) --- */
+.btn-sidebar-toggle svg {
+  stroke: #38BDF8 !important;
+}
+
+/* Drawer lateral deslizable en móvil */
+aside {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  width: min(290px, 85vw) !important;
+  max-width: 85vw !important;
+  z-index: 1050 !important;
+  transform: translateX(-100%) !important;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.28s ease !important;
+  padding-top: var(--sat) !important;
+  padding-bottom: var(--sab) !important;
+  padding-left: var(--sal) !important;
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+aside.aside-open {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+aside .aside-header {
+  padding-left: 1.25rem !important;
+}
+
+/* Overlay móvil */
+.aside-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1040;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.aside-overlay.active {
+  display: block !important;
+}
+
+/* Espaciado del área principal en móvil respetando safe areas y botón hamburguesa */
+main {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-top: max(4.8rem, calc(var(--sat) + 4.2rem)) !important;
+  padding-left: max(1rem, calc(var(--sal) + 0.75rem)) !important;
+  padding-right: max(1rem, calc(var(--sar) + 0.75rem)) !important;
+  padding-bottom: max(2.5rem, calc(var(--sab) + 1.5rem)) !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  overflow-x: hidden !important;
+}
+
+/* Áreas táctiles mínimas de 44x44px en elementos interactivos */
+button,
+.btn,
+a.btn,
+.btn-primary-mine,
+.btn-outline-mine,
+.form-control,
+.form-select,
+.paginate_button,
+.dropdown-item,
+aside .aside-nav .nav-link,
+aside .aside-nav a {
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.btn,
+a.btn,
+.btn-primary-mine,
+.btn-outline-mine {
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+/* Contenedores y filas en móvil: 1 columna natural */
+.row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  max-width: 100% !important;
+}
+
+.container, .container-fluid {
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+  max-width: 100% !important;
+}
+
+/* Encabezados y barras de acción flexibles */
+.page-header,
+.d-flex.justify-content-between,
+.d-flex.justify-content-between.align-items-center {
+  flex-wrap: wrap !important;
+  gap: 0.75rem !important;
+  max-width: 100% !important;
+}
+
+/* Tarjetas y KPIs en móvil */
+.card {
+  margin-bottom: 0.85rem !important;
+  max-width: 100% !important;
+}
+.card-body {
+  padding: 1rem 0.85rem !important;
+}
+
+/* Formularios en pantallas pequeñas: apilamiento limpio */
 @media (max-width: 576px) {
-  /* Grid rows stack cleanly */
   .row > [class*="col-"] {
     padding-left: 0.25rem !important;
     padding-right: 0.25rem !important;
   }
-
-  /* Form groups stacked */
-  .row-2,
   .input-group {
     flex-direction: column !important;
     width: 100% !important;
   }
-
   .input-group > * {
     width: 100% !important;
     border-radius: var(--radius-sm) !important;
-    margin-bottom: 0.3rem !important;
+    margin-bottom: 0.35rem !important;
+  }
+  .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100% - 1rem) !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   2. SM: MÓVIL GRANDE (min-width: 640px)
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 640px) {
+  main {
+    padding-left: max(1.5rem, var(--sal)) !important;
+    padding-right: max(1.5rem, var(--sar)) !important;
+  }
+  .row-cols-sm-2 > * {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   3. MD: TABLET VERTICAL (min-width: 768px)
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  /* Distribución a 2 columnas donde en móvil hay 1 */
+  .grid-2-col-tablet,
+  .kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  /* DataTables alineación en tablet */
+  .dataTables_wrapper .dataTables_length {
+    float: left !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .dataTables_wrapper .dataTables_filter {
+    float: right !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .dataTables_wrapper .dataTables_info {
+    float: left !important;
+    margin-top: 0.5rem !important;
+  }
+  .dataTables_wrapper .dataTables_paginate {
+    float: right !important;
+    margin-top: 0.5rem !important;
+  }
+}
+
+/* Tablet en orientación vertical específica */
+@media (min-width: 768px) and (max-width: 1023.98px) and (orientation: portrait) {
+  main {
+    padding-top: max(5rem, calc(var(--sat) + 4.5rem)) !important;
+    padding-left: 1.75rem !important;
+    padding-right: 1.75rem !important;
+  }
+  /* En tablet vertical aseguramos 2 columnas limpias */
+  .row > [class*="col-md-3"],
+  .row > [class*="col-md-4"] {
+    flex: 0 0 auto;
+    width: 50% !important;
+  }
+}
+
+/* Tablet en orientación horizontal específica */
+@media (min-width: 768px) and (max-width: 1023.98px) and (orientation: landscape) {
+  .btn-sidebar-toggle {
+    display: flex !important;
+  }
+  main {
+    padding-top: max(4.5rem, calc(var(--sat) + 4rem)) !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   4. LG: TABLET HORIZONTAL / LAPTOP (min-width: 1024px)
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  /* El botón hamburguesa desaparece; sidebar fijo permanente */
+  .btn-sidebar-toggle {
+    display: none !important;
+  }
+  .aside-overlay {
+    display: none !important;
+  }
+
+  aside {
+    position: relative !important;
+    transform: none !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    width: var(--aside-w) !important;
+    height: 100% !important;
+    box-shadow: none !important;
+    padding-top: var(--sat) !important;
+  }
+
+  .body-wrap {
+    display: flex !important;
+    flex-direction: row !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  main {
+    flex: 1 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    padding: 2.25rem 3rem !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   5. XL: ESCRITORIO (min-width: 1280px)
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 1280px) {
+  :root {
+    --aside-w: 245px;
+  }
+  main {
+    padding: 2.5rem 4rem !important;
+  }
+  main > *:not(.modal):not(.modal-backdrop) {
+    max-width: min(1440px, 96%) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   6. 2XL & TELEVISORES (1080p, 4K, gran distancia visual)
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 1536px) {
+  :root {
+    --aside-w: 275px;
+  }
+}
+
+/* Full HD TV (1080p 1920px+ y televisores) */
+@media (min-width: 1920px), tv {
+  html {
+    /* Texto base escalado hacia arriba >= 24px equivalente */
+    font-size: clamp(24px, 1.25vw + 10px, 32px) !important;
+  }
+
+  /* Safe area del 5% en los bordes por overscan de televisores */
+  body {
+    padding: max(var(--sat), 5vh) max(var(--sar), 5vw) max(var(--sab), 5vh) max(var(--sal), 5vw) !important;
+    background-color: #071525 !important;
+  }
+
+  .body-wrap {
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+
+  :root {
+    --aside-w: 330px;
+  }
+
+  /* Contraste reforzado: tipografía legible a larga distancia */
+  body, main, .card, .table, p, span {
+    font-weight: 500;
+  }
+
+  .text-muted {
+    color: #475569 !important;
+  }
+
+  /* Botones y campos generosos para control remoto / D-pad */
+  .btn, .btn-primary-mine, .btn-outline-mine, .form-control, .form-select {
+    min-height: 54px !important;
+    font-size: 1.05rem !important;
+    padding: 0.75rem 1.6rem !important;
+    border-radius: 12px !important;
+  }
+
+  aside .aside-nav .nav-link,
+  aside .aside-nav a {
+    min-height: 52px !important;
+    font-size: 1rem !important;
+    padding: 0.7rem 1.2rem !important;
+  }
+}
+
+/* 4K Ultra HD y pantallas gigantes (min-width: 2560px) */
+@media (min-width: 2560px) {
+  html {
+    font-size: clamp(28px, 1.2vw + 12px, 38px) !important;
+  }
+  :root {
+    --aside-w: 400px;
+  }
+  .btn, .btn-primary-mine, .btn-outline-mine, .form-control, .form-select {
+    min-height: 62px !important;
+    font-size: 1.15rem !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   7. CONTROL REMOTO / D-PAD / FOCUS-VISIBLE ULTRA-VISIBLE
+   ════════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline: 3px solid #0284C7 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 6px rgba(2, 132, 199, 0.35), 0 0 20px rgba(2, 132, 199, 0.5) !important;
+  transform: scale(1.025);
+  transition: transform 0.15s ease, outline 0.15s ease, box-shadow 0.15s ease !important;
+  z-index: 1060 !important;
+}
+
+/* En televisores y modo oscuro, brillo reforzado */
+@media (min-width: 1920px), tv {
+  :focus-visible {
+    outline: 4px solid #38BDF8 !important;
+    outline-offset: 4px !important;
+    box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.4), 0 0 28px rgba(56, 189, 248, 0.7) !important;
+    transform: scale(1.035);
+  }
+}
+
+body.dark-mode :focus-visible {
+  outline-color: #38BDF8 !important;
+  box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.35), 0 0 20px rgba(56, 189, 248, 0.55) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   8. PREFERENCIAS: MOVIMIENTO REDUCIDO, COLOR Y ZOOM 200%
+   ════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  aside {
+    transition: none !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.light-mode):not([data-theme="light"]) {
+    --bg-body: #0F172A;
+    --bg-surface: #1E293B;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --border-color: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -4088,15 +4322,14 @@ aside .aside-nav::-webkit-scrollbar-thumb {
   border-radius: 4px !important;
 }
 
-/* TAMAÑO IDÉNTICO Y UNIFICADO PARA TODOS LOS ELEMENTOS DEL ASIDE */
+/* TAMAÑO IDÉNTICO Y UNIFICADO PARA TODOS LOS ELEMENTOS DEL ASIDE (Área táctil mínima 44px) */
 aside .aside-nav .nav-link,
 aside .aside-nav a {
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
+  min-height: 44px;
+  height: auto;
   font-size: 0.88rem !important;
   font-weight: 600 !important;
-  padding: 0 0.85rem !important;
+  padding: 0.5rem 0.85rem !important;
   margin: 0.2rem 0.6rem !important;
   border-radius: 8px !important;
   display: flex !important;

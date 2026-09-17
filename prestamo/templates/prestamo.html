@@ -117,14 +117,14 @@
     <table class="table table-hover align-middle datatable-custom w-100" id="prestamo-table">
       <thead class="table-light">
         <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 40px;"></th>
-          <th class="text-center" style="width: 60px;"># ID</th>
-          <th>Solicitante / Documento</th>
-          <th>Ficha SENA</th>
-          <th>Herramientas Solicitadas</th>
-          <th class="text-center">Estado</th>
-          <th class="text-center">Fecha</th>
-          <th class="text-center" style="width: 140px;">Acciones</th>
+          <th class="text-center" style="width: 40px;" data-priority="1"></th>
+          <th class="text-center" style="width: 60px;" data-priority="1"># ID</th>
+          <th data-priority="1">Solicitante / Documento</th>
+          <th data-priority="3">Ficha SENA</th>
+          <th data-priority="1">Herramientas Solicitadas</th>
+          <th class="text-center" data-priority="1">Estado</th>
+          <th class="text-center" data-priority="2">Fecha</th>
+          <th class="text-center" style="width: 150px;" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -133,7 +133,7 @@
           <td class="text-center">
             <button type="button" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs" 
                     style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
-                    data-target-detail="detail-p-{{ p.pk }}" title="Ver detalles desplegables">
+                    data-target-detail="detail-p-{{ p.pk }}" title="Ver detalles desplegables" aria-label="Expandir fila de préstamo #{{ p.pk }}">
               <i class="bi bi-chevron-right row-chevron" style="transition: transform 0.2s ease;"></i>
             </button>
           </td>
@@ -190,13 +190,13 @@
               </span>
             {% elif p.estado == 'PARCIAL' or p.estado == 'parcial' %}
               <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-clock-history"></i> Parcial
+                <i class="bi bi-pie-chart"></i> Parcial
               </span>
             {% elif p.estado == 'DEVUELTO' or p.estado == 'devuelto' %}
               <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
                 <i class="bi bi-check-circle-fill"></i> Devuelto
               </span>
-            {% elif p.estado == 'CANCELADO' or p.estado == 'cancelado' or p.estado == 'rechazado' %}
+            {% elif p.estado == 'CANCELADO' or p.estado == 'cancelado' %}
               <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
                 <i class="bi bi-x-circle-fill"></i> Cancelado
               </span>
@@ -213,9 +213,31 @@
             </div>
           </td>
           <td class="text-center text-nowrap">
-            <div class="d-inline-flex align-items-center gap-1">
+            <div class="sbm-actions-group justify-content-center">
+              <button type="button" class="sbm-action-btn sbm-btn-view"
+                      data-bs-toggle="tooltip" data-bs-placement="top" title="Ver ficha completa de solicitud"
+                      aria-label="Ver ficha de préstamo #{{ p.pk }}"
+                      onclick="window.mostrarModalDetalles({
+                        title: 'Préstamo #{{ p.pk }}',
+                        subtitle: 'Solicitante: {{ p.documento.nombre_completo|default:p.documento|escapejs }}',
+                        badge: '{{ p.get_estado_display|upper }}',
+                        icon: 'bi-box-seam',
+                        fields: [
+                          { label: 'ID Préstamo', value: '#{{ p.pk }}' },
+                          { label: 'Estado', value: '{{ p.get_estado_display }}', isBadge: true, badgeClass: 'bg-light text-dark border' },
+                          { label: 'Solicitante', value: '{{ p.documento.nombre_completo|default:p.documento|escapejs }}' },
+                          { label: 'Documento', value: '{{ p.documento.tipo_documento }} {{ p.documento.documento }}' },
+                          { label: 'Ficha SENA', value: '{{ p.ficha|default:"No registrada" }}' },
+                          { label: 'Fecha de Solicitud', value: '{{ p.fecha|date:"d/m/Y" }}' },
+                          { label: 'Observaciones', value: '{{ p.observaciones|default:"Sin observaciones"|escapejs }}', col: 12 }
+                        ],
+                        extraHtml: '<div class=\'bg-white p-3 rounded border mt-2\'><h6 class=\'fw-bold mb-2 small text-uppercase text-secondary\'><i class=\'bi bi-tools me-1 text-primary\'></i>Herramientas Asignadas:</h6><ul class=\'list-group list-group-flush\'>{% for item in p.detalles.all %}<li class=\'list-group-item d-flex justify-content-between align-items-center py-2 px-0\'><span>{{ item.herramienta.nombre|escapejs }} <small class=\'text-muted font-monospace\'>({{ item.herramienta.codigo|escapejs }})</small></span><span class=\'badge bg-primary rounded-pill\'>{{ item.cantidad }} u.</span></li>{% endfor %}</ul></div>'
+                      })">
+                <i class="bi bi-eye"></i>
+              </button>
+
               {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
-              <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-2 py-1 btn-aprobar-solicitud d-inline-flex align-items-center gap-1 shadow-xs" data-pk="{{ p.pk }}" data-nombre="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" data-usuario="{{ p.documento|escapejs }}" data-motivo="{% if p.observaciones %}{{ p.observaciones|escapejs }}{% endif %}" data-fecha="{{ p.fecha|date:'d/m/Y' }}" title="Entregar préstamo">
+              <button type="button" class="sbm-action-btn sbm-btn-success btn-aprobar-solicitud" data-pk="{{ p.pk }}" data-nombre="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" data-usuario="{{ p.documento|escapejs }}" data-motivo="{% if p.observaciones %}{{ p.observaciones|escapejs }}{% endif %}" data-fecha="{{ p.fecha|date:'d/m/Y' }}" title="Entregar préstamo" aria-label="Entregar préstamo #{{ p.pk }}">
                 <span class="items-json d-none">
                   [
                     {% for item in p.detalles.all %}
@@ -230,17 +252,17 @@
                   ]
                 </span>
                 <i class="bi bi-check-lg"></i>
-                <span>Entregar</span>
               </button>
               {% endif %}
+
               {% if p.estado in 'ENTREGADO,PARCIAL,activo,parcial' %}
-              <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-1 btn-devolver-prestamo d-inline-flex align-items-center gap-1 shadow-xs" data-pk="{{ p.pk }}" data-usuario="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" title="Registrar devolución">
+              <button type="button" class="sbm-action-btn sbm-btn-view text-primary btn-devolver-prestamo" data-pk="{{ p.pk }}" data-usuario="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" title="Registrar devolución" aria-label="Registrar devolución de préstamo #{{ p.pk }}">
                 <i class="bi bi-arrow-return-left"></i>
-                <span>Devolver</span>
               </button>
               {% endif %}
-              <button type="button" class="btn btn-sm btn-light border rounded-circle shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo" data-pk="{{ p.pk }}" data-observaciones="{{ p.observaciones|escapejs }}" title="Editar observaciones">
-                <i class="bi bi-pencil text-secondary"></i>
+
+              <button type="button" class="sbm-action-btn sbm-btn-edit" data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo" data-pk="{{ p.pk }}" data-observaciones="{{ p.observaciones|escapejs }}" title="Editar observaciones" aria-label="Editar observaciones de préstamo #{{ p.pk }}">
+                <i class="bi bi-pencil"></i>
               </button>
             </div>
           </td>

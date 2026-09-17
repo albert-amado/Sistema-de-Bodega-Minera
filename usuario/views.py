@@ -469,3 +469,196 @@ def perfil_view(request):
     }
 
     return render(request, 'perfil.html', context)
+
+
+# ─────────────────────────────────────────────────────────────
+#  VERIFICACIÓN DE APRENDICES SENA (INTEGRACIÓN SOFIAPLUS)
+# ─────────────────────────────────────────────────────────────
+@admin_required
+def verificar_aprendiz_view(request):
+    """
+    Renderiza la interfaz de búsqueda y verificación de aprendices SENA.
+    Acceso restringido a roles autorizados (Administradores / Supervisores de bodega).
+    Cumple con la Ley 1581 de 2012 (Habeas Data).
+    """
+    tipos_documento = [
+        ('CC', 'Cédula de Ciudadanía (CC)'),
+        ('TI', 'Tarjeta de Identidad (TI)'),
+        ('CE', 'Cédula de Extranjería (CE)'),
+        ('PPT', 'Permiso por Protección Temporal (PPT)'),
+        ('PEP', 'Permiso Especial de Permanencia (PEP)'),
+        ('PAS', 'Pasaporte (PAS)'),
+    ]
+    context = {
+        'title': 'Verificar Aprendiz SENA – Sistema de Bodega Minera',
+        'tipos_documento': tipos_documento,
+    }
+    return render(request, 'verificar_aprendiz.html', context)
+
+
+@admin_required
+def verificar_aprendiz_api(request):
+    """
+    Endpoint AJAX para la consulta en vivo de aprendices SENA.
+    Recibe tipo_documento y documento por GET o POST.
+    Nunca expone tokens, credenciales ni trazas de error internas al usuario.
+    """
+    from services.sofia_plus_client import (
+        get_sofia_plus_client,
+        SofiaPlusInvalidInputError,
+        AprendizNotFoundError,
+        SofiaPlusServiceUnavailableError,
+        SofiaPlusAuthError,
+    )
+
+    if request.method not in ('GET', 'POST'):
+        return JsonResponse({'success': False, 'error': 'Método HTTP no permitido.'}, status=405)
+
+    tipo_doc = request.GET.get('tipo_documento') or request.POST.get('tipo_documento', 'CC')
+    numero_doc = request.GET.get('documento') or request.POST.get('documento', '')
+
+    client = get_sofia_plus_client()
+
+    try:
+        aprendiz_info = client.consultar_aprendiz(
+            tipo_documento=tipo_doc,
+            numero_documento=numero_doc,
+        )
+        return JsonResponse({
+            'success': True,
+            'aprendiz': aprendiz_info.to_dict(),
+        }, status=200)
+
+    except SofiaPlusInvalidInputError as exc:
+        return JsonResponse({'success': False, 'error': exc.user_friendly_message}, status=400)
+
+    except AprendizNotFoundError as exc:
+        return JsonResponse({'success': False, 'error': exc.user_friendly_message}, status=404)
+
+    except SofiaPlusAuthError as exc:
+        logger.error("Fallo de autenticación con servicio SENA: %s", exc)
+        return JsonResponse({'success': False, 'error': exc.user_friendly_message}, status=401)
+
+    except SofiaPlusServiceUnavailableError as exc:
+        logger.warning("Servicio externo SENA no disponible: %s", exc)
+        return JsonResponse({'success': False, 'error': exc.user_friendly_message}, status=503)
+
+    except Exception as exc:
+        logger.error("Error inesperado en consulta de aprendiz: %s", exc, exc_info=True)
+        return JsonResponse({
+            'success': False,
+            'error': 'Ocurrió un error inesperado al consultar los datos del aprendiz. Intente nuevamente más tarde.'
+        }, status=500)
+
+
+def verificar_documento_registro_api(request):
+    """
+    Endpoint AJAX para la verificación en tiempo real durante el registro de usuarios.
+    - Valida duplicados en la base de datos local (evita dos cuentas con el mismo documento).
+    - Consulta aislada a SofiaPlus mediante el cliente centralizado get_sofia_plus_client().
+    - Retorna datos para auto-completar y bloquear en solo lectura si el aprendiz existe.
+    - Aplica las políticas configuradas si no existe (ALLOW_MANUAL_REGISTRATION)
+      o si el servicio no responde (SOFIAPLUS_FALLBACK_POLICY).
+    """
+    from django.conf import settings
+    from services.sofia_plus_client import (
+        get_sofia_plus_client,
+        SofiaPlusInvalidInputError,
+        AprendizNotFoundError,
+        SofiaPlusServiceUnavailableError,
+        SofiaPlusAuthError,
+    )
+
+    if request.method not in ('GET', 'POST'):
+        return JsonResponse({'success': False, 'error': 'Método HTTP no permitido.'}, status=405)
+
+    tipo_doc = request.GET.get('tipo_documento') or request.POST.get('tipo_documento', 'CC')
+    numero_doc = (request.GET.get('documento') or request.POST.get('documento', '')).strip()
+
+    if not numero_doc:
+        return JsonResponse({'success': False, 'error': 'El número de documento es obligatorio.'}, status=400)
+
+    # 1. Validar duplicados en la base de datos local
+    if Usuario.objects.filter(documento=numero_doc).exists():
+        return JsonResponse({
+            'success': False,
+            'already_registered': True,
+            'error': 'Ya existe una cuenta registrada con este número de documento. Por favor inicia sesión o recupera tu contraseña.'
+        }, status=409)
+
+    client = get_sofia_plus_client()
+
+    try:
+        aprendiz = client.consultar_aprendiz(tipo_doc, numero_doc)
+        return JsonResponse({
+            'success': True,
+            'verificado': True,
+            'aprendiz': {
+                'documento': aprendiz.documento,
+                'tipo_documento': aprendiz.tipo_documento,
+                'nombre_completo': aprendiz.nombre_completo,
+                'primer_nombre': aprendiz.primer_nombre,
+                'primer_apellido': aprendiz.primer_apellido,
+                'segundo_nombre': aprendiz.segundo_nombre,
+                'segundo_apellido': aprendiz.segundo_apellido,
+                'numero_ficha': aprendiz.numero_ficha,
+                'nombre_ficha': aprendiz.nombre_ficha,
+                'programa_formacion': aprendiz.programa_formacion,
+                'estado_programa': aprendiz.estado_programa,
+                'centro_formacion': aprendiz.centro_formacion,
+                'regional': aprendiz.regional,
+                'correo_institucional': aprendiz.correo_institucional,
+                'telefono_contacto': aprendiz.telefono_contacto,
+                'origen_datos': aprendiz.origen_datos,
+            }
+        }, status=200)
+
+    except SofiaPlusInvalidInputError as exc:
+        return JsonResponse({
+            'success': False,
+            'invalid_input': True,
+            'error': exc.user_friendly_message
+        }, status=400)
+
+    except AprendizNotFoundError as exc:
+        allow_manual = getattr(settings, 'ALLOW_MANUAL_REGISTRATION', False)
+        return JsonResponse({
+            'success': False,
+            'not_found': True,
+            'allow_manual': allow_manual,
+            'error': (
+                'El documento no se encuentra registrado en SofiaPlus. '
+                'Solo aprendices verificados del SENA pueden crear una cuenta en el sistema.'
+                if not allow_manual else
+                'El documento no figura en SofiaPlus. Registro manual habilitado como excepción.'
+            )
+        }, status=200 if allow_manual else 404)
+
+    except SofiaPlusServiceUnavailableError as exc:
+        policy = getattr(settings, 'SOFIAPLUS_FALLBACK_POLICY', 'ALLOW_PENDING')
+        allow_pending = (policy == 'ALLOW_PENDING')
+        return JsonResponse({
+            'success': False,
+            'service_unavailable': True,
+            'policy': policy,
+            'allow_pending': allow_pending,
+            'error': (
+                'El servicio de SofiaPlus no responde temporalmente. Puedes continuar con el registro; '
+                'tu cuenta quedará registrada provisionalmente pendiente de verificación.'
+                if allow_pending else
+                'El servicio de SofiaPlus no responde temporalmente. Por seguridad, el registro requiere verificación activa. Intenta de nuevo en unos minutos.'
+            )
+        }, status=200 if allow_pending else 503)
+
+    except Exception as exc:
+        logger.error("Error inesperado en endpoint de registro SofiaPlus: %s", exc, exc_info=True)
+        policy = getattr(settings, 'SOFIAPLUS_FALLBACK_POLICY', 'ALLOW_PENDING')
+        allow_pending = (policy == 'ALLOW_PENDING')
+        return JsonResponse({
+            'success': False,
+            'service_unavailable': True,
+            'policy': policy,
+            'allow_pending': allow_pending,
+            'error': 'No se pudo conectar con el servicio de verificación en este momento.'
+        }, status=200 if allow_pending else 500)
+

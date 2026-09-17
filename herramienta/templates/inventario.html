@@ -156,13 +156,13 @@
     <table class="table table-hover align-middle datatable-custom w-100" id="inventario-table">
       <thead class="table-light">
         <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 70px;">SKU</th>
-          <th>Herramienta</th>
-          <th>Descripción</th>
-          <th>Categoría</th>
-          <th>Ubicación</th>
-          <th class="text-center">Stock</th>
-          <th class="text-center" style="width: 120px;">Acciones</th>
+          <th class="text-center" style="width: 80px;" data-priority="2">SKU</th>
+          <th data-priority="1">Herramienta</th>
+          <th data-priority="3">Descripción</th>
+          <th data-priority="2">Categoría</th>
+          <th data-priority="2">Ubicación</th>
+          <th class="text-center" data-priority="1">Stock</th>
+          <th class="text-center" style="width: 140px;" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -222,19 +222,37 @@
           </td>
           <!-- Acciones -->
           <td class="text-center">
-            <div class="d-flex gap-1 justify-content-center align-items-center">
+            <div class="sbm-actions-group justify-content-center">
+              <button type="button" class="sbm-action-btn sbm-btn-view"
+                      data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles de {{ producto.nombre }}"
+                      aria-label="Ver detalles de {{ producto.nombre }}"
+                      onclick="window.mostrarModalDetalles({
+                        title: '{{ producto.nombre|escapejs }}',
+                        subtitle: 'SKU: {{ producto.codigo_sku|default:producto.pk|escapejs }}',
+                        badge: '{{ producto.codigo_categoria|default:"Herramienta"|escapejs }}',
+                        icon: 'bi-tools',
+                        fields: [
+                          { label: 'Código SKU', value: '{{ producto.codigo_sku|default:producto.pk|escapejs }}' },
+                          { label: 'Categoría', value: '{{ producto.codigo_categoria|default:"Sin categoría"|escapejs }}' },
+                          { label: 'Stock Disponible', value: '{{ producto.stock_disponible }} unidades', isBadge: true, badgeClass: '{% if producto.stock_disponible == 0 %}sbm-badge-agotado{% elif producto.stock_disponible <= 5 %}sbm-badge-critico{% else %}sbm-badge-disponible{% endif %}' },
+                          { label: 'Ubicación', value: '{% if producto.estante %}Estante {{ producto.estante.codigo|escapejs }} - Almacén {{ producto.estante.almacen.nombre|escapejs }}{% else %}No asignada{% endif %}' },
+                          { label: 'Descripción', value: '{{ producto.descripcion|default:"Sin descripción registrada"|escapejs }}', col: 12 }
+                        ]
+                      })">
+                <i class="bi bi-eye"></i>
+              </button>
+
               {% if producto.stock_disponible > 0 %}
-              <button type="button" class="btn btn-sm btn-outline-success px-2 py-1 btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Registrar préstamo rápido" onclick="abrirPrestamo('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
+              <button type="button" class="sbm-action-btn sbm-btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Registrar préstamo de {{ producto.nombre }}" aria-label="Registrar préstamo de {{ producto.nombre }}" onclick="abrirPrestamo('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
                 <i class="bi bi-arrow-left-right"></i>
-                <span class="d-none d-xl-inline">Prestar</span>
               </button>
               {% else %}
-              <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1 d-inline-flex align-items-center gap-1 opacity-50" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Sin existencias" onclick="event.stopPropagation();">
+              <button type="button" class="sbm-action-btn sbm-btn-success" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Sin existencias disponibles" aria-label="Sin existencias de {{ producto.nombre }}">
                 <i class="bi bi-arrow-left-right"></i>
               </button>
               {% endif %}
 
-              <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock_disponible }}', '{% if producto.codigo_categoria %}{{ producto.codigo_categoria.pk }}{% endif %}', '{% if producto.estante %}{{ producto.estante.almacen.pk }}{% endif %}', '{% if producto.estante %}{{ producto.estante.pk }}{% endif %}')">
+              <button type="button" class="sbm-action-btn sbm-btn-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar {{ producto.nombre }}" aria-label="Modificar {{ producto.nombre }}" onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock_disponible }}', '{% if producto.codigo_categoria %}{{ producto.codigo_categoria.pk }}{% endif %}', '{% if producto.estante %}{{ producto.estante.almacen.pk }}{% endif %}', '{% if producto.estante %}{{ producto.estante.pk }}{% endif %}')">
                 <i class="bi bi-pencil"></i>
               </button>
             </div>

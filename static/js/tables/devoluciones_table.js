@@ -25,29 +25,13 @@ $(document).ready(function () {
   });
 
   // ─── PASO 2: inicializar DataTable sobre el tbody ya limpio
-  var table = $('#devoluciones-table').DataTable({
-    responsive: true,
-    dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6">>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
-    buttons: window.obtenerBotonesDataTable('devoluciones'),
-    language: {
-      url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
-    },
-    order: [],
+  var table = window.initSBMDataTable('#devoluciones-table', {
+    modulo: 'devoluciones',
+    order: [[1, 'desc']], // ID descendente por defecto
     columnDefs: [
       { orderable: false, targets: [0, 4, 7] }
     ],
-    pageLength: 10,
-    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
-    drawCallback: function (settings) {
-      if (settings.aiDisplay.length === 0 && emptyStateHtml) {
-        $(this).find('.dataTables_empty').html(emptyStateHtml);
-      }
-      var tooltipTriggerList = this.api().table().container()
-        .querySelectorAll('[data-bs-toggle="tooltip"]');
-      [...tooltipTriggerList].forEach(function (el) {
-        bootstrap.Tooltip.getOrCreateInstance(el);
-      });
-    }
+    pageLength: 10
   });
 
   // ─── Buscador en tiempo real y Filtros ───

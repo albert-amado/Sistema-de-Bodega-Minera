@@ -24,30 +24,23 @@ $(document).ready(function() {
       }
     });
 
-    var table = $('#inventario-table').DataTable({
-        responsive: true,
-        dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6">>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
-        buttons: window.obtenerBotonesDataTable('inventario'),
-        language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
-        },
-        order: [[1, 'asc']], // Order by tool name (column index 1) ascending by default
+    var table = window.initSBMDataTable('#inventario-table', {
+        modulo: 'inventario',
+        order: [[1, 'asc']], // Ordenar por nombre de herramienta por defecto
         columnDefs: [
-            { orderable: false, targets: [4, 6] } // Ubicación (4) and Acciones (6) are not sortable
+            { orderable: false, targets: [4, 6] } // Ubicación (4) y Acciones (6) no ordenables
         ],
-        pageLength: 10,
-        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-        drawCallback: function(settings) {
-            if (settings.aiDisplay.length === 0 && emptyStateHtml) {
-                $(this).find('.dataTables_empty').html(emptyStateHtml);
-            }
-            // Re-initialize Bootstrap tooltips for elements inside the table after redrawing
-            var tooltipTriggerList = document.querySelectorAll('#inventario-table [data-bs-toggle="tooltip"]');
-            var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
-                return bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl);
-            });
-        }
+        pageLength: 10
     });
+
+    // Inicializar tabla de Kardex dentro del modal si existe
+    if ($('#modalKardexHistorial table').length) {
+        window.initSBMDataTable('#modalKardexHistorial table', {
+            modulo: 'inventario',
+            order: [[0, 'desc']],
+            pageLength: 10
+        });
+    }
 
     // Real-time search filter
     $('#inventario-busqueda').on('keyup input', function() {
