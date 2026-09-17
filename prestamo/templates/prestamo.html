@@ -8,8 +8,8 @@
     <h5 class="fw-bold mb-1">Préstamos</h5>
     <p class="text-muted small mb-0">Gestión de préstamos de herramientas e inventario</p>
   </div>
-  <button class="btn btn-primary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalCrearPrestamo">
-    <i class="bi bi-plus-circle"></i> Nuevo Préstamo
+  <button class="btn btn-sbm-primary btn-sm rounded-pill px-3 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalCrearPrestamo">
+    <i class="bi bi-plus-lg"></i> Nuevo Préstamo
   </button>
 </div>
 
@@ -25,74 +25,69 @@
   <div class="col-6 col-md-2">
     <div class="card h-100 p-3 text-center border-0 shadow-sm kpi-card" data-kpi-delay="80">
       <div class="text-muted small fw-semibold">Entregados</div>
-      <div class="fs-4 fw-bold text-success kpi-number" data-target="{{ prestamos_activos|default:0 }}">0</div>
+      <div class="fs-4 fw-bold kpi-number kpi-color-warn" data-target="{{ prestamos_activos|default:0 }}">0</div>
       <div class="text-muted small">en uso</div>
     </div>
   </div>
   <div class="col-6 col-md-2">
     <div class="card h-100 p-3 text-center border-0 shadow-sm kpi-card" data-kpi-delay="160">
       <div class="text-muted small fw-semibold">Pendientes</div>
-      <div class="fs-4 fw-bold text-warning kpi-number" data-target="{{ prestamos_pendientes|default:0 }}">0</div>
+      <div class="fs-4 fw-bold kpi-number kpi-color-amber" data-target="{{ prestamos_pendientes|default:0 }}">0</div>
       <div class="text-muted small">por entregar</div>
     </div>
   </div>
   <div class="col-6 col-md-2">
     <div class="card h-100 p-3 text-center border-0 shadow-sm kpi-card" data-kpi-delay="240">
       <div class="text-muted small fw-semibold">Devueltos</div>
-      <div class="fs-4 fw-bold text-primary kpi-number" data-target="{{ prestamos_devueltos|default:0 }}">0</div>
+      <div class="fs-4 fw-bold kpi-number kpi-color-ok" data-target="{{ prestamos_devueltos|default:0 }}">0</div>
       <div class="text-muted small">completados</div>
     </div>
   </div>
   <div class="col-6 col-md-2">
     <div class="card h-100 p-3 text-center border-0 shadow-sm kpi-card" data-kpi-delay="320">
       <div class="text-muted small fw-semibold">Parciales</div>
-      <div class="fs-4 fw-bold text-info kpi-number" data-target="{{ prestamos_parciales|default:0 }}">0</div>
+      <div class="fs-4 fw-bold kpi-number kpi-color-rock" data-target="{{ prestamos_parciales|default:0 }}">0</div>
       <div class="text-muted small">incompletos</div>
     </div>
   </div>
   <div class="col-6 col-md-2">
     <div class="card h-100 p-3 text-center border-0 shadow-sm kpi-card" data-kpi-delay="400">
       <div class="text-muted small fw-semibold">Cancelados</div>
-      <div class="fs-4 fw-bold text-danger kpi-number" data-target="{{ prestamos_cancelados|default:0 }}">0</div>
+      <div class="fs-4 fw-bold kpi-number kpi-color-danger" data-target="{{ prestamos_cancelados|default:0 }}">0</div>
       <div class="text-muted small">rechazados</div>
     </div>
   </div>
 </div>
 
-{# ══ FILTROS ══ #}
+{# ══ FILTROS EN TIEMPO REAL ══ #}
 <div class="sfb-wrap mb-4">
-  <form method="get" class="d-contents w-100" style="display:contents;">
-    <!-- Búsqueda -->
-    <div class="sfb-search-group">
-      <i class="bi bi-search sfb-search-icon"></i>
-      <input type="text" name="q" data-no-validate autocomplete="off"
-             class="sfb-search-input"
-             value="{{ filtro_q }}"
-             placeholder="Buscar por documento, ficha o herramienta…">
-    </div>
+  <!-- Búsqueda en tiempo real -->
+  <div class="sfb-search-group">
+    <i class="bi bi-search sfb-search-icon"></i>
+    <input type="text" id="prestamo-busqueda" class="sfb-search-input"
+           placeholder="Buscar por ID, solicitante, documento, ficha o herramienta…"
+           value="{{ filtro_q|default:'' }}"
+           autocomplete="off">
+  </div>
 
-    <div class="sfb-divider"></div>
+  <div class="sfb-divider"></div>
 
-    <!-- Estado -->
-    <select name="estado" data-no-validate class="sfb-select">
-      <option value="">— Todos los Estados —</option>
-      <option value="PENDIENTE"  {% if filtro_estado == 'PENDIENTE'  or filtro_estado == 'pendiente'  %}selected{% endif %}>Pendiente</option>
-      <option value="ENTREGADO"  {% if filtro_estado == 'ENTREGADO'  or filtro_estado == 'entregado'  or filtro_estado == 'activo' %}selected{% endif %}>Entregado</option>
-      <option value="PARCIAL"    {% if filtro_estado == 'PARCIAL'    or filtro_estado == 'parcial'    %}selected{% endif %}>Devolución Parcial</option>
-      <option value="DEVUELTO"   {% if filtro_estado == 'DEVUELTO'   or filtro_estado == 'devuelto'   %}selected{% endif %}>Devuelto</option>
-      <option value="CANCELADO"  {% if filtro_estado == 'CANCELADO'  or filtro_estado == 'cancelado'  or filtro_estado == 'rechazado' %}selected{% endif %}>Cancelado</option>
-    </select>
+  <!-- Selector de Estado -->
+  <select id="prestamo-estado" class="sfb-select">
+    <option value="">— Todos los Estados —</option>
+    <option value="PENDIENTE" {% if filtro_estado == 'PENDIENTE' or filtro_estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+    <option value="ENTREGADO" {% if filtro_estado == 'ENTREGADO' or filtro_estado == 'entregado' or filtro_estado == 'activo' %}selected{% endif %}>Entregado</option>
+    <option value="PARCIAL" {% if filtro_estado == 'PARCIAL' or filtro_estado == 'parcial' %}selected{% endif %}>Devolución Parcial</option>
+    <option value="DEVUELTO" {% if filtro_estado == 'DEVUELTO' or filtro_estado == 'devuelto' %}selected{% endif %}>Devuelto</option>
+    <option value="CANCELADO" {% if filtro_estado == 'CANCELADO' or filtro_estado == 'cancelado' %}selected{% endif %}>Cancelado</option>
+  </select>
 
-    <!-- Acciones -->
-    <div class="sfb-actions">
-      <button type="submit" class="sfb-btn-primary">
-        <i class="bi bi-funnel"></i> Filtrar
-      </button>
-      <a href="{% url 'prestamo' %}" class="sfb-btn-secondary" title="Limpiar filtros">
-        <i class="bi bi-x-circle"></i> Limpiar
-      </a>
-    </div>
-  </form>
+  <div class="sfb-divider"></div>
+
+  <!-- Limpiar -->
+  <button type="button" id="btn-limpiar-filtros" class="sfb-btn-secondary" title="Limpiar filtros">
+    <i class="bi bi-x-circle"></i> Limpiar
+  </button>
 </div>
 
 
@@ -100,7 +95,7 @@
 <div class="card table-card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
   <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-2">
-      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+      <div class="p-2 rounded-3 bg-light border text-warning d-flex align-items-center justify-content-center sbm-icon-box-34">
         <i class="bi bi-journal-text fs-5"></i>
       </div>
       <div>
@@ -109,114 +104,107 @@
       </div>
     </div>
     <span class="badge bg-light text-dark border px-3 py-2 rounded-pill font-monospace small">
-      <i class="bi bi-layers me-1 text-primary"></i>{{ prestamos|length }} registro{{ prestamos|length|pluralize }}
+      <i class="bi bi-layers me-1 text-warning"></i>{{ prestamos|length }} registro{{ prestamos|length|pluralize }}
     </span>
   </div>
 
   <div class="table-responsive px-3 pb-3 pt-2">
     <table class="table table-hover align-middle datatable-custom w-100" id="prestamo-table">
       <thead class="table-light">
-        <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 40px;" data-priority="1"></th>
-          <th class="text-center" style="width: 60px;" data-priority="1"># ID</th>
-          <th data-priority="1">Solicitante / Documento</th>
-          <th data-priority="3">Ficha SENA</th>
+        <tr class="text-secondary small fw-bold text-uppercase th-tracking">
+          <th class="text-center th-w-75" data-priority="2"># ID</th>
           <th data-priority="1">Herramientas Solicitadas</th>
-          <th class="text-center" data-priority="1">Estado</th>
-          <th class="text-center" data-priority="2">Fecha</th>
-          <th class="text-center" style="width: 150px;" data-priority="1">Acciones</th>
+          <th data-priority="1">Solicitante / Responsable</th>
+          <th class="text-center th-w-110" data-priority="3">Ficha SENA</th>
+          <th class="text-center th-w-125" data-priority="1">Estado</th>
+          <th class="text-center th-w-110" data-priority="2">Fecha</th>
+          <th class="text-center th-w-140" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for p in prestamos %}
-        <tr class="prestamo-row" style="cursor: pointer;" onclick="if(!event.target.closest('button') && !event.target.closest('a') && !event.target.closest('input')) { $(this).find('.btn-toggle-details').trigger('click'); }">
-          <td class="text-center">
-            <button type="button" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs" 
-                    style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
-                    data-target-detail="detail-p-{{ p.pk }}" title="Ver detalles desplegables" aria-label="Expandir fila de préstamo #{{ p.pk }}">
-              <i class="bi bi-chevron-right row-chevron" style="transition: transform 0.2s ease;"></i>
-            </button>
-          </td>
+        <tr>
+          <!-- # ID -->
           <td class="text-center">
             <span class="badge bg-light text-secondary border font-monospace px-2 py-1">
               #{{ p.pk }}
             </span>
           </td>
+
+          <!-- Herramientas Solicitadas -->
           <td>
-            <div class="d-flex align-items-center gap-2">
-              <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.85rem;">
-                {{ p.documento.primer_nombre|slice:":1"|default:"P" }}
-              </div>
-              <div>
-                <div class="fw-semibold text-dark text-nowrap">
-                  {{ p.documento.nombre_completo|default:p.documento|default:"Solicitante" }}
-                </div>
-                <div class="text-muted extra-small font-monospace" style="font-size: 0.72rem;">
-                  Doc: {{ p.documento.tipo_documento }} {{ p.documento.documento }}
-                </div>
-              </div>
-            </div>
-          </td>
-          <td>
-            {% if p.ficha %}
-            <span class="badge bg-light text-muted border px-2 py-1 font-monospace" style="font-size: 0.75rem;">
-              <i class="bi bi-bookmark-fill text-warning me-1"></i>{{ p.ficha }}
-            </span>
-            {% else %}
-            <span class="text-muted small">—</span>
-            {% endif %}
-          </td>
-          <td>
-            <div class="d-flex flex-wrap gap-1 align-items-center" style="max-width: 280px;">
+            <div class="d-flex flex-wrap gap-1 align-items-center max-w-290">
               {% for item in p.detalles.all %}
-              <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-weight: 500; font-size: 0.75rem;" title="{{ item.herramienta.nombre }}">
-                <i class="bi bi-tools text-primary"></i>
-                <span class="text-truncate" style="max-width: 130px;">{{ item.herramienta.nombre }}</span>
-                <span class="badge bg-primary text-white rounded-pill ms-1 px-1">×{{ item.cantidad }}</span>
+              <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs badge-item-tool" title="{{ item.herramienta.nombre }}">
+                <i class="bi bi-tools text-warning"></i>
+                <span class="text-truncate max-w-130">{{ item.herramienta.nombre }}</span>
+                <span class="badge bg-dark text-white rounded-pill ms-1 px-1 badge-item-qty">×{{ item.cantidad }}</span>
               </span>
               {% empty %}
               <span class="text-muted small fst-italic">Sin herramientas</span>
               {% endfor %}
             </div>
           </td>
+
+          <!-- Solicitante / Documento -->
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-light border text-dark d-flex align-items-center justify-content-center fw-bold flex-shrink-0 sbm-avatar-doc">
+                {{ p.documento.primer_nombre|slice:":1"|default:"P" }}
+              </div>
+              <div class="overflow-hidden max-w-200">
+                <div class="fw-semibold text-dark text-truncate" title="{{ p.documento.nombre_completo|default:p.documento|default:'Solicitante' }}">
+                  {{ p.documento.nombre_completo|default:p.documento|default:"Solicitante" }}
+                </div>
+                <div class="text-muted extra-small font-monospace text-truncate fs-xs">
+                  Doc: {{ p.documento.tipo_documento }} {{ p.documento.documento }}
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Ficha SENA -->
           <td class="text-center">
-            {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
-              <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-hourglass-split"></i> Pendiente
-              </span>
-            {% elif p.estado == 'ENTREGADO' or p.estado == 'entregado' or p.estado == 'activo' %}
-              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-box-seam"></i> Entregado
-              </span>
-            {% elif p.estado == 'PARCIAL' or p.estado == 'parcial' %}
-              <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-pie-chart"></i> Parcial
-              </span>
-            {% elif p.estado == 'DEVUELTO' or p.estado == 'devuelto' %}
-              <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-check-circle-fill"></i> Devuelto
-              </span>
-            {% elif p.estado == 'CANCELADO' or p.estado == 'cancelado' %}
-              <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-x-circle-fill"></i> Cancelado
-              </span>
+            {% if p.ficha %}
+            <span class="badge bg-light text-muted border px-2 py-1 font-monospace fs-sm-badge">
+              <i class="bi bi-bookmark-fill text-warning me-1"></i>{{ p.ficha }}
+            </span>
             {% else %}
-              <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill">
-                {{ p.get_estado_display }}
-              </span>
+            <span class="text-muted small">—</span>
             {% endif %}
           </td>
+
+          <!-- Estado -->
+          <td class="text-center col-estado" data-estado="{{ p.estado|upper }}">
+            {% if p.estado == 'DEVUELTO' or p.estado == 'devuelto' %}
+              <span class="badge-state badge-aprobada">Devuelto</span>
+            {% elif p.estado == 'ENTREGADO' or p.estado == 'entregado' or p.estado == 'activo' %}
+              <span class="badge-state badge-pendiente">Entregado</span>
+            {% elif p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
+              <span class="badge-state badge-pendiente">Pendiente</span>
+            {% elif p.estado == 'PARCIAL' or p.estado == 'parcial' %}
+              <span class="badge-state badge-pendiente">Parcial</span>
+            {% elif p.estado == 'CANCELADO' or p.estado == 'cancelado' or p.estado == 'vencido' or p.estado == 'atrasado' %}
+              <span class="badge-state badge-rechazada">Cancelado</span>
+            {% else %}
+              <span class="badge-state badge-pendiente">{{ p.get_estado_display }}</span>
+            {% endif %}
+          </td>
+
+          <!-- Fecha -->
           <td class="text-center text-nowrap">
             <div class="d-inline-flex align-items-center gap-1 text-secondary font-monospace small px-2 py-1 rounded bg-light border">
               <i class="bi bi-calendar3 text-muted"></i>
               <span>{{ p.fecha|date:"d/m/Y" }}</span>
             </div>
           </td>
+
+          <!-- Acciones -->
           <td class="text-center text-nowrap">
             <div class="sbm-actions-group justify-content-center">
               <button type="button" class="sbm-action-btn sbm-btn-view"
-                      data-bs-toggle="tooltip" data-bs-placement="top" title="Ver ficha completa de solicitud"
-                      aria-label="Ver ficha de préstamo #{{ p.pk }}"
+                      data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles del préstamo #{{ p.pk }}"
+                      aria-label="Ver detalles del préstamo #{{ p.pk }} de {{ p.documento.nombre_completo|default:p.documento|escapejs }}"
                       onclick="window.mostrarModalDetalles({
                         title: 'Préstamo #{{ p.pk }}',
                         subtitle: 'Solicitante: {{ p.documento.nombre_completo|default:p.documento|escapejs }}',
@@ -224,20 +212,28 @@
                         icon: 'bi-box-seam',
                         fields: [
                           { label: 'ID Préstamo', value: '#{{ p.pk }}' },
-                          { label: 'Estado', value: '{{ p.get_estado_display }}', isBadge: true, badgeClass: 'bg-light text-dark border' },
+                          { label: 'Estado', value: '{{ p.get_estado_display }}', isBadge: true, badgeClass: '{% if p.estado == "DEVUELTO" or p.estado == "devuelto" %}sbm-badge-disponible{% elif p.estado == "CANCELADO" or p.estado == "cancelado" or p.estado == "vencido" %}sbm-badge-agotado{% else %}sbm-badge-critico{% endif %}' },
                           { label: 'Solicitante', value: '{{ p.documento.nombre_completo|default:p.documento|escapejs }}' },
                           { label: 'Documento', value: '{{ p.documento.tipo_documento }} {{ p.documento.documento }}' },
-                          { label: 'Ficha SENA', value: '{{ p.ficha|default:"No registrada" }}' },
-                          { label: 'Fecha de Solicitud', value: '{{ p.fecha|date:"d/m/Y" }}' },
-                          { label: 'Observaciones', value: '{{ p.observaciones|default:"Sin observaciones"|escapejs }}', col: 12 }
-                        ],
-                        extraHtml: '<div class=\'bg-white p-3 rounded border mt-2\'><h6 class=\'fw-bold mb-2 small text-uppercase text-secondary\'><i class=\'bi bi-tools me-1 text-primary\'></i>Herramientas Asignadas:</h6><ul class=\'list-group list-group-flush\'>{% for item in p.detalles.all %}<li class=\'list-group-item d-flex justify-content-between align-items-center py-2 px-0\'><span>{{ item.herramienta.nombre|escapejs }} <small class=\'text-muted font-monospace\'>({{ item.herramienta.codigo|escapejs }})</small></span><span class=\'badge bg-primary rounded-pill\'>{{ item.cantidad }} u.</span></li>{% endfor %}</ul></div>'
+                          { label: 'Ficha SENA', value: '{{ p.ficha|default:"No registrada"|escapejs }}' },
+                          { label: 'Fecha Solicitud', value: '{{ p.fecha|date:"d/m/Y" }}' },
+                          { label: 'Herramientas', value: '{% for item in p.detalles.all %}{{ item.herramienta.nombre|escapejs }} (×{{ item.cantidad }}){% if not forloop.last %}, {% endif %}{% empty %}Sin herramientas asignadas{% endfor %}', col: 12 },
+                          { label: 'Observaciones', value: '{{ p.observaciones|default:"Sin observaciones registradas."|escapejs }}', col: 12 }
+                        ]
                       })">
                 <i class="bi bi-eye"></i>
               </button>
 
               {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
-              <button type="button" class="sbm-action-btn sbm-btn-success btn-aprobar-solicitud" data-pk="{{ p.pk }}" data-nombre="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" data-usuario="{{ p.documento|escapejs }}" data-motivo="{% if p.observaciones %}{{ p.observaciones|escapejs }}{% endif %}" data-fecha="{{ p.fecha|date:'d/m/Y' }}" title="Entregar préstamo" aria-label="Entregar préstamo #{{ p.pk }}">
+              <button type="button" class="sbm-action-btn sbm-btn-success btn-aprobar-solicitud"
+                      data-pk="{{ p.pk }}"
+                      data-nombre="{{ p.documento.nombre_completo|default:p.documento|escapejs }}"
+                      data-usuario="{{ p.documento|escapejs }}"
+                      data-motivo="{% if p.observaciones %}{{ p.observaciones|escapejs }}{% endif %}"
+                      data-fecha="{{ p.fecha|date:'d/m/Y' }}"
+                      data-bs-toggle="tooltip" data-bs-placement="top"
+                      title="Entregar préstamo"
+                      aria-label="Entregar préstamo #{{ p.pk }}">
                 <span class="items-json d-none">
                   [
                     {% for item in p.detalles.all %}
@@ -256,92 +252,30 @@
               {% endif %}
 
               {% if p.estado in 'ENTREGADO,PARCIAL,activo,parcial' %}
-              <button type="button" class="sbm-action-btn sbm-btn-view text-primary btn-devolver-prestamo" data-pk="{{ p.pk }}" data-usuario="{{ p.documento.nombre_completo|default:p.documento|escapejs }}" title="Registrar devolución" aria-label="Registrar devolución de préstamo #{{ p.pk }}">
+              <button type="button" class="sbm-action-btn sbm-btn-success btn-devolver-prestamo"
+                      data-pk="{{ p.pk }}"
+                      data-usuario="{{ p.documento.nombre_completo|default:p.documento|escapejs }}"
+                      data-bs-toggle="tooltip" data-bs-placement="top"
+                      title="Registrar devolución"
+                      aria-label="Registrar devolución de préstamo #{{ p.pk }}">
                 <i class="bi bi-arrow-return-left"></i>
               </button>
               {% endif %}
 
-              <button type="button" class="sbm-action-btn sbm-btn-edit" data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo" data-pk="{{ p.pk }}" data-observaciones="{{ p.observaciones|escapejs }}" title="Editar observaciones" aria-label="Editar observaciones de préstamo #{{ p.pk }}">
+              <button type="button" class="sbm-action-btn sbm-btn-edit"
+                      data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo"
+                      data-pk="{{ p.pk }}"
+                      data-observaciones="{{ p.observaciones|escapejs }}"
+                      title="Editar observaciones"
+                      aria-label="Editar observaciones de préstamo #{{ p.pk }}">
                 <i class="bi bi-pencil"></i>
               </button>
             </div>
           </td>
         </tr>
-
-        {# Fila de detalle colapsable #}
-        <tr class="detail-row d-none" id="detail-p-{{ p.pk }}">
-          <td colspan="8" class="p-0 border-0 bg-light">
-            <div class="p-4 mx-3 my-2 bg-white rounded-4 border shadow-sm">
-              <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-primary text-white rounded-pill px-2 py-1">Préstamo #{{ p.pk }}</span>
-                  <h6 class="fw-bold mb-0 text-dark">Información completa de la solicitud</h6>
-                </div>
-                <div class="small text-muted font-monospace">
-                  <i class="bi bi-clock me-1"></i>Fecha registrada: {{ p.fecha|date:"d/m/Y" }}
-                </div>
-              </div>
-
-              <div class="row g-3">
-                <div class="col-6 col-md-4">
-                  <div class="p-2 rounded-3 bg-light border">
-                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Solicitante</span>
-                    <span class="fw-bold text-dark fs-6 text-truncate d-block">{{ p.documento.nombre_completo|default:p.documento }}</span>
-                    <span class="text-muted extra-small font-monospace">Doc: {{ p.documento.tipo_documento }} {{ p.documento.documento }}</span>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-4">
-                  <div class="p-2 rounded-3 bg-light border">
-                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Ficha SENA</span>
-                    <span class="fw-semibold text-dark fs-6">{{ p.ficha|default:"Sin Ficha" }}</span>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-4">
-                  <div class="p-2 rounded-3 bg-light border">
-                    <span class="text-uppercase text-muted extra-small font-monospace d-block">Estado Actual</span>
-                    <span class="fw-semibold text-primary fs-6">{{ p.get_estado_display }}</span>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <div class="p-3 rounded-3 bg-light border">
-                    <span class="text-uppercase text-muted extra-small font-monospace d-block mb-1">
-                      <i class="bi bi-chat-left-text me-1"></i>Observaciones del Préstamo
-                    </span>
-                    <p class="mb-0 text-secondary small">{{ p.observaciones|default:"Sin observaciones registradas." }}</p>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <h6 class="fw-bold text-dark small text-uppercase mb-2">
-                    <i class="bi bi-tools me-1 text-primary"></i>Herramientas Solicitadas
-                  </h6>
-                  <div class="d-flex flex-wrap gap-2">
-                    {% for item in p.detalles.all %}
-                    <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-3" style="min-width: 220px;">
-                      <div class="p-2 rounded bg-white text-primary border">
-                        <i class="bi bi-box-seam fs-5"></i>
-                      </div>
-                      <div class="flex-grow-1">
-                        <div class="fw-bold text-dark small">{{ item.herramienta.nombre }}</div>
-                        <div class="text-muted extra-small font-monospace">SKU: {{ item.herramienta.codigo }}</div>
-                      </div>
-                      <span class="badge bg-primary text-white rounded-pill fs-6 px-2 py-1">×{{ item.cantidad }}</span>
-                    </div>
-                    {% empty %}
-                    <div class="text-muted small">No hay herramientas asociadas.</div>
-                    {% endfor %}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </td>
-        </tr>
         {% empty %}
         <tr>
-          <td colspan="8" class="text-center py-4 text-muted">
+          <td colspan="7" class="text-center py-4 text-muted">
             <i class="bi bi-inbox fs-2 d-block mb-2"></i>
             No hay préstamos registrados.
           </td>
@@ -523,8 +457,8 @@
                     {% endfor %}
                   </select>
                 </div>
-                <div class="col-auto" style="width:90px;">
-                  <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" value="1" placeholder="Cant." required>
+                <div class="col-auto w-input-sm">
+                  <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" max="50" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="1" placeholder="Cant." required>
                 </div>
                 <div class="col-auto">
                   <button type="button" class="btn btn-outline-danger btn-sm crear-del-btn disabled">
@@ -541,7 +475,7 @@
           {# PASO 3 #}
           <div id="step-3" class="wizard-step d-none">
             <label class="form-label small fw-semibold">Observaciones</label>
-            <textarea name="observaciones" class="form-control form-control-sm" rows="3" placeholder="Notas sobre el préstamo"></textarea>
+            <textarea name="observaciones" class="form-control form-control-sm" rows="3" maxlength="500" placeholder="Notas sobre el préstamo"></textarea>
           </div>
 
           {# PASO 4 #}
@@ -570,6 +504,8 @@
 {% endblock %}
 
 {% block js %}
-<script src="{% static 'js/prestamos.js' %}"></script>
-<script src="{% static 'js/tables/prestamos_table.js' %}?v=1.3"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
+<script defer src="{% static 'js/tables/prestamos_table.js' %}?v=3"></script>
+<script defer src="{% static 'js/prestamos.js' %}?v=3"></script>
 {% endblock js %}

@@ -1,23 +1,22 @@
 <!-- Modal Global Reutilizable para Ver Detalles (Sistema de Bodega Minera) -->
 <div class="modal fade" id="modalSBMDetalle" tabindex="-1" aria-labelledby="modalSBMDetalleLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-    <div class="modal-content border-0 shadow-lg" style="border-radius: 14px; overflow: hidden;">
+    <div class="modal-content border-0 shadow-lg sbm-modal-content">
       
       <!-- CABECERA MODAL CON PALETA SBM -->
-      <div class="modal-header text-white p-3 p-md-4" style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-bottom: 3px solid #F59E0B;">
+      <div class="modal-header text-white p-3 p-md-4 sbm-modal-header">
         <div class="d-flex align-items-center gap-3">
-          <div id="sbmDetalleAvatar" class="d-flex align-items-center justify-content-center rounded-circle fw-bold shadow-xs flex-shrink-0"
-               style="width: 44px; height: 44px; background: #F59E0B; color: #0F172A; font-size: 1.1rem;">
+          <div id="sbmDetalleAvatar" class="d-flex align-items-center justify-content-center rounded-circle fw-bold shadow-xs flex-shrink-0 sbm-modal-avatar">
             <i class="bi bi-info-circle-fill"></i>
           </div>
           <div>
-            <span id="sbmDetalleBadge" class="badge mb-1" style="background: rgba(245, 158, 11, 0.2); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 0.72rem;">
+            <span id="sbmDetalleBadge" class="badge mb-1 sbm-modal-badge">
               DETALLES DEL REGISTRO
             </span>
             <h5 class="modal-title fw-bold text-white mb-0" id="modalSBMDetalleLabel">
               Ficha de Información
             </h5>
-            <div id="sbmDetalleSubtitulo" class="small text-muted font-monospace" style="color: #94A3B8 !important;">
+            <div id="sbmDetalleSubtitulo" class="small text-muted font-monospace sbm-modal-subtitulo">
               Sistema de Bodega Minera
             </div>
           </div>

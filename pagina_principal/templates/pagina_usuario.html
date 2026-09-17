@@ -175,7 +175,7 @@
         <span class="extracted-style-162">préstamos</span>
       </div>
       <div class="card-body extracted-style-163">
-        <canvas id="barActividad" class="w-100" style="max-height:200px;"></canvas>
+        <canvas id="barActividad" class="w-100 chart-canvas-sm"></canvas>
       </div>
     </div>
   </div>
@@ -275,7 +275,7 @@
         <a href="{% url 'prestamo_usuario' %}" class="btn-ghost extracted-style-179">Ver todos</a>
       </div>
       <div class="table-responsive">
-        <table class="table-app datatable-disabled w-100" style="border-collapse:collapse; font-size:.86rem;">
+        <table class="table-app datatable-disabled w-100 table-compact">
           <thead>
             <tr>
               <th>#</th>
@@ -291,7 +291,7 @@
               <td><span class="extracted-style-180">#{{ p.pk }}</span></td>
               <td>
                 {% for item in p.detalles.all %}
-                  <div class="extracted-style-181">{{ item.codigo_herramienta.nombre_herramienta }} <span class="badge bg-primary text-white rounded-pill px-1" style="font-size:0.7rem;">×{{ item.cantidad }}</span></div>
+                  <div class="extracted-style-181">{{ item.codigo_herramienta.nombre_herramienta }} <span class="badge bg-primary text-white rounded-pill px-1 badge-item-qty">×{{ item.cantidad }}</span></div>
                 {% empty %}
                   <span class="text-muted small">—</span>
                 {% endfor %}

@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof window.initSBMDataTable === 'function') {
     window.initSBMDataTable('#pu-tabla', {
       modulo: 'prestamos',
+      searchPlaceholder: 'Buscar en mis préstamos por herramienta, fecha, estado…',
       order: [[1, 'desc']],
       columnDefs: [
         { orderable: false, targets: [0, 2, 6] }

@@ -211,6 +211,9 @@ def crear_prestamo(request):
                 cant_num = int(cant)
                 if cant_num <= 0:
                     continue
+                if cant_num > 50:
+                    messages.error(request, "La cantidad no puede superar 50 unidades por herramienta.")
+                    return redirect("prestamo")
                 herramienta = Herramienta.objects.get(pk=h_id)
                 if cant_num > herramienta.stock_disponible:
                     messages.error(request, f"Stock insuficiente para {herramienta.nombre} (disponible: {herramienta.stock_disponible}).")
@@ -417,6 +420,9 @@ def usuario_solicitar_prestamo(request):
                 cant_num = int(cant)
                 if cant_num <= 0:
                     continue
+                if cant_num > 50:
+                    messages.error(request, "La cantidad no puede superar 50 unidades por herramienta.")
+                    return redirect("prestamo_usuario")
                 herramienta = Herramienta.objects.get(pk=h_id)
                 if cant_num > herramienta.stock_disponible:
                     messages.error(request, f"Stock insuficiente para {herramienta.nombre} (disponible: {herramienta.stock_disponible}).")

@@ -82,7 +82,7 @@
 <div class="card table-card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
   <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-2">
-      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center sbm-icon-box-34">
         <i class="bi bi-journal-check fs-5"></i>
       </div>
       <div>
@@ -105,23 +105,23 @@
   <div class="table-responsive px-3 pb-3 pt-2">
     <table class="table table-hover align-middle mb-0 w-100" id="pu-tabla">
       <thead class="table-light">
-        <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 40px;" data-priority="1"></th>
-          <th class="text-center" style="width: 60px;" data-priority="1"># ID</th>
+        <tr class="text-secondary small fw-bold text-uppercase th-tracking">
+          <th class="text-center th-w-40" data-priority="1"></th>
+          <th class="text-center th-w-60" data-priority="1"># ID</th>
           <th data-priority="1">Herramientas Solicitadas</th>
           <th class="text-center" data-priority="1">Estado</th>
           <th class="text-center" data-priority="2">Fecha</th>
           <th class="text-center" data-priority="3">Ficha SENA</th>
-          <th class="text-center" style="width: 70px;" data-priority="1">Acciones</th>
+          <th class="text-center th-w-70" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for p in all_prestamos %}
-        <tr class="pu-row" data-estado="{{ p.estado }}" style="cursor: pointer;" onclick="if(!event.target.closest('button') && !event.target.closest('a')) { $('#pu-detail-{{ p.pk }}').collapse('toggle'); }">
+        <tr class="pu-row cursor-pointer" data-estado="{{ p.estado }}" onclick="if(!event.target.closest('button') && !event.target.closest('a')) { $('#pu-detail-{{ p.pk }}').collapse('toggle'); }">
           <!-- Expandir -->
           <td class="text-center">
-            <button type="button" data-bs-toggle="collapse" data-bs-target="#pu-detail-{{ p.pk }}" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" aria-label="Expandir préstamo #{{ p.pk }}">
-              <i class="bi bi-chevron-right pu-chevron" style="transition: transform 0.2s ease;"></i>
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#pu-detail-{{ p.pk }}" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs sbm-icon-box-28" aria-label="Expandir préstamo #{{ p.pk }}">
+              <i class="bi bi-chevron-right pu-chevron sbm-chevron-transition"></i>
             </button>
           </td>
 
@@ -134,11 +134,11 @@
 
           <!-- Herramientas -->
           <td>
-            <div class="d-flex flex-wrap gap-1 align-items-center" style="max-width: 320px;">
+            <div class="d-flex flex-wrap gap-1 align-items-center max-w-320">
               {% for item in p.detalles.all %}
-              <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-weight: 500; font-size: 0.75rem;" title="{{ item.herramienta.nombre }}">
+              <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs badge-item-tool" title="{{ item.herramienta.nombre }}">
                 <i class="bi bi-tools text-primary"></i>
-                <span class="text-truncate" style="max-width: 140px;">{{ item.herramienta.nombre }}</span>
+                <span class="text-truncate max-w-140">{{ item.herramienta.nombre }}</span>
                 <span class="badge bg-primary text-white rounded-pill ms-1 px-1">×{{ item.cantidad }}</span>
               </span>
               {% empty %}
@@ -187,7 +187,7 @@
           <!-- Ficha -->
           <td class="text-center">
             {% if p.ficha %}
-            <span class="badge bg-light text-muted border px-2 py-1 font-monospace" style="font-size: 0.75rem;">
+            <span class="badge bg-light text-muted border px-2 py-1 font-monospace fs-sm-badge">
               <i class="bi bi-bookmark-fill text-warning me-1"></i>{{ p.ficha }}
             </span>
             {% else %}
@@ -243,7 +243,7 @@
                     </h6>
                     <div class="d-flex flex-wrap gap-2">
                       {% for item in p.detalles.all %}
-                      <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-3" style="min-width: 220px;">
+                      <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-3 min-w-220">
                         <div class="p-2 rounded bg-white text-primary border">
                           <i class="bi bi-box-seam fs-5"></i>
                         </div>
@@ -330,8 +330,8 @@
                   {% endfor %}
                 </select>
               </div>
-              <div class="col-auto" style="width:90px;">
-                <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" value="1" placeholder="Cant.">
+              <div class="col-auto w-input-sm">
+                <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" max="50" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="1" placeholder="Cant." required>
               </div>
               <div class="col-auto">
                 <button type="button" class="btn btn-outline-danger btn-sm sol-del-btn disabled">
@@ -346,7 +346,7 @@
           </button>
 
           <h6 class="fw-bold small text-primary mb-2">3. Observaciones</h6>
-          <textarea name="observaciones" class="form-control form-control-sm" rows="3" placeholder="Indica el motivo o detalles de tu solicitud..."></textarea>
+          <textarea name="observaciones" class="form-control form-control-sm" rows="3" maxlength="500" placeholder="Indica el motivo o detalles de tu solicitud..."></textarea>
         </div>
 
         <div class="modal-footer">
