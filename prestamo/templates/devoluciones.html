@@ -83,7 +83,7 @@
 <div class="card table-card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
   <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-2">
-      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+      <div class="p-2 rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center sbm-icon-box-34">
         <i class="bi bi-arrow-counterclockwise fs-5"></i>
       </div>
       <div>
@@ -99,26 +99,25 @@
   <div class="table-responsive px-3 pb-3 pt-2">
     <table class="table table-hover align-middle datatable-custom w-100" id="devoluciones-table">
       <thead class="table-light">
-        <tr class="text-secondary small fw-bold text-uppercase" style="letter-spacing: 0.04em;">
-          <th class="text-center" style="width: 40px;" data-priority="1"></th>
-          <th class="text-center" style="width: 60px;" data-priority="1"># ID</th>
+        <tr class="text-secondary small fw-bold text-uppercase th-tracking">
+          <th class="text-center th-w-40" data-priority="1"></th>
+          <th class="text-center th-w-60" data-priority="1"># ID</th>
           <th data-priority="1">Préstamo / Solicitante</th>
           <th data-priority="3">Recibido Por</th>
           <th data-priority="1">Herramientas Reintegradas</th>
           <th class="text-center" data-priority="1">Estado Préstamo</th>
           <th class="text-center" data-priority="2">Fecha Devolución</th>
-          <th class="text-center" style="width: 80px;" data-priority="1">Acciones</th>
+          <th class="text-center th-w-80" data-priority="1">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for d in devoluciones %}
-        <tr class="devolucion-row" style="cursor: pointer;" onclick="if(!event.target.closest('button') && !event.target.closest('a') && !event.target.closest('input')) { $(this).find('.btn-toggle-details').trigger('click'); }">
+        <tr class="devolucion-row cursor-pointer" onclick="if(!event.target.closest('button') && !event.target.closest('a') && !event.target.closest('input')) { $(this).find('.btn-toggle-details').trigger('click'); }">
           <!-- Columna 0: Botón Expandir -->
           <td class="text-center">
-            <button type="button" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs" 
-                    style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
+            <button type="button" class="btn btn-sm btn-light border rounded-circle btn-toggle-details shadow-xs sbm-icon-box-28" 
                     data-target-detail="detail-{{ d.pk }}" title="Ver detalles desplegables" aria-label="Expandir fila de devolución #{{ d.pk }}">
-              <i class="bi bi-chevron-right row-chevron" style="transition: transform 0.2s ease;"></i>
+              <i class="bi bi-chevron-right row-chevron sbm-chevron-transition"></i>
             </button>
           </td>
 
@@ -132,21 +131,21 @@
           <!-- Columna 2: Préstamo & Solicitante -->
           <td>
             <div class="d-flex align-items-center gap-2">
-              <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.85rem;">
+              <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold flex-shrink-0 sbm-icon-box-36">
                 {{ d.codigo_prestamo.documento.primer_nombre|slice:":1"|default:"P" }}
               </div>
               <div>
                 <div class="fw-bold text-dark text-nowrap">
                   Préstamo #{{ d.codigo_prestamo.pk }}
                 </div>
-                <div class="small text-secondary fw-semibold text-truncate" style="max-width: 200px;">
+                <div class="small text-secondary fw-semibold text-truncate max-w-200">
                   {{ d.codigo_prestamo.documento.nombre_completo|default:d.codigo_prestamo.documento.documento|default:"Solicitante" }}
                 </div>
-                <div class="text-muted extra-small font-monospace" style="font-size: 0.72rem;">
+                <div class="text-muted extra-small font-monospace fs-xs">
                   Doc: {{ d.codigo_prestamo.documento.tipo_documento }} {{ d.codigo_prestamo.documento.documento }}
                 </div>
                 {% if d.codigo_prestamo.ficha %}
-                <span class="badge bg-light text-muted border px-1 py-0 extra-small font-monospace mt-1" style="font-size: 0.68rem;">
+                <span class="badge bg-light text-muted border px-1 py-0 extra-small font-monospace mt-1 fs-2xs">
                   <i class="bi bi-bookmark-fill text-warning me-1"></i>Ficha: {{ d.codigo_prestamo.ficha }}
                 </span>
                 {% endif %}
@@ -157,17 +156,17 @@
           <!-- Columna 3: Recibido Por -->
           <td>
             <div class="d-flex align-items-center gap-2">
-              <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.85rem;">
+              <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center fw-bold flex-shrink-0 sbm-icon-box-36">
                 <i class="bi bi-shield-check fs-6"></i>
               </div>
               <div>
                 <div class="fw-semibold text-dark text-nowrap">
                   {{ d.codigo_recibe.nombre_completo|default:d.codigo_recibe.documento|default:"Administrador" }}
                 </div>
-                <div class="text-muted small font-monospace" style="font-size: 0.72rem;">
+                <div class="text-muted small font-monospace fs-xs">
                   Doc: {{ d.codigo_recibe.tipo_documento }} {{ d.codigo_recibe.documento }}
                 </div>
-                <span class="badge bg-light text-secondary border px-1 py-0 extra-small font-monospace mt-1" style="font-size: 0.68rem;">
+                <span class="badge bg-light text-secondary border px-1 py-0 extra-small font-monospace mt-1 fs-2xs">
                   {{ d.codigo_recibe.rol|default:"Admin" }}
                 </span>
               </div>
@@ -176,11 +175,11 @@
 
           <!-- Columna 4: Herramientas -->
           <td>
-            <div class="d-flex flex-wrap gap-1 align-items-center" style="max-width: 280px;">
+            <div class="d-flex flex-wrap gap-1 align-items-center max-w-280">
               {% for item in d.codigo_prestamo.detalles.all %}
-              <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-weight: 500; font-size: 0.75rem;" title="{{ item.codigo_herramienta.nombre_herramienta }}">
+              <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs badge-item-tool" title="{{ item.codigo_herramienta.nombre_herramienta }}">
                 <i class="bi bi-tools text-primary"></i>
-                <span class="text-truncate" style="max-width: 130px;">{{ item.codigo_herramienta.nombre_herramienta }}</span>
+                <span class="text-truncate max-w-130">{{ item.codigo_herramienta.nombre_herramienta }}</span>
                 <span class="badge bg-primary text-white rounded-pill ms-1 px-1">×{{ item.cantidad }}</span>
               </span>
               {% empty %}
@@ -192,19 +191,13 @@
           <!-- Columna 5: Estado Préstamo -->
           <td class="text-center">
             {% if d.codigo_prestamo.estado == 'DEVUELTO' or d.devolucion_total %}
-              <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-check-circle-fill"></i> Devuelto
-              </span>
+              <span class="badge-state badge-aprobada">Devuelto</span>
             {% elif d.codigo_prestamo.estado == 'PARCIAL' %}
-              <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-clock-history"></i> Parcial
-              </span>
+              <span class="badge-state badge-pendiente">Parcial</span>
             {% elif d.codigo_prestamo.estado == 'ENTREGADO' %}
-              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
-                <i class="bi bi-box-seam"></i> Entregado
-              </span>
+              <span class="badge-state badge-pendiente">Entregado</span>
             {% else %}
-              <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill">
+              <span class="badge-state badge-pendiente">
                 {{ d.codigo_prestamo.get_estado_display }}
               </span>
             {% endif %}
@@ -304,7 +297,7 @@
                   </h6>
                   <div class="d-flex flex-wrap gap-2">
                     {% for item in d.codigo_prestamo.detalles.all %}
-                    <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-3" style="min-width: 220px;">
+                    <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-3 min-w-220">
                       <div class="p-2 rounded bg-white text-primary border">
                         <i class="bi bi-box-seam fs-5"></i>
                       </div>

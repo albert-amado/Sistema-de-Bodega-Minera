@@ -125,14 +125,14 @@ aside hr {
   min-width: 28px !important;
   min-height: 28px !important;
   border-radius: 50% !important;
-  background: #094D92 !important;
+  background: var(--sbm-amber-500, #D97706) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 0.75rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.02em !important;
-  color: #ffffff !important;
+  color: #0F172A !important;
   flex-shrink: 0 !important;
 }
 .profile-pill-name {
@@ -242,8 +242,8 @@ body.dark-mode .profile-avatar-circle,
 body.dark-theme .profile-avatar-circle,
 [data-theme="dark"] .profile-avatar-circle,
 aside[data-acc-dark="1"] .profile-avatar-circle {
-  background: #094D92 !important;
-  color: #ffffff !important;
+  background: var(--sbm-amber-400, #F59E0B) !important;
+  color: #0F172A !important;
 }
 
 /* ── Profile Dropdown Menu (High Contrast & Clear Icons) ── */
@@ -327,15 +327,15 @@ aside[data-acc-dark="1"] .profile-avatar-circle {
   z-index: 99995;
   overflow: hidden;
   flex-direction: column;
-  color: #1B2021 !important;
+  color: var(--sbm-rock-900, #0F172A) !important;
 }
 @media (max-width: 768px) {
   .aside-notif-panel { left: .75rem !important; right: .75rem !important; bottom: 4.5rem !important; width: auto !important; max-width: calc(100% - 1.5rem) !important; }
 }
 .aside-notif-panel-header {
   padding: .75rem 1rem !important;
-  background: #094D92 !important;
-  border-bottom: 2px solid #98473E !important;
+  background: var(--sbm-rock-900, #0F172A) !important;
+  border-bottom: 2px solid var(--sbm-amber-500, #D97706) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -345,14 +345,14 @@ aside[data-acc-dark="1"] .profile-avatar-circle {
   font-family: var(--font-ui) !important;
   font-weight: 700 !important;
   font-size: .88rem !important;
-  color: #EFECCA !important;
+  color: var(--sbm-rock-50, #F8FAFC) !important;
   letter-spacing: .03em !important;
 }
 .aside-panel-count {
   font-family: var(--font-mono) !important;
   font-size: .68rem !important;
-  background: #98473E !important;
-  color: #EFECCA !important;
+  background: var(--sbm-amber-500, #D97706) !important;
+  color: #0F172A !important;
   padding: .15rem .5rem !important;
   border-radius: 20px !important;
   margin-left: .25rem !important;
@@ -362,7 +362,7 @@ aside[data-acc-dark="1"] .profile-avatar-circle {
   background: none !important;
   border: none !important;
   cursor: pointer !important;
-  color: #EFECCA !important;
+  color: var(--sbm-amber-400, #F59E0B) !important;
   padding: 0 !important;
   line-height: 1 !important;
   font-size: 1.1rem !important;

@@ -69,11 +69,14 @@ function abrirDevoluciones() {
   if (pk) window.location.href = '/devoluciones/?prestamo=' + pk;
 }
 
-document.getElementById('modalEditarPrestamo').addEventListener('show.bs.modal', function (e) {
-  var btn = e.relatedTarget;
-  document.getElementById('edit_pk').value            = btn.dataset.pk;
-  document.getElementById('edit_observaciones').value = btn.dataset.observaciones || '';
-});
+var modalEditEl = document.getElementById('modalEditarPrestamo');
+if (modalEditEl) {
+  modalEditEl.addEventListener('show.bs.modal', function (e) {
+    var btn = e.relatedTarget;
+    document.getElementById('edit_pk').value            = btn.dataset.pk;
+    document.getElementById('edit_observaciones').value = btn.dataset.observaciones || '';
+  });
+}
 
 /* ═══════════════════════════════════════════
    WIZARD — NUEVO PRÉSTAMO

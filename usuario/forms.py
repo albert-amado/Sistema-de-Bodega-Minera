@@ -110,6 +110,18 @@ class RegistroUsuarioForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Programa de formación'})
     )
 
+    def clean_first_name(self):
+        nombre = self.cleaned_data.get('first_name', '').strip()
+        if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$', nombre):
+            raise ValidationError('El nombre solo debe contener letras y espacios (entre 2 y 50 caracteres).')
+        return nombre
+
+    def clean_last_name(self):
+        apellido = self.cleaned_data.get('last_name', '').strip()
+        if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$', apellido):
+            raise ValidationError('El apellido solo debe contener letras y espacios (entre 2 y 50 caracteres).')
+        return apellido
+
     def clean_documento(self):
         doc = self.cleaned_data.get('documento', '').strip()
         tipo = self.cleaned_data.get('tipo_documento', 'CC')
@@ -266,6 +278,12 @@ class EditarUsuarioAdminForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             self.fields['nombre_completo'].initial = self.instance.nombre_completo
 
+    def clean_nombre_completo(self):
+        nombre = self.cleaned_data.get('nombre_completo', '').strip()
+        if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,150}$', nombre):
+            raise ValidationError('El nombre completo solo debe contener letras y espacios.')
+        return nombre
+
     def clean_correo_personal(self):
         correo = self.cleaned_data.get('correo_personal', '').strip().lower()
         if not correo:
@@ -330,6 +348,15 @@ class PerfilUsuarioForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields['nombre_completo'].initial = self.instance.nombre_completo
+
+    def clean_nombre_completo(self):
+        nombre = self.cleaned_data.get('nombre_completo', '').strip()
+        # Si el usuario ya fue verificado por SofiaPlus, no permitir alterar el nombre oficial
+        if self.instance and self.instance.verificado_sofia_plus:
+            return self.instance.nombre_completo
+        if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,150}$', nombre):
+            raise ValidationError('El nombre completo solo debe contener letras y espacios.')
+        return nombre
 
     def clean_correo_personal(self):
       correo = (self.cleaned_data.get('correo_personal') or '').strip().lower()

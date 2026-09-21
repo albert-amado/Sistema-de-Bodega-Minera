@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Reporte de Auditoria de Calidad - Proyecto Sistema de Bodega Minera</title>
+    <title>Reporte de Auditoria de Calidad - Proyecto Inventario-Mina</title>
     <style>
         @page {
             size: letter;
@@ -133,14 +133,14 @@
 <body>
     <div class="header">
         <div class="title">REPORTE DE AUDITORIA TECNICA</div>
-        <div class="subtitle">Evaluacion de Calidad - Proyecto Sistema de Bodega Minera</div>
+        <div class="subtitle">Evaluacion de Calidad - Proyecto Inventario-Mina</div>
     </div>
 
     <div class="summary-box">
         <table class="summary-table">
             <tr>
                 <td width="35%">
-                    <div class="score-large">97 / 100</div>
+                    <div class="score-large">100 / 100</div>
                     <div style="text-align: center; color: #64748b; font-size: 9pt;">PUNTUACION GLOBAL</div>
                 </td>
                 <td width="65%">
@@ -165,7 +165,7 @@
             </tr>
         </table>
         <div class="point-desc">Excelente. La arquitectura de Django Templates usa herencia de plantillas de forma modular.</div>
-        <ul class="metrics-list"><li>Total de plantillas HTML detectadas: 27</li><li>Plantillas que heredan ({% extends %}): 14</li><li>Plantillas con fragmentos reusables ({% include %}): 6</li><li>Bloques definidos ({% block %}): 15</li><li>Uso de static ({% load static %}): 19</li></ul>
+        <ul class="metrics-list"><li>Total de plantillas HTML detectadas: 32</li><li>Plantillas que heredan ({% extends %}): 18</li><li>Plantillas con fragmentos reusables ({% include %}): 4</li><li>Bloques definidos ({% block %}): 19</li><li>Uso de static ({% load static %}): 24</li></ul>
     </div>
 
     <div class="point-card">
@@ -176,7 +176,7 @@
             </tr>
         </table>
         <div class="point-desc">Enrutamiento correcto mediante urls.py centralizado y modular en Django.</div>
-        <ul class="metrics-list"><li>Archivos urls.py mapeados: 7</li><li>Rutas/endpoints totales definidos en el servidor: 56</li><li>  - .\almacen\urls.py</li><li>  - .\configuracion\urls.py</li><li>  - .\core\urls.py</li><li>  - .\herramienta\urls.py</li><li>  - .\pagina_principal\urls.py</li><li>  - .\prestamo\urls.py</li><li>  - .\usuario\urls.py</li></ul>
+        <ul class="metrics-list"><li>Archivos urls.py mapeados: 7</li><li>Rutas/endpoints totales definidos en el servidor: 59</li><li>  - .\almacen\urls.py</li><li>  - .\configuracion\urls.py</li><li>  - .\core\urls.py</li><li>  - .\herramienta\urls.py</li><li>  - .\pagina_principal\urls.py</li><li>  - .\prestamo\urls.py</li><li>  - .\usuario\urls.py</li></ul>
     </div>
 
     <div class="point-card">
@@ -187,18 +187,18 @@
             </tr>
         </table>
         <div class="point-desc">Excelente. Se consumen APIs y se manejan correctamente los errores de conexión y estados de carga.</div>
-        <ul class="metrics-list"><li>  - .\static\js\datatables-init.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\datatables.js (Frontend JS): 3 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\datatables.min.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\mantenimiento.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\usuarios_gestion.js (Frontend JS): 1 llamadas (Con manejo de errores sin estado de carga)</li></ul>
+        <ul class="metrics-list"><li>  - .\static\js\configuracion.js (Frontend JS): 1 llamadas (Con manejo de errores sin estado de carga)</li><li>  - .\static\js\datatables-init.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\datatables.js (Frontend JS): 3 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\datatables.min.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\inventario.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\mantenimiento.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\notificaciones.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\usuario.js (Frontend JS): 1 llamadas (Con manejo de errores y estado de carga)</li><li>  - .\static\js\usuarios_gestion.js (Frontend JS): 1 llamadas (Con manejo de errores sin estado de carga)</li></ul>
     </div>
 
     <div class="point-card">
         <table class="point-header-table">
             <tr>
                 <td class="point-title" width="80%">4. 4. Estilos y metodologías CSS (BEM / Atómico)</td>
-                <td class="point-score score-val-RED" width="20%">70 / 100</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
             </tr>
         </table>
         <div class="point-desc">Diseño atómico basado en Bootstrap 5 / metodología BEM aplicado de forma general.</div>
-        <ul class="metrics-list"><li>Archivos CSS en la carpeta estática: 7</li><li>Selectores con estructura BEM (__ o --) detectados: 5</li><li>Estructuras de diseño atómico (clases utilitarias Bootstrap): 1233</li><li>Estilos en línea (style='...') en HTML: 110 (se sugiere minimizarlos)</li><li>Estilos en línea detectados por archivo:</li><li>  - almacen\templates\almacen.html: líneas 64, 87, 88, 93, 114, 122, 132, 144, 163, 166, 169</li><li>  - almacen\templates\detalle_almacen.html: líneas 9, 67, 84, 85, 104, 111, 121</li><li>  - almacen\templates\estante.html: líneas 64, 87, 88, 93, 115, 122, 131, 140, 159, 162, 165</li><li>  - herramienta\templates\inventario.html: líneas 272, 299, 300, 306</li><li>  - pagina_principal\templates\pagina_principal.html: líneas 14, 35, 41, 48, 54, 61, 67, 74, 80, 156, 176, 181, 186, 191, 196, 201</li><li>  - prestamo\templates\devoluciones.html: líneas 84, 100, 101, 102, 108, 113, 117, 119, 133, 140, 143, 147, 158, 165, 168, 177, 179, 181, 287</li><li>  - prestamo\templates\prestamo.html: líneas 96, 112, 113, 114, 120, 125, 128, 130, 140, 147, 155, 163, 165, 167, 235, 294, 497</li><li>  - prestamo\templates\prestamo_usuario.html: líneas 86, 109, 110, 111, 120, 123, 124, 137, 139, 141, 190, 221, 308</li><li>  - templates\partials\_notif_row.html: líneas 620, 635</li><li>  - usuario\templates\email_recuperacion.html: líneas 51</li><li>  - usuario\templates\lista_usuarios.html: líneas 13, 229, 244, 279, 300, 392</li><li>  - usuario\templates\perfil.html: líneas 312</li></ul>
+        <ul class="metrics-list"><li>Archivos CSS en la carpeta estática: 12</li><li>Selectores con estructura BEM (__ o --) detectados: 11</li><li>Estructuras de diseño atómico (clases utilitarias Bootstrap): 1385</li><li>Estilos en línea (style='...') en HTML: 4 (se sugiere minimizarlos)</li><li>Estilos en línea detectados por archivo:</li><li>  - usuario\templates\email_recuperacion.html: líneas 51, 69, 70</li><li>  - usuario\templates\lista_usuarios.html: líneas 13</li></ul>
     </div>
 
     <div class="point-card">
@@ -209,7 +209,7 @@
             </tr>
         </table>
         <div class="point-desc">Data binding unidireccional/bidireccional reactivo manejado mediante JS y listeners de eventos del DOM.</div>
-        <ul class="metrics-list"><li>Archivos JavaScript escaneados: 22</li><li>Escrituras dinámicas en el DOM (binding de salida): 401</li><li>Escuchadores de eventos de entrada (binding de entrada): 55</li></ul>
+        <ul class="metrics-list"><li>Archivos JavaScript escaneados: 31</li><li>Escrituras dinámicas en el DOM (binding de salida): 488</li><li>Escuchadores de eventos de entrada (binding de entrada): 75</li></ul>
     </div>
 
     <div class="point-card">
@@ -220,7 +220,7 @@
             </tr>
         </table>
         <div class="point-desc">Cumplido. Se realizan validaciones robustas tanto en backend (Django Forms) como en frontend.</div>
-        <ul class="metrics-list"><li>Formularios de Django estructurados (forms.py): 5</li><li>Llamadas a validación segura en vistas (.is_valid()): 24</li><li>Atributos de validación HTML5 en plantillas frontend: 62</li><li>  - .\almacen\forms.py</li><li>  - .\configuracion\forms.py</li><li>  - .\herramienta\forms.py</li><li>  - .\prestamo\forms.py</li><li>  - .\usuario\forms.py</li></ul>
+        <ul class="metrics-list"><li>Formularios de Django estructurados (forms.py): 5</li><li>Llamadas a validación segura en vistas (.is_valid()): 18</li><li>Atributos de validación HTML5 en plantillas frontend: 74</li><li>  - .\almacen\forms.py</li><li>  - .\configuracion\forms.py</li><li>  - .\herramienta\forms.py</li><li>  - .\prestamo\forms.py</li><li>  - .\usuario\forms.py</li></ul>
     </div>
 
     <div class="point-card">
@@ -231,7 +231,7 @@
             </tr>
         </table>
         <div class="point-desc">Perfecto. Configuración limpia basada en variables de entorno sin datos sensibles expuestos.</div>
-        <ul class="metrics-list"><li>Archivo .env o .env.example presente: Sí</li><li>Llamadas a variables de entorno en código (os.getenv/decouple): 11</li></ul>
+        <ul class="metrics-list"><li>Archivo .env o .env.example presente: Sí</li><li>Llamadas a variables de entorno en código (os.getenv/decouple): 27</li></ul>
     </div>
 
     <div class="point-card">
@@ -242,7 +242,7 @@
             </tr>
         </table>
         <div class="point-desc">Estructura de directorios altamente organizada bajo el estándar de aplicaciones Django MVT.</div>
-        <ul class="metrics-list"><li>  - vistas (views.py): 6</li><li>  - modelos (models.py): 5</li><li>  - formularios (forms.py): 5</li><li>  - rutas (urls.py): 7</li><li>  - plantillas (.html): 27</li><li>  - recursos estaticos (.css/.js): 29</li><li>  - tests (tests.py): 7</li></ul>
+        <ul class="metrics-list"><li>  - vistas (views.py): 6</li><li>  - modelos (models.py): 6</li><li>  - formularios (forms.py): 5</li><li>  - rutas (urls.py): 7</li><li>  - plantillas (.html): 32</li><li>  - recursos estaticos (.css/.js): 43</li><li>  - tests (tests.py): 9</li></ul>
     </div>
 
     <div class="point-card">
@@ -253,7 +253,7 @@
             </tr>
         </table>
         <div class="point-desc">¡Excelente cobertura de pruebas! Se encontraron 21 métodos de prueba estructurados.</div>
-        <ul class="metrics-list"><li>Archivos de prueba detectados: 7</li><li>Clases de Test definidos: 6</li><li>Funciones de prueba (test_*): 21</li><li>  - .\almacen\tests.py</li><li>  - .\configuracion\db_tester.py</li><li>  - .\configuracion\tests.py</li><li>  - .\herramienta\tests.py</li><li>  - .\pagina_principal\tests.py</li><li>  - .\prestamo\tests.py</li><li>  - .\usuario\tests.py</li></ul>
+        <ul class="metrics-list"><li>Archivos de prueba detectados: 9</li><li>Clases de Test definidos: 6</li><li>Funciones de prueba (test_*): 21</li><li>  - .\almacen\tests.py</li><li>  - .\configuracion\db_tester.py</li><li>  - .\configuracion\tests.py</li><li>  - .\herramienta\tests.py</li><li>  - .\pagina_principal\tests.py</li><li>  - .\prestamo\tests.py</li><li>  - .\services\test_sofia_plus.py</li><li>  - .\services\test_sofia_registration.py</li><li>  - .\usuario\tests.py</li></ul>
     </div>
 
     <div class="point-card">
@@ -264,7 +264,7 @@
             </tr>
         </table>
         <div class="point-desc">Técnicas de carga diferida (lazy loading) e importación asíncrona de recursos implementadas correctamente.</div>
-        <ul class="metrics-list"><li>Imágenes o recursos con carga diferida (loading='lazy'): 4</li><li>Uso de scripts asíncronos o diferidos (async/defer): 31</li></ul>
+        <ul class="metrics-list"><li>Imágenes o recursos con carga diferida (loading='lazy'): 4</li><li>Uso de scripts asíncronos o diferidos (async/defer): 36</li></ul>
     </div>
 
     <div class="point-card">
@@ -275,7 +275,7 @@
             </tr>
         </table>
         <div class="point-desc">Código fuente ampliamente documentado con estándares JSDoc y Docstrings descriptivos.</div>
-        <ul class="metrics-list"><li>Archivos de código escaneados: 65 Python, 22 JavaScript</li><li>Docstrings de documentación en Python: 121</li><li>Comentarios estilo JSDoc en JavaScript: 2766</li></ul>
+        <ul class="metrics-list"><li>Archivos de código escaneados: 71 Python, 31 JavaScript</li><li>Docstrings de documentación en Python: 140</li><li>Comentarios estilo JSDoc en JavaScript: 2776</li></ul>
     </div>
 
     <div class="point-card">
@@ -286,20 +286,18 @@
             </tr>
         </table>
         <div class="point-desc">Diseño completamente responsivo y adaptable mediante Bootstrap Grid y consultas de medios CSS.</div>
-        <ul class="metrics-list"><li>Media Queries detectadas en hojas de estilo CSS: 125</li><li>Uso de contenedores y rejillas responsivas (Bootstrap Grid/Flexbox): 437</li></ul>
+        <ul class="metrics-list"><li>Media Queries detectadas en hojas de estilo CSS: 136</li><li>Uso de contenedores y rejillas responsivas (Bootstrap Grid/Flexbox): 505</li></ul>
     </div>
 
     
-    <div class="sugerencias-box">
-        <div class="sugerencias-title">RECOMENDACIONES CLAVE PARA MEJORA:</div>
-        <ul style="margin: 0; padding-left: 20px; font-size: 9pt; color: #78350f;">
-            <li>Reducir el uso de estilos en linea (style="...") en las plantillas HTML (trasladar a CSS).</li>
-        </ul>
+    <div class="sugerencias-box" style="background-color: #ecfdf5; border: 1px solid #a7f3d0;">
+        <div class="sugerencias-title" style="color: #065f46;">¡FELICITACIONES!</div>
+        <div style="font-size: 9pt; color: #065f46; margin: 0; padding: 0;">El proyecto cumple al 100% con todos los puntos evaluados de la rubrica.</div>
     </div>
 
 
     <div id="footer_content" class="footer">
-        Reporte generado automaticamente - Proyecto Sistema de Bodega Minera &bull; Pagina <pdf:pagenumber> de <pdf:pagecount>
+        Reporte generado automaticamente - Proyecto Inventario-Mina &bull; Pagina <pdf:pagenumber> de <pdf:pagecount>
     </div>
 </body>
 </html>
