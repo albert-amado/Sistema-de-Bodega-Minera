@@ -359,13 +359,13 @@ class PerfilUsuarioForm(forms.ModelForm):
         return nombre
 
     def clean_correo_personal(self):
-        correo = self.cleaned_data.get('correo_personal', '').strip().lower()
-        if not correo:
-            raise ValidationError('El correo no puede estar vacío.')
-        qs = Usuario.objects.filter(correo_personal=correo).exclude(documento=self.instance.documento)
-        if qs.exists():
-            raise ValidationError('Este correo ya está en uso por otro usuario.')
-        return correo
+      correo = (self.cleaned_data.get('correo_personal') or '').strip().lower()
+      if not correo:
+          raise ValidationError('El correo no puede estar vacío.')
+      qs = Usuario.objects.filter(correo_personal=correo).exclude(documento=self.instance.documento)
+      if qs.exists():
+          raise ValidationError('Este correo ya está en uso por otro usuario.')
+      return correo
 
     def clean_telefono(self):
         tel = self.cleaned_data.get('telefono', '').strip()
