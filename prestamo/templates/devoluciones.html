@@ -51,18 +51,19 @@
 
 <!-- ══ FILTROS DEVOLUCIONES ══ -->
 <div class="sfb-wrap mb-4">
-  <!-- Búsqueda -->
-  <div class="sfb-search-group">
+  <!-- Búsqueda (Largo a todo el ancho disponible) -->
+  <div class="sfb-search-group" style="display: block !important; flex: 1 1 auto !important; width: 100% !important; min-width: 0 !important; position: relative !important;">
     <i class="bi bi-search sfb-search-icon"></i>
     <input type="text" id="devoluciones-busqueda" data-no-validate autocomplete="off"
            class="sfb-search-input"
+           style="display: block !important; width: 100% !important; box-sizing: border-box !important;"
            placeholder="Buscar por préstamo, usuario u observaciones…">
   </div>
 
   <div class="sfb-divider"></div>
 
   <!-- Estado -->
-  <select id="devoluciones-estado" data-no-validate class="sfb-select">
+  <select id="devoluciones-estado" data-no-validate class="sfb-select" style="flex: 0 0 auto; width: auto; min-width: 220px;" aria-label="Filtrar devoluciones por estado">
     <option value="">— Todos los Estados —</option>
     <option value="DEVUELTO">Devuelto</option>
     <option value="PARCIAL">Devolución Parcial</option>
@@ -71,8 +72,10 @@
     <option value="CANCELADO">Cancelado</option>
   </select>
 
+  <div class="sfb-divider"></div>
+
   <!-- Limpiar -->
-  <button type="button" id="btn-limpiar-filtros-dev" class="sfb-btn-secondary" title="Limpiar filtros">
+  <button type="button" id="btn-limpiar-filtros-dev" class="sfb-btn-secondary" style="flex: 0 0 auto;" title="Limpiar filtros">
     <i class="bi bi-x-circle"></i> Limpiar
   </button>
 </div>
@@ -436,8 +439,8 @@
             <li><strong>Usuario:</strong> <span id="acp-usuario"></span></li>
           </ul>
           <div class="mb-2">
-            <label class="form-label small font-mono">Observaciones (Opcional)</label>
-            <textarea name="motivo" class="form-control form-control-sm" rows="2" placeholder="Notas sobre la entrega o estado del equipo…"></textarea>
+            <label for="acp_motivo" class="form-label small font-mono">Observaciones (Opcional)</label>
+            <textarea name="motivo" id="acp_motivo" class="form-control form-control-sm" rows="2" placeholder="Notas sobre la entrega o estado del equipo…"></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -472,7 +475,7 @@
             <i class="bi bi-exclamation-triangle-fill me-2"></i> El motivo del rechazo debe tener al menos 10 caracteres.
           </div>
           <div class="mb-2">
-            <label class="form-label small font-mono">Motivo del rechazo *</label>
+            <label for="rch-motivo-textarea" class="form-label small font-mono">Motivo del rechazo *</label>
             <textarea id="rch-motivo-textarea" name="motivo" class="form-control form-control-sm" rows="3" placeholder="Explica la razón por la que se rechaza la devolución (mínimo 10 caracteres)…" required></textarea>
           </div>
         </div>

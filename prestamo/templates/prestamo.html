@@ -61,19 +61,21 @@
 
 {# ══ FILTROS EN TIEMPO REAL ══ #}
 <div class="sfb-wrap mb-4">
-  <!-- Búsqueda en tiempo real -->
-  <div class="sfb-search-group">
+  <!-- Búsqueda en tiempo real (Largo a todo el ancho disponible) -->
+  <div class="sfb-search-group" style="display: block !important; flex: 1 1 auto !important; width: 100% !important; min-width: 0 !important; position: relative !important;">
     <i class="bi bi-search sfb-search-icon"></i>
     <input type="text" id="prestamo-busqueda" class="sfb-search-input"
+           style="display: block !important; width: 100% !important; box-sizing: border-box !important;"
            placeholder="Buscar por ID, solicitante, documento, ficha o herramienta…"
            value="{{ filtro_q|default:'' }}"
+           aria-label="Buscar préstamos por ID, solicitante, documento o herramienta"
            autocomplete="off">
   </div>
 
   <div class="sfb-divider"></div>
 
   <!-- Selector de Estado -->
-  <select id="prestamo-estado" class="sfb-select">
+  <select id="prestamo-estado" class="sfb-select" style="flex: 0 0 auto; width: auto; min-width: 220px;" aria-label="Filtrar por estado del préstamo">
     <option value="">— Todos los Estados —</option>
     <option value="PENDIENTE" {% if filtro_estado == 'PENDIENTE' or filtro_estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
     <option value="ENTREGADO" {% if filtro_estado == 'ENTREGADO' or filtro_estado == 'entregado' or filtro_estado == 'activo' %}selected{% endif %}>Entregado</option>
@@ -85,7 +87,7 @@
   <div class="sfb-divider"></div>
 
   <!-- Limpiar -->
-  <button type="button" id="btn-limpiar-filtros" class="sfb-btn-secondary" title="Limpiar filtros">
+  <button type="button" id="btn-limpiar-filtros" class="sfb-btn-secondary" style="flex: 0 0 auto;" title="Limpiar filtros">
     <i class="bi bi-x-circle"></i> Limpiar
   </button>
 </div>
@@ -125,7 +127,7 @@
         {% for p in prestamos %}
         <tr>
           <!-- # ID -->
-          <td class="text-center">
+          <td class="text-center" data-order="{{ p.pk }}">
             <span class="badge bg-light text-secondary border font-monospace px-2 py-1">
               #{{ p.pk }}
             </span>
@@ -339,8 +341,8 @@
         <input type="hidden" name="accion" value="rechazar_pendiente">
         <input type="hidden" name="prestamo_pk" id="rch-pk">
         <div class="modal-body">
-          <label class="form-label small fw-semibold">Motivo del rechazo *</label>
-          <textarea name="motivo_rechazo" class="form-control" rows="3" placeholder="Explica por qué se rechaza..." required></textarea>
+          <label for="motivo_rechazo" class="form-label small fw-semibold">Motivo del rechazo *</label>
+          <textarea name="motivo_rechazo" id="motivo_rechazo" class="form-control" rows="3" placeholder="Explica por qué se rechaza..." required></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
@@ -382,7 +384,7 @@
         <input type="hidden" name="accion" value="editar">
         <input type="hidden" name="prestamo_pk" id="edit_pk">
         <div class="modal-body">
-          <label class="form-label small fw-semibold">Observaciones</label>
+          <label for="edit_observaciones" class="form-label small fw-semibold">Observaciones</label>
           <textarea name="observaciones" id="edit_observaciones" class="form-control" rows="3" placeholder="Notas sobre el préstamo..."></textarea>
         </div>
         <div class="modal-footer">
@@ -408,6 +410,7 @@
 
       <form method="post" action="{% url 'prestamo' %}" id="wizardForm" novalidate>
         {% csrf_token %}
+        <input type="hidden" name="accion" value="crear_prestamo">
 
         <div class="px-3 pt-2">
           <div id="wizard-progress-bar" class="d-flex justify-content-between"></div>
@@ -418,15 +421,15 @@
           <div id="step-1" class="wizard-step">
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Documento *</label>
+                <label for="id_documento" class="form-label small fw-semibold">Documento *</label>
                 <input type="text" name="documento" id="id_documento" class="form-control form-control-sm" placeholder="Número de documento" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Ficha SENA *</label>
+                <label for="id_ficha" class="form-label small fw-semibold">Ficha SENA *</label>
                 <input type="text" name="ficha" id="id_ficha" class="form-control form-control-sm" placeholder="Ej: 2670123" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Usuario (Sistema)</label>
+                <label for="id_usuario" class="form-label small fw-semibold">Usuario (Sistema)</label>
                 <select name="usuario" id="id_usuario" class="form-select form-select-sm">
                   <option value="">— Selecciona usuario —</option>
                   {% for u in usuarios_sistema %}
@@ -437,18 +440,18 @@
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Fecha del préstamo</label>
+                <label for="id_fecha" class="form-label small fw-semibold">Fecha del préstamo</label>
                 <input type="date" name="fecha" id="id_fecha" class="form-control form-control-sm" value="{% now 'Y-m-d' %}">
               </div>
             </div>
           </div>
 
           {# PASO 2 #}
-          <div id="step-2" class="wizard-step d-none">
+          <div id="step-2" class="wizard-step" style="display: none;">
             <div id="crear-items-container">
               <div class="crear-item-row row g-2 align-items-start mb-2">
                 <div class="col">
-                  <select name="herramienta[]" class="form-select form-select-sm crear-prod-sel" required>
+                  <select name="herramienta[]" class="form-select form-select-sm crear-prod-sel" aria-label="Seleccionar herramienta" required>
                     <option value="">— Selecciona herramienta —</option>
                     {% for h in herramientas|default:productos %}
                     <option value="{{ h.pk }}" data-stock="{{ h.stock_disponible|default:0 }}">
@@ -458,10 +461,10 @@
                   </select>
                 </div>
                 <div class="col-auto w-input-sm">
-                  <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" max="50" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="1" placeholder="Cant." required>
+                  <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" max="50" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="1" placeholder="Cant." aria-label="Cantidad" required>
                 </div>
                 <div class="col-auto">
-                  <button type="button" class="btn btn-outline-danger btn-sm crear-del-btn disabled">
+                  <button type="button" class="btn btn-outline-danger btn-sm crear-del-btn disabled" aria-label="Eliminar herramienta">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
@@ -473,13 +476,13 @@
           </div>
 
           {# PASO 3 #}
-          <div id="step-3" class="wizard-step d-none">
-            <label class="form-label small fw-semibold">Observaciones</label>
-            <textarea name="observaciones" class="form-control form-control-sm" rows="3" maxlength="500" placeholder="Notas sobre el préstamo"></textarea>
+          <div id="step-3" class="wizard-step" style="display: none;">
+            <label for="wizard_observaciones" class="form-label small fw-semibold">Observaciones</label>
+            <textarea name="observaciones" id="wizard_observaciones" class="form-control form-control-sm" rows="3" maxlength="500" placeholder="Notas sobre el préstamo"></textarea>
           </div>
 
           {# PASO 4 #}
-          <div id="step-4" class="wizard-step d-none">
+          <div id="step-4" class="wizard-step" style="display: none;">
             <h6 class="fw-bold mb-2">Resumen del Préstamo</h6>
             <div id="summary-usuario" class="p-2 bg-light rounded small mb-3"></div>
             <h6 class="fw-bold mb-2">Herramientas a prestar</h6>
@@ -489,9 +492,9 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-outline-secondary btn-sm d-none" id="btn-prev">Anterior</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-prev" style="display: none;">Anterior</button>
           <button type="button" id="btn-next" class="btn btn-primary btn-sm">Siguiente</button>
-          <button type="submit" id="btn-submit" class="btn btn-success btn-sm d-none">Confirmar y registrar</button>
+          <button type="submit" id="btn-submit" class="btn btn-success btn-sm" style="display: none;">Confirmar y registrar</button>
         </div>
       </form>
     </div>
@@ -506,6 +509,6 @@
 {% block js %}
 <script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
-<script defer src="{% static 'js/tables/prestamos_table.js' %}?v=3"></script>
-<script defer src="{% static 'js/prestamos.js' %}?v=3"></script>
+<script defer src="{% static 'js/tables/prestamos_table.js' %}?v=5"></script>
+<script defer src="{% static 'js/prestamos.js' %}?v=5"></script>
 {% endblock js %}

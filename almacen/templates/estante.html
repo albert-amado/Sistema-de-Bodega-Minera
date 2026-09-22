@@ -254,15 +254,15 @@
 
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén *</label>
+              <label for="id_codigo_almacen" class="form-label text-muted fw-bold small uppercase mb-1">Almacén *</label>
               {{ form.codigo_almacen }}
             </div>
             <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Código *</label>
+              <label for="id_codigo" class="form-label text-muted fw-bold small uppercase mb-1">Código *</label>
               {{ form.codigo }}
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Dimensiones</label>
+              <label for="id_dimensiones" class="form-label text-muted fw-bold small uppercase mb-1">Dimensiones</label>
               {{ form.dimensiones }}
             </div>
           </div>
@@ -302,7 +302,7 @@
 
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén *</label>
+              <label for="edit_estante_almacen" class="form-label text-muted fw-bold small uppercase mb-1">Almacén *</label>
               <select name="codigo_almacen" id="edit_estante_almacen" class="form-select">
                 {% for almacen in almacenes %}
                 <option value="{{ almacen.pk }}">{{ almacen.nombre }}</option>
@@ -310,11 +310,11 @@
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Código *</label>
+              <label for="edit_estante_codigo" class="form-label text-muted fw-bold small uppercase mb-1">Código *</label>
               <input type="text" name="codigo" id="edit_estante_codigo" class="form-control" required>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Dimensiones</label>
+              <label for="edit_estante_detalles" class="form-label text-muted fw-bold small uppercase mb-1">Dimensiones</label>
               <textarea name="dimensiones" id="edit_estante_detalles" class="form-control" rows="3"></textarea>
             </div>
           </div>

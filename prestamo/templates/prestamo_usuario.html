@@ -308,12 +308,12 @@
           <h6 class="fw-bold small text-primary mb-3">1. Datos del Solicitante</h6>
           <div class="row g-2 mb-3">
             <div class="col-md-6">
-              <label class="form-label small fw-semibold">Número de Documento *</label>
-              <input type="text" name="documento" class="form-control form-control-sm" value="{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% endif %}" required placeholder="Documento">
+              <label for="sol_documento" class="form-label small fw-semibold">Número de Documento *</label>
+              <input type="text" name="documento" id="sol_documento" class="form-control form-control-sm" value="{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% endif %}" required placeholder="Documento">
             </div>
             <div class="col-md-6">
-              <label class="form-label small fw-semibold">Ficha SENA *</label>
-              <input type="text" name="ficha" class="form-control form-control-sm" required placeholder="Ej: 2670123">
+              <label for="sol_ficha" class="form-label small fw-semibold">Ficha SENA *</label>
+              <input type="text" name="ficha" id="sol_ficha" class="form-control form-control-sm" required placeholder="Ej: 2670123">
             </div>
           </div>
 
@@ -321,7 +321,7 @@
           <div id="sol-items-container">
             <div class="sol-item-row row g-2 align-items-start mb-2">
               <div class="col">
-                <select name="herramienta[]" class="form-select form-select-sm sol-prod-sel" required>
+                <select name="herramienta[]" class="form-select form-select-sm sol-prod-sel" aria-label="Seleccionar herramienta" required>
                   <option value="">— Selecciona herramienta —</option>
                   {% for h in herramientas_disponibles|default:productos_disponibles %}
                   <option value="{{ h.pk }}" data-stock="{{ h.stock_disponible|default:0 }}">
@@ -331,10 +331,10 @@
                 </select>
               </div>
               <div class="col-auto w-input-sm">
-                <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" max="50" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="1" placeholder="Cant." required>
+                <input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" max="50" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="1" placeholder="Cant." aria-label="Cantidad" required>
               </div>
               <div class="col-auto">
-                <button type="button" class="btn btn-outline-danger btn-sm sol-del-btn disabled">
+                <button type="button" class="btn btn-outline-danger btn-sm sol-del-btn disabled" aria-label="Eliminar herramienta">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -345,8 +345,8 @@
             <i class="bi bi-plus-circle me-1"></i> Añadir otra herramienta
           </button>
 
-          <h6 class="fw-bold small text-primary mb-2">3. Observaciones</h6>
-          <textarea name="observaciones" class="form-control form-control-sm" rows="3" maxlength="500" placeholder="Indica el motivo o detalles de tu solicitud..."></textarea>
+          <label for="sol_observaciones" class="fw-bold small text-primary mb-2 d-block">3. Observaciones</label>
+          <textarea name="observaciones" id="sol_observaciones" class="form-control form-control-sm" rows="3" maxlength="500" placeholder="Indica el motivo o detalles de tu solicitud..."></textarea>
         </div>
 
         <div class="modal-footer">

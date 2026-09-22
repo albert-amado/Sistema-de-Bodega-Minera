@@ -95,12 +95,12 @@ aside hr {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  background: rgba(255, 255, 255, 0.07) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 50px !important;
   color: #FFFFFF !important;
-  padding: 0.25rem 0.65rem 0.25rem 0.35rem !important;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease !important;
+  padding: 4px 12px 4px 4px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   height: 38px !important;
   min-height: 38px !important;
   width: 100% !important;
@@ -108,16 +108,19 @@ aside hr {
   outline: none !important;
   appearance: none !important;
   -webkit-appearance: none !important;
+  cursor: pointer !important;
 }
 .btn-profile-pill::after {
   display: none !important;
 }
 .btn-profile-pill:hover,
 .btn-profile-pill:focus,
-.btn-profile-pill[aria-expanded="true"] {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.22) !important;
+.btn-profile-pill[aria-expanded="true"],
+.btn-profile-pill.show {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
   color: #FFFFFF !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
 }
 .profile-avatar-circle {
   width: 28px !important;
@@ -125,18 +128,19 @@ aside hr {
   min-width: 28px !important;
   min-height: 28px !important;
   border-radius: 50% !important;
-  background: var(--sbm-amber-500, #D97706) !important;
+  background: linear-gradient(135deg, #0D6EFD 0%, #0056b3 100%) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 0.75rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.02em !important;
-  color: #0F172A !important;
+  color: #FFFFFF !important;
   flex-shrink: 0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
 .profile-pill-name {
-  font-size: 0.85rem !important;
+  font-size: 0.82rem !important;
   font-weight: 600 !important;
   color: #FFFFFF !important;
   letter-spacing: 0.01em !important;
@@ -145,15 +149,21 @@ aside hr {
   white-space: nowrap !important;
 }
 .profile-pill-caret {
-  color: #8CA4C4 !important;
-  fill: #8CA4C4 !important;
-  transition: color 0.18s ease, fill 0.18s ease !important;
+  display: inline-block !important;
+  color: #94A3B8 !important;
+  fill: currentColor !important;
+  transform: rotate(0deg) !important;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease !important;
+  transform-origin: center center !important;
 }
 .btn-profile-pill:hover .profile-pill-caret,
-.btn-profile-pill:focus .profile-pill-caret,
-.btn-profile-pill[aria-expanded="true"] .profile-pill-caret {
+.btn-profile-pill:focus .profile-pill-caret {
   color: #FFFFFF !important;
-  fill: #FFFFFF !important;
+}
+.btn-profile-pill[aria-expanded="true"] .profile-pill-caret,
+.btn-profile-pill.show .profile-pill-caret {
+  transform: rotate(-90deg) !important;
+  color: #FFFFFF !important;
 }
 
 /* Modo Oscuro & Temas: Aside Footer en tono Deep Navy armonioso y legible */

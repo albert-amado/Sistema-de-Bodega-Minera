@@ -72,16 +72,16 @@
         {% csrf_token %}
 
         <div class="field-wrap">
-          <span class="field-lbl">Documento</span>
+          <label for="documento" class="field-lbl">Documento</label>
           <input type="hidden" id="tipo_documento" name="tipo_documento" value="CC" />
           <div class="input-group-mine">
             <div class="extracted-style-394">
-              <button type="button" class="sel-btn" id="doc-tipo-btn">CC ▾</button>
-              <div class="doc-dropdown" id="docDropdown">
-                <a href="#" data-value="CC">CC – Cédula de Ciudadanía</a>
-                <a href="#" data-value="CE">CE – Cédula de Extranjería</a>
-                <a href="#" data-value="PP">PP – Pasaporte</a>
-                <a href="#" data-value="TI">TI – Tarjeta de Identidad</a>
+              <button type="button" class="sel-btn" id="doc-tipo-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="docDropdown">CC ▾</button>
+              <div class="doc-dropdown" id="docDropdown" role="listbox">
+                <a href="#" data-value="CC" role="option">CC – Cédula de Ciudadanía</a>
+                <a href="#" data-value="CE" role="option">CE – Cédula de Extranjería</a>
+                <a href="#" data-value="PP" role="option">PP – Pasaporte</a>
+                <a href="#" data-value="TI" role="option">TI – Tarjeta de Identidad</a>
               </div>
             </div>
             <input type="text" id="documento" name="documento" class="mine-input" placeholder="Número de documento" required />
@@ -90,7 +90,7 @@
         </div>
 
         <div class="field-wrap">
-          <span class="field-lbl">Contraseña</span>
+          <label for="password" class="field-lbl">Contraseña</label>
           <input type="password" id="password" name="password" class="mine-input full" placeholder="••••••••" required />
         </div>
 

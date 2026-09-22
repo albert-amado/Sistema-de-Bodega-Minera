@@ -16,8 +16,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=1">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=41">
-  <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=5">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=48">
+  <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=6">
+  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=4">
 {% block css %}{% endblock css %}
 </head>
 
@@ -58,8 +59,12 @@
 
   {% include "partials/modal_ver_detalle.html" %}
 
+  {% if request.session.usuario_documento %}
+  {% include "partials/chatbot_widget.html" %}
+  {% endif %}
+
   <script defer src="{% static 'js/bootstrap.bundle.min.js' %}?v=3"></script>
-  <script defer src="{% static 'js/form-validation.js' %}?v=2"></script>
+  <script defer src="{% static 'js/form-validation.js' %}?v=3"></script>
   <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
   <script defer src="{% static 'js/datatables-init.js' %}?v=4"></script>
@@ -67,6 +72,9 @@
   <script defer src="{% static 'js/sbm-actions.js' %}?v=1"></script>
   <script defer src="{% static 'js/base.js' %}?v=1"></script>
   <script defer src="{% static 'js/notificaciones.js' %}?v=1"></script>
+  {% if request.session.usuario_documento %}
+  <script defer src="{% static 'js/chatbot.js' %}?v=2"></script>
+  {% endif %}
   {% block js %}{% endblock %}
   <script src="https://cdn.jsdelivr.net/gh/PrabothCharith/accessibility-plugin@main/accessibility-menu.min.js"></script>
 </body>

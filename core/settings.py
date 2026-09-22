@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "herramienta",
     "almacen",
     "configuracion",
+    'chatbot',
 ]
 
 MIDDLEWARE = [
@@ -145,6 +146,8 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
@@ -173,4 +176,12 @@ ALLOW_MANUAL_REGISTRATION = config('ALLOW_MANUAL_REGISTRATION', default=False, c
 #   (verificado_sofia_plus = False) para no bloquear al aprendiz en terreno, pendiente de confirmación.
 # - 'REJECT': Bloquea temporalmente el registro con mensaje de reintento.
 SOFIAPLUS_FALLBACK_POLICY = config('SOFIAPLUS_FALLBACK_POLICY', default='ALLOW_PENDING')
+
+# =============================================================================
+# ASISTENTE VIRTUAL IA (GEMINI API)
+# =============================================================================
+GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
+GEMINI_MODEL = config('GEMINI_MODEL', default='gemini-flash-lite-latest')
+CHATBOT_RATE_LIMIT_RPM = config('CHATBOT_RATE_LIMIT_RPM', default=20, cast=int)
+CHATBOT_ENABLE_LOGGING = config('CHATBOT_ENABLE_LOGGING', default=True, cast=bool)
 
