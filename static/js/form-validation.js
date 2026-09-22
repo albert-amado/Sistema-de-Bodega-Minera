@@ -104,6 +104,7 @@
 
     /* Input number */
     if (field.type === 'number') {
+      if (!field.required && val === '') return null;
       var num = parseFloat(val);
       var min = field.hasAttribute('min') ? parseFloat(field.min) : -Infinity;
       var max = field.hasAttribute('max') ? parseFloat(field.max) : Infinity;
@@ -113,7 +114,10 @@
     /* Input date */
     if (field.type === 'date') {
       if (!field.required && val === '') return null;
-      return val !== '';
+      if (val === '') return false;
+      if (field.hasAttribute('max') && field.max && val > field.max) return false;
+      if (field.hasAttribute('min') && field.min && val < field.min) return false;
+      return true;
     }
 
     /* Password */
@@ -212,7 +216,36 @@
   }
 
   /* ── Delegación de eventos al document ── */
-  document.addEventListener('input',  onInteract, true);
+  document.addEventListener('input', function (e) {
+    var el = e.target;
+    if (!el) return;
+
+    // Sanitización numérica estricta si min >= 0
+    if (el.type === 'number' && el.hasAttribute('min') && parseFloat(el.min) >= 0) {
+      if (el.value.indexOf('-') !== -1) {
+        el.value = el.value.replace(/-/g, '');
+      }
+    }
+
+    // Sanitización para campos de nombres/texto alfabético
+    if (el.classList && el.classList.contains('input-solo-letras')) {
+      el.value = el.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+    }
+
+    onInteract(e);
+  }, true);
+
+  document.addEventListener('paste', function (e) {
+    var el = e.target;
+    if (el && el.classList && el.classList.contains('input-solo-letras')) {
+      e.preventDefault();
+      var pasted = (e.clipboardData || window.clipboardData).getData('text');
+      var max = el.maxLength > 0 ? el.maxLength : 100;
+      el.value = pasted.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '').slice(0, max);
+      onInteract(e);
+    }
+  }, true);
+
   document.addEventListener('change', onInteract, true);
   document.addEventListener('blur',   onBlur,     true);
 

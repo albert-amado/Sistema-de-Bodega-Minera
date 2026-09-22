@@ -1,5 +1,5 @@
 from django.contrib.auth.hashers import make_password
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from .forms import (
@@ -33,6 +33,7 @@ class UsuarioSecurityTests(TestCase):
             rol="Usuario",
         )
 
+    @override_settings(ALLOW_MANUAL_REGISTRATION=True)
     def test_registro_usuario_form_forces_user_role(self):
         """Verifica que el formulario de registro no permita escalar privilegios a Administrador."""
         data = {

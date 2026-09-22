@@ -50,8 +50,8 @@ class Usuario(models.Model):
     password         = models.CharField(max_length=255, blank=True, null=True, verbose_name='Contraseña')
     rol              = models.CharField(
         max_length=50,
-        choices=ROL_CHOICES,
         default='Usuario',
+        choices=ROL_CHOICES,
         blank=True,
         null=True,
         verbose_name='Rol',

@@ -54,6 +54,10 @@
     .text-copper { color: #F59E0B; }
     .text-slate { color: #94A3B8; }
     .text-white { color: #FFFFFF; }
+    .card-desc { font-size: 0.85rem; color: #94A3B8; }
+    .brand-title-white { font-weight: 800; font-size: 0.95rem; color: #FFFFFF; }
+    .brand-title-amber { font-weight: 700; font-size: 0.95rem; color: #F59E0B; }
+    .brand-sub-mono { display: block; font-size: 0.65rem; color: #64748B; font-family: monospace; letter-spacing: 0.08em; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -65,7 +69,7 @@
     <div class="card">
       <span class="badge">Propuesta A: Casco Minero + Caja de Inventario</span>
       <h3>"Seguridad y Resguardo"</h3>
-      <p style="font-size: 0.85rem; color: #94A3B8;">Combina la silueta del casco protector minero con su linterna frontal, posado sobre una robusta caja de bodega con sujeción y hendiduras de inventario.</p>
+      <p class="card-desc">Combina la silueta del casco protector minero con su linterna frontal, posado sobre una robusta caja de bodega con sujeción y hendiduras de inventario.</p>
       
       <div class="preview-row">
         <div><strong>Monocromo:</strong></div>
@@ -86,6 +90,14 @@
             <path d="M4 12c0-4.5 3.5-8 8-8s8 3.5 8 8"/>
             <path d="M10 2h4v3h-4z"/>
           </svg>
+          <!-- 32px -->
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z"/>
+            <path d="M9 16h6"/>
+            <path d="M12 12v10"/>
+            <path d="M4 12c0-4.5 3.5-8 8-8s8 3.5 8 8"/>
+            <path d="M10 2h4v3h-4z"/>
+          </svg>
           <!-- 48px -->
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 12h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z"/>
@@ -98,42 +110,37 @@
       </div>
 
       <div class="preview-row">
-        <div><strong>Dos Tonos (Dúo-tono Industrial):</strong></div>
+        <div><strong>Color Marca:</strong></div>
         <div class="sizes">
-          <!-- 32px duo -->
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Bodega / Caja base en Grafito / Slate -->
-            <path d="M4 12h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="#94A3B8"/>
-            <path d="M9 16h6" stroke="#94A3B8"/>
-            <path d="M12 12v10" stroke="#94A3B8"/>
-            <!-- Minería / Casco y Haz de luz en Ámbar Cobre -->
-            <path d="M4 12c0-4.5 3.5-8 8-8s8 3.5 8 8" stroke="#F59E0B"/>
-            <path d="M10 2h4v3h-4z" fill="#F59E0B" stroke="#F59E0B"/>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="#CBD5E1" stroke-width="2"/>
+            <path d="M9 16h6" stroke="#CBD5E1" stroke-width="1.8"/>
+            <path d="M12 12v10" stroke="#CBD5E1" stroke-width="1.8"/>
+            <path d="M4 12c0-4.5 3.5-8 8-8s8 3.5 8 8" stroke="#F59E0B" stroke-width="2.2"/>
+            <path d="M10 2h4v3h-4z" fill="#F59E0B" stroke="#F59E0B" stroke-width="1.5"/>
           </svg>
-          <!-- 48px duo -->
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 12h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="#94A3B8"/>
-            <path d="M9 16h6" stroke="#94A3B8"/>
-            <path d="M12 12v10" stroke="#94A3B8"/>
-            <path d="M4 12c0-4.5 3.5-8 8-8s8 3.5 8 8" stroke="#F59E0B"/>
-            <path d="M10 2h4v3h-4z" fill="#F59E0B" stroke="#F59E0B"/>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="#CBD5E1" stroke-width="2"/>
+            <path d="M9 16h6" stroke="#CBD5E1" stroke-width="1.8"/>
+            <path d="M12 12v10" stroke="#CBD5E1" stroke-width="1.8"/>
+            <path d="M4 12c0-4.5 3.5-8 8-8s8 3.5 8 8" stroke="#F59E0B" stroke-width="2.2"/>
+            <path d="M10 2h4v3h-4z" fill="#F59E0B" stroke="#F59E0B" stroke-width="1.5"/>
           </svg>
         </div>
       </div>
 
-      <!-- Preview en Barra Horizontal -->
       <div class="brand-preview">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 12h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="#94A3B8"/>
-          <path d="M9 16h6" stroke="#94A3B8"/>
-          <path d="M12 12v10" stroke="#94A3B8"/>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="#CBD5E1" stroke-width="2"/>
+          <path d="M9 16h6" stroke="#CBD5E1" stroke-width="1.8"/>
+          <path d="M12 12v10" stroke="#CBD5E1" stroke-width="1.8"/>
           <path d="M4 12c0-4.5 3.5-8 8-8s8 3.5 8 8" stroke="#F59E0B"/>
           <path d="M10 2h4v3h-4z" fill="#F59E0B" stroke="#F59E0B"/>
         </svg>
         <div>
-          <span style="font-weight: 800; font-size: 0.95rem; color: #FFFFFF;">Bodega</span>
-          <span style="font-weight: 700; font-size: 0.95rem; color: #F59E0B;"> Minera</span>
-          <span style="display: block; font-size: 0.65rem; color: #64748B; font-family: monospace; letter-spacing: 0.08em; text-transform: uppercase;">Sistema de Gestión</span>
+          <span class="brand-title-white">Bodega</span>
+          <span class="brand-title-amber"> Minera</span>
+          <span class="brand-sub-mono">Sistema de Gestión</span>
         </div>
       </div>
     </div>
@@ -142,7 +149,7 @@
     <div class="card">
       <span class="badge">Propuesta B: Pico Minero + Módulo de Estantería</span>
       <h3>"Herramienta & Logística"</h3>
-      <p style="font-size: 0.85rem; color: #94A3B8;">Estructura de rack/estantería industrial de almacén cruzada por el tradicional pico de extracción minera. Simboliza de forma directa el préstamo y control de herramientas pesadas.</p>
+      <p class="card-desc">Estructura de rack/estantería industrial de almacén cruzada por el tradicional pico de extracción minera. Simboliza de forma directa el préstamo y control de herramientas pesadas.</p>
       
       <div class="preview-row">
         <div><strong>Monocromo:</strong></div>
@@ -220,9 +227,9 @@
           <path d="M12 3.5v12" stroke="#F59E0B" stroke-width="2.5"/>
         </svg>
         <div>
-          <span style="font-weight: 800; font-size: 0.95rem; color: #FFFFFF;">Bodega</span>
-          <span style="font-weight: 700; font-size: 0.95rem; color: #F59E0B;"> Minera</span>
-          <span style="display: block; font-size: 0.65rem; color: #64748B; font-family: monospace; letter-spacing: 0.08em; text-transform: uppercase;">Sistema de Gestión</span>
+          <span class="brand-title-white">Bodega</span>
+          <span class="brand-title-amber"> Minera</span>
+          <span class="brand-sub-mono">Sistema de Gestión</span>
         </div>
       </div>
     </div>
@@ -231,7 +238,7 @@
     <div class="card">
       <span class="badge">Propuesta C: Vagoneta Minera + Cajas de Inventario</span>
       <h3>"Extracción & Despacho"</h3>
-      <p style="font-size: 0.85rem; color: #94A3B8;">Vagoneta minera de tolva sobre riel, cargada con paquetes de almacén rotulados. Comunica inmediatamente el movimiento y transporte de insumos en la mina.</p>
+      <p class="card-desc">Vagoneta minera de tolva sobre riel, cargada con paquetes de almacén rotulados. Comunica inmediatamente el movimiento y transporte de insumos en la mina.</p>
       
       <div class="preview-row">
         <div><strong>Monocromo:</strong></div>
@@ -303,9 +310,9 @@
           <path d="M13 3h5v8h-5z" stroke="#F59E0B" fill="rgba(245, 158, 11, 0.15)"/>
         </svg>
         <div>
-          <span style="font-weight: 800; font-size: 0.95rem; color: #FFFFFF;">Bodega</span>
-          <span style="font-weight: 700; font-size: 0.95rem; color: #F59E0B;"> Minera</span>
-          <span style="display: block; font-size: 0.65rem; color: #64748B; font-family: monospace; letter-spacing: 0.08em; text-transform: uppercase;">Sistema de Gestión</span>
+          <span class="brand-title-white">Bodega</span>
+          <span class="brand-title-amber"> Minera</span>
+          <span class="brand-sub-mono">Sistema de Gestión</span>
         </div>
       </div>
     </div>

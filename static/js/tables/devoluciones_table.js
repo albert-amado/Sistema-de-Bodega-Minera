@@ -34,11 +34,7 @@ $(document).ready(function () {
     pageLength: 10
   });
 
-  // ─── Buscador en tiempo real y Filtros ───
-  $('#devoluciones-busqueda').on('keyup input', function () {
-    table.search(this.value).draw();
-  });
-
+  // ─── Filtro por Estado ───
   $('#devoluciones-estado').on('change', function () {
     var val = $(this).val();
     table.column(5).search(val ? val : '', true, false).draw();
@@ -47,8 +43,17 @@ $(document).ready(function () {
   $('#btn-limpiar-filtros-dev').on('click', function (e) {
     e.preventDefault();
     $('#devoluciones-busqueda').val('');
+    $('#devoluciones-busqueda').closest('.sfb-search-group').find('.sbm-search-clear').addClass('d-none');
     $('#devoluciones-estado').val('');
-    table.search('').column(5).search('').draw();
+    if (table) {
+      var settings = table.settings()[0];
+      if (settings) {
+        settings._sbmSearchQuery = '';
+        settings._sbmSearchTokens = [];
+        settings._sbmSearchRaw = '';
+      }
+      table.search('').column(5).search('').page('first').draw();
+    }
   });
 
   // ─── PASO 3: función toggle de detalles

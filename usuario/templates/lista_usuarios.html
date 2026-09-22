@@ -51,7 +51,7 @@
 
 <!-- BARRA DE FILTROS Y CONTROLES -->
 <div class="sfb-wrap mb-4">
-  <form method="get" id="filtroForm" style="display:contents;">
+  <form method="get" id="filtroForm" class="d-contents">
 
     <!-- Búsqueda -->
     <div class="sfb-search-group">
@@ -213,7 +213,7 @@
             <th data-priority="2">Ficha / Programa</th>
             <th data-priority="3">Teléfono</th>
             <th data-priority="1">Rol</th>
-            <th class="text-center" data-priority="1" style="width: 100px;">Acciones</th>
+            <th class="text-center th-w-100" data-priority="1">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -221,7 +221,7 @@
           <tr>
             <td>
               <div class="d-flex align-items-center gap-2">
-                <div class="gu-avatar gu-avatar-{% if u.rol == 'Administrador' %}admin{% else %}user{% endif %}" style="width:34px;height:34px;font-size:0.8rem;">
+                <div class="gu-avatar gu-avatar-{% if u.rol == 'Administrador' %}admin{% else %}user{% endif %} gu-avatar-sm">
                   {{ u.nombre_completo|slice:":2"|upper }}
                 </div>
                 <span class="fw-bold gu-user-table-name">{{ u.nombre_completo }}</span>
@@ -236,7 +236,7 @@
             <td>
               {% if u.numero_ficha %}
                 <span class="gu-info-badge-ficha">{{ u.numero_ficha }}</span>
-                <small class="text-muted d-block text-truncate" style="max-width:200px;">{{ u.nombre_programa|default:"" }}</small>
+                <small class="text-muted d-block text-truncate max-w-200">{{ u.nombre_programa|default:"" }}</small>
               {% else %}
                 <span class="text-muted">—</span>
               {% endif %}
@@ -271,11 +271,11 @@
 <!-- ESTADO VACÍO -->
 <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4 gu-filter-card">
   <div class="py-4">
-    <div class="mx-auto mb-3" style="width:64px;height:64px;background:var(--gu-input-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--gu-text-muted);border:1px solid var(--gu-filter-border);">
+    <div class="mx-auto mb-3 gu-empty-icon">
       <i class="bi bi-person-x"></i>
     </div>
-    <h5 class="fw-bold" style="color:var(--gu-text-name);">No se encontraron usuarios</h5>
-    <p class="small mb-3" style="color:var(--gu-text-muted);">No hay coincidencias para los criterios o filtros de búsqueda seleccionados.</p>
+    <h5 class="fw-bold gu-text-name-color">No se encontraron usuarios</h5>
+    <p class="small mb-3 gu-text-muted-color">No hay coincidencias para los criterios o filtros de búsqueda seleccionados.</p>
     {% if q or rol_id or tipo_doc %}
     <a href="{% url 'lista_usuarios' %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
       <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar filtros
@@ -292,7 +292,7 @@
 
       <div class="modal-header bg-light py-3 border-0">
         <div class="d-flex align-items-center gap-3">
-          <div id="modalAvatar" class="gu-avatar gu-avatar-admin" style="width:42px;height:42px;"></div>
+          <div id="modalAvatar" class="gu-avatar gu-avatar-admin gu-avatar-md"></div>
           <div>
             <h5 class="modal-title fw-bold mb-0 text-dark" id="modalUsuarioLabel"></h5>
             <span class="gu-badge-role mt-1" id="modalRol"></span>
@@ -384,7 +384,7 @@
 
       <div class="modal-header bg-light py-3 border-0">
         <div class="d-flex align-items-center gap-3">
-          <div id="editAvatar" class="gu-avatar gu-avatar-admin" style="width:38px;height:38px;font-size:0.85rem;"></div>
+          <div id="editAvatar" class="gu-avatar gu-avatar-admin gu-avatar-edit"></div>
           <div>
             <h5 class="modal-title fw-bold mb-0 text-dark">Editar Usuario</h5>
             <span class="small text-muted font-monospace" id="editDocLabel"></span>
