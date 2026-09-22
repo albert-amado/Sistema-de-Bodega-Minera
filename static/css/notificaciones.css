@@ -2,8 +2,16 @@
 /* ── Bottom Bar Layout & Buttons ── */
 .nav-bottom,
 aside .nav-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  margin-top: auto !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1020 !important;
+  flex-shrink: 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
   background: #08172B !important;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 .nav-bottom hr,
 aside .nav-bottom hr,
@@ -149,12 +157,16 @@ aside hr {
   white-space: nowrap !important;
 }
 .profile-pill-caret {
-  display: inline-block !important;
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  font-size: 0.82rem !important;
   color: #94A3B8 !important;
-  fill: currentColor !important;
-  transform: rotate(0deg) !important;
+  line-height: 1 !important;
+  transform: translateY(-50%) rotate(0deg) !important;
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease !important;
   transform-origin: center center !important;
+  pointer-events: none !important;
 }
 .btn-profile-pill:hover .profile-pill-caret,
 .btn-profile-pill:focus .profile-pill-caret {
@@ -162,7 +174,7 @@ aside hr {
 }
 .btn-profile-pill[aria-expanded="true"] .profile-pill-caret,
 .btn-profile-pill.show .profile-pill-caret {
-  transform: rotate(-90deg) !important;
+  transform: translateY(-50%) rotate(-90deg) !important;
   color: #FFFFFF !important;
 }
 

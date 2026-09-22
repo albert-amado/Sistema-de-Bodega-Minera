@@ -4471,12 +4471,18 @@ aside .aside-section-label {
   padding: 0 !important;
 }
 
-/* Parte inferior fija */
+/* Parte inferior fija y siempre visible */
 aside .nav-bottom {
   margin-top: auto !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1020 !important;
   flex-shrink: 0 !important;
-  background: inherit !important;
-  border-top: 1px solid #E8DEC8 !important;
+  background: #0B1E36 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -4502,6 +4508,8 @@ aside .nav-bottom {
 
 .btn-profile-pill {
   display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   align-items: center !important;
   justify-content: space-between !important;
   background: rgba(255, 255, 255, 0.08) !important;
@@ -4518,6 +4526,8 @@ aside .nav-bottom {
   appearance: none !important;
   -webkit-appearance: none !important;
   cursor: pointer !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
 }
 
 .btn-profile-pill::after {
@@ -4563,12 +4573,16 @@ aside .nav-bottom {
 }
 
 .profile-pill-caret {
-  display: inline-block !important;
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  font-size: 0.82rem !important;
   color: #94A3B8 !important;
-  fill: currentColor !important;
-  transform: rotate(0deg) !important;
+  line-height: 1 !important;
+  transform: translateY(-50%) rotate(0deg) !important;
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease !important;
   transform-origin: center center !important;
+  pointer-events: none !important;
 }
 
 .btn-profile-pill:hover .profile-pill-caret,
@@ -4578,7 +4592,7 @@ aside .nav-bottom {
 
 .btn-profile-pill[aria-expanded="true"] .profile-pill-caret,
 .btn-profile-pill.show .profile-pill-caret {
-  transform: rotate(-90deg) !important;
+  transform: translateY(-50%) rotate(-90deg) !important;
   color: #FFFFFF !important;
 }
 
@@ -5573,16 +5587,20 @@ body.dark-mode .badge-rechazada {
   border-radius: 50px !important;
 }
 .profile-pill-caret {
-  display: inline-block !important;
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  font-size: 0.82rem !important;
   color: #94A3B8 !important;
-  fill: currentColor !important;
-  transform: rotate(0deg) !important;
+  line-height: 1 !important;
+  transform: translateY(-50%) rotate(0deg) !important;
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease !important;
   transform-origin: center center !important;
+  pointer-events: none !important;
 }
 .btn-profile-pill[aria-expanded="true"] .profile-pill-caret,
 .btn-profile-pill.show .profile-pill-caret {
-  transform: rotate(-90deg) !important;
+  transform: translateY(-50%) rotate(-90deg) !important;
   color: #FFFFFF !important;
 }
 
