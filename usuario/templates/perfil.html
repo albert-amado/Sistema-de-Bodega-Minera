@@ -183,12 +183,12 @@
 
               <!-- Documento (solo lectura) -->
               <div class="col-md-6">
-                <label class="form-label">Tipo de documento</label>
-                <input type="text" class="form-control perfil__style-26" value="{{ usuario.get_tipo_documento_display }}" disabled>
+                <label for="perfil_tipo_doc" class="form-label">Tipo de documento</label>
+                <input type="text" id="perfil_tipo_doc" class="form-control perfil__style-26" value="{{ usuario.get_tipo_documento_display }}" disabled>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Número de documento</label>
-                <input type="text" class="form-control perfil__style-27" value="{{ usuario.numero_documento }}" disabled>
+                <label for="perfil_num_doc" class="form-label">Número de documento</label>
+                <input type="text" id="perfil_num_doc" class="form-control perfil__style-27" value="{{ usuario.numero_documento }}" disabled>
                 <div class="perfil__style-28">
                   El documento no puede modificarse.
                 </div>
@@ -196,8 +196,8 @@
 
               <!-- Nombre -->
               <div class="col-12">
-                <label class="form-label">Nombre completo *</label>
-                <input type="text" name="nombre_completo" class="form-control
+                <label for="perfil_nombre" class="form-label">Nombre completo *</label>
+                <input type="text" id="perfil_nombre" name="nombre_completo" class="form-control
                        {% if errores.nombre_completo %}is-invalid{% endif %}"
                        value="{{ usuario.nombre_completo }}"
                        placeholder="Tu nombre completo" required>
@@ -208,8 +208,8 @@
 
               <!-- Correo -->
               <div class="col-md-7">
-                <label class="form-label">Correo electrónico *</label>
-                <input type="email" name="correo" class="form-control
+                <label for="perfil_correo" class="form-label">Correo electrónico *</label>
+                <input type="email" id="perfil_correo" name="correo" class="form-control
                        {% if errores.correo %}is-invalid{% endif %}"
                        value="{{ usuario.correo }}"
                        placeholder="tu@correo.com" required>
@@ -220,8 +220,8 @@
 
               <!-- Teléfono -->
               <div class="col-md-5">
-                <label class="form-label">Teléfono</label>
-                <input type="text" name="telefono" class="form-control
+                <label for="perfil_telefono" class="form-label">Teléfono</label>
+                <input type="text" id="perfil_telefono" name="telefono" class="form-control
                        {% if errores.telefono %}is-invalid{% endif %}"
                        value="{{ usuario.telefono|default:'' }}"
                        placeholder="Ej: 3001234567" maxlength="20">
@@ -232,8 +232,8 @@
 
               <!-- Número de ficha -->
               <div class="col-md-5">
-                <label class="form-label">Número de ficha</label>
-                <select name="numero_ficha" class="form-select">
+                <label for="perfil_ficha" class="form-label">Número de ficha</label>
+                <select id="perfil_ficha" name="numero_ficha" class="form-select">
                   <option value="">-- Seleccionar Ficha --</option>
                   <option value="2758369" {% if usuario.numero_ficha == "2758369" %}selected{% endif %}>2758369</option>
                   <option value="2827435" {% if usuario.numero_ficha == "2827435" %}selected{% endif %}>2827435</option>
@@ -247,8 +247,8 @@
 
               <!-- Nombre del programa -->
               <div class="col-md-7">
-                <label class="form-label">Nombre del programa</label>
-                <select name="nombre_programa" class="form-select">
+                <label for="perfil_programa" class="form-label">Nombre del programa</label>
+                <select id="perfil_programa" name="nombre_programa" class="form-select">
                   <option value="">-- Seleccionar Programa --</option>
                   <option value="Análisis y Desarrollo de Software (ADSO)" {% if usuario.nombre_programa == "Análisis y Desarrollo de Software (ADSO)" %}selected{% endif %}>Análisis y Desarrollo de Software (ADSO)</option>
                   <option value="Sistemas" {% if usuario.nombre_programa == "Sistemas" %}selected{% endif %}>Sistemas</option>
@@ -279,7 +279,7 @@
       </div>
 
       <!-- Pestaña 2: Contraseña -->
-      <div class="modal-tab-panel" id="tab-password" class="d-none">
+      <div class="modal-tab-panel d-none" id="tab-password">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="cambiar_password">
@@ -299,7 +299,7 @@
 
             <div class="row g-3">
               <div class="col-12">
-                <label class="form-label">Contraseña actual *</label>
+                <label for="pw-actual" class="form-label">Contraseña actual *</label>
                 <input type="password" name="password_actual" id="pw-actual"
                        class="form-control {% if errores.password_actual %}is-invalid{% endif %}"
                        placeholder="Tu contraseña actual" required>
@@ -308,7 +308,7 @@
                 {% endif %}
               </div>
               <div class="col-md-6">
-                <label class="form-label">Nueva contraseña *</label>
+                <label for="pw-nueva" class="form-label">Nueva contraseña *</label>
                 <input type="password" name="password_nueva" id="pw-nueva"
                        class="form-control {% if errores.password_nueva %}is-invalid{% endif %}"
                        placeholder="Mínimo 8 caracteres" required minlength="8">
@@ -321,7 +321,7 @@
                 {% endif %}
               </div>
               <div class="col-md-6">
-                <label class="form-label">Confirmar nueva *</label>
+                <label for="pw-confirma" class="form-label">Confirmar nueva *</label>
                 <input type="password" name="password_confirma" id="pw-confirma"
                        class="form-control {% if errores.password_confirma %}is-invalid{% endif %}"
                        placeholder="Repite la contraseña" required>
@@ -346,7 +346,7 @@
       </div>
 
       <!-- Pestaña 3: Notificaciones -->
-      <div class="modal-tab-panel" id="tab-config" class="d-none">
+      <div class="modal-tab-panel d-none" id="tab-config">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="guardar_config">

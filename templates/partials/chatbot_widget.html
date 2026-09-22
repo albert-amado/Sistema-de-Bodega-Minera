@@ -1,0 +1,164 @@
+{% load static %}
+<!-- Widget Flotante del Asistente Virtual (Chatbot SBM) -->
+<div id="sbmChatbotContainer" class="sbm-chatbot-container" data-user-role="{% if request.session.usuario_rol|lower == 'administrador' or request.session.usuario_rol|lower == 'admin' or request.user.is_staff %}admin{% else %}usuario{% endif %}">
+  
+  <!-- Botón Activador Flotante (Esquina inferior derecha) -->
+  <button id="btnChatbotToggle" 
+          class="sbm-chatbot-trigger" 
+          type="button" 
+          aria-haspopup="dialog" 
+          aria-expanded="false" 
+          aria-controls="chatbotPanel" 
+          aria-label="Abrir Asistente Virtual de Bodega Minera"
+          title="Asistente Virtual Bodega Minera">
+    <span class="sbm-trigger-icon sbm-icon-open">
+      <i class="fa-solid fa-helmet-safety" aria-hidden="true"></i>
+    </span>
+    <span class="sbm-trigger-icon sbm-icon-close">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </span>
+    <span class="sbm-trigger-badge" aria-hidden="true"></span>
+  </button>
+
+  <!-- Panel del Chatbot -->
+  <div id="chatbotPanel" 
+       class="sbm-chatbot-panel" 
+       role="dialog" 
+       aria-modal="false" 
+       aria-labelledby="chatbotHeaderTitle" 
+       aria-hidden="true">
+    
+    <!-- Encabezado con identidad minera e institucional -->
+    <div class="sbm-chat-header">
+      <div class="sbm-chat-avatar-wrapper">
+        <div class="sbm-chat-avatar">
+          <i class="fa-solid fa-helmet-safety" aria-hidden="true"></i>
+        </div>
+        <span class="sbm-chat-status-dot" title="En línea"></span>
+      </div>
+
+      <div class="sbm-chat-header-info">
+        <h2 id="chatbotHeaderTitle" class="sbm-chat-title">Asistente Bodega Minera</h2>
+        <div class="sbm-chat-subtitle">
+          <span class="sbm-status-text">En línea</span>
+          <span class="sbm-badge-role">{% if request.session.usuario_rol|lower == 'administrador' or request.session.usuario_rol|lower == 'admin' or request.user.is_staff %}Bodeguero / Admin{% else %}Aprendiz / Instructor{% endif %}</span>
+        </div>
+      </div>
+
+      <div class="sbm-chat-header-actions">
+        <button id="btnChatbotReset" 
+                class="sbm-chat-btn-header" 
+                type="button" 
+                title="Reiniciar conversación" 
+                aria-label="Reiniciar conversación">
+          <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+        </button>
+        <button id="btnChatbotClose" 
+                class="sbm-chat-btn-header" 
+                type="button" 
+                title="Minimizar asistente (Esc)" 
+                aria-label="Cerrar ventana del asistente">
+          <i class="bi bi-dash-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenedor de mensajes y flujo de conversación -->
+    <div id="chatbotMessages" class="sbm-chat-messages" tabindex="0" aria-live="polite">
+      
+      <!-- Mensaje de bienvenida contextual según rol -->
+      <div class="sbm-chat-message sbm-message-bot">
+        <div class="sbm-bubble">
+          {% if request.session.usuario_rol|lower == 'administrador' or request.session.usuario_rol|lower == 'admin' or request.user.is_staff %}
+          <p><strong>¡Hola, Bodeguero!</strong> Soy tu asistente de soporte para el Sistema de Bodega Minera. Puedo orientarte en la gestión de inventario, aprobación y entrega de préstamos, devoluciones parciales/totales, zonificación AL-ES o configuración de base de datos.</p>
+          {% else %}
+          <p><strong>¡Hola!</strong> Soy tu asistente virtual de bodega. Puedo guiarte para consultar herramientas en catálogo, solicitar préstamos, revisar el estado en "Mis Préstamos" o resolver dudas de uso del sistema.</p>
+          {% endif %}
+          <span class="sbm-msg-time" data-init-time>Ahora</span>
+        </div>
+      </div>
+
+      <!-- Chips de sugerencias rápidas -->
+      <div class="sbm-chat-suggestions">
+        <span class="sbm-suggestions-label"><i class="bi bi-lightbulb-fill"></i> Preguntas frecuentes:</span>
+        <div class="sbm-chips-grid">
+          {% if request.session.usuario_rol|lower == 'administrador' or request.session.usuario_rol|lower == 'admin' or request.user.is_staff %}
+          <button type="button" class="sbm-chip" data-question="¿Cómo entrego un préstamo y descuenta stock?">
+            ¿Cómo entregar un préstamo?
+          </button>
+          <button type="button" class="sbm-chip" data-question="¿Cómo registro una devolución parcial de herramientas?">
+            Devolución parcial
+          </button>
+          <button type="button" class="sbm-chip" data-question="¿Qué significa el código AL-ES y cómo se asigna?">
+            Código AL-ES
+          </button>
+          <button type="button" class="sbm-chip" data-question="¿Qué hace la verificación SofiaPlus de aprendices?">
+            Verificación SofiaPlus
+          </button>
+          {% else %}
+          <button type="button" class="sbm-chip" data-question="¿Cómo solicito el préstamo de una herramienta?">
+            ¿Cómo solicitar herramienta?
+          </button>
+          <button type="button" class="sbm-chip" data-question="¿Dónde puedo consultar el estado de mis préstamos?">
+            Ver mis préstamos
+          </button>
+          <button type="button" class="sbm-chip" data-question="¿Qué significa el código de ubicación AL-ES?">
+            ¿Qué es código AL-ES?
+          </button>
+          <button type="button" class="sbm-chip" data-question="¿Cómo edito la información de mi perfil?">
+            Editar mi perfil
+          </button>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Indicador visual de 'Escribiendo...' (oculto por defecto) -->
+    <div id="chatbotTyping" class="sbm-chat-typing d-none" aria-hidden="true">
+      <div class="sbm-typing-bubble">
+        <span class="sbm-dot"></span>
+        <span class="sbm-dot"></span>
+        <span class="sbm-dot"></span>
+      </div>
+      <span class="sbm-typing-text">Asistente formulando respuesta...</span>
+    </div>
+
+    <!-- Pie con input de texto y controles -->
+    <div class="sbm-chat-footer">
+      <form id="chatbotForm" class="sbm-chat-form" onsubmit="return false;">
+        {% csrf_token %}
+        <div class="sbm-chat-input-row" style="display: flex; align-items: flex-end; gap: 8px; width: 100%;">
+          <div class="sbm-input-wrapper" style="flex: 1 1 auto; min-width: 0; cursor: text;">
+            <textarea id="chatbotInput" 
+                      class="sbm-chat-textarea" 
+                      data-no-validate
+                      rows="1" 
+                      maxlength="500" 
+                      style="width: 100% !important; background: transparent !important; border: none !important; outline: none !important; box-shadow: none !important;"
+                      placeholder="Escribe tu consulta aquí…" 
+                      aria-label="Mensaje para el asistente"></textarea>
+          </div>
+          
+          <button id="btnChatbotSend" 
+                  class="sbm-chat-send-btn" 
+                  type="submit" 
+                  title="Enviar consulta (Enter)" 
+                  aria-label="Enviar mensaje"
+                  style="flex: 0 0 42px; width: 42px; height: 42px;">
+            <i class="bi bi-send-fill" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="sbm-chat-meta-bar">
+          <span class="sbm-chat-disclaimer" title="Tratamiento de datos conforme a la Ley 1581">
+            <i class="bi bi-shield-check" aria-hidden="true"></i>
+            <span>Cumplimiento Ley 1581 - Habeas Data. No envíes contraseñas.</span>
+          </span>
+          <span id="chatbotCharCounter" class="sbm-chat-char-counter">0/500</span>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

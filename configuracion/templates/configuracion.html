@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block css %}
+<style>
+  .btn-save       { background-color: var(--sbm-navy, #0f172a); color: #ffffff; border-radius: 10px; transition: background-color .15s ease-in-out; }
+  .btn-save:hover { background-color: #1e293b; color: #ffffff; }
+  .storage-card   { cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+  .btn-check:checked + .storage-card { border-color: #0d6efd !important; background-color: #f0f5fc !important; }
+</style>
+{% endblock css %}
+
 {% block content %}
 <div class="container py-5 extracted-style-3">
 
@@ -95,8 +104,6 @@
           </div>
         </div>
 
-        
-
         <div class="d-flex justify-content-end">
           <button type="submit" class="btn fw-bold px-4 btn-save">
             <i class="bi bi-floppy-fill me-2"></i>Guardar y Sincronizar Entorno
@@ -108,14 +115,4 @@
   </form>
 
 </div>
-{% endblock %}
-
-
-{% block js %}
-<style>
-  .btn-save       { background-color:#98473E; color:#EFECCA; border-radius:10px; }
-  .btn-save:hover { background-color:#7a3730; color:#EFECCA; }
-  .storage-card   { cursor:pointer; transition:border-color .15s; }
-  .btn-check:checked + .storage-card { border-color:#094D92 !important; background-color:#f0f5fc !important; }
-</style>
 {% endblock %}

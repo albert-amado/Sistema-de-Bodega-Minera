@@ -9,6 +9,10 @@
   /* ── Campos que no deben validarse visualmente ── */
   var SKIP_SELECTORS = [
     '[data-no-validate]',
+    '#chatbotInput',
+    '.sbm-chat-textarea',
+    '#chatbotForm textarea',
+    '#chatbotForm input',
     'input[name="q"]',
     'input[name="busqueda"]',
     '[type="hidden"]',

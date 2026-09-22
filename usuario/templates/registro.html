@@ -61,16 +61,16 @@
 
       <!-- 1. IDENTIFICACIÓN Y VERIFICACIÓN EN SOFIAPLUS -->
       <div class="field-wrap">
-        <span class="field-lbl">Documento de identidad <span class="text-danger">*</span></span>
+        <label for="documento" class="field-lbl">Documento de identidad <span class="text-danger">*</span></label>
         <input type="hidden" id="tipo_documento" name="tipo_documento" value="{{ tipo_documento|default:'CC' }}" />
         <div class="input-group-mine">
           <div class="extracted-style-394">
-            <button type="button" class="sel-btn" id="doc-tipo-btn">{{ tipo_documento|default:'CC' }} ▾</button>
-            <div class="doc-dropdown" id="docDropdown">
-              <a href="#" data-value="CC">CC – Cédula de Ciudadanía</a>
-              <a href="#" data-value="CE">CE – Cédula de Extranjería</a>
-              <a href="#" data-value="PP">PP – Pasaporte</a>
-              <a href="#" data-value="TI">TI – Tarjeta de Identidad</a>
+            <button type="button" class="sel-btn" id="doc-tipo-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="docDropdown">{{ tipo_documento|default:'CC' }} ▾</button>
+            <div class="doc-dropdown" id="docDropdown" role="listbox">
+              <a href="#" data-value="CC" role="option">CC – Cédula de Ciudadanía</a>
+              <a href="#" data-value="CE" role="option">CE – Cédula de Extranjería</a>
+              <a href="#" data-value="PP" role="option">PP – Pasaporte</a>
+              <a href="#" data-value="TI" role="option">TI – Tarjeta de Identidad</a>
             </div>
           </div>
           <input type="text" id="documento" name="documento" class="mine-input"
@@ -83,12 +83,12 @@
       <!-- 2. DATOS PERSONALES (AUTOCOMPLETADOS Y BLOQUEADOS POR SOFIAPLUS) -->
       <div class="row-2 field-wrap">
         <div>
-          <span class="field-lbl">Nombres <small class="text-muted" id="lbl-nombres-info"></small></span>
+          <label for="first_name" class="field-lbl">Nombres <small class="text-muted" id="lbl-nombres-info"></small></label>
           <input type="text" id="first_name" name="first_name" class="mine-input full"
                  placeholder="Se autocompleta con SofiaPlus" value="{{ first_name|default:'' }}" required />
         </div>
         <div>
-          <span class="field-lbl">Apellidos <small class="text-muted" id="lbl-apellidos-info"></small></span>
+          <label for="last_name" class="field-lbl">Apellidos <small class="text-muted" id="lbl-apellidos-info"></small></label>
           <input type="text" id="last_name" name="last_name" class="mine-input full"
                  placeholder="Se autocompleta con SofiaPlus" value="{{ last_name|default:'' }}" required />
         </div>
@@ -97,12 +97,12 @@
       <!-- 3. INFORMACIÓN ACADÉMICA SENA -->
       <div class="row-2 field-wrap">
         <div>
-          <span class="field-lbl">Número de ficha SENA <small class="text-muted" id="lbl-ficha-info"></small></span>
+          <label for="numero_ficha" class="field-lbl">Número de ficha SENA <small class="text-muted" id="lbl-ficha-info"></small></label>
           <input type="text" id="numero_ficha" name="numero_ficha" class="mine-input full"
                  placeholder="Ej. 2758369" value="{{ numero_ficha|default:'' }}" />
         </div>
         <div>
-          <span class="field-lbl">Programa de formación <small class="text-muted" id="lbl-prog-info"></small></span>
+          <label for="nombre_programa" class="field-lbl">Programa de formación <small class="text-muted" id="lbl-prog-info"></small></label>
           <input type="text" id="nombre_programa" name="nombre_programa" class="mine-input full"
                  placeholder="Ej. Supervisión de Labores Mineras" value="{{ nombre_programa|default:'' }}" />
         </div>
@@ -110,19 +110,19 @@
 
       <!-- 4. CREDENCIALES DE ACCESO -->
       <div class="field-wrap">
-        <span class="field-lbl">Correo electrónico</span>
+        <label for="email" class="field-lbl">Correo electrónico <span class="text-danger">*</span></label>
         <input type="email" id="email" name="email" class="mine-input full"
                placeholder="correo@ejemplo.com" value="{{ email|default:'' }}" required />
       </div>
 
       <div class="row-2 field-wrap">
         <div>
-          <span class="field-lbl">Contraseña</span>
+          <label for="password1" class="field-lbl">Contraseña <span class="text-danger">*</span></label>
           <input type="password" id="password1" name="password1" class="mine-input full"
                  placeholder="••••••••" required />
         </div>
         <div>
-          <span class="field-lbl">Confirmar contraseña</span>
+          <label for="password2" class="field-lbl">Confirmar contraseña <span class="text-danger">*</span></label>
           <input type="password" id="password2" name="password2" class="mine-input full"
                  placeholder="••••••••" required />
         </div>

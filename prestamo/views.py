@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from common.mixins import sesion_requerida
 from herramienta.models import Herramienta
@@ -190,18 +191,42 @@ def crear_prestamo(request):
     if request.method == "POST":
         documento = request.POST.get("documento", "").strip()
         ficha = request.POST.get("ficha", "").strip()
+        usuario_id = request.POST.get("usuario", "").strip()
+        fecha_str = request.POST.get("fecha", "").strip()
         observaciones = request.POST.get("observaciones", "").strip()
         herramientas_ids = request.POST.getlist("herramienta[]")
         cantidades = request.POST.getlist("cantidad[]")
 
-        if not documento or not ficha:
-            messages.error(request, "El documento y la ficha SENA son obligatorios.")
+        # 1. Resolver usuario del sistema o por documento
+        usuario_obj = None
+        if documento:
+            usuario_obj = Usuario.objects.filter(documento=documento).first()
+        if not usuario_obj and usuario_id:
+            usuario_obj = Usuario.objects.filter(pk=usuario_id).first()
+            if usuario_obj:
+                documento = usuario_obj.documento
+                if not ficha and getattr(usuario_obj, 'ficha', None):
+                    ficha = usuario_obj.ficha
+
+        if not documento:
+            messages.error(request, "El número de documento del solicitante es obligatorio.")
             return redirect("prestamo")
 
-        usuario_obj = Usuario.objects.filter(documento=documento).first()
+        if not ficha:
+            ficha = getattr(usuario_obj, 'ficha', None) or "Sin Ficha"
+
+        # Si el usuario no existe en la base de datos, crear registro de Aprendiz / Usuario
         if not usuario_obj:
-            messages.error(request, "El usuario con el documento indicado no existe.")
-            return redirect("prestamo")
+            usuario_obj, _ = Usuario.objects.get_or_create(
+                documento=documento,
+                defaults={
+                    'primer_nombre': 'Aprendiz',
+                    'primer_apellido': 'SENA',
+                    'tipo_documento': 'CC',
+                    'rol': 'Usuario',
+                    'ficha': ficha,
+                }
+            )
 
         items_validos = []
         for h_id, cant in zip(herramientas_ids, cantidades):
@@ -226,8 +251,12 @@ def crear_prestamo(request):
             messages.error(request, "Debes seleccionar al menos una herramienta válida con cantidad mayor a 0.")
             return redirect("prestamo")
 
+        from django.utils.dateparse import parse_date
+        fecha_val = parse_date(fecha_str) if fecha_str else timezone.now().date()
+
         nuevo_prestamo = Prestamo.objects.create(
             documento=usuario_obj,
+            fecha=fecha_val or timezone.now().date(),
             ficha=ficha,
             estado=EstadoPrestamo.PENDIENTE,
             observaciones=observaciones,
