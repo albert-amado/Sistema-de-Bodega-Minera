@@ -15,7 +15,9 @@
         btn.classList.toggle('modal-tab--active', btn.dataset.tab === id);
       });
       document.querySelectorAll('.modal-tab-panel').forEach(function (panel) {
-        panel.style.display = panel.id === id ? 'block' : 'none';
+        var activo = (panel.id === id);
+        panel.classList.toggle('d-none', !activo);
+        panel.style.display = activo ? 'block' : 'none';
       });
     }
     window._activarTabPerfil = activarTab;

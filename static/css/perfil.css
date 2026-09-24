@@ -72,3 +72,68 @@
   width: 0;
   transition: width 0.3s, background 0.3s;
 }
+
+/* ── Estilos de resumen de actividad y métricas ── */
+.perfil__style-10 {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--navy, #094d92);
+}
+.perfil__style-11 {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted, #71816d);
+  font-weight: 600;
+}
+.perfil__style-12 {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--sage, #3a7a42);
+}
+.perfil__style-13 {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted, #71816d);
+  font-weight: 600;
+}
+.perfil__style-14 {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--rust, #98473e);
+}
+.perfil__style-15 {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted, #71816d);
+  font-weight: 600;
+}
+.perfil__style-16 {
+  font-size: .75rem;
+}
+.perfil__style-17 {
+  padding: 1rem 1.2rem;
+}
+.perfil__style-18 {
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+
+.notif-channel-item {
+  transition: background-color 0.15s ease;
+}
+.notif-channel-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+.badge-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
