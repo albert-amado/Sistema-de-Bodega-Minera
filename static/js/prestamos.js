@@ -213,8 +213,15 @@ function goToStep(step) {
     }
   }
   limpiarAlerta();
-  document.querySelectorAll('.wizard-step').forEach(function (s) { s.style.display = 'none'; });
-  document.getElementById('step-' + step).style.display = 'block';
+  document.querySelectorAll('.wizard-step').forEach(function (s) {
+    s.classList.add('d-none');
+    s.style.display = 'none';
+  });
+  var activeStep = document.getElementById('step-' + step);
+  if (activeStep) {
+    activeStep.classList.remove('d-none');
+    activeStep.style.display = 'block';
+  }
   currentStep = step;
   var titles = [
     { title:'Paso 1: Responsable del préstamo',   subtitle:'Ingresa datos del solicitante y ficha' },
@@ -227,9 +234,39 @@ function goToStep(step) {
     document.getElementById('wizard-subtitle').textContent = titles[step - 1].subtitle;
   }
   renderWizardProgress();
-  document.getElementById('btn-prev').style.display   = step > 1        ? 'inline-flex' : 'none';
-  document.getElementById('btn-next').style.display   = step < maxSteps ? 'inline-flex' : 'none';
-  document.getElementById('btn-submit').style.display = step === maxSteps ? 'inline-flex' : 'none';
+
+  var btnPrev = document.getElementById('btn-prev');
+  var btnNext = document.getElementById('btn-next');
+  var btnSubmit = document.getElementById('btn-submit');
+
+  if (btnPrev) {
+    if (step > 1) {
+      btnPrev.classList.remove('d-none');
+      btnPrev.style.display = 'inline-flex';
+    } else {
+      btnPrev.classList.add('d-none');
+      btnPrev.style.display = 'none';
+    }
+  }
+  if (btnNext) {
+    if (step < maxSteps) {
+      btnNext.classList.remove('d-none');
+      btnNext.style.display = 'inline-flex';
+    } else {
+      btnNext.classList.add('d-none');
+      btnNext.style.display = 'none';
+    }
+  }
+  if (btnSubmit) {
+    if (step === maxSteps) {
+      btnSubmit.classList.remove('d-none');
+      btnSubmit.style.display = 'inline-flex';
+    } else {
+      btnSubmit.classList.add('d-none');
+      btnSubmit.style.display = 'none';
+    }
+  }
+
   if (step === maxSteps) updateSummary();
   /* Scroll al inicio del body del modal al cambiar paso */
   var body = document.querySelector('#modalCrearPrestamo .modal-body');
@@ -283,12 +320,12 @@ function crearFilaProducto() {
   div.className = 'crear-item-row row g-2 align-items-start mb-2';
   div.innerHTML =
     '<div class="col">' +
-      '<select name="herramienta[]" class="form-select crear-prod-sel" required>' + opciones + '</select>' +
+      '<select name="herramienta[]" class="form-select form-select-sm crear-prod-sel" aria-label="Seleccionar herramienta" required>' + opciones + '</select>' +
       '<div class="stock-info-dyn d-none mt-1 px-2 py-1 rounded" style="font-size:.78rem;display:flex;align-items:center;gap:.4rem;"></div>' +
     '</div>' +
-    '<div class="col-auto" style="width:90px;"><input type="number" name="cantidad[]" class="form-control text-center" min="1" value="1" required></div>' +
-    '<div class="col-auto"><button type="button" class="btn-ghost crear-del-btn" style="width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;">' +
-      '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+    '<div class="col-auto w-input-sm"><input type="number" name="cantidad[]" class="form-control form-control-sm text-center" min="1" max="50" step="1" pattern="\\d*" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" value="1" placeholder="Cant." aria-label="Cantidad" required></div>' +
+    '<div class="col-auto"><button type="button" class="btn btn-outline-danger btn-sm crear-del-btn" aria-label="Eliminar herramienta" style="width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;">' +
+      '<i class="bi bi-trash"></i>' +
     '</button></div>';
   div.querySelector('.crear-prod-sel').addEventListener('change', function () {
     var info = div.querySelector('.stock-info-dyn');
@@ -335,8 +372,9 @@ if (userSelect) {
     var opt = this.options[this.selectedIndex];
     var doc = opt ? opt.dataset.doc : '';
     var docInp = document.getElementById('id_documento');
-    if (doc && docInp && !docInp.value) {
+    if (doc && docInp) {
       docInp.value = doc;
+      docInp.classList.remove('is-invalid');
     }
   });
 }

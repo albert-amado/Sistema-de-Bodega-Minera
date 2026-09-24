@@ -91,23 +91,25 @@
 
       <!-- Pill User Avatar + Name Dropup (Right) -->
       <div class="dropup flex-grow-1 min-w-0">
-        <button type="button" class="btn btn-profile-pill w-100 d-flex align-items-center justify-content-between px-2 py-1"
-          data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-          <div class="d-flex align-items-center gap-2 text-truncate me-1">
+        <button type="button"
+          class="btn btn-profile-pill w-100"
+          data-bs-toggle="dropdown"
+          data-bs-display="static"
+          aria-expanded="false"
+          style="position: relative !important; display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: flex-start !important; width: 100% !important; height: 40px !important; min-height: 40px !important; max-height: 40px !important; padding: 4px 28px 4px 4px !important; overflow: hidden !important; border-radius: 50px !important; box-sizing: border-box !important;">
+          <div style="display: flex !important; align-items: center !important; gap: 8px !important; min-width: 0 !important; width: 100% !important; overflow: hidden !important;">
             {% with nombre=request.session.usuario_nombre|default:"Invitado" %}
             <div class="profile-avatar-circle flex-shrink-0 fw-bold text-white">
               {{ nombre|slice:":2"|upper }}
             </div>
             {% with partes=nombre.split %}
-            <span class="profile-pill-name text-truncate text-start ms-1">
+            <span class="profile-pill-name" style="min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; text-align: left !important; display: block !important;">
               {{ partes.0 }} {% if partes|length > 1 %}{{ partes.1 }}{% endif %}
             </span>
             {% endwith %}
             {% endwith %}
           </div>
-          <svg class="profile-pill-caret opacity-75 flex-shrink-0" width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
-            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
-          </svg>
+          <i class="bi bi-chevron-right profile-pill-caret" aria-hidden="true"></i>
         </button>
 
         <ul class="dropdown-menu dropdown-menu-end shadow aside-profile-dropdown">

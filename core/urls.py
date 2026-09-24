@@ -34,4 +34,5 @@ urlpatterns = [
     # Rutas auxiliares de navegación
     path('reportes/', prestamo_views.prestamo_lista, name='reportes'),
     path('api/notificaciones/', prestamo_views.notificaciones_json, name='notificaciones_json'),
+    path('api/chatbot/', include('chatbot.urls')),
 ]

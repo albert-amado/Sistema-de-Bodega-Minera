@@ -27,7 +27,7 @@ $(document).ready(function() {
     var table = window.initSBMDataTable('#prestamo-table', {
         modulo: 'prestamos',
         dom: '<"row mb-3 align-items-center g-2"<"col-sm-6"l><"col-sm-6 text-sm-end"B>>t<"row mt-3 align-items-center g-2"<"col-md-6 col-sm-12 text-muted small"i><"col-md-6 col-sm-12 d-flex justify-content-md-end"p>>',
-        order: [[5, 'desc']], // Ordenar por fecha de solicitud descendente por defecto
+        order: [[0, 'desc']], // Ordenar por # ID descendente: desde el último préstamo realizado al primero
         columnDefs: [
             { orderable: false, targets: [1, 6] } // Herramientas (1) y Acciones (6) no ordenables
         ],

@@ -88,40 +88,40 @@
 
             <div class="row g-2 mb-2">
               <div class="col-md-4">
-                <label class="form-label config-label small fw-semibold">Motor</label>
+                <label for="cloud_driver" class="form-label config-label small fw-semibold">Motor</label>
                 <select name="driver" id="cloud_driver" class="form-select form-select-sm config-input">
                   <option value="postgresql" {% if cloud_db.driver == 'postgresql' %}selected{% endif %}>PostgreSQL</option>
                   <option value="mysql" {% if cloud_db.driver == 'mysql' %}selected{% endif %}>MySQL</option>
                 </select>
               </div>
               <div class="col-md-5">
-                <label class="form-label config-label small fw-semibold">Host / Servidor</label>
+                <label for="cloud_host" class="form-label config-label small fw-semibold">Host / Servidor</label>
                 <input type="text" name="host" id="cloud_host" class="form-control form-control-sm config-input" value="{{ cloud_db.host }}" required>
               </div>
               <div class="col-md-3">
-                <label class="form-label config-label small fw-semibold">Puerto</label>
+                <label for="cloud_port" class="form-label config-label small fw-semibold">Puerto</label>
                 <input type="number" name="port" id="cloud_port" class="form-control form-control-sm config-input" value="{{ cloud_db.port }}" required>
               </div>
             </div>
 
             <div class="row g-2 mb-2">
               <div class="col-md-4">
-                <label class="form-label config-label small fw-semibold">Database Name</label>
+                <label for="cloud_name" class="form-label config-label small fw-semibold">Database Name</label>
                 <input type="text" name="name" id="cloud_name" class="form-control form-control-sm config-input" value="{{ cloud_db.name }}" required>
               </div>
               <div class="col-md-4">
-                <label class="form-label config-label small fw-semibold">Usuario</label>
+                <label for="cloud_user" class="form-label config-label small fw-semibold">Usuario</label>
                 <input type="text" name="user" id="cloud_user" class="form-control form-control-sm config-input" value="{{ cloud_db.user }}" required>
               </div>
               <div class="col-md-4">
-                <label class="form-label config-label small fw-semibold">Contraseña</label>
+                <label for="cloud_password" class="form-label config-label small fw-semibold">Contraseña</label>
                 <input type="password" name="password" id="cloud_password" class="form-control form-control-sm config-input" placeholder="••••••••">
               </div>
             </div>
 
             <div class="row g-2 mb-3">
               <div class="col-md-6">
-                <label class="form-label config-label small fw-semibold">SSL Mode</label>
+                <label for="cloud_ssl" class="form-label config-label small fw-semibold">SSL Mode</label>
                 <select name="ssl_mode" id="cloud_ssl" class="form-select form-select-sm config-input">
                   <option value="require" {% if cloud_db.ssl_mode == 'require' %}selected{% endif %}>Require (Recomendado Nube)</option>
                   <option value="prefer" {% if cloud_db.ssl_mode == 'prefer' %}selected{% endif %}>Prefer</option>
@@ -152,23 +152,23 @@
 
             <div class="row g-2 mb-2">
               <div class="col-md-6">
-                <label class="form-label config-label small fw-semibold">Zona Horaria</label>
-                <input type="text" name="timezone" class="form-control form-control-sm config-input" value="{{ system.timezone }}" required>
+                <label for="sys_timezone" class="form-label config-label small fw-semibold">Zona Horaria</label>
+                <input type="text" name="timezone" id="sys_timezone" class="form-control form-control-sm config-input" value="{{ system.timezone }}" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label config-label small fw-semibold">Idioma / Localización</label>
-                <input type="text" name="language_code" class="form-control form-control-sm config-input" value="{{ system.language_code }}" required>
+                <label for="sys_language_code" class="form-label config-label small fw-semibold">Idioma / Localización</label>
+                <input type="text" name="language_code" id="sys_language_code" class="form-control form-control-sm config-input" value="{{ system.language_code }}" required>
               </div>
             </div>
 
             <div class="row g-2 mb-3">
               <div class="col-md-6">
-                <label class="form-label config-label small fw-semibold">Símbolo de Moneda</label>
-                <input type="text" name="currency_symbol" class="form-control form-control-sm config-input" value="{{ system.currency_symbol }}" required>
+                <label for="sys_currency_symbol" class="form-label config-label small fw-semibold">Símbolo de Moneda</label>
+                <input type="text" name="currency_symbol" id="sys_currency_symbol" class="form-control form-control-sm config-input" value="{{ system.currency_symbol }}" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label config-label small fw-semibold">Nivel de Logs</label>
-                <select name="log_level" class="form-select form-select-sm config-input">
+                <label for="sys_log_level" class="form-label config-label small fw-semibold">Nivel de Logs</label>
+                <select name="log_level" id="sys_log_level" class="form-select form-select-sm config-input">
                   <option value="DEBUG" {% if system.log_level == 'DEBUG' %}selected{% endif %}>DEBUG</option>
                   <option value="INFO" {% if system.log_level == 'INFO' %}selected{% endif %}>INFO</option>
                   <option value="WARNING" {% if system.log_level == 'WARNING' %}selected{% endif %}>WARNING</option>

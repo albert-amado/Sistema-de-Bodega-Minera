@@ -64,7 +64,7 @@
     <div class="sfb-divider"></div>
 
     <!-- Filtro por Rol -->
-    <select name="rol" class="sfb-select" onchange="this.form.submit()">
+    <select name="rol" id="filtro_rol" class="sfb-select" onchange="this.form.submit()" aria-label="Filtrar por rol">
       <option value="">Todos los roles</option>
       {% for rol in roles %}
         <option value="{{ rol.id }}" {% if rol_id == rol.id|stringformat:"s" %}selected{% endif %}>
@@ -74,7 +74,7 @@
     </select>
 
     <!-- Filtro por tipo de documento -->
-    <select name="tipo_doc" class="sfb-select" onchange="this.form.submit()">
+    <select name="tipo_doc" id="filtro_tipo_doc" class="sfb-select" onchange="this.form.submit()" aria-label="Filtrar por tipo de documento">
       <option value="">Todos los tipos</option>
       {% for val, label in tipos_doc %}
         <option value="{{ val }}" {% if tipo_doc == val %}selected{% endif %}>{{ label }}</option>
@@ -401,42 +401,42 @@
         <div class="modal-body p-4">
           <div class="row g-3">
             <div class="col-md-4">
-              <label class="form-label small fw-bold">Tipo de documento</label>
+              <label for="edit_tipo_doc_display" class="form-label small fw-bold">Tipo de documento</label>
               <input type="text" id="edit_tipo_doc_display" class="form-control form-control-sm bg-light" disabled>
             </div>
             <div class="col-md-8">
-              <label class="form-label small fw-bold">Número de documento</label>
+              <label for="edit_num_doc_display" class="form-label small fw-bold">Número de documento</label>
               <input type="text" id="edit_num_doc_display" class="form-control form-control-sm bg-light" disabled>
               <small class="text-muted">El documento no puede modificarse directamente.</small>
             </div>
 
             <div class="col-12">
-              <label class="form-label small fw-bold">Nombre completo *</label>
+              <label for="edit_nombre" class="form-label small fw-bold">Nombre completo *</label>
               <input type="text" name="nombre_completo" id="edit_nombre" class="form-control form-control-sm" placeholder="Nombre completo" required>
             </div>
 
             <div class="col-md-7">
-              <label class="form-label small fw-bold">Correo electrónico *</label>
+              <label for="edit_correo" class="form-label small fw-bold">Correo electrónico *</label>
               <input type="email" name="correo" id="edit_correo" class="form-control form-control-sm" placeholder="correo@ejemplo.com" required>
             </div>
 
             <div class="col-md-5">
-              <label class="form-label small fw-bold">Teléfono</label>
+              <label for="edit_telefono" class="form-label small fw-bold">Teléfono</label>
               <input type="text" name="telefono" id="edit_telefono" class="form-control form-control-sm" placeholder="Ej: 3001234567" maxlength="20">
             </div>
 
             <div class="col-md-6">
-              <label class="form-label small fw-bold">Número de ficha</label>
+              <label for="edit_ficha" class="form-label small fw-bold">Número de ficha</label>
               <input type="text" name="numero_ficha" id="edit_ficha" class="form-control form-control-sm" placeholder="Número de ficha">
             </div>
 
             <div class="col-md-6">
-              <label class="form-label small fw-bold">Nombre del programa</label>
+              <label for="edit_programa" class="form-label small fw-bold">Nombre del programa</label>
               <input type="text" name="nombre_programa" id="edit_programa" class="form-control form-control-sm" placeholder="Programa de formación">
             </div>
 
             <div class="col-md-6">
-              <label class="form-label small fw-bold">Rol *</label>
+              <label for="edit_rol" class="form-label small fw-bold">Rol *</label>
               <select name="rol" id="edit_rol" class="form-select form-select-sm" required>
                 {% for rol in roles %}
                 <option value="{{ rol.id }}">{{ rol.nombre }}</option>
@@ -445,7 +445,7 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label small fw-bold">Nueva contraseña <span class="text-muted fw-normal">(opcional)</span></label>
+              <label for="edit_password" class="form-label small fw-bold">Nueva contraseña <span class="text-muted fw-normal">(opcional)</span></label>
               <div class="position-relative">
                 <input type="password" name="nueva_password" id="edit_password" class="form-control form-control-sm" placeholder="Mínimo 8 caracteres" minlength="8">
                 <button type="button" id="toggleEditPw" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted p-1 me-1 text-decoration-none">

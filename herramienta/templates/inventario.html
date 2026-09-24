@@ -113,43 +113,42 @@
   </div>
 </div>
 
-<!-- Filter Bar -->
-<div class="sfb-wrap sfb-wrap--stacked mb-4">
+<!-- Filter Bar (Una sola línea moderna y cohesiva) -->
+<div class="sfb-wrap mb-4">
 
-  <!-- FILA 1: Búsqueda ocupa todo el ancho -->
-  <div class="sfb-search-group">
+  <!-- Búsqueda en tiempo real (Largo a todo el ancho disponible) -->
+  <div class="sfb-search-group" style="display: block !important; flex: 1 1 auto !important; width: 100% !important; min-width: 0 !important; position: relative !important;">
     <i class="bi bi-search sfb-search-icon"></i>
     <input type="text" id="inventario-busqueda" class="sfb-search-input"
+           style="display: block !important; width: 100% !important; box-sizing: border-box !important;"
            placeholder="Buscar por SKU o nombre de herramienta…"
            value="{{ request.GET.busqueda|default:'' }}"
            autocomplete="off">
   </div>
 
-  <!-- FILA 2: Filtros y acciones compactos -->
-  <div class="sfb-row2">
-    <!-- Selector de categoría -->
-    <select id="inventario-categoria" class="sfb-select sfb-select--grow">
-      <option value="">— Todas las Categorías —</option>
-      {% for cat in categorias %}
-      <option value="{{ cat.pk }}" {% if request.GET.categoria == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
-      {% endfor %}
-    </select>
+  <div class="sfb-divider"></div>
 
-    <!-- Spacer -->
-    <span class="sfb-row2-spacer"></span>
+  <!-- Selector de categoría -->
+  <select id="inventario-categoria" class="sfb-select" style="flex: 0 0 auto; width: auto; min-width: 220px;" aria-label="Filtrar por categoría">
+    <option value="">— Todas las Categorías —</option>
+    {% for cat in categorias %}
+    <option value="{{ cat.pk }}" {% if request.GET.categoria == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
+    {% endfor %}
+  </select>
 
-    <!-- Botón nueva categoría -->
-    <button type="button" class="sfb-btn-add"
-            data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria"
-            title="Nueva categoría">
-      <i class="bi bi-plus-lg"></i>
-    </button>
+  <!-- Botón nueva categoría -->
+  <button type="button" class="sfb-btn-add"
+          data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria"
+          title="Nueva categoría">
+    <i class="bi bi-plus-lg"></i>
+  </button>
 
-    <!-- Limpiar -->
-    <button type="button" id="btn-limpiar-filtros" class="sfb-btn-secondary" title="Limpiar filtros">
-      <i class="bi bi-x-circle"></i> Limpiar
-    </button>
-  </div>
+  <div class="sfb-divider"></div>
+
+  <!-- Limpiar -->
+  <button type="button" id="btn-limpiar-filtros" class="sfb-btn-secondary" style="flex: 0 0 auto;" title="Limpiar filtros">
+    <i class="bi bi-x-circle"></i> Limpiar
+  </button>
 
 </div>
 
@@ -322,7 +321,7 @@
           </div>
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Usuario *</label>
+              <label for="prestamo_usuario" class="form-label text-muted fw-bold small uppercase mb-1">Usuario *</label>
               <select name="usuario" id="prestamo_usuario" class="form-select" required onchange="actualizarNombreUsuario();">
                 <option value="">— Selecciona usuario —</option>
                 {% for usuario in usuarios_sistema %}
@@ -333,20 +332,20 @@
               </select>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre Completo</label>
+              <label for="prestamo_nombre_usuario" class="form-label text-muted fw-bold small uppercase mb-1">Nombre Completo</label>
               <input type="text" name="nombre_usuario" id="prestamo_nombre_usuario" class="form-control" placeholder="Se autocompletará" readonly required>
             </div>
             <div class="col-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Cantidad a Prestar *</label>
-              <input type="number" name="cantidad[]" class="form-control" min="1" value="1" required>
+              <label for="prestamo_cantidad" class="form-label text-muted fw-bold small uppercase mb-1">Cantidad a Prestar *</label>
+              <input type="number" name="cantidad[]" id="prestamo_cantidad" class="form-control" min="1" value="1" required>
             </div>
             <div class="col-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha de Devolución Estimada</label>
-              <input type="date" name="fecha_vencimiento" class="form-control">
+              <label for="prestamo_fecha_vencimiento" class="form-label text-muted fw-bold small uppercase mb-1">Fecha de Devolución Estimada</label>
+              <input type="date" name="fecha_vencimiento" id="prestamo_fecha_vencimiento" class="form-control">
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Observación inicial</label>
-              <textarea name="observaciones" class="form-control" rows="2" placeholder="Frente de trabajo, área de minas, etc..."></textarea>
+              <label for="prestamo_observaciones" class="form-label text-muted fw-bold small uppercase mb-1">Observación inicial</label>
+              <textarea name="observaciones" id="prestamo_observaciones" class="form-control" rows="2" placeholder="Frente de trabajo, área de minas, etc..."></textarea>
             </div>
           </div>
         </div>
@@ -413,16 +412,16 @@
 
           <div class="row g-3">
             <div class="col-md-4">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Código SKU *</label>
-              <input type="text" name="codigo_sku" class="form-control" placeholder="Ej: SKU-001" value="{{ post_sku }}" required>
+              <label for="nueva_sku" class="form-label text-muted fw-bold small uppercase mb-1">Código SKU *</label>
+              <input type="text" name="codigo_sku" id="nueva_sku" class="form-control" placeholder="Ej: SKU-001" value="{{ post_sku }}" required>
             </div>
             <div class="col-md-8">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre *</label>
-              <input type="text" name="nombre" class="form-control" placeholder="Nombre de la herramienta" value="{{ post_nombre }}" required>
+              <label for="nueva_nombre" class="form-label text-muted fw-bold small uppercase mb-1">Nombre *</label>
+              <input type="text" name="nombre" id="nueva_nombre" class="form-control" placeholder="Nombre de la herramienta" value="{{ post_nombre }}" required>
             </div>
             <div class="col-md-6">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <label class="form-label text-muted fw-bold small uppercase mb-0">Categoría</label>
+                <label for="select-categoria-nueva" class="form-label text-muted fw-bold small uppercase mb-0">Categoría</label>
                 <button type="button" class="btn btn-sm btn-outline-success py-0 px-2" onclick="abrirCategoriaDesdeProducto();" title="Crear categoría instantánea">
                   <i class="bi bi-plus-lg"></i>
                 </button>
@@ -435,19 +434,19 @@
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Stock / Cantidad inicial</label>
-              <input type="number" name="stock" class="form-control" min="0" max="10000" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="{{ post_stock|default:1 }}" required>
+              <label for="nueva_stock" class="form-label text-muted fw-bold small uppercase mb-1">Stock / Cantidad inicial</label>
+              <input type="number" name="stock" id="nueva_stock" class="form-control" min="0" max="10000" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="{{ post_stock|default:1 }}" required>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
-              <textarea name="descripcion" class="form-control" rows="3" maxlength="500" placeholder="Descripción (opcional)">{{ post_descripcion }}</textarea>
+              <label for="nueva_descripcion" class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
+              <textarea name="descripcion" id="nueva_descripcion" class="form-control" rows="3" maxlength="500" placeholder="Descripción (opcional)">{{ post_descripcion }}</textarea>
             </div>
           </div>
 
           <div class="modal-section-title mt-4">Ubicación física</div>
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén</label>
+              <label for="nueva_almacen" class="form-label text-muted fw-bold small uppercase mb-1">Almacén</label>
               <select id="nueva_almacen" class="form-select">
                 <option value="">-- Selecciona almacén --</option>
                 {% for alm in almacenes %}
@@ -456,7 +455,7 @@
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Estante</label>
+              <label for="nueva_estante" class="form-label text-muted fw-bold small uppercase mb-1">Estante</label>
               <select name="estante" id="nueva_estante" class="form-select" disabled>
                 <option value="">-- Selecciona un almacén primero --</option>
               </select>
@@ -486,15 +485,15 @@
         <div class="modal-body p-4">
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Código / SKU</label>
+              <label for="edit_sku" class="form-label text-muted fw-bold small uppercase mb-1">Código / SKU</label>
               <input type="text" name="codigo_sku" id="edit_sku" class="form-control" required>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre</label>
+              <label for="edit_nombre" class="form-label text-muted fw-bold small uppercase mb-1">Nombre</label>
               <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Categoría</label>
+              <label for="edit_categoria" class="form-label text-muted fw-bold small uppercase mb-1">Categoría</label>
               <select name="categoria" id="edit_categoria" class="form-select">
                 <option value="">-- Sin Categoría --</option>
                 {% for cat in categorias %}
@@ -503,7 +502,7 @@
               </select>
             </div>
             <div class="col-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén</label>
+              <label for="edit_almacen" class="form-label text-muted fw-bold small uppercase mb-1">Almacén</label>
               <select id="edit_almacen" class="form-select">
                 <option value="">-- Selecciona almacén --</option>
                 {% for alm in almacenes %}
@@ -512,17 +511,17 @@
               </select>
             </div>
             <div class="col-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Estante</label>
+              <label for="edit_estante" class="form-label text-muted fw-bold small uppercase mb-1">Estante</label>
               <select name="estante" id="edit_estante" class="form-select" disabled>
                 <option value="">-- Selecciona un almacén primero --</option>
               </select>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Stock / Cantidad</label>
+              <label for="edit_stock" class="form-label text-muted fw-bold small uppercase mb-1">Stock / Cantidad</label>
               <input type="number" name="stock" id="edit_stock" class="form-control" min="0" max="10000" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
+              <label for="edit_descripcion" class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
               <textarea name="descripcion" id="edit_descripcion" class="form-control" rows="3" maxlength="500"></textarea>
             </div>
           </div>
@@ -561,12 +560,12 @@
           {% endif %}
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre de la Categoría *</label>
-              <input type="text" name="cat_nombre" class="form-control" placeholder="Ej: Herramientas Eléctricas" value="{{ post_cat_nombre }}" required>
+              <label for="nueva_cat_nombre" class="form-label text-muted fw-bold small uppercase mb-1">Nombre de la Categoría *</label>
+              <input type="text" name="cat_nombre" id="nueva_cat_nombre" class="form-control" placeholder="Ej: Herramientas Eléctricas" value="{{ post_cat_nombre }}" required>
             </div>
             <div class="col-12">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción corta</label>
-              <textarea name="cat_descripcion" class="form-control" rows="2" placeholder="Opcional...">{{ post_cat_descripcion }}</textarea>
+              <label for="nueva_cat_descripcion" class="form-label text-muted fw-bold small uppercase mb-1">Descripción corta</label>
+              <textarea name="cat_descripcion" id="nueva_cat_descripcion" class="form-control" rows="2" placeholder="Opcional...">{{ post_cat_descripcion }}</textarea>
             </div>
           </div>
         </div>

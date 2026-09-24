@@ -87,26 +87,29 @@
 
     <!-- Resumen de actividad -->
     <div class="card">
-      <div class="card-header">
+      <div class="card-header d-flex align-items-center justify-content-between">
         <span class="card-title">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
           Actividad reciente
         </span>
+        {% if es_admin and not tiene_personales %}
+          <span class="badge bg-light text-muted border extra-small fw-normal">Consolidado general</span>
+        {% endif %}
       </div>
       <div class="card-body">
         <div class="row g-3 text-center">
           <div class="col-4">
-            <div class="perfil__style-10">—</div>
+            <div class="perfil__style-10">{{ prestamos_count|default:0 }}</div>
             <div class="perfil__style-11">Préstamos</div>
           </div>
           <div class="col-4">
-            <div class="perfil__style-12">—</div>
+            <div class="perfil__style-12">{{ devoluciones_count|default:0 }}</div>
             <div class="perfil__style-13">Devoluciones</div>
           </div>
           <div class="col-4">
-            <div class="perfil__style-14">—</div>
+            <div class="perfil__style-14">{{ vencidos_count|default:0 }}</div>
             <div class="perfil__style-15">Vencidos</div>
           </div>
         </div>
@@ -127,9 +130,106 @@
       </div>
       <div class="card-body perfil__style-17">
         <div class="perfil__style-18">
-          {% include "partials/_notif_row.html" with activa=cfg_notif_prestamos label="Nuevos préstamos asignados" %}
-          {% include "partials/_notif_row.html" with activa=cfg_notif_vencimientos label="Préstamos próximos a vencer" %}
-          {% include "partials/_notif_row.html" with activa=cfg_notif_devoluciones label="Devoluciones pendientes de revisión" %}
+          <div class="notif-channel-item d-flex align-items-center justify-content-between p-2 rounded">
+            <div class="d-flex align-items-center gap-3 min-w-0">
+              <div class="notif-channel-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:36px; height:36px; background: rgba(9, 77, 146, 0.08); color: var(--navy);">
+                <i class="bi bi-box-arrow-right"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="fw-semibold text-dark small">Nuevos préstamos asignados</div>
+                <div class="text-muted extra-small text-truncate">
+                  {% if es_admin and not tiene_personales %}
+                    {{ pendientes_count|default:0 }} pendiente{{ pendientes_count|pluralize }} por revisar · {{ prestamos_activos_count|default:0 }} activo{{ prestamos_activos_count|pluralize }}
+                  {% else %}
+                    {{ prestamos_activos_count|default:0 }} préstamo{{ prestamos_activos_count|pluralize }} activo{{ prestamos_activos_count|pluralize }} en uso
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div>
+              {% if cfg_notif_prestamos %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 extra-small">Activa</span>
+              {% else %}
+                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1 extra-small">Inactiva</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="notif-channel-item d-flex align-items-center justify-content-between p-2 rounded">
+            <div class="d-flex align-items-center gap-3 min-w-0">
+              <div class="notif-channel-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:36px; height:36px; background: rgba(239, 68, 68, 0.08); color: var(--rust, #ef4444);">
+                <i class="bi bi-exclamation-triangle"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="fw-semibold text-dark small">Préstamos próximos a vencer</div>
+                <div class="text-muted extra-small text-truncate">
+                  {% if vencidos_count > 0 %}
+                    <span class="text-danger fw-semibold">{{ vencidos_count }} vencido{{ vencidos_count|pluralize }}</span> requieren atención
+                  {% else %}
+                    Sin préstamos vencidos en este momento
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div>
+              {% if cfg_notif_vencimientos %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 extra-small">Activa</span>
+              {% else %}
+                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1 extra-small">Inactiva</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="notif-channel-item d-flex align-items-center justify-content-between p-2 rounded">
+            <div class="d-flex align-items-center gap-3 min-w-0">
+              <div class="notif-channel-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:36px; height:36px; background: rgba(58, 122, 66, 0.08); color: var(--sage, #3a7a42);">
+                <i class="bi bi-arrow-counterclockwise"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="fw-semibold text-dark small">Devoluciones registradas</div>
+                <div class="text-muted extra-small text-truncate">
+                  {{ devoluciones_count|default:0 }} devolución{{ devoluciones_count|pluralize }} en el historial
+                </div>
+              </div>
+            </div>
+            <div>
+              {% if cfg_notif_devoluciones %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 extra-small">Activa</span>
+              {% else %}
+                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1 extra-small">Inactiva</span>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if alertas_recientes %}
+          <hr class="my-2 opacity-10">
+          <div class="d-flex align-items-center justify-content-between mb-1 px-1">
+            <span class="text-uppercase text-muted extra-small font-monospace fw-bold">Alertas en tiempo real</span>
+            <span class="badge bg-light text-muted border extra-small">{{ alertas_recientes|length }}</span>
+          </div>
+          <div class="d-flex flex-column gap-2">
+            {% for a in alertas_recientes %}
+            <div class="d-flex align-items-start gap-2 p-2 rounded bg-light border-0">
+              <div class="mt-1 flex-shrink-0">
+                {% if a.tipo == 'vencido' %}
+                  <span class="badge-dot bg-danger"></span>
+                {% elif a.tipo == 'activo' %}
+                  <span class="badge-dot bg-warning"></span>
+                {% else %}
+                  <span class="badge-dot bg-success"></span>
+                {% endif %}
+              </div>
+              <div class="min-w-0 flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <span class="fw-semibold small text-dark">{{ a.titulo }}</span>
+                  <span class="badge {{ a.badge_class }} extra-small">{{ a.badge }}</span>
+                </div>
+                <div class="text-muted extra-small text-truncate">{{ a.desc }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -141,7 +241,10 @@
 <!-- ══════════════════════════════════════════════════
      MODAL DE PERFIL (3 pestañas)
 ══════════════════════════════════════════════════ -->
-<div class="modal fade" id="modalPerfil" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalPerfil" tabindex="-1" aria-hidden="true"
+     {% if errores and accion_activa %}
+     data-active-tab="{% if accion_activa == 'editar_perfil' %}tab-datos{% elif accion_activa == 'cambiar_password' %}tab-password{% elif accion_activa == 'guardar_config' %}tab-config{% else %}tab-datos{% endif %}"
+     {% endif %}>
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
 
@@ -183,12 +286,12 @@
 
               <!-- Documento (solo lectura) -->
               <div class="col-md-6">
-                <label class="form-label">Tipo de documento</label>
-                <input type="text" class="form-control perfil__style-26" value="{{ usuario.get_tipo_documento_display }}" disabled>
+                <label for="perfil_tipo_doc" class="form-label">Tipo de documento</label>
+                <input type="text" id="perfil_tipo_doc" class="form-control perfil__style-26" value="{{ usuario.get_tipo_documento_display }}" disabled>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Número de documento</label>
-                <input type="text" class="form-control perfil__style-27" value="{{ usuario.numero_documento }}" disabled>
+                <label for="perfil_num_doc" class="form-label">Número de documento</label>
+                <input type="text" id="perfil_num_doc" class="form-control perfil__style-27" value="{{ usuario.numero_documento }}" disabled>
                 <div class="perfil__style-28">
                   El documento no puede modificarse.
                 </div>
@@ -196,8 +299,8 @@
 
               <!-- Nombre -->
               <div class="col-12">
-                <label class="form-label">Nombre completo *</label>
-                <input type="text" name="nombre_completo" class="form-control
+                <label for="perfil_nombre" class="form-label">Nombre completo *</label>
+                <input type="text" id="perfil_nombre" name="nombre_completo" class="form-control
                        {% if errores.nombre_completo %}is-invalid{% endif %}"
                        value="{{ usuario.nombre_completo }}"
                        placeholder="Tu nombre completo" required>
@@ -208,8 +311,8 @@
 
               <!-- Correo -->
               <div class="col-md-7">
-                <label class="form-label">Correo electrónico *</label>
-                <input type="email" name="correo" class="form-control
+                <label for="perfil_correo" class="form-label">Correo electrónico *</label>
+                <input type="email" id="perfil_correo" name="correo" class="form-control
                        {% if errores.correo %}is-invalid{% endif %}"
                        value="{{ usuario.correo }}"
                        placeholder="tu@correo.com" required>
@@ -220,8 +323,8 @@
 
               <!-- Teléfono -->
               <div class="col-md-5">
-                <label class="form-label">Teléfono</label>
-                <input type="text" name="telefono" class="form-control
+                <label for="perfil_telefono" class="form-label">Teléfono</label>
+                <input type="text" id="perfil_telefono" name="telefono" class="form-control
                        {% if errores.telefono %}is-invalid{% endif %}"
                        value="{{ usuario.telefono|default:'' }}"
                        placeholder="Ej: 3001234567" maxlength="20">
@@ -232,8 +335,8 @@
 
               <!-- Número de ficha -->
               <div class="col-md-5">
-                <label class="form-label">Número de ficha</label>
-                <select name="numero_ficha" class="form-select">
+                <label for="perfil_ficha" class="form-label">Número de ficha</label>
+                <select id="perfil_ficha" name="numero_ficha" class="form-select">
                   <option value="">-- Seleccionar Ficha --</option>
                   <option value="2758369" {% if usuario.numero_ficha == "2758369" %}selected{% endif %}>2758369</option>
                   <option value="2827435" {% if usuario.numero_ficha == "2827435" %}selected{% endif %}>2827435</option>
@@ -247,8 +350,8 @@
 
               <!-- Nombre del programa -->
               <div class="col-md-7">
-                <label class="form-label">Nombre del programa</label>
-                <select name="nombre_programa" class="form-select">
+                <label for="perfil_programa" class="form-label">Nombre del programa</label>
+                <select id="perfil_programa" name="nombre_programa" class="form-select">
                   <option value="">-- Seleccionar Programa --</option>
                   <option value="Análisis y Desarrollo de Software (ADSO)" {% if usuario.nombre_programa == "Análisis y Desarrollo de Software (ADSO)" %}selected{% endif %}>Análisis y Desarrollo de Software (ADSO)</option>
                   <option value="Sistemas" {% if usuario.nombre_programa == "Sistemas" %}selected{% endif %}>Sistemas</option>
@@ -279,7 +382,7 @@
       </div>
 
       <!-- Pestaña 2: Contraseña -->
-      <div class="modal-tab-panel" id="tab-password" class="d-none">
+      <div class="modal-tab-panel d-none" id="tab-password">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="cambiar_password">
@@ -299,7 +402,7 @@
 
             <div class="row g-3">
               <div class="col-12">
-                <label class="form-label">Contraseña actual *</label>
+                <label for="pw-actual" class="form-label">Contraseña actual *</label>
                 <input type="password" name="password_actual" id="pw-actual"
                        class="form-control {% if errores.password_actual %}is-invalid{% endif %}"
                        placeholder="Tu contraseña actual" required>
@@ -308,7 +411,7 @@
                 {% endif %}
               </div>
               <div class="col-md-6">
-                <label class="form-label">Nueva contraseña *</label>
+                <label for="pw-nueva" class="form-label">Nueva contraseña *</label>
                 <input type="password" name="password_nueva" id="pw-nueva"
                        class="form-control {% if errores.password_nueva %}is-invalid{% endif %}"
                        placeholder="Mínimo 8 caracteres" required minlength="8">
@@ -321,7 +424,7 @@
                 {% endif %}
               </div>
               <div class="col-md-6">
-                <label class="form-label">Confirmar nueva *</label>
+                <label for="pw-confirma" class="form-label">Confirmar nueva *</label>
                 <input type="password" name="password_confirma" id="pw-confirma"
                        class="form-control {% if errores.password_confirma %}is-invalid{% endif %}"
                        placeholder="Repite la contraseña" required>
@@ -346,7 +449,7 @@
       </div>
 
       <!-- Pestaña 3: Notificaciones -->
-      <div class="modal-tab-panel" id="tab-config" class="d-none">
+      <div class="modal-tab-panel d-none" id="tab-config">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="guardar_config">
@@ -392,5 +495,5 @@
 {% endblock %}
 
 {% block js %}
-<script defer src="{% static 'js/perfil.js' %}?v=1"></script>
+<script defer src="{% static 'js/perfil.js' %}?v=2"></script>
 {% endblock js %}

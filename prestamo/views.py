@@ -2,8 +2,11 @@ import json
 
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
 
 from common.mixins import sesion_requerida
 from herramienta.models import Herramienta
@@ -22,8 +25,111 @@ from .models import (
 
 
 def notificaciones_json(request):
-    """Endpoint para obtener notificaciones en JSON."""
-    return JsonResponse({"items": []})
+    """Endpoint para obtener notificaciones en JSON basadas en la base de datos."""
+    doc = request.session.get('usuario_documento')
+    rol = (request.session.get('usuario_rol') or '').lower()
+    es_admin = rol in ['admin', 'administrador']
+
+    items = []
+
+    if es_admin:
+        # 1. Préstamos pendientes de entrega / aprobación
+        pendientes = (
+            Prestamo.objects.filter(estado__in=['PENDIENTE', 'pendiente'])
+            .select_related('documento')
+            .order_by('-fecha', '-codigo_prestamo')[:4]
+        )
+        for p in pendientes:
+            u_nom = p.usuario.nombre_completo if p.usuario else 'Sin asignar'
+            items.append({
+                'titulo': f'Préstamo #{p.codigo_prestamo} pendiente',
+                'desc': f'Solicitado por {u_nom} · Ficha {p.ficha or "N/A"}',
+                'icono': 'tools',
+                'color': '#d97706',
+                'tipo': 'proximo',
+                'url': reverse('prestamo'),
+            })
+
+        # 2. Préstamos cancelados o vencidos
+        vencidos = (
+            Prestamo.objects.filter(estado__in=['CANCELADO', 'cancelado', 'vencido'])
+            .select_related('documento')
+            .order_by('-fecha', '-codigo_prestamo')[:3]
+        )
+        for p in vencidos:
+            u_nom = p.usuario.nombre_completo if p.usuario else 'Sin asignar'
+            items.append({
+                'titulo': f'Préstamo #{p.codigo_prestamo} cancelado/vencido',
+                'desc': f'{u_nom} · Registrado el {p.fecha.strftime("%d/%m/%Y") if p.fecha else "N/A"}',
+                'icono': 'alarm',
+                'color': '#dc2626',
+                'tipo': 'vencido',
+                'url': reverse('prestamo'),
+            })
+
+        # 3. Herramientas sin disponibilidad
+        sin_stock = Herramienta.objects.filter(Q(disponibilidad='No disponible') | Q(disponibilidad='0'))[:3]
+        for h in sin_stock:
+            items.append({
+                'titulo': f'Sin disponibilidad: {h.nombre_herramienta}',
+                'desc': f'Estado actual: {h.estado or "Agotado"}',
+                'icono': 'box-seam',
+                'color': '#dc2626',
+                'tipo': 'stock_bajo',
+                'url': reverse('inventario'),
+            })
+
+        # 4. Devoluciones recientes registradas
+        devoluciones = (
+            DevolucionHerramienta.objects.select_related('codigo_prestamo__documento')
+            .order_by('-fecha', '-codigo_devolucion')[:3]
+        )
+        for d in devoluciones:
+            items.append({
+                'titulo': f'Devolución #{d.codigo_devolucion} registrada',
+                'desc': f'Préstamo #{d.codigo_prestamo_id} devuelto',
+                'icono': 'arrow-counterclockwise',
+                'color': '#094D92',
+                'tipo': 'devolucion',
+                'url': reverse('devoluciones'),
+            })
+    else:
+        # Usuario regular
+        if doc:
+            usuario_prestamos = Prestamo.objects.filter(documento_id=doc)
+
+            # Préstamos activos o pendientes
+            for p in usuario_prestamos.filter(estado__in=['ENTREGADO', 'PARCIAL', 'activo', 'parcial']).order_by('-fecha')[:3]:
+                items.append({
+                    'titulo': f'Préstamo #{p.codigo_prestamo} activo',
+                    'desc': f'Fecha: {p.fecha.strftime("%d/%m/%Y") if p.fecha else "N/A"}',
+                    'icono': 'tools',
+                    'color': '#0284c7',
+                    'tipo': 'activo',
+                    'url': reverse('prestamo_usuario'),
+                })
+
+            for p in usuario_prestamos.filter(estado__in=['CANCELADO', 'cancelado', 'vencido']).order_by('-fecha')[:2]:
+                items.append({
+                    'titulo': f'Préstamo #{p.codigo_prestamo} requiere atención',
+                    'desc': 'Préstamo marcado como cancelado o vencido.',
+                    'icono': 'alarm',
+                    'color': '#dc2626',
+                    'tipo': 'vencido',
+                    'url': reverse('prestamo_usuario'),
+                })
+
+            for d in DevolucionHerramienta.objects.filter(codigo_prestamo__documento=doc).order_by('-fecha')[:2]:
+                items.append({
+                    'titulo': f'Devolución #{d.codigo_devolucion} registrada',
+                    'desc': f'Préstamo #{d.codigo_prestamo_id} devuelto',
+                    'icono': 'arrow-counterclockwise',
+                    'color': '#094D92',
+                    'tipo': 'devolucion',
+                    'url': reverse('prestamo_usuario'),
+                })
+
+    return JsonResponse({'items': items})
 
 
 @sesion_requerida
@@ -190,18 +296,42 @@ def crear_prestamo(request):
     if request.method == "POST":
         documento = request.POST.get("documento", "").strip()
         ficha = request.POST.get("ficha", "").strip()
+        usuario_id = request.POST.get("usuario", "").strip()
+        fecha_str = request.POST.get("fecha", "").strip()
         observaciones = request.POST.get("observaciones", "").strip()
         herramientas_ids = request.POST.getlist("herramienta[]")
         cantidades = request.POST.getlist("cantidad[]")
 
-        if not documento or not ficha:
-            messages.error(request, "El documento y la ficha SENA son obligatorios.")
+        # 1. Resolver usuario del sistema o por documento
+        usuario_obj = None
+        if documento:
+            usuario_obj = Usuario.objects.filter(documento=documento).first()
+        if not usuario_obj and usuario_id:
+            usuario_obj = Usuario.objects.filter(pk=usuario_id).first()
+            if usuario_obj:
+                documento = usuario_obj.documento
+                if not ficha and getattr(usuario_obj, 'ficha', None):
+                    ficha = usuario_obj.ficha
+
+        if not documento:
+            messages.error(request, "El número de documento del solicitante es obligatorio.")
             return redirect("prestamo")
 
-        usuario_obj = Usuario.objects.filter(documento=documento).first()
+        if not ficha:
+            ficha = getattr(usuario_obj, 'ficha', None) or "Sin Ficha"
+
+        # Si el usuario no existe en la base de datos, crear registro de Aprendiz / Usuario
         if not usuario_obj:
-            messages.error(request, "El usuario con el documento indicado no existe.")
-            return redirect("prestamo")
+            usuario_obj, _ = Usuario.objects.get_or_create(
+                documento=documento,
+                defaults={
+                    'primer_nombre': 'Aprendiz',
+                    'primer_apellido': 'SENA',
+                    'tipo_documento': 'CC',
+                    'rol': 'Usuario',
+                    'ficha': ficha,
+                }
+            )
 
         items_validos = []
         for h_id, cant in zip(herramientas_ids, cantidades):
@@ -226,8 +356,12 @@ def crear_prestamo(request):
             messages.error(request, "Debes seleccionar al menos una herramienta válida con cantidad mayor a 0.")
             return redirect("prestamo")
 
+        from django.utils.dateparse import parse_date
+        fecha_val = parse_date(fecha_str) if fecha_str else timezone.now().date()
+
         nuevo_prestamo = Prestamo.objects.create(
             documento=usuario_obj,
+            fecha=fecha_val or timezone.now().date(),
             ficha=ficha,
             estado=EstadoPrestamo.PENDIENTE,
             observaciones=observaciones,
