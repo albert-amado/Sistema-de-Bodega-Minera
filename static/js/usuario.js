@@ -464,7 +464,7 @@ if (recForm) {
       showError(area, 'Por favor ingresa tu correo electrónico.');
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       e.preventDefault();
       showError(area, 'Ingresa un correo electrónico válido.');
     }
@@ -493,7 +493,7 @@ if (regForm) {
       showError(area, 'Por favor completa todos los campos.');
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       e.preventDefault();
       showError(area, 'Ingresa un correo electrónico válido.');
       return;
@@ -564,4 +564,4 @@ document.addEventListener('DOMContentLoaded', function () {
       localStorage.setItem('acc_dark', 'false');
     });
   }
-});
+});
