@@ -17,7 +17,7 @@ from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from common.mixins import sesion_requerida
-from prestamo.models import Prestamo
+from prestamo.models import DevolucionHerramienta, EstadoPrestamo, Prestamo
 from usuario.decorators import admin_required, login_required
 
 from .forms import (
@@ -446,10 +446,97 @@ def perfil_view(request):
     cfg_notif_vencimientos = request.session.get('cfg_notif_vencimientos', True)
     cfg_notif_devoluciones = request.session.get('cfg_notif_devoluciones', True)
 
+    es_admin = (usuario.rol or '').lower() in ['admin', 'administrador'] or request.session.get('usuario_rol', '').lower() in ['admin', 'administrador']
+
+    prestamos_personales = Prestamo.objects.filter(documento=usuario)
+    tiene_personales = prestamos_personales.exists()
+
+    if es_admin and not tiene_personales:
+        prestamos_qs = Prestamo.objects.all()
+        prestamos_count = prestamos_qs.count()
+        prestamos_activos_count = prestamos_qs.filter(estado__in=['ENTREGADO', 'PARCIAL', 'activo', 'parcial']).count()
+        devoluciones_count = (
+            DevolucionHerramienta.objects.count()
+            or prestamos_qs.filter(estado__in=['DEVUELTO', 'devuelto']).count()
+        )
+        vencidos_count = prestamos_qs.filter(estado__in=['CANCELADO', 'cancelado', 'vencido']).count()
+        pendientes_count = prestamos_qs.filter(estado__in=['PENDIENTE', 'pendiente']).count()
+    else:
+        prestamos_qs = prestamos_personales
+        prestamos_count = prestamos_qs.count()
+        prestamos_activos_count = prestamos_qs.filter(estado__in=['ENTREGADO', 'PARCIAL', 'activo', 'parcial']).count()
+        devoluciones_count = (
+            DevolucionHerramienta.objects.filter(codigo_prestamo__documento=usuario).count()
+            or prestamos_qs.filter(estado__in=['DEVUELTO', 'devuelto']).count()
+        )
+        vencidos_count = prestamos_qs.filter(estado__in=['CANCELADO', 'cancelado', 'vencido']).count()
+        pendientes_count = prestamos_qs.filter(estado__in=['PENDIENTE', 'pendiente']).count()
+
+    # Alertas recientes desde la base de datos
+    alertas_recientes = []
+
+    # 1. Alertas de préstamos vencidos / cancelados
+    for p in prestamos_qs.filter(estado__in=['CANCELADO', 'cancelado', 'vencido']).order_by('-fecha', '-codigo_prestamo')[:2]:
+        alertas_recientes.append({
+            'titulo': f'Préstamo #{p.codigo_prestamo} requiere atención',
+            'desc': f'Estado: Vencido/Cancelado · Registrado el {p.fecha.strftime("%d/%m/%Y") if p.fecha else "N/A"}',
+            'icono': 'alarm',
+            'tipo': 'vencido',
+            'badge': 'Vencido',
+            'badge_class': 'badge-danger',
+        })
+
+    # 2. Alertas de préstamos pendientes o activos
+    if es_admin and not tiene_personales:
+        for p in prestamos_qs.filter(estado__in=['PENDIENTE', 'pendiente']).order_by('-fecha', '-codigo_prestamo')[:2]:
+            u_nom = p.usuario.nombre_completo if p.usuario else 'Sin asignar'
+            alertas_recientes.append({
+                'titulo': f'Préstamo #{p.codigo_prestamo} pendiente de entrega',
+                'desc': f'Solicitado por {u_nom} · Ficha {p.ficha or "N/A"}',
+                'icono': 'tools',
+                'tipo': 'activo',
+                'badge': 'Pendiente',
+                'badge_class': 'badge-warning',
+            })
+    else:
+        for p in prestamos_qs.filter(estado__in=['ENTREGADO', 'PARCIAL', 'activo', 'parcial']).order_by('-fecha', '-codigo_prestamo')[:2]:
+            alertas_recientes.append({
+                'titulo': f'Préstamo #{p.codigo_prestamo} en curso',
+                'desc': f'Fecha de entrega: {p.fecha.strftime("%d/%m/%Y") if p.fecha else "N/A"}',
+                'icono': 'tools',
+                'tipo': 'activo',
+                'badge': 'En uso',
+                'badge_class': 'badge-info',
+            })
+
+    # 3. Alertas de devoluciones recientes
+    if es_admin and not tiene_personales:
+        devs_qs = DevolucionHerramienta.objects.select_related('codigo_prestamo').order_by('-fecha', '-codigo_devolucion')[:2]
+    else:
+        devs_qs = DevolucionHerramienta.objects.filter(codigo_prestamo__documento=usuario).order_by('-fecha', '-codigo_devolucion')[:2]
+
+    for d in devs_qs:
+        alertas_recientes.append({
+            'titulo': f'Devolución #{d.codigo_devolucion} registrada',
+            'desc': f'Asociada al Préstamo #{d.codigo_prestamo_id} · {d.fecha.strftime("%d/%m/%Y") if d.fecha else ""}',
+            'icono': 'arrow-counterclockwise',
+            'tipo': 'devolucion',
+            'badge': 'Completada',
+            'badge_class': 'badge-success',
+        })
+
     context = {
         'usuario': usuario,
         'errores': errores,
         'accion_activa': accion_activa,
+        'es_admin': es_admin,
+        'tiene_personales': tiene_personales,
+        'prestamos_count': prestamos_count,
+        'prestamos_activos_count': prestamos_activos_count,
+        'devoluciones_count': devoluciones_count,
+        'vencidos_count': vencidos_count,
+        'pendientes_count': pendientes_count,
+        'alertas_recientes': alertas_recientes,
         'tab_list': [
             ('tab-datos', 'Datos personales', ''),
             ('tab-password', 'Contraseña', ''),
