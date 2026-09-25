@@ -81,6 +81,14 @@
     '<line x1="15" y1="5" x2="5" y2="15"/>' +
     '</svg>';
 
+  function getMinLength(field, fallback) {
+    var length = parseInt(field.getAttribute('minlength') || field.minLength || fallback, 10);
+    if (!Number.isFinite(length) || length < 0) {
+      return fallback;
+    }
+    return length;
+  }
+
   /* ── Valida un campo individualmente ── */
   function isFieldValid(field) {
     var tag = field.tagName.toLowerCase();
@@ -103,7 +111,7 @@
 
     /* Input email */
     if (field.type === 'email') {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
     }
 
     /* Input number */
@@ -126,12 +134,14 @@
 
     /* Password */
     if (field.type === 'password') {
-      return val.length >= (parseInt(field.getAttribute('minlength') || '1', 10));
+      var passwordMinLength = getMinLength(field, 8);
+      if (!field.required && val === '') return null;
+      return val.length >= passwordMinLength && passwordMinLength >= 8;
     }
 
     /* Text genérico */
     if (!field.required && val === '') return null;
-    var minL = parseInt(field.getAttribute('minlength') || '1', 10);
+    var minL = getMinLength(field, 1);
     return val.length >= minL;
   }
 

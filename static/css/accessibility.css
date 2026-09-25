@@ -1,0 +1,185 @@
+/* ===== Widget de accesibilidad — dock circular ===== */
+
+#a11y-widget {
+    --a11y-ink: #12161A;
+    --a11y-caution: #FFC629;
+    --a11y-panel: #232A31;
+    --a11y-panel-hover: #323C46;
+    --a11y-muted: #C7CCD1;
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    z-index: 2147483000;
+    /* por encima de casi todo, incluyendo modales de Bootstrap */
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+#a11y-fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--a11y-ink);
+    border: 3px solid var(--a11y-caution);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .28);
+}
+
+#a11y-fab:hover {
+    filter: brightness(1.1)
+}
+
+#a11y-fab:focus-visible {
+    outline: 2px solid var(--a11y-caution);
+    outline-offset: 3px
+}
+
+#a11y-dock {
+    position: absolute;
+    right: 0;
+    top: 66px;
+    width: 236px;
+    background: var(--a11y-ink);
+    border-radius: 16px;
+    padding: 6px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+}
+
+#a11y-dock[hidden] {
+    display: none
+}
+
+.a11y-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.a11y-item {
+    background: transparent;
+    border: none;
+    color: var(--a11y-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 2px;
+    border-radius: 11px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.a11y-item .ico {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--a11y-panel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+}
+
+.a11y-item:hover .ico {
+    background: var(--a11y-panel-hover)
+}
+
+.a11y-item[aria-checked="true"] .ico {
+    background: var(--a11y-caution);
+    color: var(--a11y-ink)
+}
+
+.a11y-item[aria-checked="true"] .a11y-label {
+    color: #fff
+}
+
+.a11y-item .a11y-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.15
+}
+
+.a11y-item:focus-visible {
+    outline: 2px solid var(--a11y-caution);
+    outline-offset: 2px;
+    border-radius: 11px
+}
+
+.a11y-slider-row {
+    padding: 10px 10px 4px;
+    border-top: 1px solid var(--a11y-panel);
+    margin-top: 4px;
+}
+
+.a11y-slider-row label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--a11y-muted);
+    margin-bottom: 4px;
+}
+
+.a11y-slider-row input[type=range] {
+    width: 100%;
+    accent-color: var(--a11y-caution);
+}
+
+.a11y-slider-row output {
+    font-size: 10.5px;
+    color: var(--a11y-muted);
+    float: right;
+    margin-top: -18px;
+}
+
+.a11y-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 8px 4px;
+    border-top: 1px solid var(--a11y-panel);
+    margin-top: 6px;
+}
+
+.a11y-bottom button {
+    background: none;
+    border: none;
+    color: var(--a11y-muted);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 4px 6px;
+}
+
+.a11y-bottom button:hover {
+    color: #fff
+}
+
+@media (max-width:400px) {
+    #a11y-dock {
+        width: calc(100vw - 40px);
+        right: 0
+    }
+}
+
+
+/* ===== Efectos aplicados al documento cuando un toggle está activo ===== */
+
+html.a11y-fx-grayscale,
+html.a11y-fx-invert,
+html.a11y-fx-saturate {
+    /* el filtro combinado real se aplica por JS en style.filter,
+     estas clases solo quedan como gancho por si se necesita otro selector */
+}
+
+html.a11y-links a,
+html.a11y-links a:visited {
+    text-decoration: underline !important;
+    text-decoration-thickness: 2px !important;
+    background: #FFF3B0 !important;
+    color: #12161A !important;
+}
