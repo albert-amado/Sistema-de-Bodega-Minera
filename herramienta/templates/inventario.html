@@ -187,12 +187,12 @@
     <table class="table table-hover align-middle datatable-custom w-100" id="inventario-table">
       <thead class="table-light">
         <tr class="text-secondary small fw-bold text-uppercase th-tracking">
-          <th class="text-center th-w-80" data-priority="2">SKU</th>
-          <th data-priority="1">Herramienta</th>
+          <th class="text-center th-w-80" data-priority="2">codigo_sku</th>
+          <th data-priority="1">nombre_herramienta</th>
           <th data-priority="3">Descripción</th>
-          <th data-priority="2">Categoría</th>
-          <th data-priority="2">Ubicación</th>
-          <th class="text-center" data-priority="1">Stock</th>
+          <th data-priority="2">categoria</th>
+          <th data-priority="2">estante</th>
+          <th class="text-center" data-priority="1">stock</th>
           <th class="text-center th-w-140" data-priority="1">Acciones</th>
         </tr>
       </thead>
@@ -235,7 +235,7 @@
                     data-estante-pk="{{ producto.estante.pk }}" 
                     data-producto-nombre="{{ producto.nombre|escapejs }}">
               <i class="bi bi-geo-alt-fill text-danger"></i>
-              <span class="small font-monospace">{{ producto.estante.codigo }} ({{ producto.estante.almacen.nombre|truncatechars:12 }})</span>
+              <span class="small font-monospace">{{ producto.estante.codigo }}</span>
             </button>
             {% else %}
             <span class="text-muted small fst-italic">No asignada</span>
@@ -244,11 +244,11 @@
           <!-- Stock -->
           <td class="text-center" data-order="{{ producto.stock_disponible }}">
             {% if producto.stock_disponible == 0 %}
-            <span class="badge-state badge-rechazada">Sin stock</span>
+            <span class="badge-state badge-rechazada">{{ producto.stock_disponible }}</span>
             {% elif producto.stock_disponible <= 5 %}
-            <span class="badge-state badge-pendiente">{{ producto.stock_disponible }} unidades</span>
+            <span class="badge-state badge-pendiente">{{ producto.stock_disponible }}</span>
             {% else %}
-            <span class="badge-state badge-aprobada">{{ producto.stock_disponible }} unidades</span>
+            <span class="badge-state badge-aprobada">{{ producto.stock_disponible }}</span>
             {% endif %}
           </td>
           <!-- Acciones -->
