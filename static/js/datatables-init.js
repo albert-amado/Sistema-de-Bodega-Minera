@@ -49,6 +49,9 @@ window.obtenerBotonesDataTable = function (moduloName) {
   return [
     {
       extend: 'excelHtml5',
+      title: '',
+      filename: 'herramientas',
+      exportOptions: { columns: ':not(:last-child)' },
       text: '<i class="bi bi-file-earmark-excel-fill"></i><span>Excel</span>',
       className: 'btn btn-dt-export btn-dt-excel',
       titleAttr: 'Exportar a Excel',
