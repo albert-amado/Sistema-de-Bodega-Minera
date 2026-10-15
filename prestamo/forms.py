@@ -99,7 +99,7 @@ class SolicitudPrestamoUsuarioForm(HumanForm):
         }
 
     def clean_ficha(self):
-        ficha = self.cleaned_data.get("ficha", "").strip()
+        ficha = (self.cleaned_data.get("ficha") or "").strip()
         if not ficha:
             raise ValidationError("La ficha SENA es obligatoria.")
         return ficha
