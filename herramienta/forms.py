@@ -42,11 +42,13 @@ class HerramientaForm(forms.ModelForm):
         disp = self.cleaned_data.get('disponibilidad', '').strip()
         if not disp:
             return 'Disponible'
-        if disp.isdigit():
+        try:
             val = int(disp)
             if val < 0:
                 raise ValidationError('La disponibilidad no puede ser un número negativo.')
             return str(val)
+        except ValueError:
+            pass
         return disp
 
 
