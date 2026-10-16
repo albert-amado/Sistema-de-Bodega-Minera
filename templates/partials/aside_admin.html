@@ -123,7 +123,7 @@
       <div class="collapse {% if request.resolver_match.url_name == 'almacen' or request.resolver_match.url_name == 'almacenes' or request.resolver_match.url_name == 'estantes' or request.resolver_match.url_name == 'vista_almacenes' or request.resolver_match.url_name == 'vista_estantes' %}show{% endif %}" id="menuAlmacen">
         <ul class="list-unstyled ps-4 mb-0">
           <li>
-            <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'almacen' or request.resolver_match.url_name == 'almacenes' or request.resolver_match.url_name == 'vista_almacenes' %}active{% endif %}" href="{% url 'almacen' %}">
+            <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'almacen' or request.resolver_match.url_name == 'almacenes' or request.resolver_match.url_name == 'vista_almacenes' %}active{% endif %}" href="{% url 'almacenes' %}">
               <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <rect x="2" y="7" width="20" height="14" rx="2" />
                 <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
