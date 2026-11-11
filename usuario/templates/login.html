@@ -24,7 +24,7 @@
 
       <div class="left-content">
         <div class="brand-text">
-          MINE<span>.</span>
+          Sistema De Gestion De <span>.</span>Bodega Minera
         </div>
         <div class="brand-sub">Centro Minero · Regional Boyacá · SENA</div>
       </div>
@@ -116,6 +116,6 @@
     <script defer src="{% static 'js/usuario.js' %}?v=4"></script>
     <script defer src="{% static 'js/form-validation.js' %}?v=1"></script>
     <script defer src="{% static 'js/auth-transition.js' %}?v=1"></script>
-    <script src="https://cdn.jsdelivr.net/gh/PrabothCharith/accessibility-plugin@main/accessibility-menu.min.js"></script>
+    {% include "components/accessibility_widget.html" %}
   </body>
 </html>
