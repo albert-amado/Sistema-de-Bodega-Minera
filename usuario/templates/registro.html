@@ -67,7 +67,6 @@
     <form method="POST" action="{% url 'registro' %}" id="regForm" autocomplete="off" novalidate>
       {% csrf_token %}
 
-      <!-- IDENTIFICACIÓN Y VERIFICACIÓN EN SOFIAPLUS -->
       <div class="field-wrap">
         <label for="documento" class="field-lbl">Documento de identidad <span class="text-danger">*</span></label>
         <input type="hidden" id="tipo_documento" name="tipo_documento" value="{{ tipo_documento|default:'CC' }}" />
@@ -88,7 +87,6 @@
         <div id="sofia-status-container" class="sofia-verify-box"></div>
       </div>
 
-      <!--DATOS PERSONALES (AUTOCOMPLETADOS Y BLOQUEADOS POR SOFIAPLUS) -->
       <div class="row-2 field-wrap">
         <div>
           <label for="first_name" class="field-lbl">Nombres <small class="text-muted" id="lbl-nombres-info"></small></label>
@@ -102,7 +100,6 @@
         </div>
       </div>
 
-      <!--INFORMACIÓN ACADÉMICA SENA -->
       <div class="field-wrap">
         <label for="numero_ficha" class="field-lbl">Número de ficha SENA <small class="text-muted" id="lbl-ficha-info"></small></label>
         <select id="numero_ficha" name="numero_ficha" class="mine-input full" required>
