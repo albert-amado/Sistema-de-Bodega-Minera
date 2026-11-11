@@ -1,0 +1,290 @@
+/* ==========================================================================
+   AUTH SENA — Inicio de sesión y Registro
+   Se carga DESPUÉS de styles.css en login.html y registro.html.
+   - Paleta institucional SENA centralizada en variables.
+   - Contornos limpios que cambian a Verde SENA en hover / focus.
+   - Animación fluida (fade + slide lateral) al alternar Login <-> Registro.
+   ========================================================================== */
+
+:root {
+  --auth-green:        #39A900;
+  --auth-green-hover:  #2E8800;
+  --auth-green-light:  #EBF7E5;
+  --auth-green-border: #A8E08A;
+  --auth-green-focus:  rgba(57, 169, 0, 0.22);
+  --auth-bg:           #F8F9FA;
+  --auth-white:        #FFFFFF;
+  --auth-text:         #1A1A1A;
+  --auth-muted:        #6B7280;
+  --auth-border:       #DEE2E6;
+
+  --auth-anim:         0.45s;
+  --auth-ease:         cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --------------------------------------------------------------------------
+   1. PANEL IZQUIERDO (marca) — oscuro neutro con acentos verdes
+   -------------------------------------------------------------------------- */
+html body.auth-page,
+html body.auth-page .left-panel {
+  background: linear-gradient(160deg, #1E1E1E 0%, #13290A 100%) !important;
+}
+
+html body.auth-page .left-panel::after {
+  content: '';
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  right: -140px;
+  bottom: -140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(57, 169, 0, 0.28) 0%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+html body.auth-page .brand-text       { color: var(--auth-white) !important; }
+html body.auth-page .brand-text span  { color: var(--auth-green) !important; }
+html body.auth-page .brand-sub        { color: rgba(255, 255, 255, 0.65) !important; }
+html body.auth-page .corner-note      { color: rgba(255, 255, 255, 0.35) !important; }
+
+html body.auth-page .img-container-center {
+  border: 1px solid rgba(57, 169, 0, 0.35) !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. PANEL DERECHO (formulario) — tarjeta blanca limpia
+   -------------------------------------------------------------------------- */
+html body.auth-page .right-panel {
+  background: var(--auth-white) !important;
+  color: var(--auth-text) !important;
+  border-left: 1px solid var(--auth-border) !important;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12);
+  overflow-x: hidden;
+}
+
+html body.auth-page .logo-box {
+  background: var(--auth-green-light) !important;
+  border: 1px solid var(--auth-green-border);
+  border-radius: 12px !important;
+}
+html body.auth-page .logo-box img { filter: none !important; }
+
+html body.auth-page .logo-sup      { color: var(--auth-green) !important; font-weight: 700; }
+html body.auth-page .logo-name     { color: var(--auth-text) !important; }
+html body.auth-page .page-title    { color: var(--auth-text) !important; }
+html body.auth-page .page-sub,
+html body.auth-page .field-lbl,
+html body.auth-page .doc-hint,
+html body.auth-page .version-text  { color: var(--auth-muted) !important; }
+
+/* --------------------------------------------------------------------------
+   3. PESTAÑAS con indicador deslizante (pill)
+   -------------------------------------------------------------------------- */
+html body.auth-page .auth-tabs {
+  position: relative;
+  background: var(--auth-bg) !important;
+  border: 1px solid var(--auth-border);
+  border-radius: 12px !important;
+  padding: 4px !important;
+  gap: 0 !important;
+}
+
+/* Indicador que se desliza entre "Iniciar sesión" y "Registro" */
+html body.auth-page .auth-tabs::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  background: var(--auth-green);
+  border-radius: 9px;
+  box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
+  transition: transform var(--auth-anim) var(--auth-ease);
+  z-index: 0;
+}
+html body.auth-page .auth-tabs[data-active="registro"]::before {
+  transform: translateX(100%);
+}
+
+html body.auth-page .tab-btn,
+html body.auth-page .tab-btn.on {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  color: var(--auth-muted) !important;
+  font-weight: 600 !important;
+  transition: color 0.3s ease !important;
+}
+html body.auth-page .tab-btn:not(.on):hover { color: var(--auth-green) !important; }
+html body.auth-page .tab-btn.on             { color: var(--auth-white) !important; }
+
+/* --------------------------------------------------------------------------
+   4. CAMPOS: contorno sutil -> Verde SENA en hover / focus
+   -------------------------------------------------------------------------- */
+html body.auth-page .input-group-mine,
+html body.auth-page .mine-input.full,
+html body.auth-page select.mine-input {
+  border: 1.5px solid var(--auth-border) !important;
+  border-radius: 10px !important;
+  background: var(--auth-white) !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+html body.auth-page .input-group-mine .sel-btn {
+  border-right: 1.5px solid var(--auth-border) !important;
+  color: var(--auth-text) !important;
+  transition: border-color 0.25s ease, color 0.25s ease !important;
+}
+
+html body.auth-page .input-group-mine:hover,
+html body.auth-page .mine-input.full:hover {
+  border-color: var(--auth-green-border) !important;
+}
+
+html body.auth-page .input-group-mine:focus-within,
+html body.auth-page .mine-input.full:focus,
+html body.auth-page select.mine-input:focus {
+  border-color: var(--auth-green) !important;
+  box-shadow: 0 0 0 4px var(--auth-green-focus) !important;
+}
+html body.auth-page .input-group-mine:focus-within .sel-btn {
+  border-right-color: var(--auth-green) !important;
+  color: var(--auth-green) !important;
+}
+
+html body.auth-page .mine-input::placeholder { color: #9CA3AF; }
+
+/* Campos bloqueados por SofiaPlus */
+html body.auth-page .mine-input[readonly] {
+  background: var(--auth-bg) !important;
+  color: var(--auth-muted) !important;
+}
+
+/* Desplegable de tipo de documento */
+html body.auth-page .doc-dropdown {
+  border: 1px solid var(--auth-border) !important;
+  border-radius: 12px !important;
+}
+html body.auth-page .doc-dropdown a:hover {
+  background: var(--auth-green-light) !important;
+  color: var(--auth-green-hover) !important;
+}
+
+/* Estados de validación (form-validation.js) */
+html body.auth-page .input-group-mine.fv-valid,
+html body.auth-page .mine-input.full.fv-valid {
+  border-color: var(--auth-green) !important;
+}
+html body.auth-page .input-group-mine.fv-invalid,
+html body.auth-page .mine-input.full.fv-invalid {
+  border-color: #DC2626 !important;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12) !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. BOTÓN PRINCIPAL, ENLACES Y ALERTAS
+   -------------------------------------------------------------------------- */
+html body.auth-page .btn-submit {
+  background: var(--auth-green) !important;
+  border: 1px solid var(--auth-green) !important;
+  color: var(--auth-white) !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px rgba(57, 169, 0, 0.3) !important;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
+}
+html body.auth-page .btn-submit:hover:not(:disabled) {
+  background: var(--auth-green-hover) !important;
+  border-color: var(--auth-green-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(57, 169, 0, 0.4) !important;
+}
+html body.auth-page .btn-submit:active:not(:disabled) { transform: translateY(0); }
+html body.auth-page .btn-submit:focus-visible {
+  outline: 3px solid var(--auth-green-border) !important;
+  outline-offset: 2px;
+}
+
+html body.auth-page .link-mine,
+html body.auth-page .auth-switch a {
+  color: var(--auth-green) !important;
+  font-weight: 600;
+  text-decoration: none;
+}
+html body.auth-page .link-mine:hover,
+html body.auth-page .auth-switch a:hover {
+  color: var(--auth-green-hover) !important;
+  text-decoration: underline;
+}
+
+html body.auth-page .auth-switch {
+  text-align: center;
+  font-size: 13px;
+  color: var(--auth-muted);
+  margin-top: 1.25rem;
+}
+
+html body.auth-page .alert-mine {
+  border-radius: 10px !important;
+}
+html body.auth-page .alert-mine.success {
+  background: var(--auth-green-light) !important;
+  border: 1px solid var(--auth-green-border) !important;
+  color: #1E6000 !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. ANIMACIÓN DE TRANSICIÓN LOGIN <-> REGISTRO
+   El contenido del panel derecho sale con fade + slide y la página destino
+   entra desde el lado opuesto (escalonado por elemento).
+   -------------------------------------------------------------------------- */
+html body.auth-page .right-panel > * {
+  transition: opacity var(--auth-anim) var(--auth-ease),
+              transform var(--auth-anim) var(--auth-ease);
+}
+
+/* Escalonado suave de entrada */
+html body.auth-page .right-panel > *:nth-child(1) { transition-delay: 0s; }
+html body.auth-page .right-panel > *:nth-child(2) { transition-delay: 0.03s; }
+html body.auth-page .right-panel > *:nth-child(3) { transition-delay: 0.06s; }
+html body.auth-page .right-panel > *:nth-child(4) { transition-delay: 0.09s; }
+html body.auth-page .right-panel > *:nth-child(n+5) { transition-delay: 0.12s; }
+
+/* Salida: el pill de pestañas se queda fijo para que se vea deslizarse */
+html.auth-leave-left  body.auth-page .right-panel > *:not(.auth-tabs) { opacity: 0; transform: translateX(-40px); }
+html.auth-leave-right body.auth-page .right-panel > *:not(.auth-tabs) { opacity: 0; transform: translateX(40px); }
+html.auth-leave-left  body.auth-page .right-panel > *,
+html.auth-leave-right body.auth-page .right-panel > * { transition-delay: 0s !important; }
+
+/* Entrada (estado inicial antes de animar) */
+html.auth-enter-right body.auth-page .right-panel > *:not(.auth-tabs) { opacity: 0; transform: translateX(40px); transition: none !important; }
+html.auth-enter-left  body.auth-page .right-panel > *:not(.auth-tabs) { opacity: 0; transform: translateX(-40px); transition: none !important; }
+html.auth-enter-right body.auth-page .auth-tabs::before,
+html.auth-enter-left  body.auth-page .auth-tabs::before { transition: none !important; }
+
+/* Accesibilidad: sin desplazamiento para quien reduce movimiento */
+@media (prefers-reduced-motion: reduce) {
+  html body.auth-page .right-panel > *,
+  html body.auth-page .auth-tabs::before {
+    transition: opacity 0.2s linear !important;
+    transform: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 820px) {
+  html body.auth-page .right-panel {
+    border-top: 1px solid var(--auth-border) !important;
+    box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.12);
+  }
+}
+
+@media (max-width: 480px) {
+  html body.auth-page .right-panel { padding: 1.75rem 1.25rem !important; }
+  html body.auth-page .row-2 { grid-template-columns: 1fr !important; }
+}
+

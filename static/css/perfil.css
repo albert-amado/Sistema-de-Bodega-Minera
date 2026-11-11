@@ -1,7 +1,7 @@
-/* ── static/css/perfil.css ── */
+/* ── static/css/perfil.css (Adaptado a Paleta Institucional SENA) ── */
 
 .modal-tab {
-  color: var(--text-muted, #71816d);
+  color: var(--sena-text-muted, #4B5563);
   cursor: pointer;
   background: transparent;
   border: none;
@@ -10,11 +10,11 @@
   transition: color 0.15s, border-color 0.15s;
 }
 .modal-tab:hover {
-  color: var(--text-main, #1b2021);
+  color: var(--sena-text, #1E1E1E);
 }
 .modal-tab--active {
-  color: var(--navy, #094d92) !important;
-  border-bottom-color: var(--navy, #094d92) !important;
+  color: var(--sena-green, #39A900) !important;
+  border-bottom-color: var(--sena-green, #39A900) !important;
   font-weight: 700 !important;
 }
 
@@ -33,7 +33,7 @@
 .toggle-slider {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--sena-border, #D1D5DB);
   border-radius: 24px;
   transition: background 0.2s;
 }
@@ -50,7 +50,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 .toggle-switch input:checked + .toggle-slider {
-  background: var(--navy, #094d92);
+  background: var(--sena-green, #39A900);
 }
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(18px);
@@ -78,39 +78,39 @@
   font-family: var(--font-mono, monospace);
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--navy, #094d92);
+  color: var(--sena-blue, #00324D);
 }
 .perfil__style-11 {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--text-muted, #71816d);
+  color: var(--sena-text-muted, #4B5563);
   font-weight: 600;
 }
 .perfil__style-12 {
   font-family: var(--font-mono, monospace);
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--sage, #3a7a42);
+  color: var(--sena-green, #39A900);
 }
 .perfil__style-13 {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--text-muted, #71816d);
+  color: var(--sena-text-muted, #4B5563);
   font-weight: 600;
 }
 .perfil__style-14 {
   font-family: var(--font-mono, monospace);
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--rust, #98473e);
+  color: #DC2626;
 }
 .perfil__style-15 {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--text-muted, #71816d);
+  color: var(--sena-text-muted, #4B5563);
   font-weight: 600;
 }
 .perfil__style-16 {
@@ -129,7 +129,7 @@
   transition: background-color 0.15s ease;
 }
 .notif-channel-item:hover {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: var(--sena-bg-light, #F4F6F9);
 }
 .badge-dot {
   display: inline-block;

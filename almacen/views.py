@@ -10,7 +10,7 @@ from .models import Almacen, Estante
 
 @sesion_requerida
 def vista_almacenes(request):
-    almacenes = Almacen.objects.all()
+    almacenes = Almacen.objects.prefetch_related('estantes').all()
     form = AlmacenForm()
     form_editar = None
     show_modal_editar = False
@@ -42,7 +42,11 @@ def vista_almacenes(request):
                 form_editar.save()
                 messages.success(request, 'Almacén actualizado correctamente.')
                 return redirect('almacenes')
-            show_modal_editar = True
+            else:
+                for f, errs in form_editar.errors.items():
+                    for err in errs:
+                        messages.error(request, f"{f}: {err}")
+                show_modal_editar = True
 
         elif accion == 'eliminar':
             pk = request.POST.get('almacen_id')
@@ -70,7 +74,7 @@ def vista_almacenes(request):
 
 @sesion_requerida
 def vista_estantes(request):
-    estantes = Estante.objects.select_related('codigo_almacen').all()
+    estantes = Estante.objects.select_related('codigo_almacen').prefetch_related('herramientas').all()
     form = EstanteForm()
     form_editar = None
     show_modal_editar = False
@@ -102,11 +106,18 @@ def vista_estantes(request):
                 form_editar.save()
                 messages.success(request, 'Estante actualizado correctamente.')
                 return redirect('estantes')
-            show_modal_editar = True
+            else:
+                for f, errs in form_editar.errors.items():
+                    for err in errs:
+                        messages.error(request, f"{f}: {err}")
+                show_modal_editar = True
 
         elif accion == 'eliminar':
             pk = request.POST.get('estante_id')
             estante = get_object_or_404(Estante, pk=pk)
+            if estante.herramientas.exists():
+                messages.error(request, 'No se puede eliminar el estante porque tiene herramientas asignadas.')
+                return redirect('estantes')
             try:
                 estante.delete()
                 messages.success(request, 'Estante eliminado correctamente.')
@@ -137,10 +148,12 @@ def crear_estante(request):
 @sesion_requerida
 def detalle_almacen(request, pk):
     almacen = get_object_or_404(Almacen, pk=pk)
-    estantes = Estante.objects.filter(codigo_almacen=almacen)
+    estantes = Estante.objects.filter(codigo_almacen=almacen).prefetch_related('herramientas')
+    es_admin = request.session.get('usuario_rol', '').lower() in ['admin', 'administrador']
     context = {
         'almacen': almacen,
         'estantes': estantes,
+        'es_admin': es_admin,
     }
 
     return render(request, 'detalle_almacen.html', context)

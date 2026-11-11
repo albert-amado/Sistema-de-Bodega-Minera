@@ -7762,3 +7762,377 @@ body.dark-mode .sbm-empty-search-desc {
 
 
 
+
+
+/* ==========================================================================
+   SISTEMA DE DISEÑO INSTITUCIONAL SENA — OVERRIDES GLOBALES (UI/UX)
+   Paleta estricta:
+     - Verde Principal (SENA): #39A900
+     - Azul Institucional / Acentos: #00324D
+     - Blanco (Fondos limpios / Contraste): #FFFFFF
+     - Texto Principal: #1E1E1E
+     - Gris Claro (Fondo de secciones / Tarjetas): #F4F6F9
+     - Gris Medio (Bordes / Separadores / Inputs): #D1D5DB
+   ========================================================================== */
+
+:root {
+  --sena-green:          #39A900;
+  --sena-green-hover:    #2E8800;
+  --sena-green-light:    #EBF7E5;
+  --sena-green-border:   #A8E08A;
+  --sena-green-focus:    rgba(57, 169, 0, 0.25);
+
+  --sena-blue:           #00324D;
+  --sena-blue-hover:     #002438;
+  --sena-blue-light:     #E6EEF2;
+  --sena-blue-border:    #99B8C9;
+
+  --sena-white:          #FFFFFF;
+  --sena-text:           #1E1E1E;
+  --sena-text-black:     #000000;
+  --sena-text-muted:     #4B5563;
+  --sena-bg-light:       #F4F6F9;
+  --sena-border:         #D1D5DB;
+
+  /* Mapeo global del sistema */
+  --bg-body:             var(--sena-bg-light);
+  --bg-surface:          var(--sena-white);
+  --text-main:           var(--sena-text);
+  --text-muted:          var(--sena-text-muted);
+  --border-color:        var(--sena-border);
+  --navy:                var(--sena-blue);
+  --dark:                var(--sena-blue);
+  --sage:                var(--sena-green);
+  --rust:                var(--sena-blue);
+  --cream:               var(--sena-white);
+
+  /* Bootstrap 5 Variables */
+  --bs-primary:          #39A900;
+  --bs-primary-rgb:      57, 169, 0;
+  --bs-success:          #39A900;
+  --bs-success-rgb:      57, 169, 0;
+  --bs-info:             #00324D;
+  --bs-info-rgb:         0, 50, 77;
+  --bs-dark:             #00324D;
+  --bs-dark-rgb:         0, 50, 77;
+  --bs-light:            #F4F6F9;
+  --bs-light-rgb:        244, 246, 249;
+  --bs-body-bg:          #F4F6F9;
+  --bs-body-color:       #1E1E1E;
+  --bs-border-color:     #D1D5DB;
+  --bs-link-color:       #1E1E1E;
+  --bs-link-hover-color: #39A900;
+}
+
+/* 1. Botones principales, llamadas a la acción (CTA) e indicadores de foco (#39A900 + #FFFFFF) */
+.btn-primary,
+.btn-success,
+.btn-sbm-primary,
+.btn-primary-mine,
+.sfb-btn-primary,
+.sfb-btn-add,
+.gu-btn-filter,
+.gu-btn-edit,
+.btn-dt-print,
+body.auth-page .btn-submit {
+  background: var(--sena-green) !important;
+  background-color: var(--sena-green) !important;
+  border-color: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+  box-shadow: 0 2px 6px rgba(57, 169, 0, 0.22) !important;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-primary:focus:not(:disabled),
+.btn-success:hover:not(:disabled),
+.btn-success:focus:not(:disabled),
+.btn-sbm-primary:hover:not(:disabled),
+.btn-primary-mine:hover:not(:disabled),
+.sfb-btn-primary:hover:not(:disabled),
+.sfb-btn-add:hover:not(:disabled),
+.gu-btn-filter:hover:not(:disabled),
+.gu-btn-edit:hover:not(:disabled),
+.btn-dt-print:hover:not(:disabled),
+body.auth-page .btn-submit:hover:not(:disabled) {
+  background: var(--sena-green-hover) !important;
+  background-color: var(--sena-green-hover) !important;
+  border-color: var(--sena-green-hover) !important;
+  color: var(--sena-white) !important;
+  box-shadow: 0 4px 12px rgba(57, 169, 0, 0.32) !important;
+}
+
+:focus-visible {
+  outline: 3px solid var(--sena-green) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px var(--sena-green-focus) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.sfb-search-input:focus,
+.sfb-select:focus,
+.sbm-search-input:focus,
+.config-input:focus,
+.gu-search-input:focus,
+.gu-select:focus,
+.search-input:focus,
+.inv-search-input:focus,
+.inv-cat-select:focus,
+body.auth-page .mine-input:focus,
+body.auth-page .input-group-mine:focus-within {
+  border-color: var(--sena-green) !important;
+  box-shadow: 0 0 0 3px var(--sena-green-focus) !important;
+  outline: none !important;
+}
+
+.sfb-search-group:focus-within .sfb-search-icon,
+.sbm-search-inner:focus-within .sbm-search-icon {
+  color: var(--sena-green) !important;
+}
+
+/* 2. Encabezados (h1-h6), barras de navegación (aside/header/navbar) y footer (#00324D / #FFFFFF) */
+body h1,
+body h2,
+body h3,
+body .page-title,
+body .gu-title,
+body .config-page-title,
+body .config-card-title,
+body .sbm-title-heading {
+  color: var(--sena-blue);
+}
+
+body h4,
+body h5,
+body h6 {
+  color: var(--sena-text);
+}
+
+.modal-header.text-white h5,
+.modal-header.bg-primary h5,
+.modal-header.bg-success h5,
+.modal-header.bg-dark h5,
+.sbm-modal-header h5 {
+  color: var(--sena-white) !important;
+}
+
+aside,
+aside#aside-sidebar,
+header,
+.navbar,
+footer {
+  background: var(--sena-blue) !important;
+  background-color: var(--sena-blue) !important;
+}
+
+aside .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--sena-white) !important;
+  border-left-color: var(--sena-green) !important;
+}
+
+aside .nav-link.active {
+  background: rgba(57, 169, 0, 0.22) !important;
+  border-left: 4px solid var(--sena-green) !important;
+  color: var(--sena-white) !important;
+}
+
+aside .nav-link.active .nav-icon,
+aside .nav-link.active i {
+  stroke: var(--sena-green) !important;
+  color: var(--sena-green) !important;
+}
+
+.modal-header.bg-primary,
+.modal-header.bg-dark,
+.sbm-modal-header {
+  background: var(--sena-blue) !important;
+  color: var(--sena-white) !important;
+  border-bottom: 3px solid var(--sena-green) !important;
+}
+
+.modal-header.bg-success {
+  background: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+}
+
+body.auth-page,
+body.auth-page .left-panel {
+  background-color: var(--sena-blue) !important;
+}
+
+body.auth-page .brand-text {
+  color: var(--sena-white) !important;
+}
+
+body.auth-page .brand-text span {
+  color: var(--sena-green) !important;
+}
+
+body.auth-page .logo-box,
+body.auth-page .tab-btn.on {
+  background: var(--sena-blue) !important;
+  color: var(--sena-white) !important;
+}
+
+/* 3. Fondos generales y tarjetas (#FFFFFF y #F4F6F9) */
+body:not(.auth-page),
+body main,
+body .body-wrap,
+body.auth-page .right-panel {
+  background-color: var(--sena-bg-light) !important;
+  color: var(--sena-text) !important;
+}
+
+.card,
+.table-card,
+.kpi-card,
+.inv-kpi-card,
+.gu-card,
+.gu-filter-card,
+.gu-table-card,
+.config-card,
+.sfb-wrap,
+.modal-content {
+  background-color: var(--sena-white) !important;
+  color: var(--sena-text) !important;
+}
+
+.card-footer,
+.modal-footer,
+.bg-light,
+.table-light,
+thead tr,
+.gu-table thead th,
+.quick-action-link,
+.recent-dev-row,
+.config-status-box,
+.sbm-child-row-wrapper {
+  background-color: var(--sena-bg-light) !important;
+}
+
+/* 4. Bordes de tarjetas, tablas e inputs (#D1D5DB) */
+.card,
+.table-card,
+.kpi-card,
+.inv-kpi-card,
+.gu-card,
+.gu-filter-card,
+.gu-table-card,
+.config-card,
+.sfb-wrap,
+.modal-content,
+.card-header,
+.card-footer,
+.modal-footer,
+table,
+.table,
+th,
+td,
+.sfb-divider,
+.border {
+  border-color: var(--sena-border) !important;
+}
+
+.form-control,
+.form-select,
+.sfb-search-input,
+.sfb-select,
+.sbm-search-input,
+.config-input,
+.gu-search-input,
+.gu-select,
+.search-input,
+.inv-search-input,
+.inv-cat-select,
+body.auth-page .input-group-mine,
+body.auth-page .mine-input,
+body.auth-page select.mine-input,
+body.auth-page .sel-btn {
+  border-color: var(--sena-border) !important;
+  background-color: var(--sena-white) !important;
+  color: var(--sena-text) !important;
+}
+
+/* 5. Acentos y reemplazo de azules utilitarios por Verde SENA / Neutros */
+.text-primary {
+  color: var(--sena-green) !important;
+}
+
+.text-info {
+  color: var(--sena-blue) !important;
+}
+
+.text-success {
+  color: var(--sena-green) !important;
+}
+
+.bg-primary-subtle,
+.bg-light-primary {
+  background-color: var(--sena-green-light) !important;
+  color: var(--sena-green-hover) !important;
+  border-color: var(--sena-green-border) !important;
+}
+
+.bg-info-subtle {
+  background-color: var(--sena-blue-light) !important;
+  color: var(--sena-blue) !important;
+  border-color: var(--sena-blue-border) !important;
+}
+
+.bg-success-subtle,
+.bg-light-success,
+.inv-kpi-icon.blue,
+.inv-kpi-icon.green,
+.quick-action-icon.icon-blue,
+.quick-action-icon.icon-green {
+  background-color: var(--sena-green-light) !important;
+  color: var(--sena-green) !important;
+}
+
+.btn-outline-mine {
+  background: var(--sena-white) !important;
+  color: var(--sena-text) !important;
+  border: 1.5px solid var(--sena-border) !important;
+}
+.btn-outline-mine i {
+  color: var(--sena-green) !important;
+}
+.btn-outline-mine:hover {
+  background: var(--sena-bg-light) !important;
+  border-color: var(--sena-green) !important;
+  color: var(--sena-green-hover) !important;
+}
+
+.btn-ghost {
+  background: var(--sena-green-light) !important;
+  color: var(--sena-green-hover) !important;
+  border: 1px solid var(--sena-green-border) !important;
+}
+.btn-ghost i {
+  color: var(--sena-green) !important;
+}
+.btn-ghost:hover {
+  background: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+  border-color: var(--sena-green) !important;
+}
+.btn-ghost:hover i {
+  color: var(--sena-white) !important;
+}
+
+.page-item.active .page-link,
+.paginate_button.current,
+div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link,
+div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
+  background-color: var(--sena-green) !important;
+  border-color: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+}
+
+.btn-toggle-details:hover,
+tr.shown .btn-toggle-details {
+  background: var(--sena-green) !important;
+  border-color: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+}

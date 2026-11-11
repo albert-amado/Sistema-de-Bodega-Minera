@@ -15,11 +15,16 @@ class AlmacenForm(forms.ModelForm):
         }
 
     def clean_nombre(self):
-        nombre = self.cleaned_data.get('nombre', '').strip()
+        nombre = (self.cleaned_data.get('nombre') or '').strip()
         if not nombre:
             raise ValidationError('El nombre del almacén es obligatorio.')
         if len(nombre) < 2:
             raise ValidationError('El nombre debe tener al menos 2 caracteres.')
+        qs = Almacen.objects.filter(nombre__iexact=nombre)
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise ValidationError('Ya existe un almacén registrado con este nombre.')
         return nombre
 
     def clean_ubicacion(self):
@@ -40,10 +45,22 @@ class EstanteForm(forms.ModelForm):
         }
 
     def clean_codigo(self):
-        codigo = self.cleaned_data.get('codigo', '').strip()
+        codigo = (self.cleaned_data.get('codigo') or '').strip()
         if not codigo:
             raise ValidationError('El código del estante es obligatorio.')
         return codigo
 
     def clean_dimensiones(self):
         return (self.cleaned_data.get('dimensiones') or '').strip()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        almacen = cleaned_data.get('codigo_almacen')
+        codigo = cleaned_data.get('codigo')
+        if almacen and codigo:
+            qs = Estante.objects.filter(codigo_almacen=almacen, codigo__iexact=codigo)
+            if self.instance and self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                self.add_error('codigo', 'Ya existe un estante con este código en el almacén seleccionado.')
+        return cleaned_data

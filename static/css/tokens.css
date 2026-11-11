@@ -1,54 +1,99 @@
 /* ==========================================================================
-   SISTEMA DE BODEGA MINERA (SBM) — DESIGN TOKENS & INDUSTRIAL IDENTITY
-   Variables CSS centralizadas para ambiente minero e industrial.
-   Contraste certificado WCAG AA (mínimo 4.5:1 para luz difícil / terreno).
+   SISTEMA DE BODEGA MINERA (SBM) — IDENTIDAD VISUAL INSTITUCIONAL SENA
+   Paleta de colores oficial SENA centralizada en :root (WCAG AA/AAA).
+   Predominio: Verde SENA (#39A900), Blanco (#FFFFFF), Gris Claro (#F4F6F9),
+   Gris Medio (#D1D5DB) y Texto (#1E1E1E).
+   Azul Institucional (#00324D) usado con moderación exclusiva institucional.
    ========================================================================== */
 
 :root {
-  /* ── 1. SUPERFICIES TIPO ROCA / GRAFITO ── */
-  --sbm-rock-950: #080E18;   /* Fondo ultra-profundo / Sidebar principal */
-  --sbm-rock-900: #0F172A;   /* Roca grafito profunda / Headers & Cards oscuras */
-  --sbm-rock-850: #131E30;   /* Superficie secundaria oscura */
-  --sbm-rock-800: #1E293B;   /* Paneles y tarjetas en modo oscuro */
-  --sbm-rock-700: #334155;   /* Bordes de alta resistencia y divisores */
-  --sbm-rock-600: #475569;   /* Bordes sutiles y textos secundarios */
-  --sbm-rock-500: #64748B;   /* Texto neutral de soporte (contraste 4.8:1 s/ blanco) */
-  --sbm-rock-400: #94A3B8;   /* Texto claro en fondos oscuros (contraste 5.5:1) */
-  --sbm-rock-200: #E2E8F0;   /* Bordes claros de contención */
-  --sbm-rock-100: #F1F5F9;   /* Fondo de página de trabajo diurna */
-  --sbm-rock-50:  #F8FAFC;   /* Superficie de tarjetas claras */
-  --sbm-white:    #FFFFFF;   /* Blanco puro para tarjetas y textos destacados */
+  /* ── 1. PALETA OFICIAL SENA (TOKENS MAESTROS) ── */
+  --sena-green:          #39A900;   /* Verde Principal SENA (Botones CTA, Foco, Éxito, Iconos activos) */
+  --sena-green-hover:    #2E8800;   /* Verde SENA Hover / Activo */
+  --sena-green-light:    #EBF7E5;   /* Fondo sutil verde SENA */
+  --sena-green-border:   #A8E08A;   /* Borde suave verde SENA */
+  --sena-green-focus:    rgba(57, 169, 0, 0.25); /* Anillo de foco accesible */
 
-  /* ── 2. ACENTOS INDUSTRIALES CÁLIDOS (COBRE & ÁMBAR DE SEGURIDAD) ── */
-  --sbm-amber-600: #B45309;  /* Ámbar de seguridad oscuro (contraste 4.7:1 s/ blanco) */
-  --sbm-amber-500: #D97706;  /* Ámbar de seguridad principal para acciones */
-  --sbm-amber-400: #F59E0B;  /* Oro/ámbar minero para elementos sobre fondos oscuros */
-  --sbm-amber-100: #FEF3C7;  /* Fondo suave ámbar */
-  --sbm-amber-50:  #FFFBEB;  /* Tinte sutil ámbar */
-  --sbm-copper-600:#9A3412;  /* Cobre minero profundo */
-  --sbm-copper-500:#C2410C;  /* Cobre de extracción para botones primarios */
-  --sbm-copper-400:#EA580C;  /* Cobre brillante hover */
+  --sena-blue:           #00324D;   /* Azul Institucional SENA (Headers, Sidebar, Títulos H1-H3) */
+  --sena-blue-hover:     #002438;   /* Azul Institucional profundo */
+  --sena-blue-light:     #E6EEF2;   /* Fondo sutil azul institucional */
+  --sena-blue-border:    #A8E08A;   /* Contorno verde SENA unificado */
 
-  /* ── 3. ESTADOS DE STOCK (ALTO CONTRASTE AA) ── */
-  /* Disponible / En óptimo estado */
-  --sbm-stock-ok-text:   #065F46; /* Verde bosque profundo (contraste 7.2:1 s/ fondo) */
-  --sbm-stock-ok-bg:     #ECFDF5;
-  --sbm-stock-ok-border: #A7F3D0;
-  --sbm-stock-ok-solid:  #059669;
+  --sena-white:          #FFFFFF;   /* Blanco puro (Tarjetas, Fondos limpios, Contraste) */
+  --sena-text:           #1E1E1E;   /* Texto principal de alto contraste */
+  --sena-text-black:     #000000;   /* Negro absoluto para énfasis */
+  --sena-text-muted:     #4B5563;   /* Texto secundario legible sobre #FFFFFF y #F4F6F9 */
+  --sena-bg-light:       #F4F6F9;   /* Gris claro (Fondo de secciones, página y paneles) */
+  --sena-border:         #D1D5DB;   /* Gris medio (Bordes de tarjetas, tablas e inputs) */
 
-  /* Crítico / Mínimo / Por vencer */
-  --sbm-stock-warn-text:   #92400E; /* Ámbar tostado profundo (contraste 5.8:1 s/ fondo) */
+  /* ── 2. MAPEO A VARIABLES DEL SISTEMA Y BOOTSTRAP 5 ── */
+  --bg-body:             var(--sena-bg-light);
+  --bg-surface:          var(--sena-white);
+  --text-main:           var(--sena-text);
+  --text-muted:          var(--sena-text-muted);
+  --border-color:        var(--sena-border);
+  --navy:                var(--sena-blue);
+  --dark:                var(--sena-blue);
+  --sage:                var(--sena-green);
+  --rust:                var(--sena-blue);
+  --cream:               var(--sena-white);
+
+  --bs-primary:          #39A900;
+  --bs-primary-rgb:      57, 169, 0;
+  --bs-success:          #39A900;
+  --bs-success-rgb:      57, 169, 0;
+  --bs-info:             #00324D;
+  --bs-info-rgb:         0, 50, 77;
+  --bs-dark:             #00324D;
+  --bs-dark-rgb:         0, 50, 77;
+  --bs-light:            #F4F6F9;
+  --bs-light-rgb:        244, 246, 249;
+  --bs-body-bg:          #F4F6F9;
+  --bs-body-color:       #1E1E1E;
+  --bs-border-color:     #D1D5DB;
+  --bs-link-color:       #1E1E1E;
+  --bs-link-hover-color: #39A900;
+
+  /* ── 3. COMPATIBILIDAD CON TOKENS SBM EXISTENTES ── */
+  --sbm-rock-950:        #002438;
+  --sbm-rock-900:        var(--sena-blue);
+  --sbm-rock-850:        #003B5C;
+  --sbm-rock-800:        var(--sena-blue);
+  --sbm-rock-700:        var(--sena-blue);
+  --sbm-rock-600:        var(--sena-text-muted);
+  --sbm-rock-500:        var(--sena-text-muted);
+  --sbm-rock-400:        #9CA3AF;
+  --sbm-rock-200:        var(--sena-border);
+  --sbm-rock-100:        var(--sena-bg-light);
+  --sbm-rock-50:         var(--sena-bg-light);
+  --sbm-white:           var(--sena-white);
+
+  --sbm-amber-600:       var(--sena-green-hover);
+  --sbm-amber-500:       var(--sena-green);
+  --sbm-amber-400:       var(--sena-green);
+  --sbm-amber-100:       var(--sena-green-light);
+  --sbm-amber-50:        var(--sena-bg-light);
+  --sbm-copper-600:      var(--sena-blue-hover);
+  --sbm-copper-500:      var(--sena-green);
+  --sbm-copper-400:      var(--sena-green-hover);
+
+  /* ── 4. ESTADOS DE STOCK (ALTO CONTRASTE WCAG AA) ── */
+  --sbm-stock-ok-text:     #1E6000;
+  --sbm-stock-ok-bg:       var(--sena-green-light);
+  --sbm-stock-ok-border:   var(--sena-green-border);
+  --sbm-stock-ok-solid:    var(--sena-green);
+
+  --sbm-stock-warn-text:   #92400E;
   --sbm-stock-warn-bg:     #FFFBEB;
   --sbm-stock-warn-border: #FDE68A;
   --sbm-stock-warn-solid:  #D97706;
 
-  /* Agotado / No disponible / Vencido */
-  --sbm-stock-danger-text:   #991B1B; /* Rojo rubí profundo (contraste 6.5:1 s/ fondo) */
+  --sbm-stock-danger-text:   #991B1B;
   --sbm-stock-danger-bg:     #FEF2F2;
   --sbm-stock-danger-border: #FECACA;
   --sbm-stock-danger-solid:  #DC2626;
 
-  /* ── 4. SISTEMA DE ESPACIADO MODULAR (MÚLTIPLOS DE 4px) ── */
+  /* ── 5. SISTEMA DE ESPACIADO Y BORDES ── */
   --sbm-space-1:  4px;
   --sbm-space-2:  8px;
   --sbm-space-3:  12px;
@@ -59,7 +104,6 @@
   --sbm-space-10: 40px;
   --sbm-space-12: 48px;
 
-  /* ── 5. BORDES Y RADIOS INDUSTRIALES SUAVES ── */
   --sbm-radius-xs: 4px;
   --sbm-radius-sm: 6px;
   --sbm-radius-md: 10px;
@@ -67,18 +111,458 @@
   --sbm-radius-xl: 18px;
   --sbm-radius-pill: 9999px;
 
-  /* ── 6. SOMBRAS INDUSTRIALES DISCRETAS ── */
-  --sbm-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
-  --sbm-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-  --sbm-shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
-  --sbm-shadow-glow: 0 0 14px rgba(245, 158, 11, 0.28);
+  /* ── 6. SOMBRAS LIMPIAS ── */
+  --sbm-shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.06);
+  --sbm-shadow-md:   0 4px 12px rgba(0, 0, 0, 0.08);
+  --sbm-shadow-lg:   0 10px 25px rgba(0, 0, 0, 0.12);
+  --sbm-shadow-glow: 0 0 14px rgba(57, 169, 0, 0.28);
 
-  /* ── 7. TIPOGRAFÍA Y NÚMEROS TABULARES ── */
+  /* ── 7. TIPOGRAFÍA ── */
   --sbm-font-sans: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
   --sbm-font-mono: 'Share Tech Mono', 'Courier New', monospace;
 }
 
-/* ── APLICACIÓN DE NÚMEROS TABULARES PARA DATOS INDUSTRIALES ── */
+/* ==========================================================================
+   REGLA 1: BOTONES PRINCIPALES, LLAMADAS A LA ACCIÓN (CTA) E INDICADORES DE FOCO
+   Verde Principal SENA (#39A900) con texto blanco (#FFFFFF)
+   ========================================================================== */
+.btn-primary,
+.btn-success,
+.btn-sbm-primary,
+.btn-primary-mine,
+.sfb-btn-primary,
+.sfb-btn-add,
+.gu-btn-filter,
+.gu-btn-edit,
+body.auth-page .btn-submit {
+  background: var(--sena-green) !important;
+  background-color: var(--sena-green) !important;
+  border-color: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(57, 169, 0, 0.22) !important;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-primary:focus:not(:disabled),
+.btn-success:hover:not(:disabled),
+.btn-success:focus:not(:disabled),
+.btn-sbm-primary:hover:not(:disabled),
+.btn-primary-mine:hover:not(:disabled),
+.sfb-btn-primary:hover:not(:disabled),
+.sfb-btn-add:hover:not(:disabled),
+.gu-btn-filter:hover:not(:disabled),
+.gu-btn-edit:hover:not(:disabled),
+body.auth-page .btn-submit:hover:not(:disabled) {
+  background: var(--sena-green-hover) !important;
+  background-color: var(--sena-green-hover) !important;
+  border-color: var(--sena-green-hover) !important;
+  color: var(--sena-white) !important;
+  box-shadow: 0 4px 12px rgba(57, 169, 0, 0.32) !important;
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary,
+.btn-outline-success {
+  color: var(--sena-green) !important;
+  border-color: var(--sena-green) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-success:hover {
+  background-color: var(--sena-green) !important;
+  border-color: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+}
+
+/* Indicadores de foco accesibles WCAG (#39A900) */
+:focus-visible {
+  outline: 3px solid var(--sena-green) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px var(--sena-green-focus) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.sfb-search-input:focus,
+.sfb-select:focus,
+.sbm-search-input:focus,
+.config-input:focus,
+.gu-search-input:focus,
+.gu-select:focus,
+.search-input:focus,
+.inv-search-input:focus,
+.inv-cat-select:focus,
+body.auth-page .mine-input:focus,
+body.auth-page .input-group-mine:focus-within {
+  border-color: var(--sena-green) !important;
+  box-shadow: 0 0 0 3px var(--sena-green-focus) !important;
+  outline: none !important;
+}
+
+.sfb-search-group:focus-within .sfb-search-icon,
+.sbm-search-inner:focus-within .sbm-search-icon {
+  color: var(--sena-green) !important;
+}
+
+.form-check-input:checked,
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--sena-green) !important;
+  border-color: var(--sena-green) !important;
+}
+
+/* Paginación activa en DataTables y Bootstrap */
+.page-item.active .page-link,
+.paginate_button.current,
+div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link,
+div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
+  background-color: var(--sena-green) !important;
+  border-color: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+}
+
+/* ==========================================================================
+   REGLA 2: ENCABEZADOS (H1-H6), BARRAS DE NAVEGACIÓN (SIDEBAR/HEADER) Y FOOTER
+   Azul Institucional (#00324D) y Blanco (#FFFFFF)
+   ========================================================================== */
+h1, h2, h3,
+.h1, .h2, .h3,
+.page-title,
+.gu-title,
+.config-page-title,
+.config-card-title,
+.sbm-title-heading {
+  color: var(--sena-blue);
+}
+
+h4, h5, h6,
+.h4, .h5, .h6,
+.card-header h6,
+.card-header h5 {
+  color: var(--sena-text);
+}
+
+/* Mantener texto blanco en encabezados dentro de barras o modales oscuros */
+.modal-header.text-white h5,
+.modal-header.bg-primary h5,
+.modal-header.bg-success h5,
+.modal-header.bg-dark h5,
+.sbm-modal-header h5,
+header h1, header h2, header h3,
+aside h1, aside h2, aside h3 {
+  color: var(--sena-white) !important;
+}
+
+/* Sidebar / Barra de Navegación Lateral Institucional (#00324D) */
+aside,
+aside#aside-sidebar {
+  background: var(--sena-blue) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.aside-header {
+  background: var(--sena-blue) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: var(--sena-white) !important;
+}
+
+.aside-brand-name {
+  color: var(--sena-white) !important;
+}
+
+.aside-brand-sub,
+.aside-section-label,
+aside span.text-uppercase {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+aside .nav-link {
+  color: rgba(255, 255, 255, 0.88) !important;
+  border-left: 4px solid transparent !important;
+}
+
+aside .nav-link .nav-icon,
+aside .nav-link i {
+  stroke: rgba(255, 255, 255, 0.82) !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+aside .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--sena-white) !important;
+  border-left-color: var(--sena-green) !important;
+}
+
+aside .nav-link:hover .nav-icon,
+aside .nav-link:hover i {
+  stroke: var(--sena-white) !important;
+  color: var(--sena-white) !important;
+}
+
+aside .nav-link.active {
+  background: rgba(57, 169, 0, 0.22) !important;
+  border-left: 4px solid var(--sena-green) !important;
+  color: var(--sena-white) !important;
+  font-weight: 700 !important;
+}
+
+aside .nav-link.active .nav-icon,
+aside .nav-link.active i {
+  stroke: var(--sena-green) !important;
+  color: var(--sena-green) !important;
+}
+
+/* Header, Navbar y Footer */
+header,
+.navbar,
+footer {
+  background-color: var(--sena-blue) !important;
+  color: var(--sena-white) !important;
+}
+
+/* Modales institucionales */
+.modal-header.bg-primary,
+.modal-header.bg-dark,
+.sbm-modal-header {
+  background: var(--sena-blue) !important;
+  color: var(--sena-white) !important;
+  border-bottom: 3px solid var(--sena-green) !important;
+}
+
+.modal-header.bg-success {
+  background: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+}
+
+.sbm-modal-avatar,
+.profile-avatar-circle {
+  background-color: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+}
+
+/* Panel izquierdo en Login / Registro */
+body.auth-page .left-panel {
+  background-color: var(--sena-blue) !important;
+}
+
+body.auth-page .brand-text {
+  color: var(--sena-white) !important;
+}
+
+body.auth-page .brand-text span {
+  color: var(--sena-green) !important;
+}
+
+body.auth-page .brand-sub,
+body.auth-page .corner-note {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+body.auth-page .logo-box,
+body.auth-page .tab-btn.on {
+  background: var(--sena-blue) !important;
+  color: var(--sena-white) !important;
+}
+
+/* ==========================================================================
+   REGLA 3: FONDOS GENERALES Y TARJETAS (#FFFFFF y #F4F6F9)
+   Alternancia limpia para dar profundidad visual
+   ========================================================================== */
+body,
+main,
+.body-wrap {
+  background-color: var(--sena-bg-light) !important;
+  color: var(--sena-text) !important;
+}
+
+body.auth-page .right-panel {
+  background-color: var(--sena-bg-light) !important;
+  color: var(--sena-text) !important;
+}
+
+.card,
+.table-card,
+.kpi-card,
+.inv-kpi-card,
+.gu-card,
+.gu-filter-card,
+.gu-table-card,
+.config-card,
+.sfb-wrap,
+.modal-content {
+  background-color: var(--sena-white) !important;
+  color: var(--sena-text) !important;
+}
+
+.card-header {
+  background-color: var(--sena-white) !important;
+}
+
+.card-footer,
+.modal-footer,
+.bg-light,
+.table-light,
+thead tr,
+.gu-table thead th,
+.quick-action-link,
+.recent-dev-row,
+.config-status-box,
+.sbm-child-row-wrapper {
+  background-color: var(--sena-bg-light) !important;
+}
+
+tbody tr:hover,
+.table-hover > tbody > tr:hover > *,
+.gu-table tbody tr:hover td {
+  background-color: var(--sena-bg-light) !important;
+}
+
+/* ==========================================================================
+   REGLA 4: BORDES DE TARJETAS, TABLAS E INPUTS (#D1D5DB)
+   ========================================================================== */
+.card,
+.table-card,
+.kpi-card,
+.inv-kpi-card,
+.gu-card,
+.gu-filter-card,
+.gu-table-card,
+.config-card,
+.sfb-wrap,
+.modal-content,
+.quick-action-link,
+.recent-dev-row,
+.config-status-box,
+.sbm-child-row-wrapper,
+.border {
+  border-color: var(--sena-border) !important;
+}
+
+.card-header,
+.card-footer,
+.modal-header,
+.modal-footer,
+.border-bottom,
+.border-top,
+table,
+.table,
+th,
+td,
+thead tr,
+.gu-table thead th,
+.gu-table tbody td,
+.sfb-divider,
+hr {
+  border-color: var(--sena-border) !important;
+}
+
+.form-control,
+.form-select,
+.sfb-search-input,
+.sfb-select,
+.sbm-search-input,
+.config-input,
+.gu-search-input,
+.gu-select,
+.search-input,
+.search-icon,
+.inv-search-input,
+.inv-cat-select,
+body.auth-page .input-group-mine,
+body.auth-page .mine-input,
+body.auth-page select.mine-input,
+body.auth-page .sel-btn {
+  border-color: var(--sena-border) !important;
+  background-color: var(--sena-white) !important;
+  color: var(--sena-text) !important;
+}
+
+/* ==========================================================================
+   ACENTOS, ICONOS Y COMPONENTES COMPLEMENTARIOS SENA
+   (Reemplazo de azules brillantes por Verde SENA y Tonos Neutros)
+   ========================================================================== */
+.text-primary {
+  color: var(--sena-green) !important;
+}
+
+.text-info {
+  color: var(--sena-blue) !important;
+}
+
+.text-success {
+  color: var(--sena-green) !important;
+}
+
+.text-dark {
+  color: var(--sena-text) !important;
+}
+
+.bg-primary-subtle,
+.bg-light-primary {
+  background-color: var(--sena-green-light) !important;
+  color: var(--sena-green-hover) !important;
+}
+
+.bg-info-subtle {
+  background-color: var(--sena-blue-light) !important;
+  color: var(--sena-blue) !important;
+}
+
+.bg-success-subtle,
+.bg-light-success,
+.inv-kpi-icon.green,
+.inv-kpi-icon.blue,
+.quick-action-icon.icon-blue,
+.quick-action-icon.icon-green {
+  background-color: var(--sena-green-light) !important;
+  color: var(--sena-green) !important;
+}
+
+.inv-kpi-card.accent-blue,
+.kpi-accent-blue {
+  border-left-color: var(--sena-blue) !important;
+}
+
+.inv-kpi-card.accent-green,
+.kpi-accent-green {
+  border-left-color: var(--sena-green) !important;
+}
+
+/* Botones secundarios y ghost en verde SENA / neutro */
+.btn-outline-mine {
+  background: var(--sena-white) !important;
+  color: var(--sena-text) !important;
+  border: 1.5px solid var(--sena-border) !important;
+}
+.btn-outline-mine i {
+  color: var(--sena-green) !important;
+}
+.btn-outline-mine:hover {
+  background: var(--sena-bg-light) !important;
+  border-color: var(--sena-green) !important;
+  color: var(--sena-green-hover) !important;
+}
+
+.btn-ghost {
+  background: var(--sena-green-light) !important;
+  color: var(--sena-green-hover) !important;
+  border: 1px solid var(--sena-green-border) !important;
+}
+.btn-ghost i {
+  color: var(--sena-green) !important;
+}
+.btn-ghost:hover {
+  background: var(--sena-green) !important;
+  color: var(--sena-white) !important;
+  border-color: var(--sena-green) !important;
+}
+.btn-ghost:hover i {
+  color: var(--sena-white) !important;
+}
+
+/* Números tabulares */
 .tabular-nums,
 table td,
 .kpi-num,
@@ -88,7 +572,7 @@ table td,
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* ── ESTILOS UNIFICADOS DE BADGES SEMÁNTICOS (WCAG AA) ── */
+/* Badges de estado (WCAG AA) */
 .badge-state {
   display: inline-flex;
   align-items: center;
@@ -112,7 +596,6 @@ table td,
   flex-shrink: 0;
 }
 
-/* Éxito: Devuelto / Disponible / Aprobado */
 .badge-state.badge-aprobada,
 .badge-state.badge-devuelto,
 .badge-state.badge-approved,
@@ -127,7 +610,6 @@ table td,
   background-color: var(--sbm-stock-ok-solid) !important;
 }
 
-/* Advertencia / Atención: Pendiente / Entregado / Parcial / Stock Crítico */
 .badge-state.badge-pendiente,
 .badge-state.badge-entregado,
 .badge-state.badge-pending,
@@ -144,7 +626,6 @@ table td,
   background-color: var(--sbm-stock-warn-solid) !important;
 }
 
-/* Peligro / Alerta: Vencido / Atrasado / Cancelado / Agotado */
 .badge-state.badge-rechazada,
 .badge-state.badge-vencido,
 .badge-state.badge-cancelado,
@@ -163,131 +644,7 @@ table td,
   background-color: var(--sbm-stock-danger-solid) !important;
 }
 
-/* ── ESTADOS INTERACTIVOS ROBUSTOS (HOVER, FOCUS, DISABLED) ── */
-.btn-sbm-primary {
-  background-color: var(--sbm-amber-500);
-  color: #FFFFFF;
-  border: 1px solid var(--sbm-amber-600);
-  border-radius: var(--sbm-radius-sm);
-  font-weight: 600;
-  padding: var(--sbm-space-2) var(--sbm-space-4);
-  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-}
-
-.btn-sbm-primary:hover:not(:disabled) {
-  background-color: var(--sbm-amber-600);
-  color: #FFFFFF;
-  box-shadow: var(--sbm-shadow-glow);
-  transform: translateY(-1px);
-}
-
-.btn-sbm-primary:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn-sbm-primary:disabled,
-button:disabled,
-.btn:disabled {
-  opacity: 0.55 !important;
-  cursor: not-allowed !important;
-  pointer-events: none !important;
-  box-shadow: none !important;
-}
-
-/* Foco visible ultra-claro para pantallas industriales y guantes */
-:focus-visible {
-  outline: 3px solid var(--sbm-amber-400) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.3) !important;
-}
-
-/* ── ESTADOS VACÍOS Y DE CARGA CON ÍCONO DEL SISTEMA ── */
-.sbm-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--sbm-space-10) var(--sbm-space-4);
-  text-align: center;
-  color: var(--sbm-rock-500);
-}
-
-.sbm-empty-state-icon {
-  width: 48px;
-  height: 48px;
-  color: var(--sbm-amber-500);
-  margin-bottom: var(--sbm-space-3);
-  opacity: 0.85;
-}
-
-.sbm-empty-state-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--sbm-rock-900);
-  margin-bottom: var(--sbm-space-1);
-}
-
-.sbm-empty-state-desc {
-  font-size: 0.875rem;
-  color: var(--sbm-rock-500);
-  max-width: 380px;
-}
-
-body.dark-mode .sbm-empty-state-title {
-  color: var(--sbm-rock-50);
-}
-
-body.dark-mode .sbm-empty-state-desc {
-  color: var(--sbm-rock-400);
-}
-
-/* ── DATATABLES RESPONSIVE OFICIAL (SBM PALETTE & CHILD ROWS) ── */
-table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control,
-table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control,
-table.dataTable.dtr-column > tbody > tr > td.dtr-control,
-table.dataTable.dtr-column > tbody > tr > th.dtr-control {
-  position: relative;
-  cursor: pointer;
-}
-
-table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
-table.dataTable.dtr-column > tbody > tr > td.dtr-control:before {
-  content: "+";
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background-color: var(--sbm-amber-500);
-  color: #0F172A;
-  font-family: monospace;
-  font-weight: 800;
-  font-size: 14px;
-  line-height: 1;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  margin-right: 8px;
-  transition: all 0.15s ease;
-}
-
-table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control:before,
-table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
-  content: "−";
-  background-color: #0F172A;
-  color: #F59E0B;
-}
-
-.sbm-child-row-wrapper {
-  background-color: #F8FAFC !important;
-  border: 1px solid #E2E8F0 !important;
-}
-
-body.dark-mode .sbm-child-row-wrapper {
-  background-color: #1E293B !important;
-  border: 1px solid #334155 !important;
-}
-
-/* ── BOTONES DE ACCIÓN UNIFICADOS (36x36px TOUCH INDUSTRIAL) ── */
+/* Botones de acción unificados en tablas (36x36px) */
 .sbm-actions-group {
   display: flex;
   justify-content: center;
@@ -304,9 +661,9 @@ body.dark-mode .sbm-child-row-wrapper {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  border: 1px solid transparent;
-  background-color: transparent;
-  color: #475569;
+  border: 1px solid var(--sena-border);
+  background-color: var(--sena-bg-light);
+  color: var(--sena-blue);
   font-size: 1rem;
   transition: all 0.15s ease;
   position: relative;
@@ -315,45 +672,40 @@ body.dark-mode .sbm-child-row-wrapper {
 
 .sbm-action-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 5px rgba(0, 50, 77, 0.12);
 }
 
-.sbm-action-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-/* Semántica de botones de acción */
 .sbm-btn-view {
-  color: #334155;
-  background-color: #F1F5F9;
-  border-color: #E2E8F0;
+  color: var(--sena-blue);
+  background-color: var(--sena-bg-light);
+  border-color: var(--sena-border);
 }
 .sbm-btn-view:hover:not(:disabled) {
-  background-color: #0F172A;
-  color: #FFFFFF;
-  border-color: #0F172A;
+  background-color: var(--sena-blue);
+  color: var(--sena-white);
+  border-color: var(--sena-blue);
 }
 
 .sbm-btn-edit {
-  color: #B45309;
-  background-color: #FEF3C7;
-  border-color: #FDE68A;
+  color: var(--sena-green-hover);
+  background-color: var(--sena-green-light);
+  border-color: var(--sena-green-border);
 }
 .sbm-btn-edit:hover:not(:disabled) {
-  background-color: #F59E0B;
-  color: #0F172A;
-  border-color: #F59E0B;
+  background-color: var(--sena-green);
+  color: var(--sena-white);
+  border-color: var(--sena-green);
 }
 
 .sbm-btn-success {
-  color: #15803D;
-  background-color: #DCFCE7;
-  border-color: #BBF7D0;
+  color: var(--sena-green-hover);
+  background-color: var(--sena-green-light);
+  border-color: var(--sena-green-border);
 }
 .sbm-btn-success:hover:not(:disabled) {
-  background-color: #16A34A;
-  color: #FFFFFF;
-  border-color: #16A34A;
+  background-color: var(--sena-green);
+  color: var(--sena-white);
+  border-color: var(--sena-green);
 }
 
 .sbm-btn-danger {
@@ -363,108 +715,32 @@ body.dark-mode .sbm-child-row-wrapper {
 }
 .sbm-btn-danger:hover:not(:disabled) {
   background-color: #DC2626;
-  color: #FFFFFF;
+  color: var(--sena-white);
   border-color: #DC2626;
 }
 
-.sbm-btn-kebab {
-  color: #64748B;
-  background-color: #F8FAFC;
-  border-color: #E2E8F0;
-}
-.sbm-btn-kebab:hover:not(:disabled) {
-  background-color: #E2E8F0;
-  color: #0F172A;
-}
-
-.sbm-action-btn:disabled {
-  opacity: 0.45 !important;
-  cursor: not-allowed !important;
-  pointer-events: none !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* ── ESTILOS DE VERIFICACIÓN SOFIAPLUS EN REGISTRO ── */
-.sofia-verify-box {
-  margin-top: 6px;
-  font-size: 0.82rem;
-  line-height: 1.4;
-  transition: all 0.25s ease;
-}
-
-.sofia-badge-loading {
+/* DataTables control responsive (+) */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
+table.dataTable.dtr-column > tbody > tr > td.dtr-control:before {
+  content: "+";
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--sbm-amber-600, #D97706);
-  font-weight: 500;
-  padding: 4px 10px;
-  background: rgba(245, 158, 11, 0.1);
+  justify-content: center;
+  width: 22px;
+  height: 22px;
   border-radius: 6px;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background-color: var(--sena-green);
+  color: var(--sena-white);
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1;
+  margin-right: 8px;
 }
 
-.sofia-badge-success {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #15803D;
-  font-weight: 600;
-  padding: 5px 12px;
-  background: #DCFCE7;
-  border-radius: 6px;
-  border: 1px solid #86EFAC;
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control:before,
+table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
+  content: "−";
+  background-color: var(--sena-blue);
+  color: var(--sena-white);
 }
-
-.sofia-badge-error {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #B91C1C;
-  font-weight: 500;
-  padding: 5px 12px;
-  background: #FEE2E2;
-  border-radius: 6px;
-  border: 1px solid #FECACA;
-}
-
-.sofia-badge-warning {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #B45309;
-  font-weight: 500;
-  padding: 5px 12px;
-  background: #FEF3C7;
-  border-radius: 6px;
-  border: 1px solid #FCD34D;
-}
-
-.mine-input.is-locked-sofia {
-  background-color: #F8FAFC !important;
-  color: #334155 !important;
-  border-color: #CBD5E1 !important;
-  cursor: not-allowed;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath d='M8 1a2 2 0 0 0-2 2v4H5a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1V3a2 2 0 0 0-2-2zm1 6V3a1 1 0 0 0-2 0v4h2z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
-  font-weight: 500;
-}
-
-.spinner-sofia {
-  display: inline-block;
-  width: 13px;
-  height: 13px;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: spin-sofia 0.75s linear infinite;
-}
-
-@keyframes spin-sofia {
-  to { transform: rotate(360deg); }
-}
-
-

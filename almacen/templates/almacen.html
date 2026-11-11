@@ -36,7 +36,7 @@
           <h6 class="text-muted fw-normal mb-1">Total Almacenes</h6>
           <h3 class="fw-bold mb-0">{{ total_almacenes }}</h3>
         </div>
-        <div class="icon-shape bg-light-primary text-primary rounded-circle p-3">
+        <div class="icon-shape bg-primary-subtle text-primary rounded-circle p-3 d-flex align-items-center justify-content-center">
           <i class="bi bi-building fs-4"></i>
         </div>
       </div>
@@ -50,7 +50,7 @@
           <h6 class="text-muted fw-normal mb-1">Total Estantes</h6>
           <h3 class="fw-bold mb-0">{{ total_estantes }}</h3>
         </div>
-        <div class="icon-shape bg-light-success text-success rounded-circle p-3">
+        <div class="icon-shape bg-success-subtle text-success rounded-circle p-3 d-flex align-items-center justify-content-center">
           <i class="bi bi-layout-three-columns fs-4"></i>
         </div>
       </div>
@@ -74,10 +74,12 @@
       <span class="badge bg-light text-dark border px-3 py-2 rounded-pill font-monospace small">
         <i class="bi bi-layers me-1 text-primary"></i>{{ almacenes|length }} registro{{ almacenes|length|pluralize }}
       </span>
+      {% if es_admin %}
       <button type="button" class="btn btn-success btn-sm rounded-pill px-3 d-flex align-items-center gap-1 shadow-xs" data-bs-toggle="modal" data-bs-target="#modalAlmacen" title="Registrar un nuevo almacén">
         <i class="bi bi-plus-lg"></i>
         <span>Nuevo Almacén</span>
       </button>
+      {% endif %}
     </div>
   </div>
 
@@ -151,10 +153,10 @@
 
           <!-- Estantes -->
           <td class="text-center">
-            <span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+            <a href="{% url 'detalle_almacen' almacen.pk %}" class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 text-decoration-none" title="Ver estantes de {{ almacen.nombre }}">
               <i class="bi bi-layout-three-columns"></i>
               <span>{{ almacen.estantes.count|default:0 }} estante{{ almacen.estantes.count|pluralize }}</span>
-            </span>
+            </a>
           </td>
 
           <!-- Acciones -->
@@ -176,12 +178,14 @@
                       })">
                 <i class="bi bi-eye"></i>
               </button>
+              {% if es_admin %}
               <button type="button" class="sbm-action-btn sbm-btn-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar {{ almacen.nombre }}" aria-label="Modificar {{ almacen.nombre }}" onclick="abrirEditarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}','{{ almacen.ubicacion|default:''|escapejs }}','{{ almacen.dimensiones|default:''|escapejs }}')">
                 <i class="bi bi-pencil"></i>
               </button>
               <button type="button" class="sbm-action-btn sbm-btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar {{ almacen.nombre }}" aria-label="Eliminar {{ almacen.nombre }}" onclick="abrirEliminarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}')">
                 <i class="bi bi-trash"></i>
               </button>
+              {% endif %}
             </div>
           </td>
         </tr>
@@ -196,39 +200,6 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
-</div>
-
-<!-- ══ Modal Ver Detalles ══ -->
-<div class="modal fade" id="modalDetallesAlmacen" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title fw-bold d-flex align-items-center gap-2"><i class="bi bi-eye me-1"></i>Detalles del Almacén</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body modal-body-padded p-4">
-        <div class="p-2 mb-2 rounded bg-light border d-flex justify-content-between">
-          <span class="text-muted small fw-bold">ID</span>
-          <span class="font-monospace fw-bold" id="det_id">—</span>
-        </div>
-        <div class="p-2 mb-2 rounded bg-light border d-flex justify-content-between">
-          <span class="text-muted small fw-bold">Nombre</span>
-          <span class="fw-bold text-dark" id="det_nombre">—</span>
-        </div>
-        <div class="p-2 mb-2 rounded bg-light border d-flex justify-content-between">
-          <span class="text-muted small fw-bold">Ubicación</span>
-          <span class="text-dark" id="det_ubicacion">—</span>
-        </div>
-        <div class="p-2 rounded bg-light border d-flex justify-content-between">
-          <span class="text-muted small fw-bold">Dimensiones</span>
-          <span class="font-monospace text-dark" id="det_dimensiones">—</span>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -356,48 +327,43 @@
 <!-- ══ Scripts ══ -->
 {% if show_modal %}
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    new bootstrap.Modal(document.getElementById('modalAlmacen')).show();
+  window.addEventListener('load', function () {
+    var modalEl = document.getElementById('modalAlmacen');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+      bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    }
   });
 </script>
 {% endif %}
 
 {% if show_modal_editar %}
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('edit_almacen_id').value          = '{{ request.POST.almacen_id }}';
+  window.addEventListener('load', function () {
+    document.getElementById('edit_almacen_id').value          = '{{ request.POST.almacen_id|escapejs }}';
     document.getElementById('edit_almacen_nombre').value      = '{{ request.POST.nombre|escapejs }}';
     document.getElementById('edit_almacen_ubicacion').value   = '{{ request.POST.ubicacion|escapejs }}';
     document.getElementById('edit_almacen_dimensiones').value = '{{ request.POST.dimensiones|escapejs }}';
-    new bootstrap.Modal(document.getElementById('modalEditarAlmacen')).show();
+    var modalEl = document.getElementById('modalEditarAlmacen');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+      bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    }
   });
 </script>
 {% endif %}
 
 <script>
-  /* ── Modal detalles (delegación global) ── */
-  $(document).on('click', '.btn-ver-detalle', function () {
-    var tr = this.closest('tr');
-    if (!tr) return;
-    document.getElementById('det_id').textContent          = tr.dataset.almId || '';
-    document.getElementById('det_nombre').textContent      = tr.dataset.almNombre || '';
-    document.getElementById('det_ubicacion').textContent   = tr.dataset.almUbicacion || '—';
-    document.getElementById('det_dimensiones').textContent = tr.dataset.almDimensiones || '—';
-    new bootstrap.Modal(document.getElementById('modalDetallesAlmacen')).show();
-  });
-
   function abrirEditarAlmacen(pk, nombre, ubicacion, dimensiones) {
     document.getElementById('edit_almacen_id').value          = pk;
     document.getElementById('edit_almacen_nombre').value      = nombre;
     document.getElementById('edit_almacen_ubicacion').value   = ubicacion;
     document.getElementById('edit_almacen_dimensiones').value = dimensiones;
-    new bootstrap.Modal(document.getElementById('modalEditarAlmacen')).show();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditarAlmacen')).show();
   }
 
   function abrirEliminarAlmacen(pk, nombre) {
     document.getElementById('eliminar_almacen_id').value           = pk;
     document.getElementById('eliminar_almacen_nombre').textContent = '"' + nombre + '"';
-    new bootstrap.Modal(document.getElementById('modalEliminarAlmacen')).show();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEliminarAlmacen')).show();
   }
 </script>
 

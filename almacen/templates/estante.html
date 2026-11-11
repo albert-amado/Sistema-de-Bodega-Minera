@@ -16,7 +16,7 @@
     <line x1="12" y1="17" x2="12.01" y2="17" />
   </svg>
   {% else %}
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2.2">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#39A900" stroke-width="2.2">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
     <polyline points="22 4 12 14.01 9 11.01" />
   </svg>
@@ -36,7 +36,7 @@
           <h6 class="text-muted fw-normal mb-1">Total Estantes</h6>
           <h3 class="fw-bold mb-0">{{ total_estantes }}</h3>
         </div>
-        <div class="icon-shape bg-light-success text-success rounded-circle p-3">
+        <div class="icon-shape bg-success-subtle text-success rounded-circle p-3 d-flex align-items-center justify-content-center">
           <i class="bi bi-layout-three-columns fs-4"></i>
         </div>
       </div>
@@ -50,7 +50,7 @@
           <h6 class="text-muted fw-normal mb-1">Total Almacenes</h6>
           <h3 class="fw-bold mb-0">{{ total_almacenes }}</h3>
         </div>
-        <div class="icon-shape bg-light-primary text-primary rounded-circle p-3">
+        <div class="icon-shape bg-primary-subtle text-primary rounded-circle p-3 d-flex align-items-center justify-content-center">
           <i class="bi bi-building fs-4"></i>
         </div>
       </div>
@@ -74,10 +74,12 @@
       <span class="badge bg-light text-dark border px-3 py-2 rounded-pill font-monospace small">
         <i class="bi bi-layers me-1 text-primary"></i>{{ estantes|length }} registro{{ estantes|length|pluralize }}
       </span>
+      {% if es_admin %}
       <button type="button" class="btn btn-success btn-sm rounded-pill px-3 d-flex align-items-center gap-1 shadow-xs" data-bs-toggle="modal" data-bs-target="#modalEstante" title="Registrar un nuevo estante">
         <i class="bi bi-plus-lg"></i>
         <span>Nuevo Estante</span>
       </button>
+      {% endif %}
     </div>
   </div>
 
@@ -127,10 +129,10 @@
 
           <!-- Almacén Asignado -->
           <td>
-            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs fs-sm-badge">
+            <a href="{% url 'detalle_almacen' estante.codigo_almacen.pk %}" class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs fs-sm-badge text-decoration-none" title="Ver almacén {{ estante.codigo_almacen.nombre }}">
               <i class="bi bi-building text-primary"></i>
               <span>{{ estante.codigo_almacen.nombre }}</span>
-            </span>
+            </a>
           </td>
 
           <!-- Dimensiones -->
@@ -171,12 +173,14 @@
                       })">
                 <i class="bi bi-eye"></i>
               </button>
+              {% if es_admin %}
               <button type="button" class="sbm-action-btn sbm-btn-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar estante" aria-label="Modificar estante {{ estante.codigo }}" onclick="abrirEditarEstante('{{ estante.pk }}','{{ estante.codigo_almacen.pk }}','{{ estante.codigo|escapejs }}','{{ estante.dimensiones|default:''|escapejs }}')">
                 <i class="bi bi-pencil"></i>
               </button>
               <button type="button" class="sbm-action-btn sbm-btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar estante" aria-label="Eliminar estante {{ estante.codigo }}" onclick="abrirEliminarEstante('{{ estante.pk }}','{{ estante.codigo|escapejs }}')">
                 <i class="bi bi-trash"></i>
               </button>
+              {% endif %}
             </div>
           </td>
         </tr>
@@ -191,39 +195,6 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
-</div>
-
-<!-- ══ Modal Ver Detalles ══ -->
-<div class="modal fade" id="modalDetallesEstante" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title fw-bold d-flex align-items-center gap-2"><i class="bi bi-eye me-1"></i>Detalles del Estante</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body modal-body-padded">
-        <div class="detalle-row">
-          <span class="label-caps">ID</span>
-          <span class="value-text" id="det_est_id">—</span>
-        </div>
-        <div class="detalle-row">
-          <span class="label-caps">Almacén</span>
-          <span class="value-text" id="det_est_almacen">—</span>
-        </div>
-        <div class="detalle-row">
-          <span class="label-caps">Código</span>
-          <span class="value-text font-monospace" id="det_est_codigo">—</span>
-        </div>
-        <div class="detalle-row border-bottom-0">
-          <span class="label-caps">Dimensiones</span>
-          <span class="value-text" id="det_est_detalles">—</span>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -268,8 +239,8 @@
           </div>
         </div>
         <div class="modal-footer bg-light border-0 px-4 py-3">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-success px-4">Guardar Estante</button>
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success rounded-pill px-4">Guardar Estante</button>
         </div>
       </form>
     </div>
@@ -315,13 +286,13 @@
             </div>
             <div class="col-12">
               <label for="edit_estante_detalles" class="form-label text-muted fw-bold small uppercase mb-1">Dimensiones</label>
-              <textarea name="dimensiones" id="edit_estante_detalles" class="form-control" rows="3"></textarea>
+              <input type="text" name="dimensiones" id="edit_estante_detalles" class="form-control" placeholder="Ej: 2x1x3m">
             </div>
           </div>
         </div>
         <div class="modal-footer bg-light border-0 px-4 py-3">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="submit" class="btn btn-primary px-4">Actualizar Datos</button>
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4">Actualizar Datos</button>
         </div>
       </form>
     </div>
@@ -337,7 +308,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-4 text-center">
-        <p class="mb-2">¿Estás seguro de eliminar el estante</p>
+        <p class="mb-2">¿Estás seguro de eliminar el estante?</p>
         <p id="eliminar_estante_codigo" class="fw-bold text-danger fs-5"></p>
         <p class="text-muted small mb-0">Esta acción no se puede deshacer.</p>
       </div>
@@ -346,8 +317,8 @@
           {% csrf_token %}
           <input type="hidden" name="accion" value="eliminar">
           <input type="hidden" name="estante_id" id="eliminar_estante_id">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-warning text-dark fw-bold px-4">Sí, eliminar</button>
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-warning text-dark fw-bold rounded-pill px-4">Sí, eliminar</button>
         </form>
       </div>
     </div>
@@ -357,51 +328,71 @@
 <!-- ══ Scripts ══ -->
 {% if show_modal %}
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    new bootstrap.Modal(document.getElementById('modalEstante')).show();
+  window.addEventListener('load', function () {
+    var modalEl = document.getElementById('modalEstante');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+      bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    }
   });
 </script>
 {% endif %}
 
 {% if show_modal_editar %}
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('edit_estante_id').value        = '{{ request.POST.estante_id }}';
-    document.getElementById('edit_estante_codigo').value    = '{{ request.POST.codigo|escapejs }}';
-    document.getElementById('edit_estante_detalles').value  = '{{ request.POST.dimensiones|escapejs }}';
-    const sel = document.getElementById('edit_estante_almacen');
-    const almacenPk = '{{ request.POST.codigo_almacen }}';
-    for (let opt of sel.options) { opt.selected = opt.value == almacenPk; }
-    new bootstrap.Modal(document.getElementById('modalEditarEstante')).show();
+  window.addEventListener('load', function () {
+    document.getElementById('edit_estante_id').value       = '{{ request.POST.estante_id|escapejs }}';
+    document.getElementById('edit_estante_codigo').value   = '{{ request.POST.codigo|escapejs }}';
+    document.getElementById('edit_estante_detalles').value = '{{ request.POST.dimensiones|escapejs }}';
+    var sel = document.getElementById('edit_estante_almacen');
+    var almacenPk = '{{ request.POST.codigo_almacen|escapejs }}';
+    if (sel) {
+      for (var i = 0; i < sel.options.length; i++) {
+        sel.options[i].selected = sel.options[i].value == almacenPk;
+      }
+    }
+    var modalEl = document.getElementById('modalEditarEstante');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+      bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    }
   });
 </script>
 {% endif %}
 
 <script>
-  /* ── Modal detalles (delegación global) ── */
-  $(document).on('click', '.btn-ver-detalle-estante', function () {
-    var tr = this.closest('tr');
-    if (!tr) return;
-    document.getElementById('det_est_id').textContent        = tr.dataset.estId || '';
-    document.getElementById('det_est_almacen').textContent   = tr.dataset.estAlmacen || '';
-    document.getElementById('det_est_codigo').textContent    = tr.dataset.estCodigo || '';
-    document.getElementById('det_est_detalles').textContent  = tr.dataset.estDetalles || '—';
-    new bootstrap.Modal(document.getElementById('modalDetallesEstante')).show();
+  window.addEventListener('load', function () {
+    var params = new URLSearchParams(window.location.search);
+    var almParam = params.get('almacen');
+    if (almParam) {
+      var sel = document.getElementById('id_codigo_almacen');
+      if (sel) {
+        sel.value = almParam;
+      }
+      if (params.get('nuevo') === '1' && typeof bootstrap !== 'undefined') {
+        var modalEl = document.getElementById('modalEstante');
+        if (modalEl) {
+          bootstrap.Modal.getOrCreateInstance(modalEl).show();
+        }
+      }
+    }
   });
 
   function abrirEditarEstante(pk, almacenPk, codigo, detalles) {
-    document.getElementById('edit_estante_id').value        = pk;
-    document.getElementById('edit_estante_codigo').value    = codigo;
-    document.getElementById('edit_estante_detalles').value  = detalles;
-    const sel = document.getElementById('edit_estante_almacen');
-    for (let opt of sel.options) { opt.selected = opt.value == almacenPk; }
-    new bootstrap.Modal(document.getElementById('modalEditarEstante')).show();
+    document.getElementById('edit_estante_id').value       = pk;
+    document.getElementById('edit_estante_codigo').value   = codigo;
+    document.getElementById('edit_estante_detalles').value = detalles;
+    var sel = document.getElementById('edit_estante_almacen');
+    if (sel) {
+      for (var i = 0; i < sel.options.length; i++) {
+        sel.options[i].selected = sel.options[i].value == almacenPk;
+      }
+    }
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditarEstante')).show();
   }
 
   function abrirEliminarEstante(pk, codigo) {
     document.getElementById('eliminar_estante_id').value           = pk;
     document.getElementById('eliminar_estante_codigo').textContent = '"' + codigo + '"';
-    new bootstrap.Modal(document.getElementById('modalEliminarEstante')).show();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEliminarEstante')).show();
   }
 </script>
 

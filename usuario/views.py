@@ -88,6 +88,8 @@ def login_view(request):
         request.session['usuario_nombre'] = usuario.nombre_completo
         request.session['usuario_rol'] = usuario.rol
         request.session['usuario_tipo_documento'] = usuario.tipo_documento
+        # Bandera de un solo uso: muestra la animación de bienvenida en el inicio
+        request.session['auth_bienvenida'] = 'login'
 
         return redirect('pagina_principal')
 
@@ -125,6 +127,8 @@ def registro_view(request):
             request.session['usuario_nombre'] = usuario.nombre_completo
             request.session['usuario_rol'] = usuario.rol
             request.session['usuario_tipo_documento'] = usuario.tipo_documento
+            # Bandera de un solo uso: muestra la animación de registro exitoso
+            request.session['auth_bienvenida'] = 'registro'
             messages.success(request, f'¡Bienvenido, {usuario.nombre_completo}!')
             return redirect('pagina_principal')
         else:

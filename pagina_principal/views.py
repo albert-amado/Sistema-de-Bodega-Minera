@@ -177,6 +177,8 @@ def home_usuario_view(request):
         'chart_estados_json': chart_estados_json,
         'chart_meses_json': chart_meses_json,
         'chart_salud_json': chart_salud_json,
+        # Animación de bienvenida tras login/registro exitoso (se consume una sola vez)
+        'auth_bienvenida': request.session.pop('auth_bienvenida', None),
     }
 
     return render(request, 'pagina_principal.html', context)

@@ -1,6 +1,5 @@
 /* ==========================================================================
-   PÁGINA PRINCIPAL / DASHBOARD
-   Hoja de estilos modularizada
+   PÁGINA PRINCIPAL / DASHBOARD (Adaptado a Paleta Institucional SENA)
    ========================================================================== */
 
 .kpi-card {
@@ -8,18 +7,18 @@
   transform: translateY(0) !important;
   position: relative !important;
   overflow: hidden !important;
-  background: #ffffff;
-  border: 1px solid rgba(27, 32, 33, 0.09);
+  background: var(--sena-white, #ffffff);
+  border: 1px solid var(--sena-border, #D1D5DB);
   border-radius: 12px;
   padding: 18px 16px;
-  box-shadow: 0 2px 8px rgba(27, 32, 33, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 50, 77, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   height: 100%;
 }
 
 .kpi-card:hover {
   transform: translateY(-3px) !important;
-  box-shadow: 0 8px 24px rgba(27, 32, 33, 0.1) !important;
+  box-shadow: 0 8px 24px rgba(0, 50, 77, 0.09) !important;
 }
 
 .kpi-accent-bar {
@@ -31,15 +30,15 @@
   border-radius: 4px 4px 0 0;
   transform: scaleX(1) !important;
 }
-.kpi-accent-blue   { background: #5b8dee; }
-.kpi-accent-green  { background: #1D9E75; }
-.kpi-accent-rust   { background: #98473E; }
-.kpi-accent-yellow { background: #c4900a; }
+.kpi-accent-blue   { background: var(--sena-blue, #00324D); }
+.kpi-accent-green  { background: var(--sena-green, #39A900); }
+.kpi-accent-rust   { background: var(--sbm-stock-danger-solid, #DC2626); }
+.kpi-accent-yellow { background: var(--sbm-stock-warn-solid, #D97706); }
 
 .kpi-title-label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--sena-text-muted, #4B5563);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -47,13 +46,14 @@
 .kpi-num-display {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--sena-text, #1E1E1E);
   line-height: 1.1;
   margin: 8px 0;
 }
 
 .kpi-sub-text {
   font-size: 0.78rem;
+  color: var(--sena-text-muted, #4B5563);
 }
 
 .chart-container {
@@ -63,21 +63,22 @@
 }
 
 .quick-action-link {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--sena-bg-light, #F4F6F9);
+  border: 1px solid var(--sena-border, #D1D5DB);
   border-radius: 10px;
   padding: 12px 14px;
   transition: all 0.2s ease;
   text-decoration: none !important;
-  color: #1e293b;
+  color: var(--sena-text, #1E1E1E);
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 .quick-action-link:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: var(--sena-green-light, #EBF7E5);
+  border-color: var(--sena-green-border, #A8E08A);
+  color: var(--sena-green-hover, #2E8800);
   transform: translateX(3px);
 }
 
@@ -92,12 +93,12 @@
   flex-shrink: 0;
 }
 .quick-action-icon.icon-blue {
-  background: rgba(91, 141, 238, 0.15);
-  color: #2563eb;
+  background: var(--sena-green-light, #EBF7E5);
+  color: var(--sena-green, #39A900);
 }
 .quick-action-icon.icon-green {
-  background: rgba(16, 185, 129, 0.15);
-  color: #059669;
+  background: var(--sena-green-light, #EBF7E5);
+  color: var(--sena-green, #39A900);
 }
 .quick-action-icon.icon-amber {
   background: rgba(245, 158, 11, 0.15);
@@ -105,44 +106,10 @@
 }
 
 .recent-dev-row {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--sena-bg-light, #F4F6F9);
+  border: 1px solid var(--sena-border, #D1D5DB);
 }
 
 .recent-dev-title {
-  color: #1e293b;
-}
-
-/* ── Dark mode ── */
-body.dark-mode .kpi-card {
-  background: #1e293b !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-body.dark-mode .kpi-title-label {
-  color: #94a3b8 !important;
-}
-
-body.dark-mode .kpi-num-display {
-  color: #f8fafc !important;
-}
-
-body.dark-mode .quick-action-link {
-  background: #1e293b !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #f8fafc !important;
-}
-
-body.dark-mode .quick-action-link:hover {
-  background: #334155 !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-body.dark-mode .recent-dev-row {
-  background: #1e293b !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-body.dark-mode .recent-dev-title {
-  color: #f8fafc !important;
+  color: var(--sena-text, #1E1E1E);
 }

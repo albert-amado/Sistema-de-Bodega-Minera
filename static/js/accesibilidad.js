@@ -54,7 +54,10 @@
     }
 
     function applyFontSize() {
+        var scale = state.fontSize / 100;
         root.style.fontSize = state.fontSize + "%";
+        root.style.setProperty("--a11y-font-scale", scale.toFixed(2));
+        root.classList.toggle("a11y-font-scaled", state.fontSize !== 100);
     }
 
     function applyLineHeight() {
