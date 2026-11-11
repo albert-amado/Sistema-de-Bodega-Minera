@@ -198,7 +198,7 @@ const DOC_RULES = new Map([
   const firstNameInp = document.getElementById('first_name');
   const lastNameInp  = document.getElementById('last_name');
   const fichaInp     = document.getElementById('numero_ficha');
-  const progInp      = document.getElementById('nombre_programa');
+  const progInp      = document.getElementById('nombre_programa'); // ahora es un <select>
 
   const lblNombres   = document.getElementById('lbl-nombres-info');
   const lblApellidos = document.getElementById('lbl-apellidos-info');
@@ -214,29 +214,56 @@ const DOC_RULES = new Map([
   let isDocVerified = false;
   let isDocBlocked = false;
 
+  // Asigna un valor al <select>; si SofiaPlus devuelve un programa que no está en la lista, lo agrega
+  function setSelectValue(select, value) {
+    if (!select) return;
+    if (value && !Array.from(select.options).some(o => o.value === value)) {
+      const opt = document.createElement('option');
+      opt.value = value;
+      opt.textContent = value;
+      select.appendChild(opt);
+    }
+    select.value = value || '';
+    syncTitles();
+  }
+
+  // Tooltip con el texto completo por si algún valor aún se ve cortado
+  function syncTitles() {
+    [firstNameInp, lastNameInp].forEach(f => { if (f) f.title = f.value; });
+    [fichaInp, progInp].forEach(s => { if (s) s.title = s.options[s.selectedIndex]?.text || ''; });
+  }
+  [firstNameInp, lastNameInp, fichaInp, progInp].forEach(f => {
+    if (f) f.addEventListener(f.tagName === 'SELECT' ? 'change' : 'input', syncTitles);
+  });
+
   function setFieldsReadOnly(locked, data = null) {
-    const fields = [firstNameInp, lastNameInp, fichaInp, progInp];
-    fields.forEach(f => {
+    // Inputs de texto: se bloquean con readOnly
+    [firstNameInp, lastNameInp].forEach(f => {
       if (!f) return;
-      if (locked) {
-        f.readOnly = true;
-        f.classList.add('is-locked-sofia');
-      } else {
-        f.readOnly = false;
-        f.classList.remove('is-locked-sofia');
-      }
+      f.readOnly = locked;
+      f.classList.toggle('is-locked-sofia', locked);
+    });
+
+    // Selects: readOnly no existe, así que se bloquean sin deshabilitarlos (un select disabled no se envía en el form)
+    [fichaInp, progInp].forEach(s => {
+      if (!s) return;
+      s.classList.toggle('is-locked-sofia', locked);
+      s.style.pointerEvents = locked ? 'none' : '';
+      if (locked) s.setAttribute('tabindex', '-1');
+      else s.removeAttribute('tabindex');
     });
 
     if (locked && data) {
       if (firstNameInp) firstNameInp.value = data.primer_nombre || '';
       if (lastNameInp)  lastNameInp.value  = data.primer_apellido || '';
-      if (fichaInp)     fichaInp.value     = data.numero_ficha || '';
-      if (progInp)      progInp.value      = data.programa_formacion || '';
+      setSelectValue(fichaInp, String(data.numero_ficha || ''));
+      setSelectValue(progInp, data.programa_formacion || '');
 
       if (lblNombres)   lblNombres.textContent   = '(SofiaPlus ✓)';
       if (lblApellidos) lblApellidos.textContent = '(SofiaPlus ✓)';
       if (lblFicha)     lblFicha.textContent     = '(SofiaPlus ✓)';
       if (lblProg)      lblProg.textContent      = '(SofiaPlus ✓)';
+      syncTitles();
     } else if (!locked) {
       if (lblNombres)   lblNombres.textContent   = '';
       if (lblApellidos) lblApellidos.textContent = '';

@@ -8136,3 +8136,24 @@ tr.shown .btn-toggle-details {
   border-color: var(--sena-green) !important;
   color: var(--sena-white) !important;
 }
+/* seleccion de ficha y programa*/
+
+body.auth-page select.mine-input:invalid {
+  color: #9ca3af !important;
+}
+body.auth-page select.mine-input:not(:invalid) {
+  color: var(--sena-text, #1E1E1E) !important;
+}
+body.auth-page select.mine-input option {
+  color: #212529 !important;
+}
+
+body.auth-page .right-panel {
+  justify-content: flex-start;
+}
+body.auth-page .right-panel > :first-child {
+  margin-top: auto;
+}
+body.auth-page .right-panel > :last-child {
+  margin-bottom: auto;
+}
