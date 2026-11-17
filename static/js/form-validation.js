@@ -21,11 +21,11 @@
     '[type="reset"]',
     '[type="checkbox"]',
     '[type="radio"]',
-    '.dt-search input',           /* DataTables search */
+    '.dt-search input',
     '.dataTables_filter input',
-    '.dt-length select',          /* DataTables length */
+    '.dt-length select',
     '.dataTables_length select',
-    '.dt-container input',        /* Broad DataTables escape */
+    '.dt-container input',
     '.dt-container select',
     '.dataTables_wrapper input',
     '.dataTables_wrapper select',
@@ -37,13 +37,11 @@
 
   /* ── Crea el wrapper si no existe ── */
   function wrapField(field) {
-    /* Evitar doble-wrap */
     if (field.closest('.fv-wrap')) return;
 
     var parent = field.parentElement;
     if (!parent) return;
 
-    /* No wrappear dentro de input-groups de Bootstrap o personalizados (se ve mal) */
     if (parent.classList.contains('input-group') || parent.classList.contains('input-group-mine')) {
       parent.classList.add('fv-wrap');
       return;
@@ -89,32 +87,42 @@
     return length;
   }
 
+  /* ── Mensaje "no coinciden" debajo de Confirmar contraseña ── */
+  function setMatchMessage(field, show) {
+    var holder = (field.closest('.fv-wrap') || field).parentElement;
+    if (!holder) return;
+    var msg = holder.querySelector('.fv-match-msg');
+    if (show && !msg) {
+      msg = document.createElement('div');
+      msg.className = 'fv-match-msg small text-danger mt-1';
+      msg.textContent = 'Las contraseñas no coinciden.';
+      holder.appendChild(msg);
+    } else if (!show && msg) {
+      msg.remove();
+    }
+  }
+
   /* ── Valida un campo individualmente ── */
   function isFieldValid(field) {
     var tag = field.tagName.toLowerCase();
     var val = (field.value || '').trim();
 
-    /* Campos no requeridos y vacíos → neutro (no marcar como error) */
     if (!field.required && val === '' && tag !== 'select') return null;
 
-    /* Select */
     if (tag === 'select') {
       return field.required ? (val !== '' && val !== '0') : null;
     }
 
-    /* Textarea */
     if (tag === 'textarea') {
       if (!field.required && val === '') return null;
       var minLen = parseInt(field.getAttribute('minlength') || '1', 10);
       return val.length >= minLen;
     }
 
-    /* Input email */
     if (field.type === 'email') {
       return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
     }
 
-    /* Input number */
     if (field.type === 'number') {
       if (!field.required && val === '') return null;
       var num = parseFloat(val);
@@ -123,7 +131,6 @@
       return !isNaN(num) && num >= min && num <= max;
     }
 
-    /* Input date */
     if (field.type === 'date') {
       if (!field.required && val === '') return null;
       if (val === '') return false;
@@ -136,10 +143,16 @@
     if (field.type === 'password') {
       var passwordMinLength = getMinLength(field, 8);
       if (!field.required && val === '') return null;
+
+      /* Confirmar contraseña: debe ser idéntica a la primera */
+      if (field.id === 'password2') {
+        var p1 = document.getElementById('password1');
+        if (p1 && field.value !== p1.value) return false;
+      }
+
       return val.length >= passwordMinLength && passwordMinLength >= 8;
     }
 
-    /* Text genérico */
     if (!field.required && val === '') return null;
     var minL = getMinLength(field, 1);
     return val.length >= minL;
@@ -161,7 +174,6 @@
         wrap.classList.remove('fv-invalid');
         wrap.classList.add('fv-valid');
       }
-      /* Quitar clase de animación al finalizar */
       icon.addEventListener('animationend', function () {
         icon.classList.remove('fv-icon--pop');
       }, { once: true });
@@ -175,13 +187,18 @@
         wrap.classList.add('fv-invalid');
       }
     } else {
-      /* Neutro: borrar */
       icon.className = 'fv-icon';
       icon.innerHTML = '';
       field.classList.remove('fv-valid', 'fv-invalid');
       if (wrap && wrap.classList.contains('input-group-mine')) {
         wrap.classList.remove('fv-valid', 'fv-invalid');
       }
+    }
+
+    /* Mensaje de no coincidencia solo para "Confirmar contraseña" */
+    if (field.id === 'password2') {
+      var p1 = document.getElementById('password1');
+      setMatchMessage(field, valid === false && !!p1 && field.value !== p1.value);
     }
   }
 
@@ -190,12 +207,18 @@
     var field = e.target;
     if (!isValidatable(field)) return;
 
-    /* Marcar como "tocado" */
     field.dataset.fvTouched = '1';
 
-    /* Leer estado solo si ya fue tocado (o es blur) */
     var valid = isFieldValid(field);
     applyState(field, valid);
+
+    /* Si cambia la primera contraseña, revalidar la confirmación */
+    if (field.id === 'password1') {
+      var p2 = document.getElementById('password2');
+      if (p2 && p2.value !== '' && isValidatable(p2)) {
+        applyState(p2, isFieldValid(p2));
+      }
+    }
   }
 
   function onBlur(e) {
@@ -210,8 +233,7 @@
   function isValidatable(field) {
     var tag = field.tagName && field.tagName.toLowerCase();
     if (!tag || !['input', 'select', 'textarea'].includes(tag)) return false;
-    
-    /* Skip DataTables explicitly (their layouts break easily) */
+
     if (field.closest('.dt-container') || field.closest('.dataTables_wrapper')) return false;
 
     for (var i = 0; i < SKIP_SELECTORS.length; i++) {
@@ -234,14 +256,12 @@
     var el = e.target;
     if (!el) return;
 
-    // Sanitización numérica estricta si min >= 0
     if (el.type === 'number' && el.hasAttribute('min') && parseFloat(el.min) >= 0) {
       if (el.value.indexOf('-') !== -1) {
         el.value = el.value.replace(/-/g, '');
       }
     }
 
-    // Sanitización para campos de nombres/texto alfabético
     if (el.classList && el.classList.contains('input-solo-letras')) {
       el.value = el.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
     }
@@ -263,7 +283,7 @@
   document.addEventListener('change', onInteract, true);
   document.addEventListener('blur',   onBlur,     true);
 
-  /* ── Observer para campos añadidos dinámicamente (ej. filas del wizard) ── */
+  /* ── Observer para campos añadidos dinámicamente ── */
   var observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (m) {
       m.addedNodes.forEach(function (node) {

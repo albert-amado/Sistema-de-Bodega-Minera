@@ -438,7 +438,7 @@ const DOC_RULES = new Map([
     }
   });
 
-  // Ejecutar verificación inicial si el documento ya venía lleno (ej. tras error de validación)
+  // Ejecutar verificación inicial si el documento ya venía lleno
   if (docInput.value.trim().length >= 5) {
     checkSofiaPlus();
   }
@@ -458,6 +458,156 @@ function showError(area, msg) {
 }
 
 
+// ══════════════════════════════════════════════════════════════
+// MÓDULO CONTRASEÑA
+// ══════════════════════════════════════════════════════════════
+const PWD = (function () {
+
+  const REGLAS = { minLargo: 8, minMayusculas: 1, minMinusculas: 1, minNumeros: 2 };
+
+  const MENSAJE =
+    'La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula ' +
+    'y al menos 2 números, y no puede contener tu documento, nombre o correo.';
+
+
+  function contexto() {
+    const val = id => (document.getElementById(id)?.value || '').trim().toLowerCase();
+    const tokens = [];
+    const doc = val('documento');
+    if (doc.length >= 4) tokens.push(doc);
+    ['first_name', 'last_name'].forEach(function (id) {
+      val(id).split(/\s+/).forEach(function (p) { if (p.length >= 3) tokens.push(p); });
+    });
+    const correo = val('email').split('@')[0];
+    if (correo.length >= 3) tokens.push(correo);
+    return tokens;
+  }
+
+  function requisitos(pwd, tokens) {
+    const v = pwd || '';
+    const bajo = v.toLowerCase();
+    return [
+      { id: 'largo',     texto: 'mínimo ' + REGLAS.minLargo + ' caracteres',
+        ok: v.length >= REGLAS.minLargo },
+      { id: 'mayuscula', texto: 'Una mayúscula',
+        ok: (v.match(/[A-ZÁÉÍÓÚÑ]/g) || []).length >= REGLAS.minMayusculas },
+      { id: 'minuscula', texto: 'Una minúscula',
+        ok: (v.match(/[a-záéíóúñ]/g) || []).length >= REGLAS.minMinusculas },
+      { id: 'numeros',   texto: 'Al menos ' + REGLAS.minNumeros + ' números',
+        ok: (v.match(/\d/g) || []).length >= REGLAS.minNumeros },
+      { id: 'personal',  texto: 'Sin tu documento, nombre o correo',
+        ok: !(tokens || []).some(function (t) { return bajo.includes(t); }) }
+    ];
+  }
+  function faltantes(pwd, tokens) {
+    return requisitos(pwd, tokens).filter(function (r) { return !r.ok; })
+                                  .map(function (r) { return r.texto; });
+  }
+  function mensajeHTML(pwd, tokens) {
+    const reqs = requisitos(pwd, tokens);
+    const largo = reqs[0];
+    const resto = reqs.slice(1);
+
+    const items = resto.map(function (r) {
+      return '<li class="pwd-req ' + (r.ok ? 'pwd-req--ok' : 'pwd-req--no') + '">' +
+             '<span class="pwd-req__icon">' + (r.ok ? '✓' : '•') + '</span>' + r.texto + '</li>';
+    }).join('');
+
+    return '<div class="pwd-msg__title ' + (largo.ok ? 'pwd-req--ok' : 'pwd-req--no') + '">' +
+           (largo.ok ? '✓ ' : '') + 'La contraseña debe tener ' + largo.texto + ' y:</div>' +
+           '<ul class="pwd-msg__list">' + items + '</ul>';
+  }
+
+  // ──VALIDACIÓN──
+  function initValidacionEnVivo() {
+    const p1 = document.getElementById('password1');
+    const p2 = document.getElementById('password2');
+    if (!p1 || !p2) return;
+
+    if (!document.getElementById('pwd-msg-styles')) {
+      const st = document.createElement('style');
+      st.id = 'pwd-msg-styles';
+      st.textContent =
+        '.pwd-msg{font-size:.72rem;line-height:1.35;margin-top:.35rem;}' +
+        '.pwd-msg__title{font-weight:600;margin-bottom:.15rem;}' +
+        '.pwd-msg__list{list-style:none;margin:0;padding:0;}' +
+        '.pwd-req--no{color:#dc3545;}' +
+        '.pwd-req--ok{color:#2e7d32;}' +
+        '.pwd-req__icon{display:inline-block;width:1.1em;font-weight:700;}';
+      document.head.appendChild(st);
+    }
+
+    const X_SVG =
+      '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">' +
+      '<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/></svg>';
+
+    function crearMensaje(campo) {
+      const m = document.createElement('div');
+      m.className = 'pwd-msg';
+      m.style.display = 'none';
+      (campo.closest('.fv-wrap') || campo).insertAdjacentElement('afterend', m);
+      return m;
+    }
+    const msg1 = crearMensaje(p1);
+    const msg2 = crearMensaje(p2);
+
+    function forzarX(campo) {
+      const icon = campo.closest('.fv-wrap')?.querySelector('.fv-icon');
+      if (icon) { icon.className = 'fv-icon fv-icon--err'; icon.innerHTML = X_SVG; }
+      campo.classList.remove('fv-valid');
+      campo.classList.add('fv-invalid');
+    }
+
+    function revisar() {
+      const tokens = contexto();
+      const falta = faltantes(p1.value, tokens);
+
+      if (p1.value === '') {
+        msg1.style.display = 'none';
+        msg1.innerHTML = '';
+        p1.setCustomValidity('');
+      } else if (falta.length) {
+        msg1.innerHTML = mensajeHTML(p1.value, tokens);
+        msg1.style.display = 'block';
+        p1.setCustomValidity(MENSAJE);
+        forzarX(p1);
+      } else {
+        msg1.style.display = 'none';
+        msg1.innerHTML = '';
+        p1.setCustomValidity('');
+      }
+
+   
+      if (p2.value === '') {
+        msg2.style.display = 'none';
+        p2.setCustomValidity('');
+        return;
+      }
+      const coincide = p1.value === p2.value;
+      msg2.innerHTML = '<div class="pwd-req--no">Las contraseñas no coinciden.</div>';
+      msg2.style.display = coincide ? 'none' : 'block';
+      p2.setCustomValidity(coincide ? '' : 'Las contraseñas no coinciden.');
+      if (!coincide || falta.length) forzarX(p2);
+    }
+
+    const programar = function () { setTimeout(revisar, 0); };
+    ['input', 'change', 'blur'].forEach(function (ev) {
+      p1.addEventListener(ev, programar);
+      p2.addEventListener(ev, programar);
+    });
+
+    ['documento', 'first_name', 'last_name', 'email'].forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', programar);
+    });
+  }
+
+  initValidacionEnVivo();
+
+  return { faltantes: faltantes, requisitos: requisitos, contexto: contexto, MENSAJE: MENSAJE };
+})();
+
+
 
 //LOGIN
 
@@ -475,8 +625,6 @@ if (loginForm) {
     }
   });
 }
-
-
   //RECUPERAR CONTRASEÑA
 
 const recForm = document.getElementById('recForm');
@@ -497,8 +645,6 @@ if (recForm) {
     }
   });
 }
-
-
 
   // REGISTRO
 
@@ -525,9 +671,9 @@ if (regForm) {
       showError(area, 'Ingresa un correo electrónico válido.');
       return;
     }
-    if (p1.length < 8) {
+    if (PWD.faltantes(p1, PWD.contexto()).length) {
       e.preventDefault();
-      showError(area, 'La contraseña debe tener mínimo 8 caracteres.');
+      showError(area, PWD.MENSAJE);
       return;
     }
     if (p1 !== p2) {
@@ -536,9 +682,6 @@ if (regForm) {
     }
   });
 }
-
-
-
   //NUEVA CONTRASEÑA
 
 const newPassForm = document.getElementById('newPassForm');
@@ -555,9 +698,9 @@ if (newPassForm) {
       showError(area, 'Ingresa tu nueva contraseña.');
       return;
     }
-    if (p1.length < 8) {
+    if (PWD.faltantes(p1, PWD.contexto()).length) {
       e.preventDefault();
-      showError(area, 'La contraseña debe tener al menos 8 caracteres.');
+      showError(area, PWD.MENSAJE);
       return;
     }
     if (p1 !== p2) {
@@ -566,7 +709,7 @@ if (newPassForm) {
     }
   });
 }
-// Solo dígitos en número de ficha (si es campo de texto)
+
 const fichaInput = document.getElementById('numero_ficha');
 if (fichaInput && fichaInput.tagName === 'INPUT') {
   fichaInput.addEventListener('keypress', (e) => {
@@ -582,7 +725,6 @@ if (fichaInput && fichaInput.tagName === 'INPUT') {
   });
 }
 
-// Inicialización de preferencias en envío de formulario de Login
 document.addEventListener('DOMContentLoaded', function () {
   var loginForm = document.getElementById('loginForm');
   if (loginForm) {
