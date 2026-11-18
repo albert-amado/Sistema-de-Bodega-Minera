@@ -32,8 +32,8 @@ function abrirAprobar(pk, nombre, doc, motivo, fecha, items) {
     if (insuficiente) hayStockInsuficiente = true;
     var row = document.createElement('div');
     row.style.cssText = 'margin-bottom:.85rem; padding:1rem; border-radius:var(--radius-md);' +
-      'border:1px solid ' + (insuficiente ? 'rgba(152,71,62,.25)' : 'rgba(9,77,146,.12)') + ';' +
-      'background:' + (insuficiente ? 'rgba(152,71,62,.04)' : 'rgba(9,77,146,.03)') + ';';
+      'border:1px solid ' + (insuficiente ? 'rgba(152,71,62,.25)' : 'rgba(57, 169, 0,.12)') + ';' +
+      'background:' + (insuficiente ? 'rgba(152,71,62,.04)' : 'rgba(57, 169, 0,.03)') + ';';
     row.innerHTML =
       '<div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">' +
         '<div>' +
@@ -292,14 +292,14 @@ function updateSummary() {
     
     var item = document.createElement('div');
     item.style.cssText = 'padding:.65rem .85rem; border-radius:var(--radius-sm);' +
-      'background:rgba(9,77,146,.05); border:1px solid rgba(9,77,146,.1);' +
+      'background:rgba(57, 169, 0,.05); border:1px solid rgba(57, 169, 0,.1);' +
       'display:flex; align-items:center; justify-content:space-between;';
     item.innerHTML =
       '<div>' +
         '<div style="font-weight:600; font-size:.88rem;">' + escapeHtml(nombreStr) + '</div>' +
         (codigoStr ? '<div style="font-family:var(--font-mono); font-size:.72rem; color:var(--text-muted);">' + escapeHtml(codigoStr) + '</div>' : '') +
       '</div>' +
-      '<div style="font-family:var(--font-mono); font-size:.9rem; font-weight:700; color:var(--navy);">×' + (qty ? qty.value : 1) + '</div>';
+      '<div style="font-family:var(--font-mono); font-size:.9rem; font-weight:700; color:var(--sena-green, #39A900);">×' + (qty ? qty.value : 1) + '</div>';
     container.appendChild(item);
   });
   if (container.children.length === 0) {
@@ -462,4 +462,4 @@ document.addEventListener('click', function (e) {
     if (typeof abrirDevolver === 'function') abrirDevolver(pk, usuario);
     return;
   }
-});
+});

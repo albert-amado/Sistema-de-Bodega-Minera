@@ -719,6 +719,18 @@ table td,
   border-color: #DC2626;
 }
 
+.sbm-btn-print {
+  color: var(--sena-blue);
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  text-decoration: none;
+}
+.sbm-btn-print:hover:not(:disabled) {
+  background-color: var(--sena-blue);
+  color: var(--sena-white);
+  border-color: var(--sena-blue);
+}
+
 /* DataTables control responsive (+) */
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
 table.dataTable.dtr-column > tbody > tr > td.dtr-control:before {
@@ -743,4 +755,198 @@ table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
   content: "−";
   background-color: var(--sena-blue);
   color: var(--sena-white);
+}
+
+
+/* ==========================================================================
+   REFRACTORIZACIÓN Y HOMOLOGACIÓN SENA (VERDE INSTITUCIONAL #39A900)
+   Eliminación total de tonos azules y alineación WCAG AA/AAA
+   ========================================================================== */
+
+/* 1. Clases Bootstrap 5 Primarias -> Verde SENA (#39A900) */
+.bg-primary,
+.bg-primary-subtle,
+.bg-light-primary {
+  background-color: var(--sena-green, #39A900) !important;
+  color: var(--sena-white, #FFFFFF) !important;
+}
+
+.text-primary,
+a.text-primary,
+.link-primary {
+  color: var(--sena-green, #39A900) !important;
+}
+
+.text-primary:hover,
+a.text-primary:hover,
+.link-primary:hover {
+  color: var(--sena-green-hover, #2E8800) !important;
+}
+
+.border-primary {
+  border-color: var(--sena-green, #39A900) !important;
+}
+
+.btn-primary {
+  background-color: var(--sena-green, #39A900) !important;
+  border-color: var(--sena-green, #39A900) !important;
+  color: var(--sena-white, #FFFFFF) !important;
+  box-shadow: 0 2px 6px rgba(57, 169, 0, 0.22) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--sena-green-hover, #2E8800) !important;
+  border-color: var(--sena-green-hover, #2E8800) !important;
+  color: var(--sena-white, #FFFFFF) !important;
+  box-shadow: 0 4px 12px rgba(57, 169, 0, 0.32) !important;
+}
+
+.btn-outline-primary {
+  color: var(--sena-green, #39A900) !important;
+  border-color: var(--sena-green, #39A900) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--sena-green, #39A900) !important;
+  border-color: var(--sena-green, #39A900) !important;
+  color: var(--sena-white, #FFFFFF) !important;
+}
+
+/* 2. Aside / Barra Lateral de Navegación */
+aside .nav-link:hover,
+aside .aside-nav a:hover,
+.aside-nav .nav-link:hover {
+  color: var(--sena-white, #FFFFFF) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-left-color: var(--sena-green, #39A900) !important;
+}
+
+aside .nav-link:hover .nav-icon,
+aside .nav-link:hover i {
+  stroke: var(--sena-green-border, #A8E08A) !important;
+  color: var(--sena-green-border, #A8E08A) !important;
+}
+
+aside .nav-link.active,
+aside .aside-nav .nav-link.active,
+aside .aside-nav a.active,
+.aside-nav .nav-link.active {
+  background: rgba(57, 169, 0, 0.22) !important;
+  border-left: 4px solid var(--sena-green, #39A900) !important;
+  color: var(--sena-white, #FFFFFF) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+aside .nav-link.active .nav-icon,
+aside .nav-link.active i,
+aside .aside-nav a.active .nav-icon,
+aside .aside-nav a.active i {
+  stroke: var(--sena-green, #39A900) !important;
+  color: var(--sena-green, #39A900) !important;
+}
+
+aside .badge,
+.aside-badge {
+  background: rgba(57, 169, 0, 0.2) !important;
+  color: var(--sena-green-border, #A8E08A) !important;
+}
+
+/* 3. Wizard (Préstamos y Devoluciones) */
+.wizard-step-dot:not(:last-child)::after {
+  background: rgba(57, 169, 0, 0.2) !important;
+}
+
+.wizard-step-dot.wizard-done:not(:last-child)::after,
+.dev-wiz-step-dot.dev-wiz-done:not(:last-child)::after {
+  background: var(--sena-green, #39A900) !important;
+}
+
+.wizard-dot-circle,
+.dev-wiz-dot-circle {
+  border-color: rgba(57, 169, 0, 0.3) !important;
+}
+
+.wizard-step-dot.wizard-active .wizard-dot-circle,
+.dev-wiz-step-dot.dev-wiz-active .dev-wiz-dot-circle {
+  background: var(--sena-green, #39A900) !important;
+  border-color: var(--sena-green, #39A900) !important;
+  color: var(--sena-white, #FFFFFF) !important;
+  box-shadow: 0 0 0 4px rgba(57, 169, 0, 0.25) !important;
+}
+
+.wizard-step-dot.wizard-done .wizard-dot-circle,
+.dev-wiz-step-dot.dev-wiz-done .dev-wiz-dot-circle {
+  background: var(--sena-green, #39A900) !important;
+  border-color: var(--sena-green, #39A900) !important;
+  color: var(--sena-white, #FFFFFF) !important;
+}
+
+.wizard-step-dot.wizard-active .wizard-dot-label,
+.wizard-step-dot.wizard-done .wizard-dot-label,
+.dev-wiz-step-dot.dev-wiz-active .dev-wiz-dot-label,
+.dev-wiz-step-dot.dev-wiz-done .dev-wiz-dot-label {
+  color: var(--sena-green, #39A900) !important;
+  font-weight: 700 !important;
+}
+
+.dev-wiz-sec-label {
+  color: var(--sena-green, #39A900) !important;
+  border-bottom-color: rgba(57, 169, 0, 0.25) !important;
+}
+
+.dev-wiz-sec-label svg {
+  color: var(--sena-green, #39A900) !important;
+}
+
+/* 4. Estados Interactivos (Focus, Hover, Box-shadow suave) */
+:focus-visible {
+  outline: 3px solid var(--sena-green, #39A900) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px var(--sena-green-focus, rgba(57, 169, 0, 0.25)) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.sfb-search-input:focus,
+.sfb-select:focus,
+.sbm-search-input:focus,
+.config-input:focus,
+.gu-search-input:focus,
+.gu-select:focus,
+.search-input:focus,
+.inv-search-input:focus,
+.inv-cat-select:focus,
+.dev-wiz-search-input:focus,
+.dev-wiz-scanner-input:focus,
+.dev-wiz-textarea:focus,
+body.auth-page .mine-input:focus,
+body.auth-page .input-group-mine:focus-within {
+  border-color: var(--sena-green, #39A900) !important;
+  box-shadow: 0 0 0 3px var(--sena-green-focus, rgba(57, 169, 0, 0.25)) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--sena-green, #39A900) !important;
+  border-color: var(--sena-green, #39A900) !important;
+}
+
+.form-check-input:focus {
+  border-color: var(--sena-green, #39A900) !important;
+  box-shadow: 0 0 0 0.25rem var(--sena-green-focus, rgba(57, 169, 0, 0.25)) !important;
+}
+
+/* Paginación activa */
+.page-item.active .page-link,
+div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link,
+div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
+  background-color: var(--sena-green, #39A900) !important;
+  border-color: var(--sena-green, #39A900) !important;
+  color: var(--sena-white, #FFFFFF) !important;
+  box-shadow: 0 2px 6px rgba(57, 169, 0, 0.25) !important;
 }

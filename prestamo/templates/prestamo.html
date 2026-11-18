@@ -161,6 +161,13 @@
                 <div class="text-muted extra-small font-monospace text-truncate fs-xs">
                   Doc: {{ p.documento.tipo_documento }} {{ p.documento.documento }}
                 </div>
+                {% if p.es_grupal_instructor %}
+                <div class="mt-1">
+                  <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill fs-xs px-2 py-0">
+                    <i class="bi bi-people-fill me-1"></i>Grupal Instructor ({{ p.total_aprendices }} apr.)
+                  </span>
+                </div>
+                {% endif %}
               </div>
             </div>
           </td>
@@ -225,6 +232,13 @@
                       })">
                 <i class="bi bi-eye"></i>
               </button>
+
+              <a href="{% url 'comprobante_prestamo' p.pk %}" target="_blank"
+                 class="sbm-action-btn sbm-btn-print"
+                 data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir Comprobante Oficial SENA"
+                 aria-label="Imprimir Comprobante #{{ p.pk }}">
+                <i class="bi bi-printer"></i>
+              </a>
 
               {% if p.estado == 'PENDIENTE' or p.estado == 'pendiente' %}
               <button type="button" class="sbm-action-btn sbm-btn-success btn-aprobar-solicitud"

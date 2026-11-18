@@ -35,6 +35,13 @@ class Prestamo(models.Model):
         default=EstadoPrestamo.PENDIENTE,
     )
     observaciones = models.TextField("Observaciones", blank=True, null=True)
+    es_grupal_instructor = models.BooleanField("Préstamo Grupal Instructor", default=False)
+    aprendices_grupo = models.TextField(
+        "Aprendices Asignados",
+        blank=True,
+        null=True,
+        help_text="Lista de aprendices asignados al préstamo grupal del instructor",
+    )
 
     class Meta:
         db_table = "prestamo"
@@ -56,6 +63,22 @@ class Prestamo(models.Model):
     @usuario.setter
     def usuario(self, val):
         self.documento = val
+
+    @property
+    def lista_aprendices(self):
+        """Retorna la lista de aprendices del préstamo grupal decodificada."""
+        if not self.aprendices_grupo:
+            return []
+        import json
+        try:
+            return json.loads(self.aprendices_grupo)
+        except Exception:
+            lineas = self.aprendices_grupo.split("\n")
+            return [{"nombre": l.strip(), "documento": "—"} for l in lineas if l.strip()]
+
+    @property
+    def total_aprendices(self):
+        return len(self.lista_aprendices)
 
     def clean(self):
         super().clean()

@@ -10,6 +10,7 @@ Estructura de la Suite:
 5. PrestamoEdgeCasesAndSecurityTests: Pruebas de casos límite, control de concurrencia/stock y seguridad RBAC.
 """
 
+import json
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.test import Client, TestCase
@@ -671,3 +672,51 @@ class PrestamoEdgeCasesAndSecurityTests(PrestamoBaseTestCase):
         # Intento de devolver
         resp_devolver = self.client.post(reverse("devolver_prestamo"), {"pk": prestamo.pk})
         self.assertRedirects(resp_devolver, reverse("pagina_principal"))
+
+    def test_crear_prestamo_grupal_instructor_a_su_nombre_y_comprobante(self):
+        """[Instructor Grupal] Verifica que un instructor cree un préstamo grupal a su nombre para varios aprendices."""
+        instructor = Usuario.objects.create(
+            documento="9876543210",
+            primer_nombre="Carlos",
+            primer_apellido="Instructor",
+            rol="Instructor",
+            ficha="2670123",
+            password="pbkdf2_sha256$test",
+        )
+        self.login_as(instructor)
+
+        aprendices_data = [
+            {"documento": "1001", "nombre": "Aprendiz Uno", "ficha": "2670123"},
+            {"documento": "1002", "nombre": "Aprendiz Dos", "ficha": "2670123"},
+        ]
+
+        payload = {
+            "instructor_doc": instructor.documento,
+            "ficha": "2670123",
+            "ambiente_mina": "Mina Pedagógica Nivel 1",
+            "aprendices_json": json.dumps(aprendices_data),
+            "herramienta[]": [self.herramienta_disponible.pk],
+            "cantidad[]": [2],
+            "observaciones": "Práctica de ventilación",
+        }
+
+        resp = self.client.post(reverse("crear_prestamo_grupal_instructor"), payload)
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data["status"], "ok")
+        self.assertIn("comprobante_url", data)
+
+        # Verificar que el préstamo pertenece al instructor y contiene los aprendices
+        prestamo = Prestamo.objects.get(pk=data["codigo_prestamo"])
+        self.assertEqual(prestamo.documento, instructor)
+        self.assertTrue(prestamo.es_grupal_instructor)
+        self.assertEqual(len(prestamo.lista_aprendices), 2)
+        self.assertEqual(prestamo.lista_aprendices[0]["nombre"], "Aprendiz Uno")
+
+        # Verificar que la vista de comprobante imprimible renderiza con código 200
+        resp_comp = self.client.get(reverse("comprobante_prestamo", args=[prestamo.pk]))
+        self.assertEqual(resp_comp.status_code, 200)
+        self.assertContains(resp_comp, "Carlos Instructor")
+        self.assertContains(resp_comp, "Aprendiz Uno")
+        self.assertContains(resp_comp, "Aprendiz Dos")
+        self.assertContains(resp_comp, "PRÉSTAMO GRUPAL PARA PRÁCTICA FORMATIVA EN MINA")
