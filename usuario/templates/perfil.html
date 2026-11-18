@@ -312,12 +312,12 @@
               <!-- Correo -->
               <div class="col-md-7">
                 <label for="perfil_correo" class="form-label">Correo electrónico *</label>
-                <input type="email" id="perfil_correo" name="correo" class="form-control
-                       {% if errores.correo %}is-invalid{% endif %}"
+                <input type="email" id="perfil_correo" name="correo_personal" class="form-control
+                       {% if errores.correo_personal %}is-invalid{% endif %}"
                        value="{{ usuario.correo }}"
                        placeholder="tu@correo.com" required>
-                {% if errores.correo %}
-                <div class="form-error">{{ errores.correo }}</div>
+                {% if errores.correo_personal %}
+                <div class="form-error">{{ errores.correo_personal }}</div>
                 {% endif %}
               </div>
 
@@ -336,7 +336,7 @@
               <!-- Número de ficha -->
               <div class="col-md-5">
                 <label for="perfil_ficha" class="form-label">Número de ficha</label>
-                <select id="perfil_ficha" name="numero_ficha" class="form-select">
+                <select id="perfil_ficha" name="ficha" class="form-select">
                   <option value="">-- Seleccionar Ficha --</option>
                   <option value="2758369" {% if usuario.numero_ficha == "2758369" %}selected{% endif %}>2758369</option>
                   <option value="2827435" {% if usuario.numero_ficha == "2827435" %}selected{% endif %}>2827435</option>
@@ -346,12 +346,15 @@
                   <option value="3196477" {% if usuario.numero_ficha == "3196477" %}selected{% endif %}>3196477</option>
                   <option value="ADMIN-001" {% if usuario.numero_ficha == "ADMIN-001" %}selected{% endif %}>ADMIN-001</option>
                 </select>
+                {% if errores.ficha %}
+                <div class="form-error">{{ errores.ficha }}</div>
+                {% endif %}
               </div>
 
               <!-- Nombre del programa -->
               <div class="col-md-7">
                 <label for="perfil_programa" class="form-label">Nombre del programa</label>
-                <select id="perfil_programa" name="nombre_programa" class="form-select">
+                <select id="perfil_programa" name="programa" class="form-select">
                   <option value="">-- Seleccionar Programa --</option>
                   <option value="Análisis y Desarrollo de Software (ADSO)" {% if usuario.nombre_programa == "Análisis y Desarrollo de Software (ADSO)" %}selected{% endif %}>Análisis y Desarrollo de Software (ADSO)</option>
                   <option value="Sistemas" {% if usuario.nombre_programa == "Sistemas" %}selected{% endif %}>Sistemas</option>
@@ -363,6 +366,9 @@
                   <option value="Gestión Ambiental" {% if usuario.nombre_programa == "Gestión Ambiental" %}selected{% endif %}>Gestión Ambiental</option>
                   <option value="Administración" {% if usuario.nombre_programa == "Administración" %}selected{% endif %}>Administración</option>
                 </select>
+                {% if errores.programa %}
+                <div class="form-error">{{ errores.programa }}</div>
+                {% endif %}
               </div>
 
             </div>
