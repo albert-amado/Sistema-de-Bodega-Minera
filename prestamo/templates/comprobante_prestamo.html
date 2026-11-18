@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprobante de Préstamo #{{ prestamo.codigo_prestamo }} - SENA Centro Minero</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --sena-green: #39A900;
+      --sena-blue: #00324D;
+      --sena-gray: #595959;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #1f2937;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 20px;
+    }
+    .sheet-container {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 32px 40px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .sena-header-bar {
+      border-bottom: 3px solid var(--sena-green);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    .sena-logo-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sena-logo-svg {
+      width: 48px;
+      height: 48px;
+    }
+    .sena-title-main {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--sena-blue);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin: 0;
+    }
+    .sena-title-sub {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--sena-green);
+      text-transform: uppercase;
+      margin: 0;
+    }
+    .doc-badge-folio {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 6px 14px;
+      border-radius: 6px;
+      text-align: right;
+    }
+    .doc-folio-num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--sena-blue);
+    }
+    .doc-info-table th {
+      background: #f8fafc;
+      color: #475569;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      width: 25%;
+      border-color: #e2e8f0;
+    }
+    .doc-info-table td {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #1e293b;
+      border-color: #e2e8f0;
+    }
+    .section-ribbon {
+      background: var(--sena-blue);
+      color: #ffffff;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 4px;
+      margin-top: 18px;
+      margin-bottom: 10px;
+    }
+    .section-ribbon.green {
+      background: var(--sena-green);
+    }
+    .items-table, .aprendices-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-bottom: 14px;
+    }
+    .items-table th, .aprendices-table th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      padding: 6px 10px;
+      border: 1px solid #cbd5e1;
+    }
+    .items-table td, .aprendices-table td {
+      padding: 6px 10px;
+      border: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+    .signature-card {
+      border: 1px dashed #94a3b8;
+      border-radius: 6px;
+      padding: 12px;
+      min-height: 105px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #fafafa;
+    }
+    .signature-line {
+      border-top: 1.5px solid #475569;
+      margin-top: 50px;
+      padding-top: 4px;
+      text-align: center;
+    }
+    .clause-box {
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      padding: 8px 12px;
+      font-size: 0.74rem;
+      color: #78350f;
+      line-height: 1.35;
+      margin-top: 14px;
+      margin-bottom: 18px;
+    }
+
+    /* Acciones no imprimibles */
+    .action-bar-top {
+      max-width: 820px;
+      margin: 0 auto 16px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .sheet-container {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+      @page {
+        size: letter;
+        margin: 10mm 12mm 10mm 12mm;
+      }
+      .signature-card {
+        background: transparent !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de acciones en pantalla -->
+  <div class="action-bar-top no-print">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-success px-2 py-1"><i class="bi bi-check-circle me-1"></i>Registrado en Sistema</span>
+      <span class="text-muted small">Préstamo #{{ prestamo.codigo_prestamo }}</span>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.close(); if(!window.closed) history.back();">
+        <i class="bi bi-arrow-left me-1"></i> Regresar
+      </button>
+      <button type="button" class="btn btn-primary btn-sm px-3 fw-bold shadow-sm" onclick="window.print();">
+        <i class="bi bi-printer-fill me-1"></i> Imprimir Comprobante
+      </button>
+    </div>
+  </div>
+
+  <div class="sheet-container">
+    
+    <!-- Encabezado Institucional SENA -->
+    <div class="sena-header-bar d-flex justify-content-between align-items-center">
+      <div class="sena-logo-box">
+        <svg class="sena-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="20" r="14" fill="#39A900"/>
+          <path d="M50 38c-14 0-25 11-25 25v27h14v-22c0-6 5-11 11-11s11 5 11 11v22h14V63c0-14-11-25-25-25z" fill="#39A900"/>
+          <circle cx="20" cy="55" r="9" fill="#00324D"/>
+          <circle cx="80" cy="55" r="9" fill="#00324D"/>
+        </svg>
+        <div>
+          <h1 class="sena-title-main">Servicio Nacional de Aprendizaje SENA</h1>
+          <p class="sena-title-sub">Centro Minero · Regional Boyacá · Sogamoso</p>
+          <div class="small text-muted fw-semibold" style="font-size: 0.72rem;">SISTEMA DE BODEGA MINERA · CONTROL Y CUSTODIA DE HERRAMIENTAS</div>
+        </div>
+      </div>
+      <div class="doc-badge-folio">
+        <div class="text-muted small" style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Folio de Préstamo</div>
+        <div class="doc-folio-num">PR-{{ prestamo.codigo_prestamo|stringformat:"05d" }}</div>
+        <div class="small text-muted" style="font-size: 0.68rem;">{{ fecha_emision|date:"d/m/Y - H:i" }}</div>
+      </div>
+    </div>
+
+    <!-- Datos Generales del Préstamo -->
+    <table class="table table-bordered doc-info-table mb-2">
+      <tbody>
+        <tr>
+          <th>Instructor Titular:</th>
+          <td>
+            <strong>{{ prestamo.documento.nombre_completo|default:prestamo.documento.documento }}</strong>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-2">Responsable</span>
+          </td>
+          <th>Documento / Cédula:</th>
+          <td>{{ prestamo.documento.documento }}</td>
+        </tr>
+        <tr>
+          <th>Ficha de Formación:</th>
+          <td><strong>{{ prestamo.ficha|default:"N/A" }}</strong></td>
+          <th>Fecha del Préstamo:</th>
+          <td>{{ prestamo.fecha|date:"d/m/Y" }}</td>
+        </tr>
+        <tr>
+          <th>Tipo de Solicitud:</th>
+          <td colspan="3">
+            {% if prestamo.es_grupal_instructor %}
+            <span class="text-success fw-bold"><i class="bi bi-people-fill me-1"></i>PRÉSTAMO GRUPAL PARA PRÁCTICA FORMATIVA EN MINA</span>
+            <span class="text-muted ms-2">(Herramientas a cargo del Instructor titular para su cuadrilla)</span>
+            {% else %}
+            <span>Préstamo Individual</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% if prestamo.observaciones %}
+        <tr>
+          <th>Observaciones / Frente:</th>
+          <td colspan="3" class="text-secondary">{{ prestamo.observaciones }}</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+
+    <!-- Tabla de Herramientas Prestadas -->
+    <div class="section-ribbon green d-flex justify-content-between align-items-center">
+      <span>1. Equipos y Herramientas Entregadas</span>
+      <span class="badge bg-white text-dark" style="font-size: 0.7rem;">{{ detalles|length }} Ítem{{ detalles|length|pluralize }}</span>
+    </div>
+
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th style="width: 40px;" class="text-center">#</th>
+          <th style="width: 130px;">Código Activo</th>
+          <th>Nombre / Descripción de la Herramienta</th>
+          <th style="width: 90px;" class="text-center">Cant.</th>
+          <th style="width: 110px;" class="text-center">Estado Entrega</th>
+          <th style="width: 110px;" class="text-center">Estado Retorno</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in detalles %}
+        <tr>
+          <td class="text-center text-muted fw-bold">{{ forloop.counter }}</td>
+          <td><code>{{ d.codigo_herramienta.codigo }}</code></td>
+          <td><strong>{{ d.codigo_herramienta.nombre }}</strong></td>
+          <td class="text-center fw-bold">{{ d.cantidad }}</td>
+          <td class="text-center"><span class="badge bg-light text-dark border">Bueno / Operativo</span></td>
+          <td class="text-center text-muted" style="font-size: 0.75rem;">Pendiente</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center text-muted py-2">No hay herramientas asociadas al registro.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Si es Préstamo Grupal: Lista de Aprendices de la Cuadrilla -->
+    {% if prestamo.es_grupal_instructor and aprendices %}
+    <div class="section-ribbon d-flex justify-content-between align-items-center">
+      <span>2. Cuadrilla de Aprendices Asignados a la Práctica</span>
+      <span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ aprendices|length }} Aprendiz{{ aprendices|length|pluralize:"es" }}</span>
+    </div>
+
+    <table class="aprendices-table">
+      <thead>
+        <tr>
+          <th style="width: 40px;" class="text-center">#</th>
+          <th style="width: 130px;">Documento</th>
+          <th>Nombre Completo del Aprendiz</th>
+          <th style="width: 100px;">Ficha</th>
+          <th style="width: 160px;" class="text-center">Firma de Recibido</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ap in aprendices %}
+        <tr>
+          <td class="text-center text-muted fw-bold">{{ forloop.counter }}</td>
+          <td>{{ ap.documento|default:"—" }}</td>
+          <td><strong>{{ ap.nombre }}</strong></td>
+          <td>{{ ap.ficha|default:prestamo.ficha }}</td>
+          <td class="text-center" style="height: 34px;"></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <!-- Cláusula de Custodia y Seguridad Minera -->
+    <div class="clause-box">
+      <strong>COMPROMISO Y CUSTODIA INSTITUCIONAL (SENA - CENTRO MINERO):</strong>
+      El Instructor titular asume la custodia técnica, verificación de estado de operatividad y supervisión directa del uso de las herramientas y equipos en las labores prácticas de la mina pedagógica y talleres, de acuerdo con el Reglamento del Aprendiz y el Sistema de Gestión de Seguridad y Salud en el Trabajo (SG-SST) del SENA. Al término de la jornada formativa, todo el material debe reintegrarse a la bodega en las mismas condiciones en que fue recibido.
+    </div>
+
+    <!-- Área de Firmas -->
+    <div class="row g-3 mt-1">
+      <div class="col-6">
+        <div class="signature-card">
+          <div class="small text-muted fw-semibold" style="font-size: 0.72rem;">RESPONSABLE DEL PRÉSTAMO / INSTRUCTOR:</div>
+          <div class="signature-line">
+            <div class="fw-bold" style="font-size: 0.82rem;">{{ prestamo.documento.nombre_completo|default:prestamo.documento.documento }}</div>
+            <div class="text-muted" style="font-size: 0.7rem;">C.C. {{ prestamo.documento.documento }} · Instructor SENA</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="signature-card">
+          <div class="small text-muted fw-semibold" style="font-size: 0.72rem;">ENTREGA Y DESPACHO EN BODEGA:</div>
+          <div class="signature-line">
+            <div class="fw-bold" style="font-size: 0.82rem;">ALMACÉN DE HERRAMIENTAS Y EQUIPOS</div>
+            <div class="text-muted" style="font-size: 0.7rem;">Centro Minero · Regional Boyacá</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pie de página institucional -->
+    <div class="mt-4 pt-2 border-top text-center text-muted" style="font-size: 0.68rem;">
+      GC-F-004 Formato de Control de Materiales y Equipos · Servicio Nacional de Aprendizaje SENA · Centro Minero Sogamoso · Documento Oficial Generado por el Sistema de Bodega Minera (SBM)
+    </div>
+
+  </div>
+
+  {% if auto_print %}
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        window.print();
+      }, 350);
+    });
+  </script>
+  {% endif %}
+
+</body>
+</html>
+

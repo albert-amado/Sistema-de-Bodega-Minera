@@ -1,5 +1,5 @@
 {
-    "active_target": "local",
+    "active_target": "cloud",
     "local_db": {
         "driver": "sqlite3",
         "host": "localhost",

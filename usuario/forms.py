@@ -43,7 +43,7 @@ class UsuarioForm(forms.ModelForm):
         }
 
     def clean_documento(self):
-        doc = self.cleaned_data.get('documento', '').strip()
+        doc = (self.cleaned_data.get('documento') or '').strip()
         tipo = self.cleaned_data.get('tipo_documento') or self.data.get('tipo_documento', 'CC')
         if not doc:
             raise ValidationError('El número de documento es obligatorio.')
@@ -53,7 +53,7 @@ class UsuarioForm(forms.ModelForm):
         return doc
 
     def clean_correo_personal(self):
-        correo = self.cleaned_data.get('correo_personal', '').strip().lower()
+        correo = (self.cleaned_data.get('correo_personal') or '').strip().lower()
         if correo:
             qs = Usuario.objects.filter(correo_personal=correo)
             if self.instance and self.instance.pk:
@@ -63,10 +63,10 @@ class UsuarioForm(forms.ModelForm):
         return correo
 
     def clean_telefono(self):
-        tel = self.cleaned_data.get('telefono', '').strip()
+        tel = (self.cleaned_data.get('telefono') or '').strip()
         if tel and not tel.isdigit():
             raise ValidationError('El teléfono solo debe contener números.')
-        return tel
+        return tel or None
 
 
 class RegistroUsuarioForm(forms.Form):
@@ -111,19 +111,19 @@ class RegistroUsuarioForm(forms.Form):
     )
 
     def clean_first_name(self):
-        nombre = self.cleaned_data.get('first_name', '').strip()
+        nombre = (self.cleaned_data.get('first_name') or '').strip()
         if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$', nombre):
             raise ValidationError('El nombre solo debe contener letras y espacios (entre 2 y 50 caracteres).')
         return nombre
 
     def clean_last_name(self):
-        apellido = self.cleaned_data.get('last_name', '').strip()
+        apellido = (self.cleaned_data.get('last_name') or '').strip()
         if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$', apellido):
             raise ValidationError('El apellido solo debe contener letras y espacios (entre 2 y 50 caracteres).')
         return apellido
 
     def clean_documento(self):
-        doc = self.cleaned_data.get('documento', '').strip()
+        doc = (self.cleaned_data.get('documento') or '').strip()
         tipo = self.cleaned_data.get('tipo_documento', 'CC')
         patron, mensaje = DOC_PATTERNS.get(tipo, (None, None))
         if patron and not re.match(patron, doc):
@@ -133,7 +133,7 @@ class RegistroUsuarioForm(forms.Form):
         return doc
 
     def clean_email(self):
-        email = self.cleaned_data.get('email', '').strip().lower()
+        email = (self.cleaned_data.get('email') or '').strip().lower()
         if Usuario.objects.filter(correo_personal=email).exists():
             raise ValidationError('El correo ya está registrado.')
         return email
@@ -279,13 +279,13 @@ class EditarUsuarioAdminForm(forms.ModelForm):
             self.fields['nombre_completo'].initial = self.instance.nombre_completo
 
     def clean_nombre_completo(self):
-        nombre = self.cleaned_data.get('nombre_completo', '').strip()
+        nombre = (self.cleaned_data.get('nombre_completo') or '').strip()
         if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,150}$', nombre):
             raise ValidationError('El nombre completo solo debe contener letras y espacios.')
         return nombre
 
     def clean_correo_personal(self):
-        correo = self.cleaned_data.get('correo_personal', '').strip().lower()
+        correo = (self.cleaned_data.get('correo_personal') or '').strip().lower()
         if not correo:
             raise ValidationError('El correo no puede estar vacío.')
         qs = Usuario.objects.filter(correo_personal=correo).exclude(documento=self.instance.documento)
@@ -294,10 +294,10 @@ class EditarUsuarioAdminForm(forms.ModelForm):
         return correo
 
     def clean_telefono(self):
-        tel = self.cleaned_data.get('telefono', '').strip()
+        tel = (self.cleaned_data.get('telefono') or '').strip()
         if tel and not tel.isdigit():
             raise ValidationError('El teléfono solo debe contener números.')
-        return tel
+        return tel or None
 
     def clean_rol(self):
         rol = self.cleaned_data.get('rol')
@@ -350,7 +350,7 @@ class PerfilUsuarioForm(forms.ModelForm):
             self.fields['nombre_completo'].initial = self.instance.nombre_completo
 
     def clean_nombre_completo(self):
-        nombre = self.cleaned_data.get('nombre_completo', '').strip()
+        nombre = (self.cleaned_data.get('nombre_completo') or '').strip()
         # Si el usuario ya fue verificado por SofiaPlus, no permitir alterar el nombre oficial
         if self.instance and self.instance.verificado_sofia_plus:
             return self.instance.nombre_completo
@@ -368,10 +368,10 @@ class PerfilUsuarioForm(forms.ModelForm):
       return correo
 
     def clean_telefono(self):
-        tel = self.cleaned_data.get('telefono', '').strip()
+        tel = (self.cleaned_data.get('telefono') or '').strip()
         if tel and not tel.isdigit():
             raise ValidationError('El teléfono solo debe contener números.')
-        return tel
+        return tel or None
 
     def save(self, commit=True):
         usuario = self.instance

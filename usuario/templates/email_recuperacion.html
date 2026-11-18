@@ -1,95 +1,112 @@
-{% load static %}
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recuperación de contraseña · Sistema de Bodega Minera</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-
-  <style>
-    .email_recuperacion__style-1 { background-color:#EFECCA; padding:32px 0; font-family:Arial, sans-serif; }
-    .email_recuperacion__style-2 { max-width:520px; }
-    .email_recuperacion__style-3 { border-radius:14px; overflow:hidden; }
-    .email_recuperacion__style-4 { background-color:#151717; padding:28px 32px; }
-    .email_recuperacion__style-5 { font-family:'Space Mono', monospace; font-size:22px; font-weight:700; color:#EFECCA; }
-    .email_recuperacion__style-6 { color:#98473E; }
-    .email_recuperacion__style-7 { font-size:11px; color:#71816D; margin-top:4px; text-transform:uppercase; letter-spacing:1px; }
-    .email_recuperacion__style-8 { background-color:#98473E; height:4px; }
-    .email_recuperacion__style-9 { padding:36px 32px 24px 32px; background-color:#ffffff; }
-    .email_recuperacion__style-10 { font-size:24px; color:#151717; font-weight:700; }
-    .email_recuperacion__style-11 { font-size:15px; color:#3a3a38; }
-    .email_recuperacion__style-12 { font-size:15px; color:#3a3a38; }
-    .email_recuperacion__style-13 { background-color:#094D92; color:#EFECCA; font-weight:700; padding:12px 32px; border-radius:8px; text-decoration:none; display:inline-block; }
-    .email_recuperacion__style-14 { font-size:12px; color:#71816D; }
-    .email_recuperacion__style-15 { font-size:13px; color:#71816D; }
-    .email_recuperacion__style-16 { background-color:#151717; padding:18px 32px; }
-    .email_recuperacion__style-17 { font-size:11px; color:#71816D; }
-  </style>
+  <meta name="color-scheme" content="light" />
+  <title>Recuperación de contraseña · Sistema de Gestión de Bodega Minera</title>
 </head>
-<body class="email_recuperacion__style-1">
+<body style="margin:0; padding:0; background-color:#F1F4F8;">
 
-  <div class="container email_recuperacion__style-2">
-    <div class="card shadow-sm border-0 email_recuperacion__style-3">
-
-      <!-- Header -->
-      <div class="card-header border-0 email_recuperacion__style-4">
-        <span class="email_recuperacion__style-5">
-          BODEGA MINERA<span class="email_recuperacion__style-6">.</span>
-        </span>
-        <div class="email_recuperacion__style-7">
-          Centro Minero · Regional Boyacá · SENA
-        </div>
-      </div>
-
-      <div class="email_recuperacion__style-8"></div>
-
-      <!-- Body -->
-      <div class="card-body email_recuperacion__style-9">
-
-        <div class="d-flex align-items-center justify-content-center mb-3"
-             style="width:48px; height:48px; background-color:#EFECCA; border-radius:50%; font-size:22px;">
-          🔒
-        </div>
-
-        <h1 class="mb-3 email_recuperacion__style-10">
-          Recuperación de contraseña
-        </h1>
-
-        <p class="mb-2 email_recuperacion__style-11">
-          Hola <strong>{{ nombre }}</strong>,
-        </p>
-        <p class="mb-4 email_recuperacion__style-12">
-          Recibimos una solicitud para restablecer la contraseña de tu cuenta en <strong>Sistema de Bodega Minera</strong>.
-          Haz clic en el botón para crear una nueva.
-        </p>
-
-        <div class="text-center mb-4">
-          <a href="{{ link }}" target="_blank"
-             style="background-color:#094D92; color:#EFECCA; font-weight:700; padding:12px 32px; border-radius:8px; text-decoration:none; display:inline-block; font-family:Arial, sans-serif;">
-            <span style="color:#EFECCA; text-decoration:none;">Restablecer contraseña →</span>
-          </a>
-        </div>
-
-        <p class="mb-2 email_recuperacion__style-14">
-          Este enlace expira en 15 minutos.
-        </p>
-        <p class="mb-4 email_recuperacion__style-15">
-          Si no solicitaste este cambio, puedes ignorar este correo; tu contraseña seguirá siendo la misma.
-        </p>
-
-
-      </div>
-
-      <!-- Footer -->
-      <div class="card-footer text-center border-0 email_recuperacion__style-16">
-        <p class="mb-0 email_recuperacion__style-17">
-          SENA · Centro Minero · Regional Boyacá — Sistema de Bodega Minera
-        </p>
-      </div>
-
-    </div>
+  <!-- Texto de vista previa (se ve en la bandeja de entrada, no dentro del correo) -->
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; font-size:1px; line-height:1px;">
+    Restablece tu contraseña del Sistema de Gestión de Bodega Minera. El enlace expira en 15 minutos.
   </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F1F4F8;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+
+        <table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0"
+               style="width:100%; max-width:520px; background-color:#FFFFFF; border-radius:14px; overflow:hidden;">
+
+          <!-- Encabezado -->
+          <tr>
+            <td style="background-color:#151717; padding:28px 32px;">
+              <div style="font-family:'Courier New', Courier, monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#9AA59A;">
+                Sistema de Gestión de
+              </div>
+              <div style="font-family:Arial, Helvetica, sans-serif; font-size:24px; font-weight:700; color:#FFFFFF; margin-top:6px;">
+                BODEGA MINERA<span style="color:#39A900;">.</span>
+              </div>
+              <div style="font-family:'Courier New', Courier, monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#39A900; margin-top:8px;">
+                Centro Minero · Regional Boyacá · SENA
+              </div>
+            </td>
+          </tr>
+
+          <!-- Franja verde -->
+          <tr>
+            <td style="background-color:#39A900; height:4px; line-height:4px; font-size:4px;">&nbsp;</td>
+          </tr>
+
+          <!-- Contenido -->
+          <tr>
+            <td style="padding:36px 32px 24px 32px; font-family:Arial, Helvetica, sans-serif;">
+
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" valign="middle"
+                      style="width:48px; height:48px; background-color:#E8F5E0; border-radius:24px; font-size:22px; line-height:48px;">
+
+                  </td>
+                </tr>
+              </table>
+
+              <h1 style="margin:20px 0 16px 0; font-size:24px; line-height:30px; color:#151717; font-weight:700;">
+                Recuperación de contraseña
+              </h1>
+
+              <p style="margin:0 0 8px 0; font-size:15px; line-height:22px; color:#3A3F3A;">
+                Hola <strong>{{ nombre }}</strong>,
+              </p>
+              <p style="margin:0 0 28px 0; font-size:15px; line-height:22px; color:#3A3F3A;">
+                Recibimos una solicitud para restablecer la contraseña de tu cuenta en
+                <strong>Sistema de Gestión de Bodega Minera</strong>.
+                Haz clic en el botón para crear una nueva.
+              </p>
+
+              <!-- Botón -->
+              <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 28px auto;">
+                <tr>
+                  <td align="center" bgcolor="#39A900" style="border-radius:8px;">
+                    <a href="{{ link }}"
+                       style="display:inline-block; padding:14px 32px; font-family:Arial, Helvetica, sans-serif; font-size:15px; font-weight:700; color:#FFFFFF; text-decoration:none; border-radius:8px;">
+                      Restablecer contraseña &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 20px 0; font-size:12px; line-height:18px; color:#6B7280;">
+                Este enlace expira en <strong>15 minutos</strong>.
+              </p>
+
+              <!-- Aviso de seguridad -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background-color:#F1F7EC; border-left:4px solid #39A900; border-radius:6px; padding:14px 16px; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:19px; color:#4B5563;">
+                    Si no solicitaste este cambio, puedes ignorar este correo; tu contraseña seguirá siendo la misma.
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+       
+          <tr>
+            <td align="center" style="background-color:#151717; padding:18px 32px; font-family:'Courier New', Courier, monospace; font-size:11px; line-height:16px; color:#9AA59A;">
+              SENA · Centro Minero · Regional Boyacá<br />
+              Sistema de Gestión de Bodega Minera
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
 
 </body>
 </html>

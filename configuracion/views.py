@@ -1,155 +1,231 @@
-import re
+"""
+views.py - Configuración del sistema (cambio de base de datos Local <-> Nube
+y Copia de Seguridad en Excel: exportar e importar registros faltantes).
+
+Fuente única de verdad: system_configuration.json (ConfigurationManager).
+Las bases Local y Nube son INDEPENDIENTES: cambiar de entorno NO copia datos.
+Solo los botones manuales de sincronización o la importación de backups copian datos.
+"""
+import logging
 from pathlib import Path
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.http import JsonResponse
-from django.views.decorators.http import require_GET
+
 from django.conf import settings
+from django.contrib import messages
+from django.db import connection
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
+from django.views.decorators.http import require_GET
+
 from usuario.decorators import admin_required
 
+from .db_tester import DatabaseConnectionTester
+from .excel_backup import (
+    exportar_backup_excel,
+    importar_backup_excel,
+    listar_backups_excel,
+)
+from .manager import ConfigurationManager
+from .schemas import DatabaseTarget
 
-ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
-
-
-def _leer_env(clave: str, default: str = "") -> str:
-    """Lee el valor actual de una clave en el .env."""
-    if not ENV_PATH.exists():
-        return default
-    contenido = ENV_PATH.read_text(encoding="utf-8")
-    patron = re.compile(rf"^{re.escape(clave)}\s*=\s*(.+)$", re.MULTILINE)
-    match = patron.search(contenido)
-    return match.group(1).strip() if match else default
+logger = logging.getLogger(__name__)
 
 
-def _actualizar_env(clave: str, valor: str):
-    
-    if not ENV_PATH.exists():
-        ENV_PATH.write_text(f"{clave}={valor}\n", encoding="utf-8")
-        return
-
-    contenido = ENV_PATH.read_text(encoding="utf-8")
-    patron = re.compile(rf"^{re.escape(clave)}\s*=.*$", re.MULTILINE)
-
-    if patron.search(contenido):
-        nuevo = patron.sub(f"{clave}={valor}", contenido)
-    else:
-        nuevo = contenido.rstrip("\n") + f"\n{clave}={valor}\n"
-
-    ENV_PATH.write_text(nuevo, encoding="utf-8")
+def _bd_en_uso() -> str:
+    """'nube' si este proceso está conectado a PostgreSQL, 'local' si es SQLite."""
+    return "nube" if connection.vendor == "postgresql" else "local"
 
 
 def _forzar_recarga():
-    """Toca settings.py y views.py para forzar recarga del runserver."""
-    base = Path(__file__).resolve().parent.parent
-    for path in [
-        base / "core" / "settings.py",
-        Path(__file__).resolve(),
-    ]:
-        if path.exists():
-            path.touch()
+    """Toca settings.py para que runserver reinicie y vuelva a leer el JSON.
+    En producción (gunicorn, etc.) hay que reiniciar el servicio."""
+    path = Path(settings.BASE_DIR) / "core" / "settings.py"
+    if path.exists():
+        path.touch()
+
+
+def _formatear_resumen_importacion(resultado: dict) -> str:
+    total_ins = resultado.get("total_insertados", 0)
+    total_omi = resultado.get("total_omitidos", 0)
+    por_tabla = resultado.get("insertados_por_tabla", {})
+    if total_ins == 0:
+        return (
+            f"La base de datos ya está al día: no faltaba ningún registro "
+            f"({total_omi} registros verificados ya existían)."
+        )
+    detalles = ", ".join(f"{tabla}: +{cant}" for tabla, cant in por_tabla.items())
+    return (
+        f"Se subieron {total_ins} registro(s) faltante(s) correctamente "
+        f"({ dets if (dets := detalles) else '' }). "
+        f"Se conservaron intactos {total_omi} registro(s) que ya existían."
+    )
+
+
+@admin_required
+def exportar_excel_view(request):
+    """Genera y descarga inmediatamente la copia de seguridad en formato Excel (.xlsx)."""
+    try:
+        xlsx_bytes, filename = exportar_backup_excel(guardar_en_disco=True)
+        response = HttpResponse(
+            xlsx_bytes,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return response
+    except Exception as e:
+        logger.exception("Error al generar la copia de seguridad en Excel")
+        messages.error(request, f"No se pudo generar la copia de seguridad en Excel: {e}")
+        return redirect("configuracion")
+
+
+@admin_required
+def descargar_backup_guardado_view(request, filename: str):
+    """Permite descargar una copia de seguridad .xlsx previamente guardada en backups/."""
+    nombre_limpio = Path(filename).name
+    ruta = Path(settings.BASE_DIR) / "backups" / nombre_limpio
+    if not ruta.exists() or ruta.suffix.lower() != ".xlsx":
+        raise Http404("El archivo de copia de seguridad no existe.")
+    response = HttpResponse(
+        ruta.read_bytes(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{nombre_limpio}"'
+    return response
 
 
 @admin_required
 def configuracion_view(request):
-    almacenamiento_actual = _leer_env("DB_ENGINE", default="nube")
+    almacenamiento_actual = _bd_en_uso()
 
     if request.method == "POST":
         accion = request.POST.get("accion", "").strip()
 
-        # ── Botón manual: Subir todo de Local a Nube ──
+        # ── 1. Exportar Copia de Seguridad en Excel (.xlsx) ──
+        if accion == "exportar_backup_excel":
+            return exportar_excel_view(request)
+
+        # ── 2. Importar Copia de Seguridad desde archivo Excel subido (sube lo que falte) ──
+        if accion == "importar_backup_excel":
+            archivo = request.FILES.get("archivo_excel")
+            if not archivo:
+                messages.error(request, "Debes seleccionar un archivo Excel (.xlsx) para importar.")
+                return redirect("configuracion")
+            if not archivo.name.lower().endswith(".xlsx"):
+                messages.error(request, "Formato no válido. Selecciona un archivo con extensión .xlsx.")
+                return redirect("configuracion")
+            try:
+                resultado = importar_backup_excel(archivo)
+                messages.success(request, _formatear_resumen_importacion(resultado))
+            except Exception as e:
+                logger.exception("Error importando copia de seguridad desde Excel")
+                messages.error(request, f"Error al importar la copia de seguridad Excel: {e}")
+            return redirect("configuracion")
+
+        # ── 3. Importar / Restaurar faltantes desde un backup .xlsx guardado en backups/ ──
+        if accion == "restaurar_backup_guardado":
+            nombre_archivo = Path(request.POST.get("nombre_archivo", "").strip()).name
+            ruta = Path(settings.BASE_DIR) / "backups" / nombre_archivo
+            if not nombre_archivo or not ruta.exists() or ruta.suffix.lower() != ".xlsx":
+                messages.error(request, "El archivo de respaldo seleccionado no existe.")
+                return redirect("configuracion")
+            try:
+                resultado = importar_backup_excel(ruta)
+                messages.success(request, _formatear_resumen_importacion(resultado))
+            except Exception as e:
+                logger.exception("Error restaurando backup guardado en Excel")
+                messages.error(request, f"Error al restaurar desde {nombre_archivo}: {e}")
+            return redirect("configuracion")
+
+        # ── 4. Botón manual: Subir todo de Local a Nube (REEMPLAZA la nube) ──
         if accion == "sincronizar_local_a_nube":
             try:
                 from migrar_db import migrate_local_to_cloud
                 migrate_local_to_cloud()
-                messages.success(request, " Sincronización exitosa: Todos los datos locales (SQLite) se han subido a la Nube (Neon PostgreSQL).")
+                messages.success(request, "Sincronización exitosa: los datos locales (SQLite) se subieron a la Nube (Neon PostgreSQL).")
             except Exception as e:
+                logger.exception("Error subiendo datos a la nube")
                 messages.error(request, f"Error al subir datos a la nube: {e}")
             return redirect("configuracion")
 
-        # ── Botón manual: Descargar todo de Nube a Local ──
-        elif accion == "sincronizar_nube_a_local":
+        # ── 5. Botón manual: Descargar todo de Nube a Local (REEMPLAZA lo local) ──
+        if accion == "sincronizar_nube_a_local":
             try:
                 from migrar_db import migrate as run_db_migration
                 run_db_migration()
-                messages.success(request, " Sincronización exitosa: Todos los datos de la Nube (Neon PostgreSQL) se han descargado a Local (SQLite).")
+                messages.success(request, "Sincronización exitosa: los datos de la Nube (Neon PostgreSQL) se descargaron a Local (SQLite).")
             except Exception as e:
+                logger.exception("Error descargando datos de la nube")
                 messages.error(request, f"Error al descargar datos de la nube: {e}")
             return redirect("configuracion")
 
-        # ── Cambio de Entorno Activo (con sincronización automática) ──
-        almacenamiento = request.POST.get("almacenamiento", "nube")
-        sincronizado_ok = False
+        # ── 6. Cambio de base de datos activa (SIN copiar datos) ──
+        almacenamiento = request.POST.get("almacenamiento", "").strip()
 
-        if almacenamiento == "local" and almacenamiento_actual == "nube":
-            try:
-                from migrar_db import migrate as run_db_migration
-                run_db_migration()
-                sincronizado_ok = True
-            except Exception as e:
-                messages.error(
-                    request,
-                    f"Error al sincronizar datos desde la nube: {e}."
-                )
-        elif almacenamiento == "nube" and almacenamiento_actual == "local":
-            try:
-                from migrar_db import migrate_local_to_cloud
-                migrate_local_to_cloud()
-                sincronizado_ok = True
-            except Exception as e:
-                messages.error(
-                    request,
-                    f"Error al sincronizar datos hacia la nube: {e}."
-                )
-        else:
-            sincronizado_ok = True
+        if almacenamiento not in ("local", "nube"):
+            messages.error(request, "Opción de almacenamiento no válida.")
+            return redirect("configuracion")
 
-        _actualizar_env("DB_ENGINE", almacenamiento)
-        _forzar_recarga()
+        if almacenamiento == almacenamiento_actual:
+            messages.info(request, "Ya estás usando esa base de datos.")
+            return redirect("configuracion")
 
         nombre_bd = "Local (SQLite)" if almacenamiento == "local" else "Nube (Neon PostgreSQL)"
+        destino_clave = "cloud" if almacenamiento == "nube" else "local"
 
-        if sincronizado_ok:
-            messages.success(
+        # 1) Dejar lista la base de destino: solo crea tablas (migraciones), no copia datos
+        try:
+            from migrar_db import preparar_base
+            preparar_base(destino_clave)
+        except Exception as e:
+            logger.exception("Error al preparar la base de destino")
+            messages.error(
                 request,
-                f"Base de datos activa cambiada a {nombre_bd} y sincronizada exitosamente."
+                f"No se cambió la base de datos. No se pudo preparar {nombre_bd}: {e}",
             )
-            return redirect("home")
-        else:
-            request.session.flush()
-            messages.success(
-                request,
-                f"Base de datos cambiada a {nombre_bd}. Inicia sesión nuevamente.",
-            )
-            return redirect("login")
+            return redirect("configuracion")
+
+        # 2) Guardar el cambio donde settings.py realmente lo lee (el JSON)
+        manager = ConfigurationManager(base_dir=settings.BASE_DIR)
+        destino = DatabaseTarget.CLOUD if almacenamiento == "nube" else DatabaseTarget.LOCAL
+        ok, msg = manager.switch_target(destino, test_first=True)
+        if not ok:
+            messages.error(request, msg)
+            return redirect("configuracion")
+
+        # 3) Reiniciar para que Django use la nueva conexión.
+        #    Se cierra la sesión porque las sesiones viven en la base de datos.
+        _forzar_recarga()
+        request.session.flush()
+        messages.success(
+            request,
+            f"Base de datos cambiada a {nombre_bd}. Inicia sesión nuevamente.",
+        )
+        return redirect("login")
 
     class Config:
         pass
 
     config = Config()
     config.almacenamiento = almacenamiento_actual
-    context = {"config": config}
-    return render(request, "configuracion.html", context)
+    backups_excel = listar_backups_excel()
+    return render(
+        request,
+        "configuracion.html",
+        {
+            "config": config,
+            "backups_excel": backups_excel,
+        },
+    )
 
 
 @admin_required
 @require_GET
 def probar_conexion_neon(request):
+    """Prueba la conexión a la nube con el perfil guardado en el JSON."""
     try:
-        import psycopg2
-        import environ
-        env = environ.Env()
-        environ.Env.read_env(settings.BASE_DIR / ".env")
-
-        conn = psycopg2.connect(
-            dbname=env("DB_NAME", default=""),
-            user=env("DB_USER", default=""),
-            password=env("DB_PASSWORD", default=""),
-            host=env("DB_HOST", default=""),
-            port=env("DB_PORT", default="5432"),
-            connect_timeout=5,
-            sslmode="require",
+        manager = ConfigurationManager(base_dir=settings.BASE_DIR)
+        ok, msg, _ = DatabaseConnectionTester.test_profile(
+            manager.config.cloud_db, settings.BASE_DIR
         )
-        conn.close()
-        return JsonResponse({"ok": True})
+        return JsonResponse({"ok": ok, "error": "" if ok else msg})
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)})

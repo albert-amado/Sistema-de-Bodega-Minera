@@ -227,6 +227,11 @@
   color: #991b1b;
   border: 1px solid #fecaca;
 }
+.gu-badge-instructor {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
 .gu-badge-user {
   background: var(--sena-green-light, #EBF7E5);
   color: var(--sena-green-hover, #2E8800);

@@ -128,8 +128,8 @@
               <span class="gu-user-name" title="{{ u.nombre_completo }}">
                 {{ u.nombre_completo }}
               </span>
-              <span class="gu-badge-role {% if u.rol == 'Administrador' %}gu-badge-admin{% else %}gu-badge-user{% endif %}">
-                <i class="bi {% if u.rol == 'Administrador' %}bi-shield-lock-fill{% else %}bi-person{% endif %} me-1"></i>{{ u.rol }}
+              <span class="gu-badge-role {% if u.rol == 'Administrador' %}gu-badge-admin{% elif u.rol == 'Instructor' %}gu-badge-instructor{% else %}gu-badge-user{% endif %}">
+                <i class="bi {% if u.rol == 'Administrador' %}bi-shield-lock-fill{% elif u.rol == 'Instructor' %}bi-person-badge-fill{% else %}bi-person{% endif %} me-1"></i>{{ u.get_rol_display|default:u.rol }}
               </span>
             </div>
           </div>
@@ -245,8 +245,8 @@
               <span class="gu-info-text">{{ u.telefono|default:"—" }}</span>
             </td>
             <td>
-              <span class="gu-badge-role {% if u.rol == 'Administrador' %}gu-badge-admin{% else %}gu-badge-user{% endif %}">
-                {{ u.rol }}
+              <span class="gu-badge-role {% if u.rol == 'Administrador' %}gu-badge-admin{% elif u.rol == 'Instructor' %}gu-badge-instructor{% else %}gu-badge-user{% endif %}">
+                <i class="bi {% if u.rol == 'Administrador' %}bi-shield-lock-fill{% elif u.rol == 'Instructor' %}bi-person-badge-fill{% else %}bi-person{% endif %} me-1"></i>{{ u.get_rol_display|default:u.rol }}
               </span>
             </td>
             <td class="text-center">

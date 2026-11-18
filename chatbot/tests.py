@@ -68,6 +68,37 @@ class ChatbotSanitizacionTests(TestCase):
         self.assertGreater(espera, 0)
 
 
+class ChatbotKnowledgeBaseTests(TestCase):
+    """Pruebas de la base de conocimiento local experta (fallback sin API key)."""
+
+    def test_devolucion_parcial_admin(self):
+        respuesta, _ = consultar_gemini("¿Cómo registro una devolución parcial de herramientas?", rol_usuario="admin")
+        self.assertIn("Devolución Parcial", respuesta)
+        self.assertIn("Kardex", respuesta)
+        self.assertIn("PARCIAL", respuesta)
+
+    def test_devolucion_parcial_usuario(self):
+        respuesta, _ = consultar_gemini("¿Cómo registro una devolución parcial de herramientas?", rol_usuario="usuario")
+        self.assertIn("Devolución Parcial", respuesta)
+        self.assertIn("Mis Préstamos", respuesta)
+
+    def test_codigo_al_es(self):
+        respuesta, _ = consultar_gemini("¿Qué significa el código AL-ES y cómo se asigna?")
+        self.assertIn("AL-ES", respuesta)
+        self.assertIn("Almacén", respuesta)
+        self.assertIn("Estante", respuesta)
+
+    def test_verificacion_sofiaplus(self):
+        respuesta, _ = consultar_gemini("¿Qué hace la verificación SofiaPlus de aprendices?")
+        self.assertIn("SofiaPlus", respuesta)
+        self.assertIn("SENA", respuesta)
+
+    def test_prestamo_instructor(self):
+        respuesta, _ = consultar_gemini("¿Cómo hace un instructor para pedir herramientas para su grupo?")
+        self.assertIn("Instructor", respuesta)
+        self.assertIn("Comprobante", respuesta)
+
+
 class ChatbotPromptTests(TestCase):
     """Pruebas de diferenciación de roles en el system instruction."""
 

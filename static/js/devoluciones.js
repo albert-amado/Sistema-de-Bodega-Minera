@@ -183,12 +183,12 @@ function rchLimpiarError() {
           var statusMap = { activo: ['dev-badge-activo','Activo'], parcial: ['dev-badge-parcial','Parcial'], vencido: ['dev-badge-vencido','Vencido'] };
           var sm = statusMap[p.estado] || ['',''];
           var chipsHtml = p.items.filter(function(it){ return !it.devuelto; })
-            .map(function(it){ return '<span style="font-family:var(--font-mono);font-size:.65rem;background:rgba(9,77,146,.07);color:var(--navy);border:1px solid rgba(9,77,146,.12);padding:.1rem .38rem;border-radius:var(--radius-sm);margin:1px 2px 0 0;">' + it.producto.nombre + ' ×' + it.cantidad + '</span>'; }).join('');
+            .map(function(it){ return '<span style="font-family:var(--font-mono);font-size:.65rem;background:rgba(57, 169, 0,.07);color:var(--sena-green, #39A900);border:1px solid rgba(57, 169, 0,.12);padding:.1rem .38rem;border-radius:var(--radius-sm);margin:1px 2px 0 0;">' + it.producto.nombre + ' ×' + it.cantidad + '</span>'; }).join('');
           var textoData = p.id + ' ' + p.usuario.toLowerCase() + ' ' + p.items.map(function(it){ return it.producto.nombre.toLowerCase() + ' ' + it.producto.codigo_sku.toLowerCase(); }).join(' ');
           var esActiva = (_prestamo && _prestamo.id === p.id);
 
           return '<div class="' + selectedCls + '" data-id="' + p.id + '" data-texto="' + textoData.replace(/"/g,'&quot;') + '" onclick="devSeleccionarPrestamo(this,' + p.id + ')">' +
-            '<span style="font-family:var(--font-mono);font-size:.7rem;font-weight:700;color:var(--navy);background:rgba(9,77,146,.08);border:1px solid rgba(9,77,146,.15);padding:.18rem .5rem;border-radius:var(--radius-sm);white-space:nowrap;flex-shrink:0;">#' + p.id + '</span>' +
+            '<span style="font-family:var(--font-mono);font-size:.7rem;font-weight:700;color:var(--sena-green, #39A900);background:rgba(57, 169, 0,.08);border:1px solid rgba(57, 169, 0,.15);padding:.18rem .5rem;border-radius:var(--radius-sm);white-space:nowrap;flex-shrink:0;">#' + p.id + '</span>' +
             '<div style="flex:1;min-width:0;">' +
               '<div style="font-family:var(--font-ui);font-size:.88rem;font-weight:600;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.25rem;">' + p.usuario + (p.nombre_usuario ? ' · <span style="font-weight:400;opacity:.7;">' + p.nombre_usuario + '</span>' : '') + '</div>' +
               '<div style="display:flex;flex-wrap:wrap;">' + chipsHtml + '</div>' +
@@ -228,7 +228,7 @@ function rchLimpiarError() {
       var serialTxt = '';
       var chkMark = sel ? '<svg width="8" height="7" viewBox="0 0 11 9" fill="none"><path d="M1 4L4.5 7.5L10 1.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '';
       var cantCtrl = sel
-        ? '<div style="display:flex;align-items:center;gap:3px;" onclick="event.stopPropagation()"><button type="button" onclick="devCambiarCant(' + it.id + ',-1)" style="width:20px;height:20px;border-radius:4px;border:1px solid rgba(152,71,62,.3);background:#fff;color:var(--rust);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button><span id="dev-cant-' + it.id + '" style="font-family:var(--font-mono);font-weight:700;font-size:.82rem;min-width:18px;text-align:center;color:var(--navy);">' + cant + '</span><button type="button" onclick="devCambiarCant(' + it.id + ',+1)" style="width:20px;height:20px;border-radius:4px;border:1px solid rgba(152,71,62,.3);background:#fff;color:var(--rust);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button><span style="font-size:.62rem;color:var(--text-muted);">/' + it.cantidad + '</span></div>'
+        ? '<div style="display:flex;align-items:center;gap:3px;" onclick="event.stopPropagation()"><button type="button" onclick="devCambiarCant(' + it.id + ',-1)" style="width:20px;height:20px;border-radius:4px;border:1px solid rgba(152,71,62,.3);background:#fff;color:var(--rust);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button><span id="dev-cant-' + it.id + '" style="font-family:var(--font-mono);font-weight:700;font-size:.82rem;min-width:18px;text-align:center;color:var(--sena-green, #39A900);">' + cant + '</span><button type="button" onclick="devCambiarCant(' + it.id + ',+1)" style="width:20px;height:20px;border-radius:4px;border:1px solid rgba(152,71,62,.3);background:#fff;color:var(--rust);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button><span style="font-size:.62rem;color:var(--text-muted);">/' + it.cantidad + '</span></div>'
         : '<span style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);">' + it.cantidad + ' ud.</span>';
 
       return '<div class="' + rowCls + '" onclick="devToggleItem(' + it.id + ')">' +
@@ -247,17 +247,17 @@ function rchLimpiarError() {
         }).join('')
       : '';
 
-    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;padding:.6rem .9rem;background:rgba(9,77,146,.04);border:1px solid rgba(9,77,146,.14);border-radius:var(--radius-md);margin-bottom:1rem;">' +
-        '<div><span style="font-family:var(--font-mono);font-weight:700;color:var(--navy);font-size:.85rem;">Préstamo #' + _prestamo.id + '</span>' +
+    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;padding:.6rem .9rem;background:rgba(57, 169, 0,.04);border:1px solid rgba(57, 169, 0,.14);border-radius:var(--radius-md);margin-bottom:1rem;">' +
+        '<div><span style="font-family:var(--font-mono);font-weight:700;color:var(--sena-green, #39A900);font-size:.85rem;">Préstamo #' + _prestamo.id + '</span>' +
         '<span style="color:var(--text-muted);margin:0 .3rem;">·</span>' +
         '<span style="font-family:var(--font-ui);font-weight:600;font-size:.85rem;color:var(--text-main);">' + _prestamo.usuario + '</span></div>' +
-        '<button type="button" onclick="devWizAtras()" style="background:none;border:none;color:var(--navy);font-family:var(--font-ui);font-size:.75rem;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:0;opacity:.7;">Cambiar</button>' +
+        '<button type="button" onclick="devWizAtras()" style="background:none;border:none;color:var(--sena-green, #39A900);font-family:var(--font-ui);font-size:.75rem;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:0;opacity:.7;">Cambiar</button>' +
       '</div>' +
 
       '<div class="dev-wiz-sec-label" style="margin-top:.85rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>' +
         '<span>Herramientas del préstamo</span>' +
-        '<span style="font-size:.6rem;background:rgba(9,77,146,.1);color:var(--navy);border:1px solid rgba(9,77,146,.18);padding:.08rem .42rem;border-radius:10px;font-family:var(--font-mono);">' + badgeTxt + '</span>' +
-        '<button type="button" onclick="devToggleTodas()" style="margin-left:auto;background:none;border:none;color:var(--navy);font-family:var(--font-ui);font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;opacity:.75;">Marcar todas</button>' +
+        '<span style="font-size:.6rem;background:rgba(57, 169, 0,.1);color:var(--sena-green, #39A900);border:1px solid rgba(57, 169, 0,.18);padding:.08rem .42rem;border-radius:10px;font-family:var(--font-mono);">' + badgeTxt + '</span>' +
+        '<button type="button" onclick="devToggleTodas()" style="margin-left:auto;background:none;border:none;color:var(--sena-green, #39A900);font-family:var(--font-ui);font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;opacity:.75;">Marcar todas</button>' +
       '</div>' +
       '<div style="max-height:195px;overflow-y:auto;margin-bottom:.4rem;">' + itemsHtml + devueltosHtml + '</div>' +
       '<div id="dev-resumen-strip"></div>' +
@@ -277,7 +277,7 @@ function rchLimpiarError() {
     var chipsHtml = sel.map(function(it) {
       var cant = (_escaneados[it.id] && _escaneados[it.id].cantDevolver !== undefined) ? _escaneados[it.id].cantDevolver : it.cantidad;
       var esc  = _escaneados[it.id] && _escaneados[it.id].escaneado;
-      return '<span style="font-family:var(--font-mono);font-size:.72rem;margin:2px;background:' + (esc ? 'rgba(22,163,74,.1)' : 'rgba(9,77,146,.07)') + ';color:' + (esc ? '#15803d' : 'var(--navy)') + ';padding:.2rem .55rem;border-radius:6px;border:1px solid ' + (esc ? 'rgba(22,163,74,.2)' : 'rgba(9,77,146,.12)') + ';">' + (esc ? '✓ ' : '') + it.producto.nombre + ' ×' + cant + '</span>';
+      return '<span style="font-family:var(--font-mono);font-size:.72rem;margin:2px;background:' + (esc ? 'rgba(22,163,74,.1)' : 'rgba(57, 169, 0,.07)') + ';color:' + (esc ? '#15803d' : 'var(--sena-green, #39A900)') + ';padding:.2rem .55rem;border-radius:6px;border:1px solid ' + (esc ? 'rgba(22,163,74,.2)' : 'rgba(57, 169, 0,.12)') + ';">' + (esc ? '✓ ' : '') + it.producto.nombre + ' ×' + cant + '</span>';
     }).join('');
 
     var tipoBadge = parcial
@@ -285,7 +285,7 @@ function rchLimpiarError() {
       : '<span style="font-size:.72rem;background:rgba(22,163,74,.09);color:#15803d;padding:.2rem .6rem;border-radius:6px;font-weight:700;border:1px solid rgba(22,163,74,.2);">✅ Devolución total</span>';
 
     return '<div class="dev-wiz-sec-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Revisión final</div>' +
-      '<div style="background:rgba(9,77,146,.03);border:1px solid rgba(9,77,146,.12);border-radius:var(--radius-md);padding:.85rem 1rem;margin-bottom:.75rem;">' +
+      '<div style="background:rgba(57, 169, 0,.03);border:1px solid rgba(57, 169, 0,.12);border-radius:var(--radius-md);padding:.85rem 1rem;margin-bottom:.75rem;">' +
         '<div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:600;font-family:var(--font-mono);margin-bottom:.5rem;">Herramientas a devolver</div>' +
         '<div style="display:flex;flex-wrap:wrap;margin-bottom:.5rem;">' + chipsHtml + '</div>' +
         '<div>' + tipoBadge + '</div>' +
@@ -530,4 +530,4 @@ function rchLimpiarError() {
 
 })();
 
-
+

@@ -421,7 +421,12 @@ const DOC_RULES = new Map([
 
   //mostrar error
 
-function showError(area, msg) {
+function showError(area, msg, inputId = null) {
+  if (typeof window.sbmMostrarRechazo === 'function') {
+    var isRegistro = window.location.pathname.indexOf('registro') !== -1;
+    var titulo = isRegistro ? '¡Registro rechazado!' : '¡Inicio de sesión fallido!';
+    window.sbmMostrarRechazo(titulo, msg, inputId);
+  }
   if (!area) return;
   area.innerHTML = '';
   const errDiv = document.createElement('div');
@@ -444,7 +449,8 @@ if (loginForm) {
     if (area) area.innerHTML = '';
     if (!doc || !pwd) {
       e.preventDefault();
-      showError(area, 'Por favor ingresa tu documento y contraseña.');
+      const targetId = !doc ? 'documento' : 'password';
+      showError(area, 'Por favor ingresa tu documento y contraseña.', targetId);
     }
   });
 }
@@ -461,12 +467,12 @@ if (recForm) {
     if (area) area.innerHTML = '';
     if (!email) {
       e.preventDefault();
-      showError(area, 'Por favor ingresa tu correo electrónico.');
+      showError(area, 'Por favor ingresa tu correo electrónico.', 'email');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       e.preventDefault();
-      showError(area, 'Ingresa un correo electrónico válido.');
+      showError(area, 'Ingresa un correo electrónico válido.', 'email');
     }
   });
 }
@@ -490,22 +496,29 @@ if (regForm) {
 
     if (!firstName || !lastName || !email || !doc || !p1 || !p2) {
       e.preventDefault();
-      showError(area, 'Por favor completa todos los campos.');
+      let firstEmpty = 'first_name';
+      if (!firstName) firstEmpty = 'first_name';
+      else if (!lastName) firstEmpty = 'last_name';
+      else if (!email) firstEmpty = 'email';
+      else if (!doc) firstEmpty = 'documento';
+      else if (!p1) firstEmpty = 'password1';
+      else if (!p2) firstEmpty = 'password2';
+      showError(area, 'Por favor completa todos los campos.', firstEmpty);
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       e.preventDefault();
-      showError(area, 'Ingresa un correo electrónico válido.');
+      showError(area, 'Ingresa un correo electrónico válido.', 'email');
       return;
     }
     if (p1.length < 8) {
       e.preventDefault();
-      showError(area, 'La contraseña debe tener mínimo 8 caracteres.');
+      showError(area, 'La contraseña debe tener mínimo 8 caracteres.', 'password1');
       return;
     }
     if (p1 !== p2) {
       e.preventDefault();
-      showError(area, 'Las contraseñas no coinciden.');
+      showError(area, 'Las contraseñas no coinciden.', 'password2');
     }
   });
 }
@@ -525,17 +538,17 @@ if (newPassForm) {
 
     if (!p1) {
       e.preventDefault();
-      showError(area, 'Ingresa tu nueva contraseña.');
+      showError(area, 'Ingresa tu nueva contraseña.', 'password1');
       return;
     }
     if (p1.length < 8) {
       e.preventDefault();
-      showError(area, 'La contraseña debe tener al menos 8 caracteres.');
+      showError(area, 'La contraseña debe tener al menos 8 caracteres.', 'password1');
       return;
     }
     if (p1 !== p2) {
       e.preventDefault();
-      showError(area, 'Las contraseñas no coinciden.');
+      showError(area, 'Las contraseñas no coinciden.', 'password2');
     }
   });
 }

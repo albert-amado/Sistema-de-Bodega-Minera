@@ -1,11 +1,12 @@
 {% comment %}
   Animación de bienvenida SENA tras un inicio de sesión o registro exitoso.
-  Se muestra una sola vez (la vista consume la bandera de sesión `auth_bienvenida`).
+  Cubre el 100% del viewport (incluyendo barra lateral Aside, headers y widgets).
   Variables: auth_bienvenida = 'login' | 'registro'
 {% endcomment %}
 <div id="sbmWelcome" class="sbm-welcome" role="status" aria-live="polite">
   <div class="sbm-welcome-card">
-    <!-- Check animado -->
+    
+    <!-- Icono animado de éxito -->
     <div class="sbm-welcome-icon">
       <span class="sbm-welcome-ring"></span>
       <svg viewBox="0 0 52 52" aria-hidden="true">
@@ -16,47 +17,70 @@
 
     {% if auth_bienvenida == 'registro' %}
       <h2 class="sbm-welcome-title">¡Registro exitoso!</h2>
-      <p class="sbm-welcome-text">Bienvenido/a, <strong>{{ request.session.usuario_nombre|default:'aprendiz' }}</strong>. Tu cuenta fue creada correctamente.</p>
+      <p class="sbm-welcome-text">Bienvenido/a al Sistema de Bodega Minera, <strong>{{ request.session.usuario_nombre|default:'aprendiz' }}</strong>.</p>
+      <div class="sbm-welcome-badge sbm-badge-rol">
+        <i class="bi bi-person-check-fill me-1"></i> Cuenta activada correctamente
+      </div>
     {% else %}
       <h2 class="sbm-welcome-title">¡Inicio de sesión exitoso!</h2>
       <p class="sbm-welcome-text">Hola de nuevo, <strong>{{ request.session.usuario_nombre|default:'usuario' }}</strong>.</p>
+      <div class="sbm-welcome-badge sbm-badge-rol">
+        <i class="bi bi-shield-check me-1"></i> Rol: {{ request.session.usuario_rol|default:'Usuario' }}
+      </div>
     {% endif %}
 
-    <div class="sbm-welcome-progress"><span></span></div>
+    <!-- Barra de progreso sincronizada -->
+    <div class="sbm-welcome-progress-wrap">
+      <div class="sbm-welcome-progress"><span></span></div>
+    </div>
+
   </div>
 </div>
 
 <style>
+  /* Overlay a pantalla completa absoluta (cubre 100vw y 100vh sin fugas) */
   .sbm-welcome {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    background: rgba(248, 249, 250, 0.82);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 1.25rem !important;
+    box-sizing: border-box !important;
+    z-index: 9999999 !important; /* Por encima de aside (1060), chatbot (99995) y accesibilidad (10000) */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(15, 23, 42, 0.55) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
     animation: sbmWelcomeFadeIn 0.35s ease both;
     cursor: pointer;
   }
-  .sbm-welcome.is-closing { animation: sbmWelcomeFadeOut 0.4s ease both; }
+  .sbm-welcome.is-closing {
+    animation: sbmWelcomeFadeOut 0.35s cubic-bezier(0.4, 0, 1, 1) both;
+  }
 
+  /* Tarjeta de bienvenida */
   .sbm-welcome-card {
+    position: relative;
     width: 100%;
-    max-width: 380px;
-    background: #FFFFFF;
-    border: 1px solid #A8E08A;
+    max-width: 400px;
+    background: #FFFFFF !important;
+    border: 1px solid #A8E08A !important;
     border-radius: 1.25rem;
-    box-shadow: 0 20px 50px rgba(57, 169, 0, 0.18), 0 6px 18px rgba(0, 0, 0, 0.08);
-    padding: 2.25rem 1.75rem 1.5rem;
+    box-shadow: 0 25px 60px rgba(57, 169, 0, 0.22), 0 10px 25px rgba(0, 0, 0, 0.12) !important;
+    padding: 2.25rem 2rem 1.6rem;
     text-align: center;
-    overflow: hidden;
+    cursor: default;
     animation: sbmWelcomePop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
 
-  /* Icono con círculo y check que se dibujan */
+  /* Icono circular con check animado */
   .sbm-welcome-icon {
     position: relative;
     width: 88px;
@@ -65,12 +89,12 @@
   }
   .sbm-welcome-icon svg {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     width: 100%;
     height: 100%;
     border-radius: 50%;
     background: #EBF7E5;
-    animation: sbmWelcomeFill 0.4s ease 0.9s both;
+    animation: sbmWelcomeFill 0.4s ease 0.85s both;
   }
   .sbm-welcome-circle {
     stroke: #39A900;
@@ -86,35 +110,61 @@
     stroke-linejoin: round;
     stroke-dasharray: 36;
     stroke-dashoffset: 36;
-    animation: sbmWelcomeDraw 0.35s cubic-bezier(0.65, 0, 0.45, 1) 0.75s forwards,
-               sbmWelcomeCheckWhite 0.3s ease 0.95s forwards;
+    animation: sbmWelcomeDraw 0.35s cubic-bezier(0.65, 0, 0.45, 1) 0.7s forwards,
+               sbmWelcomeCheckWhite 0.25s ease 0.9s forwards;
   }
+  
   /* Onda expansiva verde */
   .sbm-welcome-ring {
     position: absolute;
-    inset: 0;
+    inset: -6px;
     border-radius: 50%;
     border: 3px solid #39A900;
     opacity: 0;
-    animation: sbmWelcomeRing 0.9s ease-out 1s;
+    z-index: 1;
+    animation: sbmWelcomeRing 0.9s ease-out 0.95s;
+    pointer-events: none;
   }
 
   .sbm-welcome-title {
-    font-size: 1.3rem;
-    font-weight: 700;
+    font-size: 1.35rem;
+    font-weight: 800;
     color: #1A1A1A !important;
-    margin-bottom: 0.4rem;
-    animation: sbmWelcomeUp 0.45s ease 0.5s both;
+    margin-bottom: 0.35rem;
+    animation: sbmWelcomeUp 0.45s ease 0.35s both;
   }
   .sbm-welcome-text {
-    font-size: 0.92rem;
-    color: #6B7280;
-    margin-bottom: 1.5rem;
-    animation: sbmWelcomeUp 0.45s ease 0.6s both;
+    font-size: 0.93rem;
+    color: #4B5563 !important;
+    margin-bottom: 0.85rem;
+    line-height: 1.45;
+    animation: sbmWelcomeUp 0.45s ease 0.45s both;
   }
-  .sbm-welcome-text strong { color: #2E8800; }
+  .sbm-welcome-text strong {
+    color: #2E8800 !important;
+    font-weight: 700;
+  }
 
-  /* Barra de progreso hasta el cierre automático */
+  /* Badge de rol / confirmación */
+  .sbm-welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #EBF7E5;
+    color: #2E8800;
+    border: 1px solid #A8E08A;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.3rem 0.85rem;
+    border-radius: 9999px;
+    margin-bottom: 1.5rem;
+    animation: sbmWelcomeUp 0.45s ease 0.55s both;
+  }
+
+  /* Contenedor y barra de progreso de cierre */
+  .sbm-welcome-progress-wrap {
+    animation: sbmWelcomeUp 0.45s ease 0.65s both;
+  }
   .sbm-welcome-progress {
     height: 4px;
     background: #EBF7E5;
@@ -126,17 +176,18 @@
     height: 100%;
     background: #39A900;
     transform-origin: left;
-    animation: sbmWelcomeProgress 2.6s linear 0.3s both;
+    animation: sbmWelcomeProgress 2.5s linear 0.4s both;
   }
 
+  /* Keyframes */
   @keyframes sbmWelcomeFadeIn  { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes sbmWelcomeFadeOut { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
-  @keyframes sbmWelcomePop     { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes sbmWelcomeFadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.96); } }
+  @keyframes sbmWelcomePop     { from { opacity: 0; transform: scale(0.85) translateY(24px); } to { opacity: 1; transform: none; } }
   @keyframes sbmWelcomeDraw    { to { stroke-dashoffset: 0; } }
   @keyframes sbmWelcomeFill    { to { background: #39A900; } }
   @keyframes sbmWelcomeCheckWhite { to { stroke: #FFFFFF; } }
-  @keyframes sbmWelcomeRing    { 0% { opacity: 0.7; transform: scale(1); } 100% { opacity: 0; transform: scale(1.6); } }
-  @keyframes sbmWelcomeUp      { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes sbmWelcomeRing    { 0% { opacity: 0.8; transform: scale(0.95); } 100% { opacity: 0; transform: scale(1.55); } }
+  @keyframes sbmWelcomeUp      { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
   @keyframes sbmWelcomeProgress{ from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
   @media (prefers-reduced-motion: reduce) {
@@ -148,18 +199,33 @@
   (function () {
     var overlay = document.getElementById('sbmWelcome');
     if (!overlay) return;
-    var closed = false;
 
+    // Mover directamente al <body> para asegurar que cubra el 100% de la pantalla (sidebar, header, etc.)
+    if (overlay.parentElement && overlay.parentElement !== document.body) {
+      document.body.appendChild(overlay);
+    }
+
+    var closed = false;
     function close() {
       if (closed) return;
       closed = true;
       overlay.classList.add('is-closing');
-      setTimeout(function () { overlay.remove(); }, 400);
+      setTimeout(function () {
+        if (overlay && overlay.parentNode) {
+          overlay.parentNode.removeChild(overlay);
+        }
+      }, 350);
     }
 
-    // Cierre automático (coincide con la barra de progreso) o por clic / Escape
+    // Auto-cierre sincronizado con la barra o al hacer clic / Escape
     setTimeout(close, 2900);
-    overlay.addEventListener('click', close);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay || e.target.closest('.sbm-welcome-card')) {
+        close();
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
   })();
 </script>

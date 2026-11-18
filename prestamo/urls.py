@@ -18,4 +18,14 @@ urlpatterns = [
         views.usuario_solicitar_prestamo,
         name="usuario_solicitar_prestamo",
     ),
+    path(
+        "grupal/crear/",
+        views.crear_prestamo_grupal_instructor,
+        name="crear_prestamo_grupal_instructor",
+    ),
+    path(
+        "<int:prestamo_id>/comprobante/",
+        views.comprobante_prestamo,
+        name="comprobante_prestamo",
+    ),
 ]
