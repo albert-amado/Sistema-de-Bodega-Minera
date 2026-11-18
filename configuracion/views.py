@@ -1,9 +1,10 @@
 """
-views.py - Configuración del sistema (cambio de base de datos Local <-> Nube).
+views.py - Configuración del sistema (cambio de base de datos Local <-> Nube
+y Copia de Seguridad en Excel: exportar e importar registros faltantes).
 
 Fuente única de verdad: system_configuration.json (ConfigurationManager).
 Las bases Local y Nube son INDEPENDIENTES: cambiar de entorno NO copia datos.
-Solo los botones manuales de sincronización copian datos (y reemplazan el destino).
+Solo los botones manuales de sincronización o la importación de backups copian datos.
 """
 import logging
 from pathlib import Path
@@ -11,13 +12,18 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib import messages
 from django.db import connection
-from django.http import JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_GET
 
 from usuario.decorators import admin_required
 
 from .db_tester import DatabaseConnectionTester
+from .excel_backup import (
+    exportar_backup_excel,
+    importar_backup_excel,
+    listar_backups_excel,
+)
 from .manager import ConfigurationManager
 from .schemas import DatabaseTarget
 
@@ -37,6 +43,55 @@ def _forzar_recarga():
         path.touch()
 
 
+def _formatear_resumen_importacion(resultado: dict) -> str:
+    total_ins = resultado.get("total_insertados", 0)
+    total_omi = resultado.get("total_omitidos", 0)
+    por_tabla = resultado.get("insertados_por_tabla", {})
+    if total_ins == 0:
+        return (
+            f"La base de datos ya está al día: no faltaba ningún registro "
+            f"({total_omi} registros verificados ya existían)."
+        )
+    detalles = ", ".join(f"{tabla}: +{cant}" for tabla, cant in por_tabla.items())
+    return (
+        f"Se subieron {total_ins} registro(s) faltante(s) correctamente "
+        f"({ dets if (dets := detalles) else '' }). "
+        f"Se conservaron intactos {total_omi} registro(s) que ya existían."
+    )
+
+
+@admin_required
+def exportar_excel_view(request):
+    """Genera y descarga inmediatamente la copia de seguridad en formato Excel (.xlsx)."""
+    try:
+        xlsx_bytes, filename = exportar_backup_excel(guardar_en_disco=True)
+        response = HttpResponse(
+            xlsx_bytes,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return response
+    except Exception as e:
+        logger.exception("Error al generar la copia de seguridad en Excel")
+        messages.error(request, f"No se pudo generar la copia de seguridad en Excel: {e}")
+        return redirect("configuracion")
+
+
+@admin_required
+def descargar_backup_guardado_view(request, filename: str):
+    """Permite descargar una copia de seguridad .xlsx previamente guardada en backups/."""
+    nombre_limpio = Path(filename).name
+    ruta = Path(settings.BASE_DIR) / "backups" / nombre_limpio
+    if not ruta.exists() or ruta.suffix.lower() != ".xlsx":
+        raise Http404("El archivo de copia de seguridad no existe.")
+    response = HttpResponse(
+        ruta.read_bytes(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{nombre_limpio}"'
+    return response
+
+
 @admin_required
 def configuracion_view(request):
     almacenamiento_actual = _bd_en_uso()
@@ -44,7 +99,43 @@ def configuracion_view(request):
     if request.method == "POST":
         accion = request.POST.get("accion", "").strip()
 
-        # ── Botón manual: Subir todo de Local a Nube (REEMPLAZA la nube) ──
+        # ── 1. Exportar Copia de Seguridad en Excel (.xlsx) ──
+        if accion == "exportar_backup_excel":
+            return exportar_excel_view(request)
+
+        # ── 2. Importar Copia de Seguridad desde archivo Excel subido (sube lo que falte) ──
+        if accion == "importar_backup_excel":
+            archivo = request.FILES.get("archivo_excel")
+            if not archivo:
+                messages.error(request, "Debes seleccionar un archivo Excel (.xlsx) para importar.")
+                return redirect("configuracion")
+            if not archivo.name.lower().endswith(".xlsx"):
+                messages.error(request, "Formato no válido. Selecciona un archivo con extensión .xlsx.")
+                return redirect("configuracion")
+            try:
+                resultado = importar_backup_excel(archivo)
+                messages.success(request, _formatear_resumen_importacion(resultado))
+            except Exception as e:
+                logger.exception("Error importando copia de seguridad desde Excel")
+                messages.error(request, f"Error al importar la copia de seguridad Excel: {e}")
+            return redirect("configuracion")
+
+        # ── 3. Importar / Restaurar faltantes desde un backup .xlsx guardado en backups/ ──
+        if accion == "restaurar_backup_guardado":
+            nombre_archivo = Path(request.POST.get("nombre_archivo", "").strip()).name
+            ruta = Path(settings.BASE_DIR) / "backups" / nombre_archivo
+            if not nombre_archivo or not ruta.exists() or ruta.suffix.lower() != ".xlsx":
+                messages.error(request, "El archivo de respaldo seleccionado no existe.")
+                return redirect("configuracion")
+            try:
+                resultado = importar_backup_excel(ruta)
+                messages.success(request, _formatear_resumen_importacion(resultado))
+            except Exception as e:
+                logger.exception("Error restaurando backup guardado en Excel")
+                messages.error(request, f"Error al restaurar desde {nombre_archivo}: {e}")
+            return redirect("configuracion")
+
+        # ── 4. Botón manual: Subir todo de Local a Nube (REEMPLAZA la nube) ──
         if accion == "sincronizar_local_a_nube":
             try:
                 from migrar_db import migrate_local_to_cloud
@@ -55,7 +146,7 @@ def configuracion_view(request):
                 messages.error(request, f"Error al subir datos a la nube: {e}")
             return redirect("configuracion")
 
-        # ── Botón manual: Descargar todo de Nube a Local (REEMPLAZA lo local) ──
+        # ── 5. Botón manual: Descargar todo de Nube a Local (REEMPLAZA lo local) ──
         if accion == "sincronizar_nube_a_local":
             try:
                 from migrar_db import migrate as run_db_migration
@@ -66,7 +157,7 @@ def configuracion_view(request):
                 messages.error(request, f"Error al descargar datos de la nube: {e}")
             return redirect("configuracion")
 
-        # ── Cambio de base de datos activa (SIN copiar datos) ──
+        # ── 6. Cambio de base de datos activa (SIN copiar datos) ──
         almacenamiento = request.POST.get("almacenamiento", "").strip()
 
         if almacenamiento not in ("local", "nube"):
@@ -115,7 +206,15 @@ def configuracion_view(request):
 
     config = Config()
     config.almacenamiento = almacenamiento_actual
-    return render(request, "configuracion.html", {"config": config})
+    backups_excel = listar_backups_excel()
+    return render(
+        request,
+        "configuracion.html",
+        {
+            "config": config,
+            "backups_excel": backups_excel,
+        },
+    )
 
 
 @admin_required
