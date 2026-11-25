@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PÁGINA PRINCIPAL / DASHBOARD (Adaptado a Paleta Institucional SENA)
+   PÁGINA PRINCIPAL / DASHBOARD — MODO CLARO Y MODO OSCURO MINIMALISTA SENA
    ========================================================================== */
 
 .kpi-card {
@@ -10,15 +10,15 @@
   background: var(--sena-white, #ffffff);
   border: 1px solid var(--sena-border, #D1D5DB);
   border-radius: 12px;
-  padding: 18px 16px;
-  box-shadow: 0 2px 8px rgba(0, 50, 77, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 18px 18px 16px;
+  box-shadow: 0 2px 8px rgba(0, 50, 77, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   height: 100%;
 }
 
 .kpi-card:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 8px 24px rgba(0, 50, 77, 0.09) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 50, 77, 0.08) !important;
 }
 
 .kpi-accent-bar {
@@ -26,29 +26,31 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  border-radius: 4px 4px 0 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
   transform: scaleX(1) !important;
 }
-.kpi-accent-blue   { background: var(--sena-blue, #00324D); }
-.kpi-accent-green  { background: var(--sena-green, #39A900); }
-.kpi-accent-rust   { background: var(--sbm-stock-danger-solid, #DC2626); }
-.kpi-accent-yellow { background: var(--sbm-stock-warn-solid, #D97706); }
+
+.kpi-accent-blue   { background: var(--sena-green, #39A900); }
+.kpi-accent-green  { background: #10B981; }
+.kpi-accent-rust   { background: #EF4444; }
+.kpi-accent-yellow { background: #F59E0B; }
 
 .kpi-title-label {
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.76rem;
+  font-weight: 700;
   color: var(--sena-text-muted, #4B5563);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
 }
 
 .kpi-num-display {
-  font-size: 2.2rem;
+  font-size: 2.15rem;
   font-weight: 800;
   color: var(--sena-text, #1E1E1E);
-  line-height: 1.1;
-  margin: 8px 0;
+  line-height: 1.15;
+  margin: 10px 0 8px;
+  letter-spacing: -0.02em;
 }
 
 .kpi-sub-text {
@@ -79,7 +81,7 @@
   background: var(--sena-green-light, #EBF7E5);
   border-color: var(--sena-green-border, #A8E08A);
   color: var(--sena-green-hover, #2E8800);
-  transform: translateX(3px);
+  transform: translateX(2px);
 }
 
 .quick-action-icon {
@@ -89,20 +91,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   flex-shrink: 0;
 }
-.quick-action-icon.icon-blue {
-  background: var(--sena-green-light, #EBF7E5);
-  color: var(--sena-green, #39A900);
-}
+
+.quick-action-icon.icon-blue,
 .quick-action-icon.icon-green {
   background: var(--sena-green-light, #EBF7E5);
   color: var(--sena-green, #39A900);
 }
+
 .quick-action-icon.icon-amber {
-  background: rgba(245, 158, 11, 0.15);
-  color: #d97706;
+  background: rgba(245, 158, 11, 0.14);
+  color: #D97706;
 }
 
 .recent-dev-row {
@@ -112,4 +113,185 @@
 
 .recent-dev-title {
   color: var(--sena-text, #1E1E1E);
+}
+
+/* ==========================================================================
+   MODO OSCURO MINIMALISTA Y ELEGANTE (CARBÓN PROFUNDO + IDENTIDAD SENA)
+   ========================================================================== */
+html.dark-mode body:not(.auth-page),
+body.dark-mode:not(.auth-page),
+html[data-theme="dark"] body:not(.auth-page),
+body.dark-mode main,
+body.dark-mode .body-wrap {
+  background-color: #0D1117 !important;
+  color: #F3F4F6 !important;
+}
+
+/* Títulos y jerarquía tipográfica en modo oscuro */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode .h1,
+body.dark-mode .h2,
+body.dark-mode .h3,
+body.dark-mode .h4,
+body.dark-mode .h5,
+body.dark-mode .h6,
+body.dark-mode .card-title,
+body.dark-mode .page-title {
+  color: #F3F4F6 !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode p.text-muted,
+body.dark-mode .kpi-title-label {
+  color: #9CA3AF !important;
+}
+
+/* Superficies de tarjetas y contenedores */
+body.dark-mode .card,
+body.dark-mode .kpi-card,
+body.dark-mode .table-card,
+body.dark-mode .inv-kpi-card,
+body.dark-mode .gu-card,
+body.dark-mode .gu-filter-card,
+body.dark-mode .gu-table-card,
+body.dark-mode .config-card,
+body.dark-mode .sfb-wrap,
+body.dark-mode .modal-content {
+  background-color: #141920 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F3F4F6 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.dark-mode .kpi-card:hover {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.48) !important;
+}
+
+body.dark-mode .card-header {
+  background-color: #141920 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  color: #F3F4F6 !important;
+}
+
+body.dark-mode .card-footer,
+body.dark-mode .modal-footer {
+  background-color: #11161C !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+/* KPI Números, subtítulos e íconos */
+body.dark-mode .kpi-num-display {
+  color: #F9FAFB !important;
+}
+
+body.dark-mode .kpi-card .text-primary {
+  color: #4ADE80 !important;
+}
+
+body.dark-mode .kpi-card .text-success {
+  color: #34D399 !important;
+}
+
+body.dark-mode .kpi-card .text-danger {
+  color: #F87171 !important;
+}
+
+body.dark-mode .kpi-card .text-warning {
+  color: #FBBF24 !important;
+}
+
+/* Íconos en encabezados de gráficas */
+body.dark-mode .card-title .text-primary,
+body.dark-mode .card-title .text-info {
+  color: #4ADE80 !important;
+}
+
+body.dark-mode .card-title .text-danger {
+  color: #F87171 !important;
+}
+
+body.dark-mode .card-title .text-warning {
+  color: #FBBF24 !important;
+}
+
+/* Botones principales y secundarios ("Ver préstamos", "Ver todos >") */
+body.dark-mode .btn-primary-mine,
+body.dark-mode .btn-primary,
+body.dark-mode .btn-success {
+  background: #39A900 !important;
+  background-color: #39A900 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 10px rgba(57, 169, 0, 0.25) !important;
+}
+
+body.dark-mode .btn-primary-mine:hover,
+body.dark-mode .btn-primary:hover,
+body.dark-mode .btn-success:hover {
+  background: #2E8800 !important;
+  background-color: #2E8800 !important;
+  color: #FFFFFF !important;
+}
+
+body.dark-mode .btn-ghost {
+  background: rgba(57, 169, 0, 0.12) !important;
+  color: #4ADE80 !important;
+  border: 1px solid rgba(57, 169, 0, 0.3) !important;
+  box-shadow: none !important;
+}
+
+body.dark-mode .btn-ghost i {
+  color: #4ADE80 !important;
+}
+
+body.dark-mode .btn-ghost:hover {
+  background: #39A900 !important;
+  color: #FFFFFF !important;
+  border-color: #39A900 !important;
+}
+
+body.dark-mode .btn-ghost:hover i {
+  color: #FFFFFF !important;
+}
+
+/* Filas de devoluciones recientes y accesos rápidos */
+body.dark-mode .recent-dev-row,
+body.dark-mode .quick-action-link {
+  background-color: #1A2029 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  color: #F3F4F6 !important;
+}
+
+body.dark-mode .quick-action-link:hover {
+  background-color: #202834 !important;
+  border-color: rgba(57, 169, 0, 0.45) !important;
+  color: #FFFFFF !important;
+}
+
+body.dark-mode .recent-dev-title,
+body.dark-mode .quick-action-link .fw-semibold {
+  color: #F3F4F6 !important;
+}
+
+body.dark-mode .quick-action-icon.icon-blue,
+body.dark-mode .quick-action-icon.icon-green {
+  background-color: rgba(57, 169, 0, 0.14) !important;
+  color: #4ADE80 !important;
+}
+
+body.dark-mode .quick-action-icon.icon-amber {
+  background-color: rgba(245, 158, 11, 0.14) !important;
+  color: #FBBF24 !important;
+}
+
+body.dark-mode .bg-success-subtle {
+  background-color: rgba(16, 185, 129, 0.14) !important;
+  color: #34D399 !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
 }

@@ -1,12 +1,13 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from .models import ChatLog
 from .services import (
     construir_system_instruction,
+    consultar_base_conocimiento_local,
     consultar_gemini,
     enmascarar_datos_sensibles,
     sanitizar_mensaje_usuario,
@@ -68,6 +69,7 @@ class ChatbotSanitizacionTests(TestCase):
         self.assertGreater(espera, 0)
 
 
+@override_settings(GEMINI_API_KEY='')
 class ChatbotKnowledgeBaseTests(TestCase):
     """Pruebas de la base de conocimiento local experta (fallback sin API key)."""
 

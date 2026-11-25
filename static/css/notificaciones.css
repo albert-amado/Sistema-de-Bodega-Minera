@@ -9,9 +9,9 @@ aside .nav-bottom {
   right: 0 !important;
   z-index: 1020 !important;
   flex-shrink: 0 !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
-  background: var(--sena-blue, #00324D) !important;
-  box-shadow: 0 -4px 12px rgba(0, 50, 77, 0.25) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.18) !important;
+  background: #278144 !important;
+  box-shadow: none !important;
 }
 .nav-bottom hr,
 aside .nav-bottom hr,

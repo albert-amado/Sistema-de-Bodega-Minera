@@ -7922,8 +7922,6 @@ body h6 {
   color: var(--sena-white) !important;
 }
 
-aside,
-aside#aside-sidebar,
 header,
 .navbar,
 footer {
@@ -7931,22 +7929,199 @@ footer {
   background-color: var(--sena-blue) !important;
 }
 
-aside .nav-link:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: var(--sena-white) !important;
-  border-left-color: var(--sena-green) !important;
+aside,
+aside#aside-sidebar,
+body.light-mode aside,
+body.dark-mode aside,
+[data-theme="dark"] aside,
+[data-theme="light"] aside {
+  background: #278144 !important;
+  background-color: #278144 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
-aside .nav-link.active {
-  background: rgba(57, 169, 0, 0.22) !important;
-  border-left: 4px solid var(--sena-green) !important;
-  color: var(--sena-white) !important;
+aside .aside-header,
+body.light-mode aside .aside-header,
+body.dark-mode aside .aside-header,
+[data-theme="dark"] aside .aside-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+  padding: 0.9rem 1rem !important;
+  gap: 0.65rem !important;
+}
+
+aside .aside-header .sbm-logo-icon {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain !important;
+  filter: brightness(0) invert(1) !important;
+}
+
+aside .aside-brand-name,
+body.light-mode aside .aside-brand-name,
+body.dark-mode aside .aside-brand-name,
+[data-theme="dark"] aside .aside-brand-name {
+  color: #FFFFFF !important;
+  font-family: var(--font-ui) !important;
+  font-weight: 500 !important;
+  font-size: 0.92rem !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  line-height: 1.2 !important;
+}
+
+aside .aside-brand-sub,
+body.light-mode aside .aside-brand-sub,
+body.dark-mode aside .aside-brand-sub,
+[data-theme="dark"] aside .aside-brand-sub {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-family: var(--font-ui) !important;
+  font-weight: 400 !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  margin-left: 0 !important;
+  margin-top: 2px !important;
+  opacity: 1 !important;
+}
+
+aside span.text-uppercase,
+aside .aside-section-label,
+aside .aside-nav span.text-uppercase,
+body.light-mode aside .aside-section-label,
+body.dark-mode aside .aside-section-label,
+[data-theme="dark"] aside .aside-section-label {
+  color: rgba(255, 255, 255, 0.88) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+aside .nav-link,
+aside .aside-nav .nav-link,
+aside .aside-nav a,
+body.light-mode aside .nav-link,
+body.dark-mode aside .nav-link,
+[data-theme="dark"] aside .nav-link {
+  color: #FFFFFF !important;
+  background: transparent !important;
+  border-left: none !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+}
+
+aside .nav-link span,
+aside .aside-nav .nav-link span {
+  color: inherit !important;
+}
+
+aside .nav-link .nav-icon,
+aside .nav-link i,
+aside .aside-nav .nav-link .nav-icon,
+aside .aside-nav .nav-link i,
+aside .aside-nav a .nav-icon,
+aside .aside-nav a i,
+aside .bi-chevron-down,
+body.light-mode aside .nav-icon,
+body.dark-mode aside .nav-icon,
+[data-theme="dark"] aside .nav-icon {
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+}
+
+aside .nav-link:hover:not(.active),
+aside .aside-nav .nav-link:hover:not(.active),
+aside .aside-nav a:hover:not(.active),
+body.light-mode aside .nav-link:hover:not(.active),
+body.dark-mode aside .nav-link:hover:not(.active),
+[data-theme="dark"] aside .nav-link:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #FFFFFF !important;
+  border-left: none !important;
+}
+
+aside .nav-link:hover:not(.active) .nav-icon,
+aside .nav-link:hover:not(.active) i,
+aside .aside-nav .nav-link:hover:not(.active) .nav-icon,
+aside .aside-nav .nav-link:hover:not(.active) i {
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+aside .nav-link.active,
+aside .aside-nav .nav-link.active,
+aside .aside-nav a.active,
+body.light-mode aside .nav-link.active,
+body.dark-mode aside .nav-link.active,
+body.dark-theme aside .nav-link.active,
+body:not(.dark-mode) aside .nav-link.active,
+[data-theme="dark"] aside .nav-link.active,
+[data-theme="light"] aside .nav-link.active {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  border-left: none !important;
+  border-radius: 10px !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+}
+
+aside .nav-link.active span,
+aside .aside-nav .nav-link.active span {
+  color: #000000 !important;
 }
 
 aside .nav-link.active .nav-icon,
-aside .nav-link.active i {
-  stroke: var(--sena-green) !important;
-  color: var(--sena-green) !important;
+aside .nav-link.active i,
+aside .aside-nav .nav-link.active .nav-icon,
+aside .aside-nav .nav-link.active i,
+aside .aside-nav a.active .nav-icon,
+aside .aside-nav a.active i,
+body.light-mode aside .nav-link.active .nav-icon,
+body.dark-mode aside .nav-link.active .nav-icon,
+body:not(.dark-mode) aside .nav-link.active .nav-icon,
+[data-theme="dark"] aside .nav-link.active .nav-icon {
+  stroke: #1B4D2E !important;
+  color: #000000 !important;
+}
+
+aside .nav-bottom,
+body.light-mode aside .nav-bottom,
+body.dark-mode aside .nav-bottom,
+[data-theme="dark"] aside .nav-bottom {
+  background: #278144 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: none !important;
+}
+
+aside .btn-notif-bell,
+body.dark-mode aside .btn-notif-bell {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #FFFFFF !important;
+}
+
+aside .btn-notif-bell svg,
+body.dark-mode aside .btn-notif-bell svg {
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+aside .btn-profile-pill,
+body.dark-mode aside .btn-profile-pill {
+  background: rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
+}
+
+aside .profile-pill-name,
+aside .profile-pill-caret,
+body.dark-mode aside .profile-pill-name,
+body.dark-mode aside .profile-pill-caret {
+  color: #FFFFFF !important;
 }
 
 .modal-header.bg-primary,
@@ -8134,6 +8309,154 @@ div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
   background-color: var(--sena-green) !important;
   border-color: var(--sena-green) !important;
   color: var(--sena-white) !important;
+}
+
+/* ==========================================================================
+   6. MODO OSCURO MINIMALISTA Y ELEGANTE (CARBÓN PROFUNDO + IDENTIDAD SENA)
+   ========================================================================== */
+html.dark-mode,
+body.dark-mode {
+  --sena-bg-light: #0D1117;
+  --sena-white: #141920;
+  --sena-text: #F3F4F6;
+  --sena-text-muted: #9CA3AF;
+  --sena-border: rgba(255, 255, 255, 0.08);
+  --bg-body: #0D1117;
+  --bg-surface: #141920;
+  --text-main: #F3F4F6;
+  --text-muted: #9CA3AF;
+  --border-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark-mode body:not(.auth-page),
+body.dark-mode:not(.auth-page),
+body.dark-mode main,
+body.dark-mode .body-wrap {
+  background-color: #0D1117 !important;
+  color: #F3F4F6 !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode .h1,
+body.dark-mode .h2,
+body.dark-mode .h3,
+body.dark-mode .h4,
+body.dark-mode .h5,
+body.dark-mode .h6,
+body.dark-mode .page-title,
+body.dark-mode .gu-title,
+body.dark-mode .config-page-title,
+body.dark-mode .config-card-title,
+body.dark-mode .sbm-title-heading,
+body.dark-mode .card-title {
+  color: #F3F4F6 !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode .text-secondary,
+body.dark-mode .kpi-title-label,
+body.dark-mode .kpi-sub-text {
+  color: #9CA3AF !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .table-card,
+body.dark-mode .kpi-card,
+body.dark-mode .inv-kpi-card,
+body.dark-mode .gu-card,
+body.dark-mode .gu-filter-card,
+body.dark-mode .gu-table-card,
+body.dark-mode .config-card,
+body.dark-mode .sfb-wrap,
+body.dark-mode .modal-content {
+  background-color: #141920 !important;
+  color: #F3F4F6 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.dark-mode .card-header {
+  background-color: #141920 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  color: #F3F4F6 !important;
+}
+
+body.dark-mode .card-footer,
+body.dark-mode .modal-footer,
+body.dark-mode .bg-light,
+body.dark-mode .table-light,
+body.dark-mode thead tr,
+body.dark-mode .gu-table thead th,
+body.dark-mode .quick-action-link,
+body.dark-mode .recent-dev-row,
+body.dark-mode .config-status-box,
+body.dark-mode .sbm-child-row-wrapper {
+  background-color: #1A2029 !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+  color: #E5E7EB !important;
+}
+
+body.dark-mode .kpi-num-display {
+  color: #F9FAFB !important;
+}
+
+body.dark-mode .btn-ghost {
+  background: rgba(57, 169, 0, 0.12) !important;
+  color: #4ADE80 !important;
+  border: 1px solid rgba(57, 169, 0, 0.3) !important;
+}
+
+body.dark-mode .btn-ghost i {
+  color: #4ADE80 !important;
+}
+
+body.dark-mode .btn-ghost:hover {
+  background: #39A900 !important;
+  color: #FFFFFF !important;
+  border-color: #39A900 !important;
+}
+
+body.dark-mode .btn-ghost:hover i {
+  color: #FFFFFF !important;
+}
+
+/* Sidebar en Modo Oscuro: Verde SENA sobrio con ítem activo blanco y texto negro */
+body.dark-mode aside,
+body.dark-mode aside#aside-sidebar,
+html.dark-mode aside#aside-sidebar {
+  background: #1F6E38 !important;
+  background-color: #1F6E38 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode aside .nav-bottom {
+  background: #1F6E38 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+body.dark-mode aside .nav-link.active,
+body.dark-mode aside .aside-nav .nav-link.active,
+body.dark-mode aside .aside-nav a.active {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  border-left: none !important;
+  border-radius: 10px !important;
+}
+
+body.dark-mode aside .nav-link.active span {
+  color: #000000 !important;
+}
+
+body.dark-mode aside .nav-link.active .nav-icon,
+body.dark-mode aside .nav-link.active i {
+  stroke: #1B4D2E !important;
+  color: #000000 !important;
 }
 
 .btn-toggle-details:hover,

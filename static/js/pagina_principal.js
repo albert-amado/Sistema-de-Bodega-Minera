@@ -10,20 +10,28 @@
   let chartSaludInst = null;
 
   function isDarkMode() {
-    return document.body.classList.contains('dark-mode');
+    return (
+      document.body.classList.contains('dark-mode') ||
+      document.documentElement.classList.contains('dark-mode') ||
+      document.documentElement.getAttribute('data-theme') === 'dark'
+    );
   }
 
   function getThemeColors() {
     const dark = isDarkMode();
     return {
-      activo: '#10b981',        // Verde esmeralda
-      vencido: '#ef4444',       // Rojo
-      devuelto: '#3b82f6',      // Azul
-      parcial: '#f59e0b',       // Amarillo/Ámbar
-      gridColor: dark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
-      textColor: dark ? '#cbd5e1' : '#334155',
-      yTickColor: dark ? '#f1f5f9' : '#0f172a',
-      borderColor: dark ? '#1e293b' : '#ffffff',
+      activo: '#39A900',
+      vencido: '#ef4444',
+      devuelto: '#10b981',
+      parcial: '#f59e0b',
+      barFill: dark ? 'rgba(57, 169, 0, 0.78)' : 'rgba(57, 169, 0, 0.85)',
+      barBorder: '#39A900',
+      gridColor: dark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)',
+      textColor: dark ? '#9CA3AF' : '#334155',
+      yTickColor: dark ? '#E5E7EB' : '#0f172a',
+      borderColor: dark ? '#141920' : '#ffffff',
+      tooltipBg: dark ? '#1A2029' : '#1e293b',
+      tooltipBorder: dark ? 'rgba(255, 255, 255, 0.1)' : '#334155',
       fontFamily: "'Inter', system-ui, sans-serif"
     };
   }
@@ -110,8 +118,8 @@
           datasets: [{
             label: 'Solicitudes / Préstamos',
             data: rawData.data || [0, 0, 0, 0, 0, 0, 0, 0],
-            backgroundColor: 'rgba(59, 130, 246, 0.85)',
-            borderColor: '#2563eb',
+            backgroundColor: tc.barFill,
+            borderColor: tc.barBorder,
             borderWidth: 1,
             borderRadius: 6
           }]

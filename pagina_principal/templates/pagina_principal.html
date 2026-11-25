@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pagina_principal.css' %}?v=3">
+{% endblock css %}
+
 {% block content %}
 <!-- ═══════════════════════════════════
      CABECERA
@@ -13,10 +17,7 @@
     <p class="text-muted small mb-0">Indicadores clave y distribución gráfica en tiempo real</p>
   </div>
   <div class="d-flex gap-2">
-    <a href="{% url 'inventario' %}" class="btn-outline-mine text-decoration-none">
-      <i class="bi bi-boxes me-1"></i> Ver inventario
-    </a>
-    <a href="{% url 'prestamo' %}" class="btn-primary-mine text-decoration-none">
+    <a href="{% if request.session.usuario_rol|lower == 'administrador' or request.session.usuario_rol|lower == 'admin' or request.user.is_staff %}{% url 'prestamo' %}{% else %}{% url 'prestamo_usuario' %}{% endif %}" class="btn-primary-mine text-decoration-none">
       <i class="bi bi-clipboard-check me-1"></i> Ver préstamos
     </a>
   </div>
@@ -103,7 +104,6 @@
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <span class="card-title"><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Actividad por Mes</span>
-        <a href="{% url 'inventario' %}" class="btn-ghost text-decoration-none">Ver inventario <i class="bi bi-chevron-right"></i></a>
       </div>
       <div class="card-body">
         <div class="chart-container">
@@ -216,5 +216,5 @@
 <script id="chart-salud-data" type="application/json">{{ chart_salud_json|safe }}</script>
 
 <!-- Lógica modularizada -->
-<script defer src="{% static 'js/pagina_principal.js' %}"></script>
+<script defer src="{% static 'js/pagina_principal.js' %}?v=2"></script>
 {% endblock js %}

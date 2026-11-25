@@ -545,14 +545,10 @@ def usuario_solicitar_prestamo(request):
         doc_sesion = request.session.get('usuario_documento')
         usuario_obj = get_object_or_404(Usuario, documento=doc_sesion)
 
-        ficha = request.POST.get("ficha", "").strip() or usuario_obj.ficha or ""
+        ficha = request.POST.get("ficha", "").strip() or usuario_obj.ficha or getattr(usuario_obj, 'numero_ficha', '') or "Sin Ficha"
         observaciones = request.POST.get("observaciones", "").strip()
         herramientas_ids = request.POST.getlist("herramienta[]")
         cantidades = request.POST.getlist("cantidad[]")
-
-        if not ficha:
-            messages.error(request, "La Ficha SENA es requerida.")
-            return redirect("prestamo_usuario")
 
         items_solicitados = []
         for h_id, cant in zip(herramientas_ids, cantidades):
