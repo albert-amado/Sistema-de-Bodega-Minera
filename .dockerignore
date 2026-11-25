@@ -1,0 +1,42 @@
+# Git y metadatos
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# Secretos y configuración local (puede contener credenciales de base de datos)
+.env
+.env.*
+!.env.example
+system_configuration.json
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+ENV/
+
+# Archivos compilados y cachés de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Bases de datos locales SQLite
+*.sqlite3
+*.sqlite3-journal
+
+# Archivos de depuración, logs y temporales
+*.log
+.gemini/
+.vscode/
+.idea/
+scratch/
+media/
+staticfiles/
+
+# Archivos de entorno sensibles (se inyectan vía docker-compose)
+.env.backup

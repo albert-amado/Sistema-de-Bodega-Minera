@@ -332,20 +332,30 @@
 
       <form method="post" action="{% url 'usuario_solicitar_prestamo' %}" novalidate id="formSolicitar">
         {% csrf_token %}
+        <input type="hidden" name="documento" id="sol_documento" value="{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% else %}{{ request.session.usuario_documento|default:'' }}{% endif %}">
+        <input type="hidden" name="ficha" id="sol_ficha" value="{% if usuario %}{{ usuario.ficha|default:usuario.numero_ficha|default:'' }}{% endif %}">
+
         <div class="modal-body">
-          <h6 class="fw-bold small text-primary mb-3">1. Datos del Solicitante</h6>
-          <div class="row g-2 mb-3">
-            <div class="col-md-6">
-              <label for="sol_documento" class="form-label small fw-semibold">Número de Documento *</label>
-              <input type="text" name="documento" id="sol_documento" class="form-control form-control-sm" value="{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% endif %}" required placeholder="Documento">
+          <!-- Datos del solicitante tomados automáticamente -->
+          <div class="alert alert-light border d-flex align-items-center justify-content-between py-2 px-3 mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-person-check-fill text-success fs-5"></i>
+              <div>
+                <span class="small fw-bold d-block text-dark">
+                  {% if usuario %}{{ usuario.nombre_completo|default:usuario.documento }}{% else %}Usuario autenticado{% endif %}
+                </span>
+                <span class="text-muted small">
+                  Doc: <span class="font-monospace">{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% else %}{{ request.session.usuario_documento }}{% endif %}</span>
+                  {% if usuario.ficha or usuario.numero_ficha %} · Ficha SENA: <span class="badge bg-light text-dark border">{{ usuario.ficha|default:usuario.numero_ficha }}</span>{% endif %}
+                </span>
+              </div>
             </div>
-            <div class="col-md-6">
-              <label for="sol_ficha" class="form-label small fw-semibold">Ficha SENA *</label>
-              <input type="text" name="ficha" id="sol_ficha" class="form-control form-control-sm" required placeholder="Ej: 2670123">
-            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle small px-2 py-1">
+              <i class="bi bi-shield-check me-1"></i>Sesión Activa
+            </span>
           </div>
 
-          <h6 class="fw-bold small text-primary mb-3">2. Selecciona las Herramientas</h6>
+          <h6 class="fw-bold small text-primary mb-3">Selecciona las Herramientas</h6>
           <div id="sol-items-container">
             <div class="sol-item-row row g-2 align-items-start mb-2">
               <div class="col">
@@ -373,7 +383,7 @@
             <i class="bi bi-plus-circle me-1"></i> Añadir otra herramienta
           </button>
 
-          <label for="sol_observaciones" class="fw-bold small text-primary mb-2 d-block">3. Observaciones</label>
+          <label for="sol_observaciones" class="fw-bold small text-primary mb-2 d-block">Observaciones</label>
           <textarea name="observaciones" id="sol_observaciones" class="form-control form-control-sm" rows="3" maxlength="500" placeholder="Indica el motivo o detalles de tu solicitud..."></textarea>
         </div>
 
