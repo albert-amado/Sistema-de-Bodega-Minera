@@ -258,8 +258,9 @@ def prestamo_lista(request):
 
 @sesion_requerida
 def prestamo_usuario_lista(request):
-    """Vista de préstamos para la interfaz de Usuario."""
+    """Vista de préstamos para la interfaz de Usuario (Aprendiz / Instructor)."""
     doc_sesion = request.session.get('usuario_documento')
+    rol_sesion = (request.session.get('usuario_rol') or '').lower()
 
     prestamos_qs = (
         Prestamo.objects.filter(documento_id=doc_sesion)
@@ -274,6 +275,11 @@ def prestamo_usuario_lista(request):
 
     herramientas_qs = Herramienta.objects.exclude(disponibilidad="0").exclude(disponibilidad="No disponible")
     usuario_obj = Usuario.objects.filter(documento=doc_sesion).first() if doc_sesion else None
+    es_instructor = (rol_sesion == 'instructor') or (usuario_obj and getattr(usuario_obj, 'es_instructor', False))
+
+    aprendices_qs = Usuario.objects.filter(
+        Q(rol__in=['Usuario', 'Aprendiz']) | Q(rol__isnull=True)
+    ).exclude(documento=doc_sesion).order_by('primer_apellido', 'primer_nombre')
 
     context = {
         "all_prestamos": prestamos_qs,
@@ -285,6 +291,8 @@ def prestamo_usuario_lista(request):
         "productos_disponibles": herramientas_qs,
         "productos": herramientas_qs,
         "usuario": usuario_obj,
+        "es_instructor": es_instructor,
+        "aprendices_disponibles": aprendices_qs,
     }
     return render(request, "prestamo_usuario.html", context)
 
@@ -537,14 +545,10 @@ def usuario_solicitar_prestamo(request):
         doc_sesion = request.session.get('usuario_documento')
         usuario_obj = get_object_or_404(Usuario, documento=doc_sesion)
 
-        ficha = request.POST.get("ficha", "").strip() or usuario_obj.ficha or ""
+        ficha = request.POST.get("ficha", "").strip() or usuario_obj.ficha or getattr(usuario_obj, 'numero_ficha', '') or "Sin Ficha"
         observaciones = request.POST.get("observaciones", "").strip()
         herramientas_ids = request.POST.getlist("herramienta[]")
         cantidades = request.POST.getlist("cantidad[]")
-
-        if not ficha:
-            messages.error(request, "La Ficha SENA es requerida.")
-            return redirect("prestamo_usuario")
 
         items_solicitados = []
         for h_id, cant in zip(herramientas_ids, cantidades):
@@ -588,3 +592,157 @@ def usuario_solicitar_prestamo(request):
             request, f"Solicitud #{nuevo.pk} enviada correctamente. Espera la aprobación del administrador."
         )
     return redirect("prestamo_usuario")
+
+
+@sesion_requerida
+@transaction.atomic
+def crear_prestamo_grupal_instructor(request):
+    """
+    Registra un préstamo grupal a nombre del Instructor para una cuadrilla de aprendices.
+    CONDICIÓN ESTRICTA: El registro solo se consolida en el sistema al emitir e imprimir
+    el comprobante físico oficial para la práctica en mina.
+    """
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Método HTTP no permitido."}, status=405)
+
+    doc_sesion = request.session.get("usuario_documento")
+    rol_sesion = (request.session.get("usuario_rol") or "").lower()
+
+    # Resolver el instructor titular
+    instructor_doc = request.POST.get("instructor_doc", "").strip() or doc_sesion
+    instructor_obj = Usuario.objects.filter(documento=instructor_doc).first()
+
+    if not instructor_obj:
+        return JsonResponse({"status": "error", "message": "No se encontró el Instructor titular en el sistema."}, status=400)
+
+    es_admin = rol_sesion in ("admin", "administrador")
+    if not (es_admin or getattr(instructor_obj, "es_instructor", False) or instructor_obj.documento == doc_sesion):
+        return JsonResponse({"status": "error", "message": "Acceso no autorizado para tramitar a nombre de este instructor."}, status=403)
+
+    ficha = request.POST.get("ficha", "").strip() or getattr(instructor_obj, "ficha", "") or "Sin Ficha"
+    ambiente_mina = request.POST.get("ambiente_mina", "").strip()
+    obs_usuario = request.POST.get("observaciones", "").strip()
+
+    observaciones_finales = []
+    if ambiente_mina:
+        observaciones_finales.append(f"Ambiente/Frente: {ambiente_mina}")
+    if obs_usuario:
+        observaciones_finales.append(obs_usuario)
+    observaciones_str = " | ".join(observaciones_finales)
+
+    # Recoger aprendices del grupo
+    aprendices_lista = []
+    aprendices_raw = request.POST.get("aprendices_json", "").strip()
+    if aprendices_raw:
+        try:
+            aprendices_lista = json.loads(aprendices_raw)
+        except Exception:
+            aprendices_lista = []
+
+    if not aprendices_lista:
+        docs = request.POST.getlist("aprendiz_doc[]")
+        nombres = request.POST.getlist("aprendiz_nombre[]")
+        fichas = request.POST.getlist("aprendiz_ficha[]")
+        for i in range(len(docs)):
+            d = docs[i].strip() if i < len(docs) else ""
+            n = nombres[i].strip() if i < len(nombres) else ""
+            f = fichas[i].strip() if i < len(fichas) else ficha
+            if d or n:
+                aprendices_lista.append({
+                    "documento": d or "—",
+                    "nombre": n or "Aprendiz",
+                    "ficha": f or ficha,
+                })
+
+    if not aprendices_lista:
+        return JsonResponse({
+            "status": "error",
+            "message": "Debes agregar al menos un aprendiz en la cuadrilla asignada."
+        }, status=400)
+
+    # Validar herramientas seleccionadas
+    herramientas_ids = request.POST.getlist("herramienta[]")
+    cantidades = request.POST.getlist("cantidad[]")
+
+    items_validos = []
+    for h_id, cant in zip(herramientas_ids, cantidades):
+        if not h_id:
+            continue
+        try:
+            cant_num = int(cant)
+            if cant_num <= 0:
+                continue
+            if cant_num > 50:
+                return JsonResponse({"status": "error", "message": "La cantidad no puede exceder 50 unidades por equipo."}, status=400)
+            herramienta = Herramienta.objects.get(pk=h_id)
+            if cant_num > herramienta.stock_disponible:
+                return JsonResponse({
+                    "status": "error",
+                    "message": f"Stock insuficiente para {herramienta.nombre}. Disponibles: {herramienta.stock_disponible}"
+                }, status=400)
+            items_validos.append((herramienta, cant_num))
+        except (ValueError, Herramienta.DoesNotExist):
+            continue
+
+    if not items_validos:
+        return JsonResponse({
+            "status": "error",
+            "message": "Debes seleccionar al menos una herramienta válida con cantidad mayor a 0."
+        }, status=400)
+
+    # Estado del préstamo
+    estado_prestamo = EstadoPrestamo.ENTREGADO if es_admin else EstadoPrestamo.PENDIENTE
+    aprendices_json_str = json.dumps(aprendices_lista, ensure_ascii=False)
+
+    nuevo_prestamo = Prestamo.objects.create(
+        documento=instructor_obj,
+        fecha=timezone.now().date(),
+        ficha=ficha,
+        estado=estado_prestamo,
+        observaciones=observaciones_str,
+        es_grupal_instructor=True,
+        aprendices_grupo=aprendices_json_str,
+    )
+
+    for herramienta, cant_num in items_validos:
+        DetallePrestamo.objects.create(
+            codigo_prestamo=nuevo_prestamo,
+            codigo_herramienta=herramienta,
+            cantidad=cant_num,
+        )
+        if estado_prestamo == EstadoPrestamo.ENTREGADO:
+            herramienta.stock_disponible = max(0, herramienta.stock_disponible - cant_num)
+            herramienta.save()
+
+    comprobante_url = reverse("comprobante_prestamo", args=[nuevo_prestamo.pk])
+
+    return JsonResponse({
+        "status": "ok",
+        "codigo_prestamo": nuevo_prestamo.pk,
+        "comprobante_url": f"{comprobante_url}?auto_print=1",
+        "message": f"Préstamo #{nuevo_prestamo.pk} a nombre del Instructor {instructor_obj.nombre_completo} guardado exitosamente tras emitir el comprobante impreso."
+    })
+
+
+@sesion_requerida
+def comprobante_prestamo(request, prestamo_id):
+    """
+    Genera la hoja oficial imprimible (comprobante de entrega / vale de préstamo)
+    con formato institucional SENA Centro Minero para prácticas formativas.
+    """
+    prestamo = get_object_or_404(
+        Prestamo.objects.select_related("documento").prefetch_related("detalles__codigo_herramienta"),
+        pk=prestamo_id,
+    )
+
+    auto_print = request.GET.get("auto_print") == "1"
+
+    context = {
+        "prestamo": prestamo,
+        "detalles": prestamo.detalles.all(),
+        "aprendices": prestamo.lista_aprendices,
+        "auto_print": auto_print,
+        "fecha_emision": timezone.now(),
+        "usuario_sesion": request.session.get("usuario_nombre"),
+    }
+    return render(request, "comprobante_prestamo.html", context)

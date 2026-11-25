@@ -50,6 +50,46 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Manejo de herramientas en modal de solicitud individual
+  var solAddBtn = document.getElementById('sol-add-item');
+  var solContainer = document.getElementById('sol-items-container');
+  if (solAddBtn && solContainer) {
+    function updateSolDelButtons() {
+      var rows = solContainer.querySelectorAll('.sol-item-row');
+      rows.forEach(function (r) {
+        var del = r.querySelector('.sol-del-btn');
+        if (del) {
+          if (rows.length <= 1) del.classList.add('disabled');
+          else del.classList.remove('disabled');
+        }
+      });
+    }
+
+    solAddBtn.addEventListener('click', function () {
+      var firstRow = solContainer.querySelector('.sol-item-row');
+      if (!firstRow) return;
+      var clone = firstRow.cloneNode(true);
+      var sel = clone.querySelector('select');
+      var num = clone.querySelector('input[type="number"]');
+      if (sel) sel.value = '';
+      if (num) num.value = '1';
+      var delBtn = clone.querySelector('.sol-del-btn');
+      if (delBtn) delBtn.classList.remove('disabled');
+      solContainer.appendChild(clone);
+      updateSolDelButtons();
+    });
+
+    solContainer.addEventListener('click', function (e) {
+      var delBtn = e.target.closest('.sol-del-btn');
+      if (!delBtn || delBtn.classList.contains('disabled')) return;
+      var row = delBtn.closest('.sol-item-row');
+      if (row && solContainer.querySelectorAll('.sol-item-row').length > 1) {
+        row.remove();
+        updateSolDelButtons();
+      }
+    });
+  }
+
   // Inicializar DataTables Responsive si la función compartida existe
   if (typeof window.initSBMDataTable === 'function') {
     window.initSBMDataTable('#pu-tabla', {

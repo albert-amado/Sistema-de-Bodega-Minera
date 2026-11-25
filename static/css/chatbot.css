@@ -194,13 +194,14 @@
 
 .sbm-chat-title {
   margin: 0;
-  font-size: 0.96rem;
+  font-size: 0.94rem;
   font-weight: 700;
   color: #FFFFFF;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.25;
+  letter-spacing: -0.2px;
 }
 
 .sbm-chat-subtitle {
@@ -613,13 +614,15 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.69rem;
+  font-size: 0.70rem;
   color: #6B7280;
   font-weight: 500;
   line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .sbm-chat-disclaimer i {

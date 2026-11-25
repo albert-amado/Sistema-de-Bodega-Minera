@@ -19,11 +19,26 @@
     <p class="mb-0 small text-muted">
       {% if usuario %}{{ usuario.nombre_completo|default:usuario.documento }}{% else %}Invitado{% endif %}
       {% if usuario.numero_documento %}<span class="font-monospace opacity-75">· {{ usuario.numero_documento }}</span>{% endif %}
+      {% if es_instructor or request.session.usuario_rol|lower == 'instructor' %}
+      <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill ms-2"><i class="bi bi-person-badge-fill me-1"></i>Instructor SENA</span>
+      {% endif %}
     </p>
   </div>
-  <button class="btn btn-primary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalSolicitar">
-    <i class="bi bi-plus-circle"></i> Nueva solicitud
-  </button>
+  <div class="d-flex align-items-center gap-2">
+    {% if es_instructor or request.session.usuario_rol|lower == 'instructor' %}
+    <button class="btn btn-primary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalPrestamoGrupalInstructor">
+      <i class="bi bi-people-fill"></i>
+      <span>Préstamo Grupal (Mina)</span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalSolicitar">
+      <i class="bi bi-plus-circle"></i> Solicitud Individual
+    </button>
+    {% else %}
+    <button class="btn btn-primary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalSolicitar">
+      <i class="bi bi-plus-circle"></i> Nueva solicitud
+    </button>
+    {% endif %}
+  </div>
 </div>
 
 {# ══ KPI CARDS ══ #}
@@ -134,6 +149,13 @@
 
           <!-- Herramientas -->
           <td>
+            {% if p.es_grupal_instructor %}
+            <div class="mb-1">
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1">
+                <i class="bi bi-people-fill me-1"></i>Grupal Instructor ({{ p.total_aprendices }} aprendices)
+              </span>
+            </div>
+            {% endif %}
             <div class="d-flex flex-wrap gap-1 align-items-center max-w-320">
               {% for item in p.detalles.all %}
               <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs badge-item-tool" title="{{ item.herramienta.nombre }}">
@@ -198,6 +220,12 @@
           <!-- Acciones -->
           <td class="text-center">
             <div class="sbm-actions-group justify-content-center">
+              <a href="{% url 'comprobante_prestamo' p.pk %}" target="_blank"
+                 class="sbm-action-btn sbm-btn-print"
+                 data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir Comprobante Oficial SENA"
+                 aria-label="Imprimir Comprobante #{{ p.pk }}">
+                <i class="bi bi-printer"></i>
+              </a>
               <button type="button" class="sbm-action-btn sbm-btn-view"
                       data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles completos de solicitud"
                       aria-label="Ver detalles de solicitud #{{ p.pk }}"
@@ -304,20 +332,30 @@
 
       <form method="post" action="{% url 'usuario_solicitar_prestamo' %}" novalidate id="formSolicitar">
         {% csrf_token %}
+        <input type="hidden" name="documento" id="sol_documento" value="{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% else %}{{ request.session.usuario_documento|default:'' }}{% endif %}">
+        <input type="hidden" name="ficha" id="sol_ficha" value="{% if usuario %}{{ usuario.ficha|default:usuario.numero_ficha|default:'' }}{% endif %}">
+
         <div class="modal-body">
-          <h6 class="fw-bold small text-primary mb-3">1. Datos del Solicitante</h6>
-          <div class="row g-2 mb-3">
-            <div class="col-md-6">
-              <label for="sol_documento" class="form-label small fw-semibold">Número de Documento *</label>
-              <input type="text" name="documento" id="sol_documento" class="form-control form-control-sm" value="{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% endif %}" required placeholder="Documento">
+          <!-- Datos del solicitante tomados automáticamente -->
+          <div class="alert alert-light border d-flex align-items-center justify-content-between py-2 px-3 mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-person-check-fill text-success fs-5"></i>
+              <div>
+                <span class="small fw-bold d-block text-dark">
+                  {% if usuario %}{{ usuario.nombre_completo|default:usuario.documento }}{% else %}Usuario autenticado{% endif %}
+                </span>
+                <span class="text-muted small">
+                  Doc: <span class="font-monospace">{% if usuario %}{{ usuario.numero_documento|default:usuario.documento }}{% else %}{{ request.session.usuario_documento }}{% endif %}</span>
+                  {% if usuario.ficha or usuario.numero_ficha %} · Ficha SENA: <span class="badge bg-light text-dark border">{{ usuario.ficha|default:usuario.numero_ficha }}</span>{% endif %}
+                </span>
+              </div>
             </div>
-            <div class="col-md-6">
-              <label for="sol_ficha" class="form-label small fw-semibold">Ficha SENA *</label>
-              <input type="text" name="ficha" id="sol_ficha" class="form-control form-control-sm" required placeholder="Ej: 2670123">
-            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle small px-2 py-1">
+              <i class="bi bi-shield-check me-1"></i>Sesión Activa
+            </span>
           </div>
 
-          <h6 class="fw-bold small text-primary mb-3">2. Selecciona las Herramientas</h6>
+          <h6 class="fw-bold small text-primary mb-3">Selecciona las Herramientas</h6>
           <div id="sol-items-container">
             <div class="sol-item-row row g-2 align-items-start mb-2">
               <div class="col">
@@ -345,7 +383,7 @@
             <i class="bi bi-plus-circle me-1"></i> Añadir otra herramienta
           </button>
 
-          <label for="sol_observaciones" class="fw-bold small text-primary mb-2 d-block">3. Observaciones</label>
+          <label for="sol_observaciones" class="fw-bold small text-primary mb-2 d-block">Observaciones</label>
           <textarea name="observaciones" id="sol_observaciones" class="form-control form-control-sm" rows="3" maxlength="500" placeholder="Indica el motivo o detalles de tu solicitud..."></textarea>
         </div>
 
@@ -357,8 +395,537 @@
     </div>
   </div>
 </div>
+
+{# ══ MODAL PRÉSTAMO GRUPAL INSTRUCTOR (WIZARD 4 PASOS) ══ #}
+{% if es_instructor or request.session.usuario_rol|lower == 'instructor' %}
+<div class="modal fade" id="modalPrestamoGrupalInstructor" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title" id="wizard-grp-title">Paso 1: Responsable y Práctica</h5>
+          <div class="small text-muted" id="wizard-grp-subtitle">Datos del instructor titular y frente de formación</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <form id="formPrestamoGrupal" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="instructor_doc" id="grp_instructor_doc" value="{{ usuario.documento }}">
+
+        <!-- Barra de Progreso del Wizard SENA -->
+        <div class="px-3 pt-2">
+          <div id="wizard-grp-progress-bar" class="d-flex justify-content-between"></div>
+        </div>
+
+        <div class="modal-body">
+          <div id="wizard-grp-alert" class="alert alert-danger py-2 small mb-3 d-none" role="alert"></div>
+
+          {# PASO 1: DATOS DEL RESPONSABLE Y PRÁCTICA #}
+          <div id="grp-step-1" class="wizard-step">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Instructor Titular *</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ usuario.nombre_completo|default:usuario.documento }} (C.C. {{ usuario.documento }})" readonly>
+                <div class="form-text fs-xs">Responsable legal y técnico ante bodega.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="grp_ficha" class="form-label small fw-semibold">Ficha SENA *</label>
+                <input type="text" name="ficha" id="grp_ficha" class="form-control form-control-sm" value="{{ usuario.ficha|default:'' }}" required placeholder="Ej: 2670123">
+              </div>
+              <div class="col-md-6">
+                <label for="grp_ambiente" class="form-label small fw-semibold">Ambiente / Frente de Mina *</label>
+                <input type="text" name="ambiente_mina" id="grp_ambiente" class="form-control form-control-sm" required placeholder="Ej: Mina Didáctica Nivel 1">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Fecha de Solicitud</label>
+                <input type="date" class="form-control form-control-sm bg-light" value="{% now 'Y-m-d' %}" readonly>
+              </div>
+            </div>
+          </div>
+
+          {# PASO 2: CUADRILLA DE APRENDICES ASIGNADOS #}
+          <div id="grp-step-2" class="wizard-step" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small fw-semibold text-muted">Aprendices beneficiarios de la práctica formativa</span>
+              <button type="button" id="btn-add-aprendiz-row" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-person-plus-fill me-1"></i> Añadir aprendiz
+              </button>
+            </div>
+
+            {% if aprendices_disponibles %}
+            <div class="row g-2 align-items-center mb-3 p-2 bg-light rounded border">
+              <div class="col-md-8">
+                <select id="select-aprendiz-rapido" class="form-select form-select-sm">
+                  <option value="">— Seleccionar aprendiz registrado para agregar —</option>
+                  {% for ap in aprendices_disponibles %}
+                  <option value="{{ ap.documento }}" data-nombre="{{ ap.nombre_completo }}" data-ficha="{{ ap.ficha|default:'' }}">
+                    {{ ap.nombre_completo }} (Doc: {{ ap.documento }}){% if ap.ficha %} · Ficha {{ ap.ficha }}{% endif %}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <button type="button" id="btn-agregar-aprendiz-rapido" class="btn btn-sm btn-primary w-100">
+                  <i class="bi bi-plus-circle me-1"></i> Agregar a cuadrilla
+                </button>
+              </div>
+            </div>
+            {% endif %}
+
+            <div class="table-responsive border rounded">
+              <table class="table table-sm table-hover mb-0" id="tabla-cuadrilla-aprendices">
+                <thead class="table-light">
+                  <tr class="small text-uppercase">
+                    <th style="width: 35px;" class="text-center">#</th>
+                    <th style="width: 170px;">Documento *</th>
+                    <th>Nombres y Apellidos *</th>
+                    <th style="width: 130px;">Ficha</th>
+                    <th style="width: 45px;" class="text-center"></th>
+                  </tr>
+                </thead>
+                <tbody id="cuadrilla-tbody">
+                  <tr class="aprendiz-row">
+                    <td class="text-center text-muted fw-bold row-index">1</td>
+                    <td>
+                      <input type="text" name="aprendiz_doc[]" class="form-control form-control-sm apr-doc" placeholder="Cédula / TI" required>
+                    </td>
+                    <td>
+                      <input type="text" name="aprendiz_nombre[]" class="form-control form-control-sm apr-nom" placeholder="Nombre completo" required>
+                    </td>
+                    <td>
+                      <input type="text" name="aprendiz_ficha[]" class="form-control form-control-sm apr-fic" placeholder="Ficha" value="{{ usuario.ficha|default:'' }}">
+                    </td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-outline-danger btn-sm p-1 btn-del-apr" title="Quitar aprendiz" disabled>
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {# PASO 3: HERRAMIENTAS Y EQUIPOS #}
+          <div id="grp-step-3" class="wizard-step" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small fw-semibold text-muted">Selección de herramientas y validación de stock</span>
+              <button type="button" id="btn-add-tool-grupal" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Añadir otra herramienta
+              </button>
+            </div>
+
+            <div id="grupal-items-container">
+              <div class="grupal-item-row row g-2 align-items-center mb-2">
+                <div class="col">
+                  <select name="herramienta[]" class="form-select form-select-sm grp-tool-select" required>
+                    <option value="">— Selecciona herramienta disponible —</option>
+                    {% for h in herramientas_disponibles|default:productos_disponibles %}
+                    <option value="{{ h.pk }}" data-stock="{{ h.stock_disponible|default:0 }}">
+                      [{{ h.codigo }}] {{ h.nombre }} (Stock: {{ h.stock_disponible }}){% if h.stock_disponible <= 0 %} ⚠️ Sin stock{% endif %}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-auto" style="width: 100px;">
+                  <input type="number" name="cantidad[]" class="form-control form-control-sm text-center grp-cant-input" min="1" max="50" value="1" placeholder="Cant." required>
+                </div>
+                <div class="col-auto">
+                  <button type="button" class="btn btn-outline-danger btn-sm grp-del-tool disabled">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {# PASO 4: RESUMEN Y EMISIÓN DEL COMPROBANTE OFICIAL #}
+          <div id="grp-step-4" class="wizard-step" style="display: none;">
+            <h6 class="fw-bold mb-2 small text-uppercase text-secondary">Resumen de la Práctica</h6>
+            <div id="grp-summary-practica" class="p-2 bg-light rounded small mb-3"></div>
+
+            <h6 class="fw-bold mb-2 small text-uppercase text-secondary">Herramientas a Entregar</h6>
+            <div id="grp-summary-items" class="d-flex flex-column gap-2 mb-3"></div>
+
+            <div class="mb-3">
+              <label for="grp_observaciones" class="form-label small fw-semibold">Observaciones / Instrucciones de Seguridad</label>
+              <textarea name="observaciones" id="grp_observaciones" class="form-control form-control-sm" rows="2" maxlength="500" placeholder="Notas sobre el frente de trabajo, turno o precauciones..."></textarea>
+            </div>
+
+            <div class="alert alert-warning py-2 px-3 small border-0 mb-0 d-flex align-items-center gap-2">
+              <i class="bi bi-printer-fill fs-5 text-warning flex-shrink-0"></i>
+              <div>
+                <strong>Directriz Institucional de Bodega:</strong><br>
+                Este préstamo queda registrado a nombre del <strong>Instructor titular</strong>. Solo se consolida y guarda en el sistema al generar e imprimir el Comprobante Oficial Físico con sus respectivas firmas.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-grp-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-grp-prev" style="display: none;">Anterior</button>
+          <button type="button" id="btn-grp-next" class="btn btn-primary btn-sm">Siguiente</button>
+          <button type="button" id="btnImprimirYGuardarGrupal" class="btn btn-primary btn-sm" style="display: none;">
+            <i class="bi bi-printer-fill me-1"></i> Imprimir Comprobante y Registrar
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block js %}
-<script defer src="{% static 'js/prestamo_usuario.js' %}?v=1"></script>
+<script defer src="{% static 'js/prestamo_usuario.js' %}?v=2"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modalEl = document.getElementById('modalPrestamoGrupalInstructor');
+  if (!modalEl) return;
+
+  const formGrupal = document.getElementById('formPrestamoGrupal');
+  const btnPrev = document.getElementById('btn-grp-prev');
+  const btnNext = document.getElementById('btn-grp-next');
+  const btnSubmit = document.getElementById('btnImprimirYGuardarGrupal');
+  const alertEl = document.getElementById('wizard-grp-alert');
+
+  const grpWizardSteps = [
+    { id: 1, label: 'Responsable', title: 'Paso 1: Responsable y Práctica', subtitle: 'Datos del instructor titular y frente de formación' },
+    { id: 2, label: 'Cuadrilla', title: 'Paso 2: Cuadrilla de Aprendices', subtitle: 'Asignación de aprendices beneficiarios de la práctica' },
+    { id: 3, label: 'Herramientas', title: 'Paso 3: Equipos y Herramientas', subtitle: 'Selección de herramientas y validación de stock' },
+    { id: 4, label: 'Confirmación', title: 'Paso 4: Resumen y Emisión', subtitle: 'Verificación del préstamo y comprobante oficial' }
+  ];
+
+  let grpCurrentStep = 1;
+  const maxSteps = 4;
+
+  function renderGrpWizardProgress() {
+    const bar = document.getElementById('wizard-grp-progress-bar');
+    if (!bar) return;
+    bar.innerHTML = grpWizardSteps.map(function(step, idx) {
+      let cls = 'wizard-step-dot';
+      if (idx < grpCurrentStep - 1) cls += ' wizard-done';
+      if (idx === grpCurrentStep - 1) cls += ' wizard-active';
+      const inner = idx < grpCurrentStep - 1
+        ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>'
+        : step.id;
+      return '<div class="' + cls + '">' +
+               '<div class="wizard-dot-circle">' + inner + '</div>' +
+               '<div class="wizard-dot-label">' + step.label + '</div>' +
+             '</div>';
+    }).join('');
+  }
+
+  function mostrarAlerta(msg) {
+    if (!alertEl) return;
+    alertEl.textContent = msg;
+    alertEl.classList.remove('d-none');
+  }
+
+  function limpiarAlerta() {
+    if (!alertEl) return;
+    alertEl.textContent = '';
+    alertEl.classList.add('d-none');
+  }
+
+  function validarPasoActual() {
+    limpiarAlerta();
+    if (grpCurrentStep === 1) {
+      const ficha = (document.getElementById('grp_ficha').value || '').trim();
+      const amb = (document.getElementById('grp_ambiente').value || '').trim();
+      if (!ficha) return { ok: false, msg: 'Por favor ingresa la Ficha SENA de la formación.' };
+      if (!amb) return { ok: false, msg: 'Por favor indica el Frente de Mina o Ambiente de Formación.' };
+      return { ok: true };
+    }
+    if (grpCurrentStep === 2) {
+      const rows = document.querySelectorAll('#cuadrilla-tbody .aprendiz-row');
+      let count = 0;
+      rows.forEach(r => {
+        const d = (r.querySelector('.apr-doc').value || '').trim();
+        const n = (r.querySelector('.apr-nom').value || '').trim();
+        if (d || n) count++;
+      });
+      if (count === 0) return { ok: false, msg: 'Debes registrar al menos un aprendiz en la cuadrilla asignada.' };
+      return { ok: true };
+    }
+    if (grpCurrentStep === 3) {
+      const rows = document.querySelectorAll('#grupal-items-container .grupal-item-row');
+      let valid = false;
+      for (let r of rows) {
+        const sel = r.querySelector('.grp-tool-select');
+        const cant = parseInt(r.querySelector('.grp-cant-input').value, 10);
+        if (sel && sel.value && cant > 0) {
+          const opt = sel.options[sel.selectedIndex];
+          const stock = parseInt(opt.getAttribute('data-stock') || '0', 10);
+          if (cant > stock) {
+            return { ok: false, msg: `Stock insuficiente para la herramienta seleccionada (Disponibles: ${stock}).` };
+          }
+          valid = true;
+        }
+      }
+      if (!valid) return { ok: false, msg: 'Debes seleccionar al menos una herramienta válida con cantidad mayor a 0.' };
+      return { ok: true };
+    }
+    return { ok: true };
+  }
+
+  function updateGrpSummary() {
+    const ficha = document.getElementById('grp_ficha').value || 'Sin ficha';
+    const amb = document.getElementById('grp_ambiente').value || 'Ambiente no especificado';
+    const aprRows = document.querySelectorAll('#cuadrilla-tbody .aprendiz-row');
+    const aprendices = [];
+    aprRows.forEach(r => {
+      const d = (r.querySelector('.apr-doc').value || '').trim();
+      const n = (r.querySelector('.apr-nom').value || '').trim();
+      if (d || n) aprendices.push(`${n} (Doc: ${d})`);
+    });
+
+    const sumPractica = document.getElementById('grp-summary-practica');
+    if (sumPractica) {
+      sumPractica.innerHTML = `
+        <div class="mb-1"><strong>Titular:</strong> {{ usuario.nombre_completo|default:usuario.documento }} (C.C. {{ usuario.documento }})</div>
+        <div class="mb-1"><strong>Ficha SENA:</strong> ${ficha} · <strong>Frente / Mina:</strong> ${amb}</div>
+        <div><strong>Cuadrilla (${aprendices.length} aprendices):</strong> ${aprendices.join(', ')}</div>
+      `;
+    }
+
+    const sumItems = document.getElementById('grp-summary-items');
+    if (sumItems) {
+      sumItems.innerHTML = '';
+      const toolRows = document.querySelectorAll('#grupal-items-container .grupal-item-row');
+      toolRows.forEach(r => {
+        const sel = r.querySelector('.grp-tool-select');
+        const cant = r.querySelector('.grp-cant-input').value;
+        if (sel && sel.value && cant > 0) {
+          const opt = sel.options[sel.selectedIndex];
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'd-flex justify-content-between align-items-center p-2 rounded bg-light border small';
+          itemDiv.innerHTML = `<span><i class="bi bi-tools text-primary me-2"></i>${opt.text}</span><span class="badge bg-primary rounded-pill">×${cant}</span>`;
+          sumItems.appendChild(itemDiv);
+        }
+      });
+    }
+  }
+
+  function goToGrpStep(step) {
+    if (step > grpCurrentStep) {
+      const val = validarPasoActual();
+      if (!val.ok) {
+        mostrarAlerta(val.msg);
+        return;
+      }
+    }
+    limpiarAlerta();
+
+    for (let i = 1; i <= maxSteps; i++) {
+      const el = document.getElementById('grp-step-' + i);
+      if (el) el.style.display = (i === step) ? 'block' : 'none';
+    }
+
+    grpCurrentStep = step;
+    renderGrpWizardProgress();
+
+    const cur = grpWizardSteps[step - 1];
+    document.getElementById('wizard-grp-title').textContent = cur.title;
+    document.getElementById('wizard-grp-subtitle').textContent = cur.subtitle;
+
+    btnPrev.style.display = (step > 1) ? 'inline-flex' : 'none';
+    btnNext.style.display = (step < maxSteps) ? 'inline-flex' : 'none';
+    btnSubmit.style.display = (step === maxSteps) ? 'inline-flex' : 'none';
+
+    if (step === maxSteps) {
+      updateGrpSummary();
+    }
+  }
+
+  btnNext.addEventListener('click', function() {
+    if (grpCurrentStep < maxSteps) goToGrpStep(grpCurrentStep + 1);
+  });
+
+  btnPrev.addEventListener('click', function() {
+    if (grpCurrentStep > 1) goToGrpStep(grpCurrentStep - 1);
+  });
+
+  // Manejo de filas de aprendices
+  const cuadrillaTbody = document.getElementById('cuadrilla-tbody');
+  const btnAddAprRow = document.getElementById('btn-add-aprendiz-row');
+  const selectAprRapido = document.getElementById('select-aprendiz-rapido');
+  const btnAgrAprRapido = document.getElementById('btn-agregar-aprendiz-rapido');
+
+  function renumerarAprendices() {
+    const rows = cuadrillaTbody.querySelectorAll('.aprendiz-row');
+    rows.forEach((r, idx) => {
+      r.querySelector('.row-index').textContent = idx + 1;
+      const del = r.querySelector('.btn-del-apr');
+      if (del) del.disabled = (rows.length <= 1);
+    });
+  }
+
+  function agregarFilaAprendiz(doc = '', nom = '', fic = '') {
+    const defaultFicha = document.getElementById('grp_ficha').value || '';
+    const tr = document.createElement('tr');
+    tr.className = 'aprendiz-row';
+    tr.innerHTML = `
+      <td class="text-center text-muted fw-bold row-index">1</td>
+      <td>
+        <input type="text" name="aprendiz_doc[]" class="form-control form-control-sm apr-doc" placeholder="Cédula / TI" value="${doc}" required>
+      </td>
+      <td>
+        <input type="text" name="aprendiz_nombre[]" class="form-control form-control-sm apr-nom" placeholder="Nombre completo" value="${nom}" required>
+      </td>
+      <td>
+        <input type="text" name="aprendiz_ficha[]" class="form-control form-control-sm apr-fic" placeholder="Ficha" value="${fic || defaultFicha}">
+      </td>
+      <td class="text-center">
+        <button type="button" class="btn btn-outline-danger btn-sm p-1 btn-del-apr" title="Quitar aprendiz">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    `;
+    cuadrillaTbody.appendChild(tr);
+    renumerarAprendices();
+  }
+
+  if (btnAddAprRow) {
+    btnAddAprRow.addEventListener('click', function() {
+      agregarFilaAprendiz();
+    });
+  }
+
+  if (btnAgrAprRapido && selectAprRapido) {
+    btnAgrAprRapido.addEventListener('click', function() {
+      const opt = selectAprRapido.options[selectAprRapido.selectedIndex];
+      if (!opt || !opt.value) return;
+      const doc = opt.value;
+      const nom = opt.getAttribute('data-nombre') || '';
+      const fic = opt.getAttribute('data-ficha') || '';
+
+      const firstRow = cuadrillaTbody.querySelector('.aprendiz-row');
+      if (firstRow && !firstRow.querySelector('.apr-doc').value.trim() && !firstRow.querySelector('.apr-nom').value.trim()) {
+        firstRow.querySelector('.apr-doc').value = doc;
+        firstRow.querySelector('.apr-nom').value = nom;
+        firstRow.querySelector('.apr-fic').value = fic;
+      } else {
+        agregarFilaAprendiz(doc, nom, fic);
+      }
+      selectAprRapido.value = '';
+    });
+  }
+
+  if (cuadrillaTbody) {
+    cuadrillaTbody.addEventListener('click', function(e) {
+      const btn = e.target.closest('.btn-del-apr');
+      if (!btn) return;
+      const row = btn.closest('.aprendiz-row');
+      if (row && cuadrillaTbody.querySelectorAll('.aprendiz-row').length > 1) {
+        row.remove();
+        renumerarAprendices();
+      }
+    });
+  }
+
+  // Manejo de herramientas
+  const grupalItemsContainer = document.getElementById('grupal-items-container');
+  const btnAddToolGrupal = document.getElementById('btn-add-tool-grupal');
+
+  if (btnAddToolGrupal && grupalItemsContainer) {
+    btnAddToolGrupal.addEventListener('click', function() {
+      const firstRow = grupalItemsContainer.querySelector('.grupal-item-row');
+      if (!firstRow) return;
+      const clone = firstRow.cloneNode(true);
+      clone.querySelector('select').value = '';
+      clone.querySelector('input[type="number"]').value = '1';
+      const delBtn = clone.querySelector('.grp-del-tool');
+      if (delBtn) delBtn.classList.remove('disabled');
+      grupalItemsContainer.appendChild(clone);
+      actualizarBotonesHerramientas();
+    });
+
+    grupalItemsContainer.addEventListener('click', function(e) {
+      const delBtn = e.target.closest('.grp-del-tool');
+      if (!delBtn || delBtn.classList.contains('disabled')) return;
+      const row = delBtn.closest('.grupal-item-row');
+      if (row && grupalItemsContainer.querySelectorAll('.grupal-item-row').length > 1) {
+        row.remove();
+        actualizarBotonesHerramientas();
+      }
+    });
+  }
+
+  function actualizarBotonesHerramientas() {
+    const rows = grupalItemsContainer.querySelectorAll('.grupal-item-row');
+    rows.forEach(r => {
+      const del = r.querySelector('.grp-del-tool');
+      if (del) {
+        if (rows.length <= 1) del.classList.add('disabled');
+        else del.classList.remove('disabled');
+      }
+    });
+  }
+
+  // BOTÓN FINAL: IMPRIMIR COMPROBANTE Y REGISTRAR
+  btnSubmit.addEventListener('click', function() {
+    const aprRows = cuadrillaTbody.querySelectorAll('.aprendiz-row');
+    const aprendices = [];
+    const ficha = document.getElementById('grp_ficha').value.trim();
+
+    aprRows.forEach(r => {
+      const d = (r.querySelector('.apr-doc').value || '').trim();
+      const n = (r.querySelector('.apr-nom').value || '').trim();
+      const f = (r.querySelector('.apr-fic').value || '').trim() || ficha;
+      if (d || n) {
+        aprendices.push({ documento: d || '—', nombre: n || 'Aprendiz', ficha: f });
+      }
+    });
+
+    const formData = new FormData(formGrupal);
+    formData.append('aprendices_json', JSON.stringify(aprendices));
+
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Emitiendo e imprimiendo...';
+
+    fetch("{% url 'crear_prestamo_grupal_instructor' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "ok") {
+        const printWindow = window.open(data.comprobante_url, '_blank');
+        if (!printWindow) {
+          window.location.href = data.comprobante_url;
+        }
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        if (modalInstance) modalInstance.hide();
+        window.location.reload();
+      } else {
+        mostrarAlerta(data.message || 'Error al registrar el préstamo.');
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<i class="bi bi-printer-fill me-1"></i> Imprimir Comprobante y Registrar';
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      mostrarAlerta('Error de conexión al procesar la solicitud.');
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '<i class="bi bi-printer-fill me-1"></i> Imprimir Comprobante y Registrar';
+    });
+  });
+
+  modalEl.addEventListener('show.bs.modal', function() {
+    grpCurrentStep = 1;
+    goToGrpStep(1);
+    limpiarAlerta();
+  });
+});
+</script>
 {% endblock %}

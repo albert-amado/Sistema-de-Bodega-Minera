@@ -1,0 +1,323 @@
+{% comment %}
+  Animación SENA para Rechazo de Inicio de Sesión o Registro.
+  Muestra una tarjeta modal animada con efecto shake, icono SVG de cruz animada
+  y barra de progreso, garantizando cobertura total del viewport.
+{% endcomment %}
+<div id="sbmReject" class="sbm-reject d-none" role="alert" aria-live="assertive">
+  <div class="sbm-reject-card">
+    
+    <!-- Icono animado de rechazo / error -->
+    <div class="sbm-reject-icon">
+      <span class="sbm-reject-ring"></span>
+      <svg viewBox="0 0 52 52" aria-hidden="true">
+        <circle class="sbm-reject-circle" cx="26" cy="26" r="24" fill="none" />
+        <path class="sbm-reject-line-1" fill="none" d="M17 17 L35 35" />
+        <path class="sbm-reject-line-2" fill="none" d="M35 17 L17 35" />
+      </svg>
+    </div>
+
+    <h2 class="sbm-reject-title" id="sbmRejectTitle">¡Acceso rechazado!</h2>
+    <p class="sbm-reject-text" id="sbmRejectMsg">Documento o contraseña incorrectos. Por favor verifica tus credenciales.</p>
+
+    <!-- Botón de acción para reintentar -->
+    <div class="sbm-reject-action">
+      <button type="button" class="sbm-reject-btn" id="sbmRejectBtn">
+        <i class="bi bi-arrow-counterclockwise me-1"></i> Intentar nuevamente
+      </button>
+    </div>
+
+    <!-- Barra de progreso de cierre automático -->
+    <div class="sbm-reject-progress-wrap">
+      <div class="sbm-reject-progress"><span id="sbmRejectBar"></span></div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* Overlay pantalla completa con desenfoque */
+  .sbm-reject {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 1.25rem !important;
+    box-sizing: border-box !important;
+    z-index: 9999999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(15, 23, 42, 0.55) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    animation: sbmRejectFadeIn 0.3s ease both;
+    cursor: pointer;
+  }
+  .sbm-reject.d-none {
+    display: none !important;
+  }
+  .sbm-reject.is-closing {
+    animation: sbmRejectFadeOut 0.3s cubic-bezier(0.4, 0, 1, 1) both;
+  }
+
+  /* Tarjeta de rechazo con sacudida elástica */
+  .sbm-reject-card {
+    position: relative;
+    width: 100%;
+    max-width: 410px;
+    background: #FFFFFF !important;
+    border: 1px solid #FECACA !important;
+    border-radius: 1.25rem;
+    box-shadow: 0 25px 60px rgba(220, 38, 38, 0.22), 0 10px 25px rgba(0, 0, 0, 0.12) !important;
+    padding: 2.25rem 2rem 1.6rem;
+    text-align: center;
+    cursor: default;
+    animation: sbmRejectPopShake 0.65s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+
+  /* Icono circular rojo */
+  .sbm-reject-icon {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 1.25rem;
+  }
+  .sbm-reject-icon svg {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #FEE2E2;
+    animation: sbmRejectFill 0.35s ease 0.8s both;
+  }
+  .sbm-reject-circle {
+    stroke: #DC2626;
+    stroke-width: 3;
+    stroke-dasharray: 151;
+    stroke-dashoffset: 151;
+    animation: sbmRejectDraw 0.55s cubic-bezier(0.65, 0, 0.45, 1) 0.15s forwards;
+  }
+  .sbm-reject-line-1 {
+    stroke: #DC2626;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+    stroke-dasharray: 26;
+    stroke-dashoffset: 26;
+    animation: sbmRejectDraw 0.25s cubic-bezier(0.65, 0, 0.45, 1) 0.55s forwards,
+               sbmRejectCrossWhite 0.25s ease 0.85s forwards;
+  }
+  .sbm-reject-line-2 {
+    stroke: #DC2626;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+    stroke-dasharray: 26;
+    stroke-dashoffset: 26;
+    animation: sbmRejectDraw 0.25s cubic-bezier(0.65, 0, 0.45, 1) 0.7s forwards,
+               sbmRejectCrossWhite 0.25s ease 0.85s forwards;
+  }
+
+  /* Onda expansiva roja */
+  .sbm-reject-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 3px solid #DC2626;
+    opacity: 0;
+    z-index: 1;
+    animation: sbmRejectRing 0.9s ease-out 0.85s;
+    pointer-events: none;
+  }
+
+  .sbm-reject-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #991B1B !important;
+    margin-bottom: 0.4rem;
+    animation: sbmRejectUp 0.4s ease 0.35s both;
+  }
+  .sbm-reject-text {
+    font-size: 0.93rem;
+    color: #4B5563 !important;
+    margin-bottom: 1.35rem;
+    line-height: 1.45;
+    animation: sbmRejectUp 0.4s ease 0.45s both;
+  }
+
+  /* Botón de reintento */
+  .sbm-reject-action {
+    margin-bottom: 1.35rem;
+    animation: sbmRejectUp 0.4s ease 0.55s both;
+  }
+  .sbm-reject-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #DC2626;
+    color: #FFFFFF !important;
+    border: 1px solid #B91C1C;
+    border-radius: 9999px;
+    padding: 0.55rem 1.6rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
+    transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+  }
+  .sbm-reject-btn:hover {
+    background: #B91C1C;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4);
+  }
+  .sbm-reject-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Barra de progreso de cierre automático */
+  .sbm-reject-progress-wrap {
+    animation: sbmRejectUp 0.4s ease 0.65s both;
+  }
+  .sbm-reject-progress {
+    height: 4px;
+    background: #FEE2E2;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  .sbm-reject-progress span {
+    display: block;
+    height: 100%;
+    background: #DC2626;
+    transform-origin: left;
+    animation: sbmRejectProgress 3.2s linear 0.4s both;
+  }
+
+  /* Animación sacudida en inputs problemáticos */
+  .auth-input-shake {
+    animation: authInputShake 0.45s ease both !important;
+    border-color: #DC2626 !important;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.16) !important;
+  }
+
+  /* Keyframes */
+  @keyframes sbmRejectFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sbmRejectFadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.96); } }
+  @keyframes sbmRejectPopShake {
+    0%   { opacity: 0; transform: scale(0.85) translateY(24px); }
+    35%  { opacity: 1; transform: scale(1.03) translateY(0); }
+    50%  { transform: translateX(-9px); }
+    65%  { transform: translateX(8px); }
+    80%  { transform: translateX(-4px); }
+    92%  { transform: translateX(2px); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes sbmRejectDraw { to { stroke-dashoffset: 0; } }
+  @keyframes sbmRejectFill { to { background: #DC2626; } }
+  @keyframes sbmRejectCrossWhite { to { stroke: #FFFFFF; } }
+  @keyframes sbmRejectRing { 0% { opacity: 0.8; transform: scale(0.95); } 100% { opacity: 0; transform: scale(1.55); } }
+  @keyframes sbmRejectUp   { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes sbmRejectProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes authInputShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sbm-reject *, .sbm-reject { animation-duration: 0.01s !important; animation-delay: 0s !important; }
+  }
+</style>
+
+<script>
+  (function () {
+    var overlay = document.getElementById('sbmReject');
+    if (!overlay) return;
+
+    // Mover al body si no está
+    if (overlay.parentElement && overlay.parentElement !== document.body) {
+      document.body.appendChild(overlay);
+    }
+
+    var autoCloseTimer = null;
+    var targetInputToFocus = null;
+
+    function cerrarRechazo() {
+      if (overlay.classList.contains('d-none')) return;
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+      overlay.classList.add('is-closing');
+      setTimeout(function () {
+        overlay.classList.add('d-none');
+        overlay.classList.remove('is-closing');
+        if (targetInputToFocus) {
+          try {
+            targetInputToFocus.focus();
+            targetInputToFocus.classList.add('auth-input-shake');
+            setTimeout(function () { targetInputToFocus.classList.remove('auth-input-shake'); }, 600);
+          } catch (e) {}
+        }
+      }, 300);
+    }
+
+    function mostrarRechazo(titulo, mensaje, inputId) {
+      if (!overlay) return;
+      if (overlay.parentElement !== document.body) {
+        document.body.appendChild(overlay);
+      }
+      if (titulo) document.getElementById('sbmRejectTitle').textContent = titulo;
+      if (mensaje) document.getElementById('sbmRejectMsg').textContent = mensaje;
+
+      targetInputToFocus = inputId ? document.getElementById(inputId) : null;
+
+      // Reiniciar animación de barra
+      var bar = document.getElementById('sbmRejectBar');
+      if (bar) {
+        bar.style.animation = 'none';
+        bar.offsetHeight; /* trigger reflow */
+        bar.style.animation = null;
+      }
+
+      overlay.classList.remove('d-none', 'is-closing');
+
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+      autoCloseTimer = setTimeout(cerrarRechazo, 3600);
+    }
+
+    // Exponer globalmente
+    window.sbmMostrarRechazo = mostrarRechazo;
+    window.sbmCerrarRechazo = cerrarRechazo;
+
+    var btn = document.getElementById('sbmRejectBtn');
+    if (btn) btn.addEventListener('click', cerrarRechazo);
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) cerrarRechazo();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !overlay.classList.contains('d-none')) {
+        cerrarRechazo();
+      }
+    });
+
+    // Detectar si la página cargó con mensajes de error de Django
+    document.addEventListener('DOMContentLoaded', function () {
+      var djangoErrors = [];
+      document.querySelectorAll('.alert-mine.error').forEach(function (el) {
+        var txt = el.textContent.replace('⚠', '').trim();
+        if (txt) djangoErrors.push(txt);
+      });
+
+      if (djangoErrors.length > 0) {
+        var isRegistro = window.location.pathname.indexOf('registro') !== -1;
+        var titulo = isRegistro ? '¡Registro no completado!' : '¡Inicio de sesión fallido!';
+        var msg = djangoErrors.join(' · ');
+        var inputId = isRegistro ? 'documento' : 'password';
+        mostrarRechazo(titulo, msg, inputId);
+      }
+    });
+  })();
+</script>

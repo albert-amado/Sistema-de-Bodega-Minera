@@ -38,7 +38,7 @@
       </div>
 
       <div class="sbm-chat-header-info">
-        <h2 id="chatbotHeaderTitle" class="sbm-chat-title">Asistente Bodega Minera</h2>
+        <h2 id="chatbotHeaderTitle" class="sbm-chat-title" title="Asistente Bodega Minera">Asistente Bodega</h2>
         <div class="sbm-chat-subtitle">
           <span class="sbm-status-text">En línea</span>
           <span class="sbm-badge-role">{% if request.session.usuario_rol|lower == 'administrador' or request.session.usuario_rol|lower == 'admin' or request.user.is_staff %}Bodeguero / Admin{% else %}Aprendiz / Instructor{% endif %}</span>
@@ -151,9 +151,9 @@
         </div>
 
         <div class="sbm-chat-meta-bar">
-          <span class="sbm-chat-disclaimer" title="Tratamiento de datos conforme a la Ley 1581">
+          <span class="sbm-chat-disclaimer" title="Tratamiento de datos conforme a la Ley 1581 de 2012. No envíes contraseñas ni datos sensibles.">
             <i class="bi bi-shield-check" aria-hidden="true"></i>
-            <span>Cumplimiento Ley 1581 - Habeas Data. No envíes contraseñas.</span>
+            <span>Ley 1581 · No envíes contraseñas</span>
           </span>
           <span id="chatbotCharCounter" class="sbm-chat-char-counter">0/500</span>
         </div>

@@ -25,8 +25,9 @@ class Usuario(models.Model):
     ]
 
     ROL_CHOICES = [
-        ('Usuario', 'Usuario'),
-        ('Administrador', 'Administrador'),
+        ('Usuario', 'Aprendiz'),
+        ('Instructor', 'Instructor'),
+        ('Administrador', 'Administrador / Almacenista'),
     ]
 
     # Campos de la tabla 'usuario' en MySQL Dump20260814.sql
@@ -125,6 +126,18 @@ class Usuario(models.Model):
     @nombre_programa.setter
     def nombre_programa(self, val):
         self.programa = val
+
+    @property
+    def es_administrador(self):
+        return (self.rol or '').lower() in ('admin', 'administrador', 'almacenista')
+
+    @property
+    def es_instructor(self):
+        return (self.rol or '').lower() == 'instructor'
+
+    @property
+    def es_aprendiz(self):
+        return (self.rol or '').lower() in ('usuario', 'aprendiz')
 
     def clean(self):
         super().clean()

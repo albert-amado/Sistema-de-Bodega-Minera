@@ -15,8 +15,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=1">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=50">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=52">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=52">
   <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=8">
   <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=4">
 {% block css %}{% endblock css %}
@@ -64,6 +64,10 @@
   {% endif %}
 
   {% include "components/accessibility_widget.html" %}
+
+  {% if auth_bienvenida %}
+  {% include "partials/auth_bienvenida.html" %}
+  {% endif %}
 
   <script defer src="{% static 'js/bootstrap.bundle.min.js' %}?v=3"></script>
   <script defer src="{% static 'js/form-validation.js' %}?v=3"></script>
