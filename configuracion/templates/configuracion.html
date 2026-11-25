@@ -6,7 +6,17 @@
   .btn-save       { background-color: var(--sbm-navy, #0f172a); color: #ffffff; border-radius: 10px; transition: background-color .15s ease-in-out; }
   .btn-save:hover { background-color: #1e293b; color: #ffffff; }
   .storage-card   { cursor: pointer; transition: border-color .15s, box-shadow .15s; }
-  .btn-check:checked + .storage-card { border-color: #0d6efd !important; background-color: #f0f5fc !important; }
+  .btn-check:checked + .storage-card { border-color: #39A900 !important; background-color: #EBF7E5 !important; }
+  .backup-dropzone {
+    border: 2px dashed #A8E08A;
+    background-color: #F8FDF6;
+    border-radius: 12px;
+    transition: border-color .2s, background-color .2s;
+  }
+  .backup-dropzone:hover {
+    border-color: #39A900;
+    background-color: #EBF7E5;
+  }
 </style>
 {% endblock css %}
 
@@ -20,7 +30,7 @@
     </div>
     <div>
       <h1 class="h4 fw-bold mb-0">Configuración del Sistema</h1>
-      <p class="small text-secondary mb-0">Gestión de entorno de base de datos (Local vs Nube) y sincronización de datos</p>
+      <p class="small text-secondary mb-0">Gestión de entorno de base de datos (Local vs Nube) y copias de seguridad en Excel</p>
     </div>
   </div>
 
@@ -29,7 +39,7 @@
     {% for msg in messages %}
     <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}success{% endif %} d-flex align-items-center gap-2 rounded-3 py-2 px-3 mb-3 small fw-semibold" role="alert">
       <i class="bi bi-{% if msg.tags == 'error' %}exclamation-triangle-fill{% else %}check-circle-fill{% endif %}"></i>
-      {{ msg }}
+      <span>{{ msg }}</span>
       <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
     </div>
     {% endfor %}
@@ -75,7 +85,7 @@
               </div>
               <div class="fw-bold mb-1">Local <span class="badge bg-secondary">SQLite3</span></div>
               <p class="small text-secondary mb-0">
-                Almacenamiento local en `db.sqlite3`. Rápido, no requiere conexión a internet.
+                Almacenamiento local en <code>db.sqlite3</code>. Rápido, no requiere conexión a internet.
               </p>
             </label>
           </div>
@@ -98,7 +108,7 @@
               </div>
               <div class="fw-bold mb-1">Nube <span class="badge bg-info text-dark">PostgreSQL</span></div>
               <p class="small text-secondary mb-0">
-                Base de datos PostgreSQL . Acceso global en la nube.
+                Base de datos PostgreSQL. Acceso global en la nube.
               </p>
             </label>
           </div>
@@ -113,6 +123,124 @@
       </div>
     </div>
   </form>
+
+  <!-- 2. COPIA DE SEGURIDAD EN EXCEL (EXPORTAR E IMPORTAR FALTANTES) -->
+  <div class="card rounded-4 shadow-sm mb-4">
+    <div class="card-body p-4">
+
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-4">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-file-earmark-spreadsheet-fill fs-4 text-success"></i>
+          <div>
+            <h2 class="h6 fw-bold mb-0">Copia de Seguridad en Excel (.xlsx)</h2>
+            <p class="small text-secondary mb-0">
+              Exporta toda la base de datos a un libro Excel o importa una copia de seguridad para subir únicamente los registros que falten.
+            </p>
+          </div>
+        </div>
+        <a href="{% url 'configuracion:exportar_excel' %}" class="btn btn-success fw-bold px-4 d-inline-flex align-items-center gap-2">
+          <i class="bi bi-download"></i>
+          Generar y Descargar Copia en Excel (.xlsx)
+        </a>
+      </div>
+
+      <div class="row g-4">
+        <!-- Subir archivo Excel para importar lo que falte -->
+        <div class="col-12 col-lg-6">
+          <div class="p-3 h-100 backup-dropzone d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-cloud-arrow-up-fill fs-5 text-success"></i>
+                <h3 class="h6 fw-bold mb-0">Importar Copia de Seguridad desde Excel</h3>
+              </div>
+              <p class="small text-secondary mb-3">
+                Selecciona un archivo <code>.xlsx</code> de respaldo. El sistema analizará todas las hojas y <strong>subirá únicamente los registros que falten</strong> sin borrar ni duplicar los existentes.
+              </p>
+            </div>
+
+            <form method="POST" action="{% url 'configuracion' %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <input type="hidden" name="accion" value="importar_backup_excel">
+              <div class="mb-3">
+                <label for="archivo_excel" class="form-label small fw-semibold">Archivo Excel (.xlsx)</label>
+                <input class="form-control form-control-sm" type="file" id="archivo_excel" name="archivo_excel" accept=".xlsx" required>
+              </div>
+              <button type="submit" class="btn btn-primary fw-bold w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-upload"></i>
+                Importar y Subir Registros Faltantes
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Historial de copias en Excel guardadas en el servidor (carpeta backups/) -->
+        <div class="col-12 col-lg-6">
+          <div class="border rounded-3 p-3 h-100 bg-light">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-clock-history fs-5 text-primary"></i>
+                <h3 class="h6 fw-bold mb-0">Copias en Excel Guardadas en el Sistema</h3>
+              </div>
+              <span class="badge bg-secondary rounded-pill">{{ backups_excel|length }}</span>
+            </div>
+            <p class="small text-secondary mb-3">
+              Cada vez que exportas una copia en Excel se guarda automáticamente un respaldo en <code>backups/</code>. Puedes descargarlo o restaurar los datos que falten desde aquí:
+            </p>
+
+            {% if backups_excel %}
+            <div class="table-responsive" style="max-height: 210px; overflow-y: auto;">
+              <table class="table table-sm align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Archivo</th>
+                    <th>Fecha</th>
+                    <th class="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for b in backups_excel %}
+                  <tr>
+                    <td class="small fw-semibold text-truncate" style="max-width: 190px;" title="{{ b.nombre }}">
+                      <i class="bi bi-file-earmark-excel text-success me-1"></i>{{ b.nombre }}
+                      <div class="text-muted" style="font-size: 0.7rem;">{{ b.tamano_kb }} KB</div>
+                    </td>
+                    <td class="small text-secondary">{{ b.fecha }}</td>
+                    <td class="text-end">
+                      <div class="d-inline-flex gap-1">
+                        <a href="{% url 'configuracion:descargar_backup_guardado' b.nombre %}"
+                           class="btn btn-outline-success btn-sm py-0 px-2"
+                           title="Descargar este Excel">
+                          <i class="bi bi-download"></i>
+                        </a>
+                        <form method="POST" action="{% url 'configuracion' %}" class="d-inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="accion" value="restaurar_backup_guardado">
+                          <input type="hidden" name="nombre_archivo" value="{{ b.nombre }}">
+                          <button type="submit"
+                                  class="btn btn-success btn-sm py-0 px-2"
+                                  title="Subir lo que falte desde esta copia">
+                            <i class="bi bi-arrow-repeat me-1"></i>Subir faltantes
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4 text-muted small">
+              <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+              Aún no hay copias de seguridad <code>.xlsx</code> guardadas en <code>backups/</code>.
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
 </div>
 {% endblock %}
