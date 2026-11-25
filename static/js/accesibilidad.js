@@ -40,13 +40,20 @@
         }
     }
 
-    // ---- filtros visuales combinados ----
+    // ---- filtros visuales combinados y modo oscuro real ----
     function applyFilters() {
         var parts = [];
         if (state.grayscale) parts.push("grayscale(1)");
-        if (state.invert) parts.push("invert(1) hue-rotate(180deg)");
         if (state.saturate) parts.push("saturate(0.45)");
         root.style.filter = parts.length ? parts.join(" ") : "";
+
+        var isDark = !!state.invert;
+        root.classList.toggle("dark-mode", isDark);
+        root.setAttribute("data-theme", isDark ? "dark" : "light");
+        if (document.body) {
+            document.body.classList.toggle("dark-mode", isDark);
+            document.body.classList.toggle("light-mode", !isDark);
+        }
     }
 
     function applyLinks() {

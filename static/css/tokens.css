@@ -255,63 +255,88 @@ aside h1, aside h2, aside h3 {
   color: var(--sena-white) !important;
 }
 
-/* Sidebar / Barra de Navegación Lateral Institucional (#00324D) */
+/* Sidebar / Barra de Navegación Lateral Institucional Verde SENA (#278144) */
 aside,
 aside#aside-sidebar {
-  background: var(--sena-blue) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: #278144 !important;
+  background-color: #278144 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 .aside-header {
-  background: var(--sena-blue) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
   color: var(--sena-white) !important;
+}
+
+.aside-header .sbm-logo-icon {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain !important;
+  filter: brightness(0) invert(1) !important;
 }
 
 .aside-brand-name {
   color: var(--sena-white) !important;
+  font-weight: 500 !important;
+  font-size: 0.92rem !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
 }
 
-.aside-brand-sub,
+.aside-brand-sub {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 400 !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
 .aside-section-label,
 aside span.text-uppercase {
-  color: rgba(255, 255, 255, 0.72) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
 }
 
 aside .nav-link {
-  color: rgba(255, 255, 255, 0.88) !important;
-  border-left: 4px solid transparent !important;
+  color: var(--sena-white) !important;
+  border-left: none !important;
+  border-radius: 10px !important;
 }
 
 aside .nav-link .nav-icon,
 aside .nav-link i {
-  stroke: rgba(255, 255, 255, 0.82) !important;
-  color: rgba(255, 255, 255, 0.82) !important;
-}
-
-aside .nav-link:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
+  stroke: var(--sena-white) !important;
   color: var(--sena-white) !important;
-  border-left-color: var(--sena-green) !important;
+  opacity: 1 !important;
 }
 
-aside .nav-link:hover .nav-icon,
-aside .nav-link:hover i {
+aside .nav-link:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: var(--sena-white) !important;
+  border-left: none !important;
+}
+
+aside .nav-link:hover:not(.active) .nav-icon,
+aside .nav-link:hover:not(.active) i {
   stroke: var(--sena-white) !important;
   color: var(--sena-white) !important;
 }
 
 aside .nav-link.active {
-  background: rgba(57, 169, 0, 0.22) !important;
-  border-left: 4px solid var(--sena-green) !important;
-  color: var(--sena-white) !important;
+  background: var(--sena-white) !important;
+  background-color: var(--sena-white) !important;
+  border-left: none !important;
+  border-radius: 10px !important;
+  color: #000000 !important;
   font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 aside .nav-link.active .nav-icon,
-aside .nav-link.active i {
-  stroke: var(--sena-green) !important;
-  color: var(--sena-green) !important;
+aside .nav-link.active i,
+aside .nav-link.active span {
+  stroke: #1B4D2E !important;
+  color: #000000 !important;
 }
 
 /* Header, Navbar y Footer */
@@ -817,38 +842,40 @@ a.text-primary:hover,
   color: var(--sena-white, #FFFFFF) !important;
 }
 
-/* 2. Aside / Barra Lateral de Navegación */
-aside .nav-link:hover,
-aside .aside-nav a:hover,
-.aside-nav .nav-link:hover {
+/* 2. Aside / Barra Lateral de Navegación (Logo SENA, Fondo Verde SENA e Ítem Activo Blanco) */
+aside .nav-link:hover:not(.active),
+aside .aside-nav a:hover:not(.active),
+.aside-nav .nav-link:hover:not(.active) {
   color: var(--sena-white, #FFFFFF) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-left-color: var(--sena-green, #39A900) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-left: none !important;
 }
 
-aside .nav-link:hover .nav-icon,
-aside .nav-link:hover i {
-  stroke: var(--sena-green-border, #A8E08A) !important;
-  color: var(--sena-green-border, #A8E08A) !important;
+aside .nav-link:hover:not(.active) .nav-icon,
+aside .nav-link:hover:not(.active) i {
+  stroke: var(--sena-white, #FFFFFF) !important;
+  color: var(--sena-white, #FFFFFF) !important;
 }
 
 aside .nav-link.active,
 aside .aside-nav .nav-link.active,
 aside .aside-nav a.active,
 .aside-nav .nav-link.active {
-  background: rgba(57, 169, 0, 0.22) !important;
-  border-left: 4px solid var(--sena-green, #39A900) !important;
-  color: var(--sena-white, #FFFFFF) !important;
+  background: var(--sena-white, #FFFFFF) !important;
+  background-color: var(--sena-white, #FFFFFF) !important;
+  border-left: none !important;
+  border-radius: 10px !important;
+  color: #000000 !important;
   font-weight: 700 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 aside .nav-link.active .nav-icon,
 aside .nav-link.active i,
 aside .aside-nav a.active .nav-icon,
 aside .aside-nav a.active i {
-  stroke: var(--sena-green, #39A900) !important;
-  color: var(--sena-green, #39A900) !important;
+  stroke: #1B4D2E !important;
+  color: #000000 !important;
 }
 
 aside .badge,
