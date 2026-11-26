@@ -200,6 +200,40 @@ function abrirEditar(doc, nombre, correo, telefono, rol, tipoDoc, ficha, program
 
   var modalEditEl = document.getElementById('modalEditarUsuario');
   if (modalEditEl) {
-    new bootstrap.Modal(modalEditEl).show();
+    bootstrap.Modal.getOrCreateInstance(modalEditEl).show();
+  }
+}
+
+function abrirEliminar(doc, nombre, correo, rol, tipoDoc) {
+  var delAvatar = document.getElementById('delAvatar');
+  if (delAvatar) {
+    delAvatar.textContent = (nombre || 'US').slice(0, 2).toUpperCase();
+    delAvatar.className = 'gu-avatar flex-shrink-0 ' + (rol === 'Administrador' ? 'gu-avatar-admin' : 'gu-avatar-user');
+  }
+
+  var setTxt = function (id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val || '—';
+  };
+
+  var docHidden = document.getElementById('del_doc_hidden');
+  if (docHidden) docHidden.value = doc || '';
+
+  setTxt('delNombre', nombre);
+  setTxt('delDoc', (tipoDoc ? tipoDoc + ' · ' : '') + doc);
+  setTxt('delCorreo', correo || 'Sin correo');
+
+  var delRol = document.getElementById('delRol');
+  if (delRol) {
+    delRol.textContent = rol || '';
+    delRol.className = 'gu-badge-role flex-shrink-0 ' + (
+      rol === 'Administrador' ? 'gu-badge-admin' :
+      rol === 'Instructor' ? 'gu-badge-instructor' : 'gu-badge-user'
+    );
+  }
+
+  var modalDelEl = document.getElementById('modalEliminarUsuario');
+  if (modalDelEl) {
+    bootstrap.Modal.getOrCreateInstance(modalDelEl).show();
   }
 }

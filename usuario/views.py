@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Q
+from django.db.models import ProtectedError, Q, RestrictedError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -288,6 +288,21 @@ def lista_usuarios_view(request):
             for field, errs in form.errors.items():
                 for err in errs:
                     messages.error(request, err)
+        return redirect('lista_usuarios')
+
+    # ── POST: eliminar usuario ────────────────────────────────
+    if request.method == 'POST' and request.POST.get('accion') == 'eliminar_usuario':
+        doc = request.POST.get('numero_documento', '').strip()
+        usuario = get_object_or_404(Usuario, documento=doc)
+        if doc == str(request.session.get('usuario_documento', '')).strip():
+            messages.error(request, 'No puedes eliminar tu propia cuenta de administrador.')
+            return redirect('lista_usuarios')
+        try:
+            nombre = usuario.nombre_completo
+            usuario.delete()
+            messages.success(request, f'Usuario {nombre} eliminado correctamente.')
+        except (ProtectedError, RestrictedError):
+            messages.error(request, f'No se puede eliminar a {usuario.nombre_completo} porque tiene préstamos o registros asociados.')
         return redirect('lista_usuarios')
 
     # ── GET: listar con filtros ───────────────────────────────
