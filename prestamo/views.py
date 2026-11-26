@@ -26,9 +26,12 @@ from .models import (
 
 def notificaciones_json(request):
     """Endpoint para obtener notificaciones en JSON basadas en la base de datos."""
+    from usuario.decorators import es_administrador_valido
+
     doc = request.session.get('usuario_documento')
-    rol = (request.session.get('usuario_rol') or '').lower()
-    es_admin = rol in ['admin', 'administrador']
+    if not doc and not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
+        return JsonResponse({'error': 'Debes iniciar sesión para acceder.'}, status=401)
+    es_admin = es_administrador_valido(request)
 
     items = []
 
@@ -135,8 +138,10 @@ def notificaciones_json(request):
 @sesion_requerida
 def prestamo_lista(request):
     """Vista principal para la gestión de préstamos (Admin)."""
-    es_admin = request.session.get('usuario_rol', '').lower() in ('admin', 'administrador')
-    if not es_admin:
+    from usuario.decorators import es_administrador_valido
+
+    if not es_administrador_valido(request):
+        messages.error(request, 'No tienes permisos para acceder a esta sección.')
         return redirect('prestamo_usuario')
 
     # Manejar acciones POST enviadas directamente a la ruta 'prestamo'
@@ -615,9 +620,18 @@ def crear_prestamo_grupal_instructor(request):
     if not instructor_obj:
         return JsonResponse({"status": "error", "message": "No se encontró el Instructor titular en el sistema."}, status=400)
 
-    es_admin = rol_sesion in ("admin", "administrador")
-    if not (es_admin or getattr(instructor_obj, "es_instructor", False) or instructor_obj.documento == doc_sesion):
-        return JsonResponse({"status": "error", "message": "Acceso no autorizado para tramitar a nombre de este instructor."}, status=403)
+    from usuario.decorators import es_administrador_valido
+
+    es_admin = es_administrador_valido(request)
+    usuario_sesion = Usuario.objects.filter(documento=doc_sesion).first() if doc_sesion else None
+    es_instructor_sesion = bool(
+        usuario_sesion and (
+            getattr(usuario_sesion, "es_instructor", False)
+            or str(usuario_sesion.rol).strip().lower() == "instructor"
+        )
+    )
+    if not (es_admin or (es_instructor_sesion and instructor_obj.documento == doc_sesion)):
+        return JsonResponse({"status": "error", "message": "Acceso no autorizado para tramitar préstamos grupales."}, status=403)
 
     ficha = request.POST.get("ficha", "").strip() or getattr(instructor_obj, "ficha", "") or "Sin Ficha"
     ambiente_mina = request.POST.get("ambiente_mina", "").strip()
@@ -730,10 +744,17 @@ def comprobante_prestamo(request, prestamo_id):
     Genera la hoja oficial imprimible (comprobante de entrega / vale de préstamo)
     con formato institucional SENA Centro Minero para prácticas formativas.
     """
+    from usuario.decorators import es_administrador_valido
+
     prestamo = get_object_or_404(
         Prestamo.objects.select_related("documento").prefetch_related("detalles__codigo_herramienta"),
         pk=prestamo_id,
     )
+
+    doc_sesion = request.session.get("usuario_documento")
+    if not es_administrador_valido(request) and prestamo.documento_id != doc_sesion:
+        messages.error(request, "No tienes permisos para ver este comprobante.")
+        return redirect("pagina_principal")
 
     auto_print = request.GET.get("auto_print") == "1"
 

@@ -123,11 +123,10 @@ body.dark-mode:not(.auth-page),
 html[data-theme="dark"] body:not(.auth-page),
 body.dark-mode main,
 body.dark-mode .body-wrap {
-  background-color: #0D1117 !important;
+  background-color: #0B0D0F !important;
   color: #F3F4F6 !important;
 }
 
-/* Títulos y jerarquía tipográfica en modo oscuro */
 body.dark-mode h1,
 body.dark-mode h2,
 body.dark-mode h3,
@@ -148,10 +147,9 @@ body.dark-mode .page-title {
 body.dark-mode .text-muted,
 body.dark-mode p.text-muted,
 body.dark-mode .kpi-title-label {
-  color: #9CA3AF !important;
+  color: #8E96A0 !important;
 }
 
-/* Superficies de tarjetas y contenedores */
 body.dark-mode .card,
 body.dark-mode .kpi-card,
 body.dark-mode .table-card,
@@ -162,30 +160,39 @@ body.dark-mode .gu-table-card,
 body.dark-mode .config-card,
 body.dark-mode .sfb-wrap,
 body.dark-mode .modal-content {
-  background-color: #141920 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background-color: #141619 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
   color: #F3F4F6 !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
 }
 
 body.dark-mode .kpi-card:hover {
-  border-color: rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.48) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.48) !important;
 }
 
+body.dark-mode .kpi-accent-bar {
+  height: 2px;
+  opacity: 0.9;
+}
+
+body.dark-mode .kpi-accent-blue   { background: #39A900; }
+body.dark-mode .kpi-accent-green  { background: #22C55E; }
+body.dark-mode .kpi-accent-rust   { background: #E5484D; }
+body.dark-mode .kpi-accent-yellow { background: #E5A00D; }
+
 body.dark-mode .card-header {
-  background-color: #141920 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background-color: #141619 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
   color: #F3F4F6 !important;
 }
 
 body.dark-mode .card-footer,
 body.dark-mode .modal-footer {
-  background-color: #11161C !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background-color: #111316 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
 
-/* KPI Números, subtítulos e íconos */
 body.dark-mode .kpi-num-display {
   color: #F9FAFB !important;
 }
@@ -206,10 +213,12 @@ body.dark-mode .kpi-card .text-warning {
   color: #FBBF24 !important;
 }
 
-/* Íconos en encabezados de gráficas */
-body.dark-mode .card-title .text-primary,
-body.dark-mode .card-title .text-info {
+body.dark-mode .card-title .text-primary {
   color: #4ADE80 !important;
+}
+
+body.dark-mode .card-title .text-info {
+  color: #38BDF8 !important;
 }
 
 body.dark-mode .card-title .text-danger {
@@ -220,29 +229,28 @@ body.dark-mode .card-title .text-warning {
   color: #FBBF24 !important;
 }
 
-/* Botones principales y secundarios ("Ver préstamos", "Ver todos >") */
 body.dark-mode .btn-primary-mine,
 body.dark-mode .btn-primary,
 body.dark-mode .btn-success {
   background: #39A900 !important;
   background-color: #39A900 !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: #FFFFFF !important;
-  box-shadow: 0 2px 10px rgba(57, 169, 0, 0.25) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 body.dark-mode .btn-primary-mine:hover,
 body.dark-mode .btn-primary:hover,
 body.dark-mode .btn-success:hover {
-  background: #2E8800 !important;
-  background-color: #2E8800 !important;
+  background: #2F8E00 !important;
+  background-color: #2F8E00 !important;
   color: #FFFFFF !important;
 }
 
 body.dark-mode .btn-ghost {
-  background: rgba(57, 169, 0, 0.12) !important;
+  background: rgba(57, 169, 0, 0.1) !important;
   color: #4ADE80 !important;
-  border: 1px solid rgba(57, 169, 0, 0.3) !important;
+  border: 1px solid rgba(57, 169, 0, 0.28) !important;
   box-shadow: none !important;
 }
 
@@ -260,17 +268,16 @@ body.dark-mode .btn-ghost:hover i {
   color: #FFFFFF !important;
 }
 
-/* Filas de devoluciones recientes y accesos rápidos */
 body.dark-mode .recent-dev-row,
 body.dark-mode .quick-action-link {
-  background-color: #1A2029 !important;
-  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background-color: #1A1D21 !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
   color: #F3F4F6 !important;
 }
 
 body.dark-mode .quick-action-link:hover {
-  background-color: #202834 !important;
-  border-color: rgba(57, 169, 0, 0.45) !important;
+  background-color: #20242A !important;
+  border-color: rgba(57, 169, 0, 0.4) !important;
   color: #FFFFFF !important;
 }
 
@@ -281,17 +288,17 @@ body.dark-mode .quick-action-link .fw-semibold {
 
 body.dark-mode .quick-action-icon.icon-blue,
 body.dark-mode .quick-action-icon.icon-green {
-  background-color: rgba(57, 169, 0, 0.14) !important;
+  background-color: rgba(57, 169, 0, 0.12) !important;
   color: #4ADE80 !important;
 }
 
 body.dark-mode .quick-action-icon.icon-amber {
-  background-color: rgba(245, 158, 11, 0.14) !important;
+  background-color: rgba(245, 158, 11, 0.12) !important;
   color: #FBBF24 !important;
 }
 
 body.dark-mode .bg-success-subtle {
-  background-color: rgba(16, 185, 129, 0.14) !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
   color: #34D399 !important;
-  border-color: rgba(16, 185, 129, 0.3) !important;
+  border-color: rgba(16, 185, 129, 0.26) !important;
 }

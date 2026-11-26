@@ -288,3 +288,87 @@ html.auth-enter-left  body.auth-page .auth-tabs::before { transition: none !impo
   html body.auth-page .row-2 { grid-template-columns: 1fr !important; }
 }
 
+html.dark-mode body.auth-page .right-panel {
+  background: #141619 !important;
+  color: #F3F4F6 !important;
+  border-left-color: rgba(255, 255, 255, 0.08) !important;
+}
+html.dark-mode body.auth-page .logo-box {
+  background: rgba(57, 169, 0, 0.14) !important;
+  border-color: rgba(57, 169, 0, 0.32) !important;
+}
+html.dark-mode body.auth-page .logo-sup {
+  color: #4ADE80 !important;
+}
+html.dark-mode body.auth-page .logo-name,
+html.dark-mode body.auth-page .page-title {
+  color: #F3F4F6 !important;
+}
+html.dark-mode body.auth-page .page-sub,
+html.dark-mode body.auth-page .field-lbl,
+html.dark-mode body.auth-page .doc-hint,
+html.dark-mode body.auth-page .version-text,
+html.dark-mode body.auth-page .auth-switch {
+  color: #9CA3AF !important;
+}
+html.dark-mode body.auth-page .auth-tabs {
+  background: #0F1114 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html.dark-mode body.auth-page .tab-btn:not(.on) {
+  color: #9CA3AF !important;
+}
+html.dark-mode body.auth-page .tab-btn:not(.on):hover {
+  color: #4ADE80 !important;
+}
+html.dark-mode body.auth-page .input-group-mine,
+html.dark-mode body.auth-page .mine-input.full,
+html.dark-mode body.auth-page select.mine-input {
+  background: #0F1114 !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #F3F4F6 !important;
+}
+html.dark-mode body.auth-page .mine-input,
+html.dark-mode body.auth-page select.mine-input:not(:invalid) {
+  color: #F3F4F6 !important;
+}
+html.dark-mode body.auth-page select.mine-input option {
+  background: #141619 !important;
+  color: #F3F4F6 !important;
+}
+html.dark-mode body.auth-page .input-group-mine .sel-btn {
+  background: transparent !important;
+  border-right-color: rgba(255, 255, 255, 0.14) !important;
+  color: #E5E7EB !important;
+}
+html.dark-mode body.auth-page .mine-input[readonly] {
+  background: #1A1D21 !important;
+  color: #8E96A0 !important;
+}
+html.dark-mode body.auth-page .doc-dropdown {
+  background: #16191D !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+html.dark-mode body.auth-page .doc-dropdown a {
+  color: #E5E7EB !important;
+}
+html.dark-mode body.auth-page .doc-dropdown a:hover {
+  background: rgba(57, 169, 0, 0.14) !important;
+  color: #4ADE80 !important;
+}
+html.dark-mode body.auth-page .link-mine,
+html.dark-mode body.auth-page .auth-switch a {
+  color: #4ADE80 !important;
+}
+html.dark-mode body.auth-page .btn-submit:disabled {
+  background: #233320 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #9CA3AF !important;
+  opacity: 0.7 !important;
+}
+html.dark-mode body.auth-page .alert-mine.success {
+  background: rgba(57, 169, 0, 0.14) !important;
+  border-color: rgba(57, 169, 0, 0.32) !important;
+  color: #4ADE80 !important;
+}
+

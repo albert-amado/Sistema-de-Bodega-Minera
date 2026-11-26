@@ -2,13 +2,13 @@ from django.contrib import messages
 from django.db.models import ProtectedError, RestrictedError
 from django.shortcuts import get_object_or_404, redirect, render
 
-from common.mixins import sesion_requerida
+from usuario.decorators import admin_required
 
 from .forms import AlmacenForm, EstanteForm
 from .models import Almacen, Estante
 
 
-@sesion_requerida
+@admin_required
 def vista_almacenes(request):
     almacenes = Almacen.objects.prefetch_related('estantes').all()
     form = AlmacenForm()
@@ -72,7 +72,7 @@ def vista_almacenes(request):
     return render(request, 'almacen.html', context)
 
 
-@sesion_requerida
+@admin_required
 def vista_estantes(request):
     estantes = Estante.objects.select_related('codigo_almacen').prefetch_related('herramientas').all()
     form = EstanteForm()
@@ -140,12 +140,12 @@ def vista_estantes(request):
     return render(request, 'estante.html', context)
 
 
-@sesion_requerida
+@admin_required
 def crear_estante(request):
     return redirect('estantes')
 
 
-@sesion_requerida
+@admin_required
 def detalle_almacen(request, pk):
     almacen = get_object_or_404(Almacen, pk=pk)
     estantes = Estante.objects.filter(codigo_almacen=almacen).prefetch_related('herramientas')

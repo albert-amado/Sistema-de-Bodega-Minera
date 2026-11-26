@@ -222,8 +222,12 @@ class HerramientaViewIntegrationTests(HerramientaBaseTestCase):
         self.assertRedirects(response, reverse("login"))
 
     def test_inventario_autenticado_status_200_y_kpis(self):
-        """Verifica que un usuario autenticado pueda visualizar el catálogo con KPIs correctos."""
+        """Verifica que un administrador pueda visualizar el catálogo con KPIs correctos y un usuario normal sea bloqueado."""
         self.login_as(self.operador)
+        resp_operador = self.client.get(reverse("inventario"))
+        self.assertRedirects(resp_operador, reverse("pagina_principal"))
+
+        self.login_as(self.admin)
         response = self.client.get(reverse("inventario"))
 
         self.assertEqual(response.status_code, 200)
@@ -261,7 +265,7 @@ class HerramientaViewIntegrationTests(HerramientaBaseTestCase):
             "stock": "1",
         }
         response = self.client.post(reverse("inventario"), data=post_data)
-        self.assertRedirects(response, reverse("inventario"))
+        self.assertRedirects(response, reverse("pagina_principal"))
 
         # No debe haberse creado
         self.assertFalse(Herramienta.objects.filter(codigo_sku="PICA-01").exists())

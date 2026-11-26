@@ -350,15 +350,11 @@ footer {
 /* Modales institucionales */
 .modal-header.bg-primary,
 .modal-header.bg-dark,
+.modal-header.bg-success,
 .sbm-modal-header {
-  background: var(--sena-blue) !important;
-  color: var(--sena-white) !important;
-  border-bottom: 3px solid var(--sena-green) !important;
-}
-
-.modal-header.bg-success {
   background: var(--sena-green) !important;
   color: var(--sena-white) !important;
+  border-bottom: 2px solid var(--sena-green-hover) !important;
 }
 
 .sbm-modal-avatar,

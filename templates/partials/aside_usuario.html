@@ -21,7 +21,7 @@
     <!-- Principal -->
     <a href="{% url 'pagina_principal' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium
-              {% if request.resolver_match.url_name == 'pagina_principal' or request.resolver_match.url_name == 'home' %}active{% endif %}">
+              {% if request.resolver_match.url_name == 'pagina_principal' or request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'home_usuario' %}active{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <rect x="3" y="3" width="7" height="7" />
         <rect x="14" y="3" width="7" height="7" />

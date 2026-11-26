@@ -193,3 +193,79 @@
   color: #dc2626;
   border-color: #fca5a5;
 }
+
+body.dark-mode .inv-kpi-card {
+  background: #141619 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+}
+body.dark-mode .inv-kpi-card.accent-blue {
+  border-left: 4px solid #39A900 !important;
+}
+body.dark-mode .inv-kpi-card.accent-green {
+  border-left: 4px solid #22C55E !important;
+}
+body.dark-mode .inv-kpi-card.accent-red {
+  border-left: 4px solid #E5484D !important;
+}
+body.dark-mode .inv-kpi-card.accent-amber {
+  border-left: 4px solid #E5A00D !important;
+}
+body.dark-mode .inv-kpi-icon.blue,
+body.dark-mode .inv-kpi-icon.green {
+  background: rgba(57, 169, 0, 0.14) !important;
+  color: #4ADE80 !important;
+}
+body.dark-mode .inv-kpi-icon.red {
+  background: rgba(239, 68, 68, 0.14) !important;
+  color: #F87171 !important;
+}
+body.dark-mode .inv-kpi-icon.amber {
+  background: rgba(245, 158, 11, 0.14) !important;
+  color: #FBBF24 !important;
+}
+body.dark-mode .inv-kpi-label {
+  color: #8E96A0 !important;
+}
+body.dark-mode .inv-kpi-value {
+  color: #F9FAFB !important;
+}
+body.dark-mode .inv-kpi-value.danger {
+  color: #F87171 !important;
+}
+body.dark-mode .inv-kpi-value.warning {
+  color: #FBBF24 !important;
+}
+body.dark-mode .inv-filter-bar {
+  background: #141619 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+body.dark-mode .inv-search-icon {
+  color: #8E96A0 !important;
+}
+body.dark-mode .inv-search-input,
+body.dark-mode .inv-cat-select {
+  background: #0F1114 !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #F3F4F6 !important;
+}
+body.dark-mode .inv-search-input::placeholder {
+  color: #6E7681 !important;
+}
+body.dark-mode .inv-search-input:focus,
+body.dark-mode .inv-cat-select:focus {
+  background: #0F1114 !important;
+  border-color: #39A900 !important;
+  color: #FFFFFF !important;
+}
+body.dark-mode .inv-filter-bar .btn-clear {
+  background: #1A1D21 !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #D1D5DB !important;
+}
+body.dark-mode .inv-filter-bar .btn-clear:hover {
+  background: rgba(239, 68, 68, 0.14) !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  color: #F87171 !important;
+}

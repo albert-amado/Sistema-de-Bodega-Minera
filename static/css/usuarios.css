@@ -371,3 +371,116 @@
 .gu-user-table-name {
   color: var(--sena-text, #1E1E1E);
 }
+
+body.dark-mode .gu-title {
+  color: #F3F4F6 !important;
+}
+body.dark-mode .gu-subtitle {
+  color: #8E96A0 !important;
+}
+body.dark-mode .gu-count-badge {
+  background: #1A1D21 !important;
+  color: #F3F4F6 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+body.dark-mode .gu-search-icon {
+  color: #8E96A0 !important;
+}
+body.dark-mode .gu-btn-clear {
+  background: #1A1D21 !important;
+  color: #D1D5DB !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+body.dark-mode .gu-btn-clear:hover {
+  background: rgba(239, 68, 68, 0.14) !important;
+  color: #F87171 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+body.dark-mode .gu-toggle-group {
+  background: #0F1114 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+body.dark-mode .gu-toggle-btn {
+  color: #9CA3AF !important;
+}
+body.dark-mode .gu-toggle-btn:hover {
+  color: #F3F4F6 !important;
+}
+body.dark-mode .gu-toggle-btn.active {
+  background: #1F242B !important;
+  color: #4ADE80 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+}
+body.dark-mode .gu-card:hover {
+  border-color: rgba(57, 169, 0, 0.45) !important;
+}
+body.dark-mode .gu-avatar-admin {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: #F87171 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+body.dark-mode .gu-avatar-user {
+  background: rgba(57, 169, 0, 0.16) !important;
+  color: #4ADE80 !important;
+  border-color: rgba(57, 169, 0, 0.35) !important;
+}
+body.dark-mode .gu-user-name,
+body.dark-mode .gu-user-table-name,
+body.dark-mode .gu-info-text,
+body.dark-mode .gu-info-email {
+  color: #F3F4F6 !important;
+}
+body.dark-mode .gu-badge-admin {
+  background: rgba(239, 68, 68, 0.14) !important;
+  color: #F87171 !important;
+  border-color: rgba(239, 68, 68, 0.32) !important;
+}
+body.dark-mode .gu-badge-instructor {
+  background: rgba(56, 189, 248, 0.14) !important;
+  color: #38BDF8 !important;
+  border-color: rgba(56, 189, 248, 0.32) !important;
+}
+body.dark-mode .gu-badge-user {
+  background: rgba(57, 169, 0, 0.14) !important;
+  color: #4ADE80 !important;
+  border-color: rgba(57, 169, 0, 0.32) !important;
+}
+body.dark-mode .gu-info-row {
+  color: #9CA3AF !important;
+}
+body.dark-mode .gu-info-icon {
+  background: #1A1D21 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #4ADE80 !important;
+}
+body.dark-mode .gu-info-badge-ficha {
+  background: #1A1D21 !important;
+  color: #E5E7EB !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+body.dark-mode .gu-card-footer {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+body.dark-mode .gu-btn-view {
+  background: #1A1D21 !important;
+  color: #E5E7EB !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+body.dark-mode .gu-btn-view:hover {
+  background: #262B33 !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+}
+body.dark-mode .gu-table thead th {
+  background: #1A1D21 !important;
+  color: #9CA3AF !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+body.dark-mode .gu-table tbody td {
+  background: #141619 !important;
+  color: #E5E7EB !important;
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+body.dark-mode .gu-table tbody tr:hover td {
+  background: #1C2026 !important;
+}
