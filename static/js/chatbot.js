@@ -16,6 +16,9 @@
   var panel = document.getElementById('chatbotPanel');
   var closeBtn = document.getElementById('btnChatbotClose');
   var resetBtn = document.getElementById('btnChatbotReset');
+  var resetDialog = document.getElementById('chatbotResetDialog');
+  var resetConfirmBtn = document.getElementById('btnChatbotResetConfirm');
+  var resetCancelBtn = document.getElementById('btnChatbotResetCancel');
   var messagesBox = document.getElementById('chatbotMessages');
   var typingIndicator = document.getElementById('chatbotTyping');
   var form = document.getElementById('chatbotForm');
@@ -231,22 +234,37 @@
   });
 
   // ── Reset de Conversación ──
-  if (resetBtn) {
+  function closeResetDialog() {
+    resetDialog.hidden = true;
+    resetBtn.focus();
+  }
+
+  function resetConversation() {
+    conversationHistory = [];
+    // Mantener solo el primer mensaje (bienvenida) y las sugerencias
+    var welcomeMsg = messagesBox.querySelector('.sbm-message-bot');
+    var suggestions = messagesBox.querySelector('.sbm-chat-suggestions');
+    messagesBox.innerHTML = '';
+    if (welcomeMsg) messagesBox.appendChild(welcomeMsg);
+    if (suggestions) messagesBox.appendChild(suggestions);
+    input.value = '';
+    input.style.height = 'auto';
+    charCounter.textContent = '0/500';
+    charCounter.classList.remove('near-limit', 'at-limit');
+    input.focus();
+  }
+
+  if (resetBtn && resetDialog && resetConfirmBtn && resetCancelBtn) {
     resetBtn.addEventListener('click', function () {
-      if (confirm('¿Deseas reiniciar la conversación con el asistente?')) {
-        conversationHistory = [];
-        // Mantener solo el primer mensaje (bienvenida) y las sugerencias
-        var welcomeMsg = messagesBox.querySelector('.sbm-message-bot');
-        var suggestions = messagesBox.querySelector('.sbm-chat-suggestions');
-        messagesBox.innerHTML = '';
-        if (welcomeMsg) messagesBox.appendChild(welcomeMsg);
-        if (suggestions) messagesBox.appendChild(suggestions);
-        input.value = '';
-        input.style.height = 'auto';
-        charCounter.textContent = '0/500';
-        charCounter.classList.remove('near-limit', 'at-limit');
-        input.focus();
-      }
+      resetDialog.hidden = false;
+      resetCancelBtn.focus();
+    });
+
+    resetCancelBtn.addEventListener('click', closeResetDialog);
+
+    resetConfirmBtn.addEventListener('click', function () {
+      resetDialog.hidden = true;
+      resetConversation();
     });
   }
 
@@ -263,6 +281,13 @@
 
   // Cerrar con Escape
   document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && resetDialog && !resetDialog.hidden) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeResetDialog();
+      return;
+    }
+
     if (e.key === 'Escape' && panel.classList.contains('is-active')) {
       toggleChatbot(false);
     }
