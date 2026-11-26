@@ -1,3 +1,5 @@
+@import url('./var.css');
+
 /* ==========================================================================
    SISTEMA DE BODEGA MINERA (SBM) — IDENTIDAD VISUAL INSTITUCIONAL SENA
    Paleta de colores oficial SENA centralizada en :root (WCAG AA/AAA).
@@ -8,23 +10,23 @@
 
 :root {
   /* ── 1. PALETA OFICIAL SENA (TOKENS MAESTROS) ── */
-  --sena-green:          #39A900;   /* Verde Principal SENA (Botones CTA, Foco, Éxito, Iconos activos) */
-  --sena-green-hover:    #2E8800;   /* Verde SENA Hover / Activo */
-  --sena-green-light:    #EBF7E5;   /* Fondo sutil verde SENA */
-  --sena-green-border:   #A8E08A;   /* Borde suave verde SENA */
-  --sena-green-focus:    rgba(57, 169, 0, 0.25); /* Anillo de foco accesible */
+  --sena-green:          var(--color-primary);   /* Verde Principal SENA (Botones CTA, Foco, Éxito, Iconos activos) */
+  --sena-green-hover:    var(--color-primary-hover);   /* Verde SENA Hover / Activo */
+  --sena-green-light:    var(--color-primary-soft);   /* Fondo sutil verde SENA */
+  --sena-green-border:   var(--border-primary);   /* Borde suave verde SENA */
+  --sena-green-focus:    var(--border-focus); /* Anillo de foco accesible */
 
-  --sena-blue:           #00324D;   /* Azul Institucional SENA (Headers, Sidebar, Títulos H1-H3) */
-  --sena-blue-hover:     #002438;   /* Azul Institucional profundo */
-  --sena-blue-light:     #E6EEF2;   /* Fondo sutil azul institucional */
-  --sena-blue-border:    #A8E08A;   /* Contorno verde SENA unificado */
+  --sena-blue:           var(--color-secondary);   /* Azul Institucional SENA (Headers, Sidebar, Títulos H1-H3) */
+  --sena-blue-hover:     var(--color-secondary-hover);   /* Azul Institucional profundo */
+  --sena-blue-light:     var(--color-secondary-soft);   /* Fondo sutil azul institucional */
+  --sena-blue-border:    var(--border-primary);   /* Contorno verde SENA unificado */
 
-  --sena-white:          #FFFFFF;   /* Blanco puro (Tarjetas, Fondos limpios, Contraste) */
-  --sena-text:           #1E1E1E;   /* Texto principal de alto contraste */
-  --sena-text-black:     #000000;   /* Negro absoluto para énfasis */
-  --sena-text-muted:     #4B5563;   /* Texto secundario legible sobre #FFFFFF y #F4F6F9 */
-  --sena-bg-light:       #F4F6F9;   /* Gris claro (Fondo de secciones, página y paneles) */
-  --sena-border:         #D1D5DB;   /* Gris medio (Bordes de tarjetas, tablas e inputs) */
+  --sena-white:          var(--bg-surface);   /* Blanco puro (Tarjetas, Fondos limpios, Contraste) */
+  --sena-text:           var(--text-primary);   /* Texto principal de alto contraste */
+  --sena-text-black:     var(--text-emphasis);   /* Negro absoluto para énfasis */
+  --sena-text-muted:     var(--text-secondary);   /* Texto secundario legible sobre #FFFFFF y #F4F6F9 */
+  --sena-bg-light:       var(--bg-main);   /* Gris claro (Fondo de secciones, página y paneles) */
+  --sena-border:         var(--border-color);   /* Gris medio (Bordes de tarjetas, tablas e inputs) */
 
   /* ── 2. MAPEO A VARIABLES DEL SISTEMA Y BOOTSTRAP 5 ── */
   --bg-body:             var(--sena-bg-light);
@@ -38,31 +40,31 @@
   --rust:                var(--sena-blue);
   --cream:               var(--sena-white);
 
-  --bs-primary:          #39A900;
-  --bs-primary-rgb:      57, 169, 0;
-  --bs-success:          #39A900;
-  --bs-success-rgb:      57, 169, 0;
-  --bs-info:             #00324D;
-  --bs-info-rgb:         0, 50, 77;
-  --bs-dark:             #00324D;
-  --bs-dark-rgb:         0, 50, 77;
-  --bs-light:            #F4F6F9;
-  --bs-light-rgb:        244, 246, 249;
-  --bs-body-bg:          #F4F6F9;
-  --bs-body-color:       #1E1E1E;
-  --bs-border-color:     #D1D5DB;
-  --bs-link-color:       #1E1E1E;
-  --bs-link-hover-color: #39A900;
+  --bs-primary:          var(--color-primary);
+  --bs-primary-rgb:      var(--color-primary-rgb);
+  --bs-success:          var(--color-primary);
+  --bs-success-rgb:      var(--color-primary-rgb);
+  --bs-info:             var(--color-secondary);
+  --bs-info-rgb:         var(--color-secondary-rgb);
+  --bs-dark:             var(--color-secondary);
+  --bs-dark-rgb:         var(--color-secondary-rgb);
+  --bs-light:            var(--bg-main);
+  --bs-light-rgb:        var(--bg-main-rgb);
+  --bs-body-bg:          var(--bg-main);
+  --bs-body-color:       var(--text-primary);
+  --bs-border-color:     var(--border-color);
+  --bs-link-color:       var(--text-primary);
+  --bs-link-hover-color: var(--color-primary);
 
   /* ── 3. COMPATIBILIDAD CON TOKENS SBM EXISTENTES ── */
-  --sbm-rock-950:        #002438;
+  --sbm-rock-950:        var(--color-secondary-hover);
   --sbm-rock-900:        var(--sena-blue);
-  --sbm-rock-850:        #003B5C;
+  --sbm-rock-850:        var(--color-secondary);
   --sbm-rock-800:        var(--sena-blue);
   --sbm-rock-700:        var(--sena-blue);
   --sbm-rock-600:        var(--sena-text-muted);
   --sbm-rock-500:        var(--sena-text-muted);
-  --sbm-rock-400:        #9CA3AF;
+  --sbm-rock-400:        var(--text-placeholder);
   --sbm-rock-200:        var(--sena-border);
   --sbm-rock-100:        var(--sena-bg-light);
   --sbm-rock-50:         var(--sena-bg-light);
@@ -78,20 +80,20 @@
   --sbm-copper-400:      var(--sena-green-hover);
 
   /* ── 4. ESTADOS DE STOCK (ALTO CONTRASTE WCAG AA) ── */
-  --sbm-stock-ok-text:     #1E6000;
+  --sbm-stock-ok-text:     var(--status-success-text);
   --sbm-stock-ok-bg:       var(--sena-green-light);
   --sbm-stock-ok-border:   var(--sena-green-border);
   --sbm-stock-ok-solid:    var(--sena-green);
 
-  --sbm-stock-warn-text:   #92400E;
-  --sbm-stock-warn-bg:     #FFFBEB;
-  --sbm-stock-warn-border: #FDE68A;
-  --sbm-stock-warn-solid:  #D97706;
+  --sbm-stock-warn-text:   var(--status-warning-text);
+  --sbm-stock-warn-bg:     var(--status-warning-bg);
+  --sbm-stock-warn-border: var(--status-warning-border);
+  --sbm-stock-warn-solid:  var(--status-warning);
 
-  --sbm-stock-danger-text:   #991B1B;
-  --sbm-stock-danger-bg:     #FEF2F2;
-  --sbm-stock-danger-border: #FECACA;
-  --sbm-stock-danger-solid:  #DC2626;
+  --sbm-stock-danger-text:   var(--status-danger-text);
+  --sbm-stock-danger-bg:     var(--status-danger-bg);
+  --sbm-stock-danger-border: var(--status-danger-border);
+  --sbm-stock-danger-solid:  var(--status-danger);
 
   /* ── 5. SISTEMA DE ESPACIADO Y BORDES ── */
   --sbm-space-1:  4px;
@@ -112,10 +114,10 @@
   --sbm-radius-pill: 9999px;
 
   /* ── 6. SOMBRAS LIMPIAS ── */
-  --sbm-shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.06);
-  --sbm-shadow-md:   0 4px 12px rgba(0, 0, 0, 0.08);
-  --sbm-shadow-lg:   0 10px 25px rgba(0, 0, 0, 0.12);
-  --sbm-shadow-glow: 0 0 14px rgba(57, 169, 0, 0.28);
+  --sbm-shadow-sm:   0 1px 3px var(--shadow-color);
+  --sbm-shadow-md:   0 4px 12px var(--shadow-color);
+  --sbm-shadow-lg:   0 10px 25px var(--shadow-color-md);
+  --sbm-shadow-glow: 0 0 14px var(--border-focus);
 
   /* ── 7. TIPOGRAFÍA ── */
   --sbm-font-sans: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
@@ -140,7 +142,7 @@ body.auth-page .btn-submit {
   border-color: var(--sena-green) !important;
   color: var(--sena-white) !important;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(57, 169, 0, 0.22) !important;
+  box-shadow: 0 2px 6px var(--border-focus) !important;
   transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
 }
 
@@ -159,7 +161,7 @@ body.auth-page .btn-submit:hover:not(:disabled) {
   background-color: var(--sena-green-hover) !important;
   border-color: var(--sena-green-hover) !important;
   color: var(--sena-white) !important;
-  box-shadow: 0 4px 12px rgba(57, 169, 0, 0.32) !important;
+  box-shadow: 0 4px 12px var(--border-focus) !important;
   transform: translateY(-1px);
 }
 
@@ -258,14 +260,14 @@ aside h1, aside h2, aside h3 {
 /* Sidebar / Barra de Navegación Lateral Institucional Verde SENA (#278144) */
 aside,
 aside#aside-sidebar {
-  background: #278144 !important;
-  background-color: #278144 !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: var(--bg-sidebar) !important;
+  background-color: var(--bg-sidebar) !important;
+  border-right: 1px solid var(--bg-overlay-medium) !important;
 }
 
 .aside-header {
   background: transparent !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-bottom: 1px solid var(--bg-overlay-medium) !important;
   color: var(--sena-white) !important;
 }
 
@@ -285,7 +287,7 @@ aside#aside-sidebar {
 }
 
 .aside-brand-sub {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: var(--text-on-primary-muted) !important;
   font-weight: 400 !important;
   font-size: 0.72rem !important;
   letter-spacing: 0.06em !important;
@@ -294,7 +296,7 @@ aside#aside-sidebar {
 
 .aside-section-label,
 aside span.text-uppercase {
-  color: rgba(255, 255, 255, 0.88) !important;
+  color: var(--text-on-primary-muted) !important;
 }
 
 aside .nav-link {
@@ -311,7 +313,7 @@ aside .nav-link i {
 }
 
 aside .nav-link:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.14) !important;
+  background: var(--bg-overlay-medium) !important;
   color: var(--sena-white) !important;
   border-left: none !important;
 }
@@ -327,16 +329,16 @@ aside .nav-link.active {
   background-color: var(--sena-white) !important;
   border-left: none !important;
   border-radius: 10px !important;
-  color: #000000 !important;
+  color: var(--text-emphasis) !important;
   font-weight: 700 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 2px 6px var(--shadow-color-md) !important;
 }
 
 aside .nav-link.active .nav-icon,
 aside .nav-link.active i,
 aside .nav-link.active span {
-  stroke: #1B4D2E !important;
-  color: #000000 !important;
+  stroke: var(--color-primary-active) !important;
+  color: var(--text-emphasis) !important;
 }
 
 /* Header, Navbar y Footer */
@@ -378,7 +380,7 @@ body.auth-page .brand-text span {
 
 body.auth-page .brand-sub,
 body.auth-page .corner-note {
-  color: rgba(255, 255, 255, 0.75) !important;
+  color: var(--text-on-primary-muted) !important;
 }
 
 body.auth-page .logo-box,
@@ -693,7 +695,7 @@ table td,
 
 .sbm-action-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0, 50, 77, 0.12);
+  box-shadow: 0 2px 5px var(--shadow-color-secondary);
 }
 
 .sbm-btn-view {
@@ -730,20 +732,20 @@ table td,
 }
 
 .sbm-btn-danger {
-  color: #B91C1C;
-  background-color: #FEE2E2;
-  border-color: #FECACA;
+  color: var(--status-danger-text);
+  background-color: var(--status-danger-bg);
+  border-color: var(--status-danger-border);
 }
 .sbm-btn-danger:hover:not(:disabled) {
-  background-color: #DC2626;
+  background-color: var(--status-danger);
   color: var(--sena-white);
-  border-color: #DC2626;
+  border-color: var(--status-danger);
 }
 
 .sbm-btn-print {
   color: var(--sena-blue);
-  background-color: #f1f5f9;
-  border-color: #cbd5e1;
+  background-color: var(--bg-main);
+  border-color: var(--border-color);
   text-decoration: none;
 }
 .sbm-btn-print:hover:not(:disabled) {
@@ -788,150 +790,150 @@ table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
 .bg-primary,
 .bg-primary-subtle,
 .bg-light-primary {
-  background-color: var(--sena-green, #39A900) !important;
-  color: var(--sena-white, #FFFFFF) !important;
+  background-color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
 }
 
 .text-primary,
 a.text-primary,
 .link-primary {
-  color: var(--sena-green, #39A900) !important;
+  color: var(--sena-green, var(--color-primary)) !important;
 }
 
 .text-primary:hover,
 a.text-primary:hover,
 .link-primary:hover {
-  color: var(--sena-green-hover, #2E8800) !important;
+  color: var(--sena-green-hover, var(--color-primary-hover)) !important;
 }
 
 .border-primary {
-  border-color: var(--sena-green, #39A900) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
 }
 
 .btn-primary {
-  background-color: var(--sena-green, #39A900) !important;
-  border-color: var(--sena-green, #39A900) !important;
-  color: var(--sena-white, #FFFFFF) !important;
-  box-shadow: 0 2px 6px rgba(57, 169, 0, 0.22) !important;
+  background-color: var(--sena-green, var(--color-primary)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
+  box-shadow: 0 2px 6px var(--border-focus) !important;
 }
 
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {
-  background-color: var(--sena-green-hover, #2E8800) !important;
-  border-color: var(--sena-green-hover, #2E8800) !important;
-  color: var(--sena-white, #FFFFFF) !important;
-  box-shadow: 0 4px 12px rgba(57, 169, 0, 0.32) !important;
+  background-color: var(--sena-green-hover, var(--color-primary-hover)) !important;
+  border-color: var(--sena-green-hover, var(--color-primary-hover)) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
+  box-shadow: 0 4px 12px var(--border-focus) !important;
 }
 
 .btn-outline-primary {
-  color: var(--sena-green, #39A900) !important;
-  border-color: var(--sena-green, #39A900) !important;
+  color: var(--sena-green, var(--color-primary)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
   background-color: transparent !important;
 }
 
 .btn-outline-primary:hover,
 .btn-outline-primary:focus,
 .btn-outline-primary:active {
-  background-color: var(--sena-green, #39A900) !important;
-  border-color: var(--sena-green, #39A900) !important;
-  color: var(--sena-white, #FFFFFF) !important;
+  background-color: var(--sena-green, var(--color-primary)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
 }
 
 /* 2. Aside / Barra Lateral de Navegación (Logo SENA, Fondo Verde SENA e Ítem Activo Blanco) */
 aside .nav-link:hover:not(.active),
 aside .aside-nav a:hover:not(.active),
 .aside-nav .nav-link:hover:not(.active) {
-  color: var(--sena-white, #FFFFFF) !important;
-  background: rgba(255, 255, 255, 0.14) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
+  background: var(--bg-overlay-medium) !important;
   border-left: none !important;
 }
 
 aside .nav-link:hover:not(.active) .nav-icon,
 aside .nav-link:hover:not(.active) i {
-  stroke: var(--sena-white, #FFFFFF) !important;
-  color: var(--sena-white, #FFFFFF) !important;
+  stroke: var(--sena-white, var(--bg-surface)) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
 }
 
 aside .nav-link.active,
 aside .aside-nav .nav-link.active,
 aside .aside-nav a.active,
 .aside-nav .nav-link.active {
-  background: var(--sena-white, #FFFFFF) !important;
-  background-color: var(--sena-white, #FFFFFF) !important;
+  background: var(--sena-white, var(--bg-surface)) !important;
+  background-color: var(--sena-white, var(--bg-surface)) !important;
   border-left: none !important;
   border-radius: 10px !important;
-  color: #000000 !important;
+  color: var(--text-emphasis) !important;
   font-weight: 700 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 2px 6px var(--shadow-color-md) !important;
 }
 
 aside .nav-link.active .nav-icon,
 aside .nav-link.active i,
 aside .aside-nav a.active .nav-icon,
 aside .aside-nav a.active i {
-  stroke: #1B4D2E !important;
-  color: #000000 !important;
+  stroke: var(--color-primary-active) !important;
+  color: var(--text-emphasis) !important;
 }
 
 aside .badge,
 .aside-badge {
-  background: rgba(57, 169, 0, 0.2) !important;
-  color: var(--sena-green-border, #A8E08A) !important;
+  background: var(--border-focus) !important;
+  color: var(--sena-green-border, var(--border-primary)) !important;
 }
 
 /* 3. Wizard (Préstamos y Devoluciones) */
 .wizard-step-dot:not(:last-child)::after {
-  background: rgba(57, 169, 0, 0.2) !important;
+  background: var(--border-focus) !important;
 }
 
 .wizard-step-dot.wizard-done:not(:last-child)::after,
 .dev-wiz-step-dot.dev-wiz-done:not(:last-child)::after {
-  background: var(--sena-green, #39A900) !important;
+  background: var(--sena-green, var(--color-primary)) !important;
 }
 
 .wizard-dot-circle,
 .dev-wiz-dot-circle {
-  border-color: rgba(57, 169, 0, 0.3) !important;
+  border-color: var(--border-focus) !important;
 }
 
 .wizard-step-dot.wizard-active .wizard-dot-circle,
 .dev-wiz-step-dot.dev-wiz-active .dev-wiz-dot-circle {
-  background: var(--sena-green, #39A900) !important;
-  border-color: var(--sena-green, #39A900) !important;
-  color: var(--sena-white, #FFFFFF) !important;
-  box-shadow: 0 0 0 4px rgba(57, 169, 0, 0.25) !important;
+  background: var(--sena-green, var(--color-primary)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
+  box-shadow: 0 0 0 4px var(--border-focus) !important;
 }
 
 .wizard-step-dot.wizard-done .wizard-dot-circle,
 .dev-wiz-step-dot.dev-wiz-done .dev-wiz-dot-circle {
-  background: var(--sena-green, #39A900) !important;
-  border-color: var(--sena-green, #39A900) !important;
-  color: var(--sena-white, #FFFFFF) !important;
+  background: var(--sena-green, var(--color-primary)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
 }
 
 .wizard-step-dot.wizard-active .wizard-dot-label,
 .wizard-step-dot.wizard-done .wizard-dot-label,
 .dev-wiz-step-dot.dev-wiz-active .dev-wiz-dot-label,
 .dev-wiz-step-dot.dev-wiz-done .dev-wiz-dot-label {
-  color: var(--sena-green, #39A900) !important;
+  color: var(--sena-green, var(--color-primary)) !important;
   font-weight: 700 !important;
 }
 
 .dev-wiz-sec-label {
-  color: var(--sena-green, #39A900) !important;
-  border-bottom-color: rgba(57, 169, 0, 0.25) !important;
+  color: var(--sena-green, var(--color-primary)) !important;
+  border-bottom-color: var(--border-focus) !important;
 }
 
 .dev-wiz-sec-label svg {
-  color: var(--sena-green, #39A900) !important;
+  color: var(--sena-green, var(--color-primary)) !important;
 }
 
 /* 4. Estados Interactivos (Focus, Hover, Box-shadow suave) */
 :focus-visible {
-  outline: 3px solid var(--sena-green, #39A900) !important;
+  outline: 3px solid var(--sena-green, var(--color-primary)) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 4px var(--sena-green-focus, rgba(57, 169, 0, 0.25)) !important;
+  box-shadow: 0 0 0 4px var(--sena-green-focus, var(--border-focus)) !important;
 }
 
 .form-control:focus,
@@ -950,26 +952,26 @@ aside .badge,
 .dev-wiz-textarea:focus,
 body.auth-page .mine-input:focus,
 body.auth-page .input-group-mine:focus-within {
-  border-color: var(--sena-green, #39A900) !important;
-  box-shadow: 0 0 0 3px var(--sena-green-focus, rgba(57, 169, 0, 0.25)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
+  box-shadow: 0 0 0 3px var(--sena-green-focus, var(--border-focus)) !important;
 }
 
 .form-check-input:checked {
-  background-color: var(--sena-green, #39A900) !important;
-  border-color: var(--sena-green, #39A900) !important;
+  background-color: var(--sena-green, var(--color-primary)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
 }
 
 .form-check-input:focus {
-  border-color: var(--sena-green, #39A900) !important;
-  box-shadow: 0 0 0 0.25rem var(--sena-green-focus, rgba(57, 169, 0, 0.25)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
+  box-shadow: 0 0 0 0.25rem var(--sena-green-focus, var(--border-focus)) !important;
 }
 
 /* Paginación activa */
 .page-item.active .page-link,
 div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link,
 div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
-  background-color: var(--sena-green, #39A900) !important;
-  border-color: var(--sena-green, #39A900) !important;
-  color: var(--sena-white, #FFFFFF) !important;
-  box-shadow: 0 2px 6px rgba(57, 169, 0, 0.25) !important;
+  background-color: var(--sena-green, var(--color-primary)) !important;
+  border-color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--sena-white, var(--bg-surface)) !important;
+  box-shadow: 0 2px 6px var(--border-focus) !important;
 }
