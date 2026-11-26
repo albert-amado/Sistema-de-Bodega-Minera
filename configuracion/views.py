@@ -1,10 +1,10 @@
 """
-views.py - Configuración del sistema (cambio de base de datos Local <-> Nube
-y Copia de Seguridad en Excel: exportar e importar registros faltantes).
+views.py - Configuración del sistema (gestión unificada de base de datos
+Local <-> Nube y copias de seguridad en Excel).
 
 Fuente única de verdad: system_configuration.json (ConfigurationManager).
-Las bases Local y Nube son INDEPENDIENTES: cambiar de entorno NO copia datos.
-Solo los botones manuales de sincronización o la importación de backups copian datos.
+Cada cambio de entorno o sincronización genera automáticamente una copia de
+seguridad en Excel dentro de backups/ antes de aplicar la operación.
 """
 import logging
 from pathlib import Path
@@ -41,6 +41,16 @@ def _forzar_recarga():
     path = Path(settings.BASE_DIR) / "core" / "settings.py"
     if path.exists():
         path.touch()
+
+
+def _crear_respaldo_seguridad_excel() -> tuple[str | None, str | None]:
+    """Genera y guarda una copia de seguridad Excel en backups/ antes de operar sobre la BD."""
+    try:
+        _, filename = exportar_backup_excel(guardar_en_disco=True)
+        return filename, None
+    except Exception as exc:
+        logger.warning("No se pudo generar copia de seguridad preventiva en Excel: %s", exc)
+        return None, str(exc)
 
 
 def _formatear_resumen_importacion(resultado: dict) -> str:
@@ -135,29 +145,39 @@ def configuracion_view(request):
                 messages.error(request, f"Error al restaurar desde {nombre_archivo}: {e}")
             return redirect("configuracion")
 
-        # ── 4. Botón manual: Subir todo de Local a Nube (REEMPLAZA la nube) ──
+        # ── 4. Botón manual: Subir todo de Local a Nube (con respaldo Excel previo) ──
         if accion == "sincronizar_local_a_nube":
+            backup_nombre, _ = _crear_respaldo_seguridad_excel()
             try:
                 from migrar_db import migrate_local_to_cloud
                 migrate_local_to_cloud()
-                messages.success(request, "Sincronización exitosa: los datos locales (SQLite) se subieron a la Nube (Neon PostgreSQL).")
+                detalle_respaldo = f" Respaldo previo guardado: {backup_nombre}." if backup_nombre else ""
+                messages.success(
+                    request,
+                    f"Sincronización exitosa: los datos locales (SQLite) se subieron a la Nube (Neon PostgreSQL).{detalle_respaldo}",
+                )
             except Exception as e:
                 logger.exception("Error subiendo datos a la nube")
                 messages.error(request, f"Error al subir datos a la nube: {e}")
             return redirect("configuracion")
 
-        # ── 5. Botón manual: Descargar todo de Nube a Local (REEMPLAZA lo local) ──
+        # ── 5. Botón manual: Descargar todo de Nube a Local (con respaldo Excel previo) ──
         if accion == "sincronizar_nube_a_local":
+            backup_nombre, _ = _crear_respaldo_seguridad_excel()
             try:
                 from migrar_db import migrate as run_db_migration
                 run_db_migration()
-                messages.success(request, "Sincronización exitosa: los datos de la Nube (Neon PostgreSQL) se descargaron a Local (SQLite).")
+                detalle_respaldo = f" Respaldo previo guardado: {backup_nombre}." if backup_nombre else ""
+                messages.success(
+                    request,
+                    f"Sincronización exitosa: los datos de la Nube (Neon PostgreSQL) se descargaron a Local (SQLite).{detalle_respaldo}",
+                )
             except Exception as e:
                 logger.exception("Error descargando datos de la nube")
                 messages.error(request, f"Error al descargar datos de la nube: {e}")
             return redirect("configuracion")
 
-        # ── 6. Cambio de base de datos activa (SIN copiar datos) ──
+        # ── 6. Cambio unificado de base de datos activa con respaldo Excel automático ──
         almacenamiento = request.POST.get("almacenamiento", "").strip()
 
         if almacenamiento not in ("local", "nube"):
@@ -171,7 +191,10 @@ def configuracion_view(request):
         nombre_bd = "Local (SQLite)" if almacenamiento == "local" else "Nube (Neon PostgreSQL)"
         destino_clave = "cloud" if almacenamiento == "nube" else "local"
 
-        # 1) Dejar lista la base de destino: solo crea tablas (migraciones), no copia datos
+        # 1) Generar copia de seguridad automática del entorno actual antes del cambio
+        backup_nombre, _ = _crear_respaldo_seguridad_excel()
+
+        # 2) Dejar lista la base de destino (migraciones)
         try:
             from migrar_db import preparar_base
             preparar_base(destino_clave)
@@ -183,7 +206,7 @@ def configuracion_view(request):
             )
             return redirect("configuracion")
 
-        # 2) Guardar el cambio donde settings.py realmente lo lee (el JSON)
+        # 3) Guardar el cambio donde settings.py realmente lo lee (el JSON)
         manager = ConfigurationManager(base_dir=settings.BASE_DIR)
         destino = DatabaseTarget.CLOUD if almacenamiento == "nube" else DatabaseTarget.LOCAL
         ok, msg = manager.switch_target(destino, test_first=True)
@@ -191,13 +214,18 @@ def configuracion_view(request):
             messages.error(request, msg)
             return redirect("configuracion")
 
-        # 3) Reiniciar para que Django use la nueva conexión.
+        # 4) Reiniciar para que Django use la nueva conexión.
         #    Se cierra la sesión porque las sesiones viven en la base de datos.
         _forzar_recarga()
         request.session.flush()
+        detalle_respaldo = (
+            f" Se generó respaldo automático ({backup_nombre}) en backups/."
+            if backup_nombre
+            else ""
+        )
         messages.success(
             request,
-            f"Base de datos cambiada a {nombre_bd}. Inicia sesión nuevamente.",
+            f"Base de datos cambiada a {nombre_bd}.{detalle_respaldo} Inicia sesión nuevamente.",
         )
         return redirect("login")
 

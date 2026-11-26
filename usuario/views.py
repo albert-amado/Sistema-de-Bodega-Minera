@@ -1,6 +1,10 @@
 import csv
+import datetime
 import logging
+import re
 import time
+import unicodedata
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib import messages
@@ -598,15 +602,233 @@ def perfil_view(request):
 
 
 # ─────────────────────────────────────────────────────────────
-#  VERIFICACIÓN DE APRENDICES SENA (INTEGRACIÓN SOFIAPLUS)
+#  VERIFICACIÓN DE USUARIOS DESDE EXCEL ADMINISTRADO
 # ─────────────────────────────────────────────────────────────
+_EXCEL_VERIFICACION_REL = Path('backups') / 'verificacion' / 'usuarios_verificacion.xlsx'
+
+_ALIAS_EXCEL = {
+    'documento': (
+        'documento', 'numero_documento', 'num_documento', 'nro_documento',
+        'no_documento', 'identificacion', 'cedula', 'doc',
+    ),
+    'tipo_documento': (
+        'tipo_documento', 'tipo_doc', 'tipo', 'tipo_identificacion', 'td',
+    ),
+    'nombre_completo': (
+        'nombre_completo', 'aprendiz', 'usuario', 'nombre_y_apellidos',
+        'nombres_y_apellidos', 'nombre',
+    ),
+    'primer_nombre': ('primer_nombre', 'nombres'),
+    'segundo_nombre': ('segundo_nombre',),
+    'primer_apellido': ('primer_apellido', 'apellidos'),
+    'segundo_apellido': ('segundo_apellido',),
+    'numero_ficha': ('ficha', 'numero_ficha', 'nro_ficha', 'codigo_ficha', 'ficha_sena'),
+    'nombre_ficha': ('nombre_ficha', 'descripcion_ficha'),
+    'programa_formacion': (
+        'programa', 'programa_formacion', 'nombre_programa', 'programa_de_formacion',
+    ),
+    'estado_programa': (
+        'estado', 'estado_programa', 'estado_formacion', 'estado_aprendiz',
+    ),
+    'correo_institucional': (
+        'correo', 'correo_personal', 'correo_institucional', 'email', 'correo_electronico',
+    ),
+    'telefono_contacto': ('telefono', 'telefono_contacto', 'celular', 'movil'),
+    'centro_formacion': ('centro', 'centro_formacion'),
+    'regional': ('regional',),
+}
+
+
+def _ruta_excel_verificacion() -> Path:
+    return Path(settings.BASE_DIR) / _EXCEL_VERIFICACION_REL
+
+
+def _normalizar_clave_excel(clave) -> str:
+    texto = str(clave or '').strip().lower()
+    texto = ''.join(
+        c for c in unicodedata.normalize('NFKD', texto)
+        if not unicodedata.combining(c)
+    )
+    texto = re.sub(r'[^a-z0-9]+', '_', texto).strip('_')
+    return texto
+
+
+def _limpiar_valor_excel(valor) -> str:
+    if valor is None:
+        return ''
+    texto = str(valor).strip()
+    if not texto or texto.lower() == 'none':
+        return ''
+    if texto.endswith('.0') and texto[:-2].lstrip('-').isdigit():
+        texto = texto[:-2]
+    return texto
+
+
+def _normalizar_documento(valor: str) -> str:
+    return re.sub(r'[\s.,\-]+', '', str(valor or '').strip()).upper()
+
+
+def _extraer_campo_fila(fila_norm: dict, campo: str) -> str:
+    for alias in _ALIAS_EXCEL[campo]:
+        val = fila_norm.get(alias, '')
+        if val:
+            return val
+    return ''
+
+
+def _extraer_registros_excel(origen) -> list[dict]:
+    from configuracion.excel_backup import parse_xlsx_file
+
+    hojas = parse_xlsx_file(origen)
+    registros = []
+    for filas in hojas.values():
+        for fila in filas:
+            fila_norm = {
+                _normalizar_clave_excel(k): _limpiar_valor_excel(v)
+                for k, v in fila.items()
+            }
+            doc_raw = _extraer_campo_fila(fila_norm, 'documento')
+            doc_norm = _normalizar_documento(doc_raw)
+            if not doc_norm:
+                continue
+
+            tipo_doc = _extraer_campo_fila(fila_norm, 'tipo_documento').upper() or 'CC'
+            p_nombre = _extraer_campo_fila(fila_norm, 'primer_nombre')
+            s_nombre = _extraer_campo_fila(fila_norm, 'segundo_nombre')
+            p_apellido = _extraer_campo_fila(fila_norm, 'primer_apellido')
+            s_apellido = _extraer_campo_fila(fila_norm, 'segundo_apellido')
+            nombre_completo = _extraer_campo_fila(fila_norm, 'nombre_completo')
+
+            if not nombre_completo:
+                nombre_completo = ' '.join(
+                    p for p in (p_nombre, s_nombre, p_apellido, s_apellido) if p
+                ).strip()
+            if nombre_completo and not p_nombre:
+                partes = nombre_completo.split()
+                p_nombre = partes[0] if partes else ''
+                p_apellido = ' '.join(partes[1:]) if len(partes) > 1 else ''
+
+            programa = _extraer_campo_fila(fila_norm, 'programa_formacion') or 'No especificado'
+            ficha = _extraer_campo_fila(fila_norm, 'numero_ficha') or 'No registrada'
+            nombre_ficha = _extraer_campo_fila(fila_norm, 'nombre_ficha') or programa
+
+            registros.append({
+                'documento': doc_norm,
+                'tipo_documento': tipo_doc,
+                'nombre_completo': nombre_completo or 'Usuario registrado',
+                'primer_nombre': p_nombre,
+                'segundo_nombre': s_nombre,
+                'primer_apellido': p_apellido,
+                'segundo_apellido': s_apellido,
+                'programa_formacion': programa,
+                'numero_ficha': ficha,
+                'nombre_ficha': nombre_ficha,
+                'estado_programa': (_extraer_campo_fila(fila_norm, 'estado_programa') or 'ACTIVO').upper(),
+                'centro_formacion': _extraer_campo_fila(fila_norm, 'centro_formacion') or 'Centro Minero - Regional Boyacá',
+                'regional': _extraer_campo_fila(fila_norm, 'regional') or 'Boyacá',
+                'correo_institucional': _extraer_campo_fila(fila_norm, 'correo_institucional'),
+                'telefono_contacto': _extraer_campo_fila(fila_norm, 'telefono_contacto'),
+            })
+    return registros
+
+
+def _obtener_info_excel_verificacion() -> dict:
+    ruta = _ruta_excel_verificacion()
+    if not ruta.exists():
+        return {'cargado': False, 'nombre': '', 'registros': 0, 'fecha': ''}
+    try:
+        registros = _extraer_registros_excel(ruta)
+        stat = ruta.stat()
+        fecha = datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%d/%m/%Y %H:%M')
+        return {
+            'cargado': True,
+            'nombre': ruta.name,
+            'registros': len(registros),
+            'fecha': fecha,
+        }
+    except Exception as exc:
+        logger.warning('No se pudo leer el archivo Excel de verificación: %s', exc)
+        return {'cargado': False, 'nombre': '', 'registros': 0, 'fecha': ''}
+
+
+def _buscar_usuario_en_excel(tipo_doc: str, numero_doc: str) -> tuple[dict | None, str | None, str | None]:
+    tipo_norm = (tipo_doc or 'CC').strip().upper()
+    doc_norm = _normalizar_documento(numero_doc)
+
+    if not doc_norm or len(doc_norm) < 5 or len(doc_norm) > 15:
+        return None, 'invalid_input', 'El número de documento debe tener entre 5 y 15 caracteres válidos.'
+    if tipo_norm in ('CC', 'TI') and not doc_norm.isdigit():
+        return None, 'invalid_input', f'El documento {tipo_norm} debe contener únicamente números.'
+
+    ruta = _ruta_excel_verificacion()
+    if not ruta.exists():
+        return (
+            None,
+            'no_file',
+            'No hay un archivo Excel cargado para verificación. El administrador debe cargar un archivo .xlsx en esta vista.',
+        )
+
+    registros = _extraer_registros_excel(ruta)
+    coincidencia_exacta = None
+    coincidencia_doc = None
+    for reg in registros:
+        if reg['documento'] == doc_norm:
+            if reg['tipo_documento'] == tipo_norm:
+                coincidencia_exacta = reg
+                break
+            if coincidencia_doc is None:
+                coincidencia_doc = reg
+
+    encontrado = coincidencia_exacta or coincidencia_doc
+    if not encontrado:
+        return (
+            None,
+            'not_found',
+            'No se encontró ningún usuario registrado con ese documento en el archivo Excel cargado.',
+        )
+
+    resultado = dict(encontrado)
+    resultado['origen_datos'] = 'excel_administrador'
+    resultado['fecha_consulta'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return resultado, None, None
+
+
 @admin_required
 def verificar_aprendiz_view(request):
     """
-    Renderiza la interfaz de búsqueda y verificación de aprendices SENA.
-    Acceso restringido a roles autorizados (Administradores / Supervisores de bodega).
-    Cumple con la Ley 1581 de 2012 (Habeas Data).
+    Renderiza la interfaz de búsqueda y verificación de usuarios desde el archivo
+    Excel (.xlsx) administrado por el administrador.
     """
+    if request.method == 'POST':
+        archivo = request.FILES.get('archivo_excel')
+        if not archivo:
+            messages.error(request, 'Debes seleccionar un archivo Excel (.xlsx) para cargar.')
+            return redirect('verificar_aprendiz')
+        if not archivo.name.lower().endswith('.xlsx'):
+            messages.error(request, 'Formato no válido. Solo se permiten archivos con extensión .xlsx.')
+            return redirect('verificar_aprendiz')
+        try:
+            contenido = archivo.read()
+            registros = _extraer_registros_excel(contenido)
+            if not registros:
+                messages.error(
+                    request,
+                    'El archivo Excel no contiene registros válidos con una columna de documento (ej. documento, cedula o identificacion).',
+                )
+                return redirect('verificar_aprendiz')
+
+            ruta = _ruta_excel_verificacion()
+            ruta.parent.mkdir(parents=True, exist_ok=True)
+            ruta.write_bytes(contenido)
+            messages.success(
+                request,
+                f'Archivo Excel cargado correctamente ({len(registros)} usuario(s) disponibles para verificación).',
+            )
+        except Exception as exc:
+            logger.exception('Error cargando archivo Excel de verificación')
+            messages.error(request, f'No se pudo procesar el archivo Excel: {exc}')
+        return redirect('verificar_aprendiz')
+
     tipos_documento = [
         ('CC', 'Cédula de Ciudadanía (CC)'),
         ('TI', 'Tarjeta de Identidad (TI)'),
@@ -616,8 +838,9 @@ def verificar_aprendiz_view(request):
         ('PAS', 'Pasaporte (PAS)'),
     ]
     context = {
-        'title': 'Verificar Aprendiz SENA – Sistema de Bodega Minera',
+        'title': 'Verificar Usuarios desde Excel – Sistema de Bodega Minera',
         'tipos_documento': tipos_documento,
+        'excel_info': _obtener_info_excel_verificacion(),
     }
     return render(request, 'verificar_aprendiz.html', context)
 
@@ -625,77 +848,35 @@ def verificar_aprendiz_view(request):
 @admin_required
 def verificar_aprendiz_api(request):
     """
-    Endpoint AJAX para la consulta en vivo de aprendices SENA.
-    Recibe tipo_documento y documento por GET o POST.
-    Nunca expone tokens, credenciales ni trazas de error internas al usuario.
+    Endpoint AJAX para consultar usuarios verificados contra el archivo Excel
+    cargado por el administrador.
     """
-    from services.sofia_plus_client import (
-        get_sofia_plus_client,
-        SofiaPlusInvalidInputError,
-        AprendizNotFoundError,
-        SofiaPlusServiceUnavailableError,
-        SofiaPlusAuthError,
-    )
-
     if request.method not in ('GET', 'POST'):
         return JsonResponse({'success': False, 'error': 'Método HTTP no permitido.'}, status=405)
 
     tipo_doc = request.GET.get('tipo_documento') or request.POST.get('tipo_documento', 'CC')
     numero_doc = request.GET.get('documento') or request.POST.get('documento', '')
 
-    client = get_sofia_plus_client()
-
     try:
-        aprendiz_info = client.consultar_aprendiz(
-            tipo_documento=tipo_doc,
-            numero_documento=numero_doc,
-        )
-        return JsonResponse({
-            'success': True,
-            'aprendiz': aprendiz_info.to_dict(),
-        }, status=200)
-
-    except SofiaPlusInvalidInputError as exc:
-        return JsonResponse({'success': False, 'error': exc.user_friendly_message}, status=400)
-
-    except AprendizNotFoundError as exc:
-        return JsonResponse({'success': False, 'error': exc.user_friendly_message}, status=404)
-
-    except SofiaPlusAuthError as exc:
-        logger.error("Fallo de autenticación con servicio SENA: %s", exc)
-        return JsonResponse({'success': False, 'error': exc.user_friendly_message}, status=401)
-
-    except SofiaPlusServiceUnavailableError as exc:
-        logger.warning("Servicio externo SENA no disponible: %s", exc)
-        return JsonResponse({'success': False, 'error': exc.user_friendly_message}, status=503)
-
+        usuario_excel, err_code, err_msg = _buscar_usuario_en_excel(tipo_doc, numero_doc)
+        if usuario_excel:
+            return JsonResponse({'success': True, 'aprendiz': usuario_excel}, status=200)
+        status_code = 400 if err_code == 'invalid_input' else 404
+        return JsonResponse({'success': False, 'error': err_msg}, status=status_code)
     except Exception as exc:
-        logger.error("Error inesperado en consulta de aprendiz: %s", exc, exc_info=True)
+        logger.error('Error inesperado consultando Excel de verificación: %s', exc, exc_info=True)
         return JsonResponse({
             'success': False,
-            'error': 'Ocurrió un error inesperado al consultar los datos del aprendiz. Intente nuevamente más tarde.'
+            'error': 'Ocurrió un error al consultar el archivo Excel de verificación.',
         }, status=500)
 
 
 @admin_required
 def verificar_documento_registro_api(request):
     """
-    Endpoint AJAX para la verificación en tiempo real durante el registro de usuarios.
-    - Valida duplicados en la base de datos local (evita dos cuentas con el mismo documento).
-    - Consulta aislada a SofiaPlus mediante el cliente centralizado get_sofia_plus_client().
-    - Retorna datos para auto-completar y bloquear en solo lectura si el aprendiz existe.
-    - Aplica las políticas configuradas si no existe (ALLOW_MANUAL_REGISTRATION)
-      o si el servicio no responde (SOFIAPLUS_FALLBACK_POLICY).
+    Endpoint AJAX para verificar un documento contra la base local y el archivo
+    Excel administrado por el administrador.
     """
-    from django.conf import settings
-    from services.sofia_plus_client import (
-        get_sofia_plus_client,
-        SofiaPlusInvalidInputError,
-        AprendizNotFoundError,
-        SofiaPlusServiceUnavailableError,
-        SofiaPlusAuthError,
-    )
-
     if request.method not in ('GET', 'POST'):
         return JsonResponse({'success': False, 'error': 'Método HTTP no permitido.'}, status=405)
 
@@ -705,87 +886,38 @@ def verificar_documento_registro_api(request):
     if not numero_doc:
         return JsonResponse({'success': False, 'error': 'El número de documento es obligatorio.'}, status=400)
 
-    # 1. Validar duplicados en la base de datos local
-    if Usuario.objects.filter(documento=numero_doc).exists():
+    if Usuario.objects.filter(documento=_normalizar_documento(numero_doc)).exists():
         return JsonResponse({
             'success': False,
             'already_registered': True,
-            'error': 'Ya existe una cuenta registrada con este número de documento. Por favor inicia sesión o recupera tu contraseña.'
+            'error': 'Ya existe una cuenta registrada con este número de documento. Por favor inicia sesión o recupera tu contraseña.',
         }, status=409)
 
-    client = get_sofia_plus_client()
-
     try:
-        aprendiz = client.consultar_aprendiz(tipo_doc, numero_doc)
-        return JsonResponse({
-            'success': True,
-            'verificado': True,
-            'aprendiz': {
-                'documento': aprendiz.documento,
-                'tipo_documento': aprendiz.tipo_documento,
-                'nombre_completo': aprendiz.nombre_completo,
-                'primer_nombre': aprendiz.primer_nombre,
-                'primer_apellido': aprendiz.primer_apellido,
-                'segundo_nombre': aprendiz.segundo_nombre,
-                'segundo_apellido': aprendiz.segundo_apellido,
-                'numero_ficha': aprendiz.numero_ficha,
-                'nombre_ficha': aprendiz.nombre_ficha,
-                'programa_formacion': aprendiz.programa_formacion,
-                'estado_programa': aprendiz.estado_programa,
-                'centro_formacion': aprendiz.centro_formacion,
-                'regional': aprendiz.regional,
-                'correo_institucional': aprendiz.correo_institucional,
-                'telefono_contacto': aprendiz.telefono_contacto,
-                'origen_datos': aprendiz.origen_datos,
-            }
-        }, status=200)
+        usuario_excel, err_code, err_msg = _buscar_usuario_en_excel(tipo_doc, numero_doc)
+        if usuario_excel:
+            return JsonResponse({
+                'success': True,
+                'verificado': True,
+                'aprendiz': usuario_excel,
+            }, status=200)
 
-    except SofiaPlusInvalidInputError as exc:
-        return JsonResponse({
-            'success': False,
-            'invalid_input': True,
-            'error': exc.user_friendly_message
-        }, status=400)
+        if err_code == 'invalid_input':
+            return JsonResponse({
+                'success': False,
+                'invalid_input': True,
+                'error': err_msg,
+            }, status=400)
 
-    except AprendizNotFoundError as exc:
-        allow_manual = getattr(settings, 'ALLOW_MANUAL_REGISTRATION', False)
         return JsonResponse({
             'success': False,
             'not_found': True,
-            'allow_manual': allow_manual,
-            'error': (
-                'El documento no se encuentra registrado en SofiaPlus. '
-                'Solo aprendices verificados del SENA pueden crear una cuenta en el sistema.'
-                if not allow_manual else
-                'El documento no figura en SofiaPlus. Registro manual habilitado como excepción.'
-            )
-        }, status=200 if allow_manual else 404)
-
-    except SofiaPlusServiceUnavailableError as exc:
-        policy = getattr(settings, 'SOFIAPLUS_FALLBACK_POLICY', 'ALLOW_PENDING')
-        allow_pending = (policy == 'ALLOW_PENDING')
-        return JsonResponse({
-            'success': False,
-            'service_unavailable': True,
-            'policy': policy,
-            'allow_pending': allow_pending,
-            'error': (
-                'El servicio de SofiaPlus no responde temporalmente. Puedes continuar con el registro; '
-                'tu cuenta quedará registrada provisionalmente pendiente de verificación.'
-                if allow_pending else
-                'El servicio de SofiaPlus no responde temporalmente. Por seguridad, el registro requiere verificación activa. Intenta de nuevo en unos minutos.'
-            )
-        }, status=200 if allow_pending else 503)
-
+            'error': err_msg,
+        }, status=404)
     except Exception as exc:
-        logger.error("Error inesperado en endpoint de registro SofiaPlus: %s", exc, exc_info=True)
-        policy = getattr(settings, 'SOFIAPLUS_FALLBACK_POLICY', 'ALLOW_PENDING')
-        allow_pending = (policy == 'ALLOW_PENDING')
+        logger.error('Error inesperado en verificación por Excel: %s', exc, exc_info=True)
         return JsonResponse({
             'success': False,
-            'service_unavailable': True,
-            'policy': policy,
-            'allow_pending': allow_pending,
-            'error': 'No se pudo conectar con el servicio de verificación en este momento.'
-        }, status=200 if allow_pending else 500)
+            'error': 'No se pudo consultar el archivo Excel de verificación en este momento.',
+        }, status=500)
 

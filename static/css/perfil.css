@@ -1,7 +1,7 @@
 /* ── static/css/perfil.css (Adaptado a Paleta Institucional SENA) ── */
 
 .modal-tab {
-  color: var(--sena-text-muted, #4B5563);
+  color: var(--sena-text-muted, var(--text-secondary));
   cursor: pointer;
   background: transparent;
   border: none;
@@ -10,11 +10,11 @@
   transition: color 0.15s, border-color 0.15s;
 }
 .modal-tab:hover {
-  color: var(--sena-text, #1E1E1E);
+  color: var(--sena-text, var(--text-primary));
 }
 .modal-tab--active {
-  color: var(--sena-green, #39A900) !important;
-  border-bottom-color: var(--sena-green, #39A900) !important;
+  color: var(--sena-green, var(--color-primary)) !important;
+  border-bottom-color: var(--sena-green, var(--color-primary)) !important;
   font-weight: 700 !important;
 }
 
@@ -33,7 +33,7 @@
 .toggle-slider {
   position: absolute;
   inset: 0;
-  background: var(--sena-border, #D1D5DB);
+  background: var(--sena-border, var(--border-color));
   border-radius: 24px;
   transition: background 0.2s;
 }
@@ -44,13 +44,13 @@
   height: 18px;
   left: 3px;
   bottom: 3px;
-  background: #fff;
+  background: var(--bg-surface);
   border-radius: 50%;
   transition: transform 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px var(--shadow-color-md);
 }
 .toggle-switch input:checked + .toggle-slider {
-  background: var(--sena-green, #39A900);
+  background: var(--sena-green, var(--color-primary));
 }
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(18px);
@@ -78,39 +78,39 @@
   font-family: var(--font-mono, monospace);
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--sena-blue, #00324D);
+  color: var(--sena-blue, var(--color-secondary));
 }
 .perfil__style-11 {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--sena-text-muted, #4B5563);
+  color: var(--sena-text-muted, var(--text-secondary));
   font-weight: 600;
 }
 .perfil__style-12 {
   font-family: var(--font-mono, monospace);
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--sena-green, #39A900);
+  color: var(--sena-green, var(--color-primary));
 }
 .perfil__style-13 {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--sena-text-muted, #4B5563);
+  color: var(--sena-text-muted, var(--text-secondary));
   font-weight: 600;
 }
 .perfil__style-14 {
   font-family: var(--font-mono, monospace);
   font-size: 1.6rem;
   font-weight: 800;
-  color: #DC2626;
+  color: var(--status-danger);
 }
 .perfil__style-15 {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--sena-text-muted, #4B5563);
+  color: var(--sena-text-muted, var(--text-secondary));
   font-weight: 600;
 }
 .perfil__style-16 {
@@ -129,7 +129,7 @@
   transition: background-color 0.15s ease;
 }
 .notif-channel-item:hover {
-  background-color: var(--sena-bg-light, #F4F6F9);
+  background-color: var(--sena-bg-light, var(--bg-main));
 }
 .badge-dot {
   display: inline-block;
@@ -139,32 +139,32 @@
 }
 
 body.dark-mode .modal-tab {
-  color: #9CA3AF;
+  color: var(--dark-text-muted);
 }
 body.dark-mode .modal-tab:hover {
-  color: #F3F4F6;
+  color: var(--dark-text-primary);
 }
 body.dark-mode .modal-tab--active {
-  color: #4ADE80 !important;
-  border-bottom-color: #39A900 !important;
+  color: var(--dark-color-primary-accent) !important;
+  border-bottom-color: var(--dark-color-primary) !important;
 }
 body.dark-mode .toggle-slider {
-  background: #2A3038;
+  background: var(--dark-bg-elevated);
 }
 body.dark-mode .perfil__style-10 {
-  color: #F3F4F6 !important;
+  color: var(--dark-text-primary) !important;
 }
 body.dark-mode .perfil__style-12 {
-  color: #4ADE80 !important;
+  color: var(--dark-color-primary-accent) !important;
 }
 body.dark-mode .perfil__style-14 {
-  color: #F87171 !important;
+  color: var(--dark-status-danger) !important;
 }
 body.dark-mode .perfil__style-11,
 body.dark-mode .perfil__style-13,
 body.dark-mode .perfil__style-15 {
-  color: #8E96A0 !important;
+  color: var(--dark-text-muted) !important;
 }
 body.dark-mode .notif-channel-item:hover {
-  background-color: #1A1D21 !important;
+  background-color: var(--dark-bg-card) !important;
 }

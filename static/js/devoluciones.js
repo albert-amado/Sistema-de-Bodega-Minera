@@ -225,7 +225,7 @@ function rchLimpiarError() {
       var rowCls = 'dev-item-row' + (sel ? ' dev-item-sel' : '') + (esc ? ' dev-item-scanned' : '');
       var chkMark = sel ? '<svg width="8" height="7" viewBox="0 0 11 9" fill="none"><path d="M1 4L4.5 7.5L10 1.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '';
       var cantCtrl = sel
-        ? '<div style="display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation()"><button type="button" class="dev-cant-btn" onclick="devCambiarCant(' + it.id + ',-1)">−</button><span id="dev-cant-' + it.id + '" style="font-family:var(--font-mono);font-weight:700;font-size:.82rem;min-width:18px;text-align:center;color:var(--sena-green, #39A900);">' + cant + '</span><button type="button" class="dev-cant-btn" onclick="devCambiarCant(' + it.id + ',+1)">+</button><span style="font-size:.65rem;color:var(--text-muted);">/' + it.cantidad + '</span></div>'
+        ? '<div style="display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation()"><button type="button" class="dev-cant-btn" onclick="devCambiarCant(' + it.id + ',-1)">−</button><span id="dev-cant-' + it.id + '" class="dev-tool-chip" style="font-family:var(--font-mono);font-weight:700;font-size:.82rem;min-width:18px;text-align:center;color:#000000;">' + cant + '</span><button type="button" class="dev-cant-btn" onclick="devCambiarCant(' + it.id + ',+1)">+</button><span style="font-size:.65rem;color:var(--text-muted);">/' + it.cantidad + '</span></div>'
         : '<span style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);">' + it.cantidad + ' ud.</span>';
 
       return '<div class="' + rowCls + '" onclick="devToggleItem(' + it.id + ')">' +
@@ -245,7 +245,7 @@ function rchLimpiarError() {
       : '';
 
     return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;padding:.6rem .9rem;background:rgba(57, 169, 0,.04);border:1px solid rgba(57, 169, 0,.14);border-radius:var(--radius-md);margin-bottom:1rem;">' +
-        '<div><span style="font-family:var(--font-mono);font-weight:700;color:var(--sena-green, #39A900);font-size:.85rem;">Préstamo #' + _prestamo.id + '</span>' +
+        '<div><span class="dev-tool-chip" style="font-family:var(--font-mono);font-weight:700;color:#000000;font-size:.85rem;">Préstamo #' + _prestamo.id + '</span>' +
         '<span style="color:var(--text-muted);margin:0 .3rem;">·</span>' +
         '<span style="font-family:var(--font-ui);font-weight:600;font-size:.85rem;color:var(--text-main);">' + _prestamo.usuario + '</span></div>' +
         '<button type="button" onclick="devWizAtras()" style="background:none;border:none;color:var(--sena-green, #39A900);font-family:var(--font-ui);font-size:.75rem;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:0;opacity:.7;">Cambiar</button>' +
@@ -253,7 +253,7 @@ function rchLimpiarError() {
 
       '<div class="dev-wiz-sec-label" style="margin-top:.85rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>' +
         '<span>Herramientas del préstamo</span>' +
-        '<span style="font-size:.6rem;background:rgba(57, 169, 0,.1);color:var(--sena-green, #39A900);border:1px solid rgba(57, 169, 0,.18);padding:.08rem .42rem;border-radius:10px;font-family:var(--font-mono);">' + badgeTxt + '</span>' +
+        '<span class="dev-tool-chip" style="font-size:.6rem;background:rgba(57, 169, 0,.1);color:#000000;border:1px solid rgba(57, 169, 0,.18);padding:.08rem .42rem;border-radius:10px;font-family:var(--font-mono);">' + badgeTxt + '</span>' +
         '<button type="button" onclick="devToggleTodas()" style="margin-left:auto;background:none;border:none;color:var(--sena-green, #39A900);font-family:var(--font-ui);font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;opacity:.75;">Marcar todas</button>' +
       '</div>' +
       '<div style="margin-bottom:.4rem;">' + itemsHtml + devueltosHtml + '</div>' +
@@ -274,7 +274,7 @@ function rchLimpiarError() {
     var chipsHtml = sel.map(function(it) {
       var cant = (_escaneados[it.id] && _escaneados[it.id].cantDevolver !== undefined) ? _escaneados[it.id].cantDevolver : it.cantidad;
       var esc  = _escaneados[it.id] && _escaneados[it.id].escaneado;
-      return '<span style="font-family:var(--font-mono);font-size:.72rem;margin:2px;background:' + (esc ? 'rgba(22,163,74,.1)' : 'rgba(57, 169, 0,.07)') + ';color:' + (esc ? '#15803d' : 'var(--sena-green, #39A900)') + ';padding:.2rem .55rem;border-radius:6px;border:1px solid ' + (esc ? 'rgba(22,163,74,.2)' : 'rgba(57, 169, 0,.12)') + ';">' + (esc ? '✓ ' : '') + it.producto.nombre + ' ×' + cant + '</span>';
+      return '<span class="dev-tool-chip" style="font-family:var(--font-mono);font-size:.72rem;margin:2px;background:' + (esc ? 'rgba(22,163,74,.1)' : 'rgba(57, 169, 0,.07)') + ';color:#000000;padding:.2rem .55rem;border-radius:6px;border:1px solid ' + (esc ? 'rgba(22,163,74,.2)' : 'rgba(57, 169, 0,.12)') + ';">' + (esc ? '✓ ' : '') + it.producto.nombre + ' ×' + cant + '</span>';
     }).join('');
 
     var tipoBadge = parcial
