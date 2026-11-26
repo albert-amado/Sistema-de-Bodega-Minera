@@ -3637,7 +3637,7 @@ body.dark-mode #notif-panel .notif-item-card:hover {
   font-family: var(--font-mono);
   font-size: .68rem;
   background: rgba(57, 169, 0, .08);
-  color: var(--sena-green-hover, #2E8800);
+  color: #000000;
   border: 1px solid rgba(57, 169, 0, .2);
   padding: .12rem .45rem;
   border-radius: 6px;
@@ -10026,4 +10026,91 @@ aside#aside-sidebar .btn-profile-pill[aria-expanded="true"] .profile-pill-caret 
     transition: none !important;
     animation: none !important;
   }
+}
+
+body:not(.dark-mode) main,
+body:not(.dark-mode) main h1,
+body:not(.dark-mode) main h2,
+body:not(.dark-mode) main h3,
+body:not(.dark-mode) main h4,
+body:not(.dark-mode) main h5,
+body:not(.dark-mode) main h6,
+body:not(.dark-mode) main p,
+body:not(.dark-mode) main td,
+body:not(.dark-mode) main th,
+body:not(.dark-mode) .modal-body,
+body:not(.dark-mode) .modal-body .form-label,
+body:not(.dark-mode) .modal-body .form-control,
+body:not(.dark-mode) .modal-body .form-select,
+body:not(.dark-mode) .gu-user-name,
+body:not(.dark-mode) .gu-info-text,
+body:not(.dark-mode) .gu-info-email,
+body:not(.dark-mode) .kpi-num-display,
+body:not(.dark-mode) .inv-kpi-value,
+body:not(.dark-mode) .sbm-label,
+body:not(.dark-mode) .sbm-title-heading {
+  color: #000000 !important;
+}
+
+body:not(.dark-mode) main .text-muted,
+body:not(.dark-mode) main .text-secondary,
+body:not(.dark-mode) main small,
+body:not(.dark-mode) .modal-body .text-muted,
+body:not(.dark-mode) .modal-body .text-secondary,
+body:not(.dark-mode) .gu-subtitle,
+body:not(.dark-mode) .gu-info-row,
+body:not(.dark-mode) .kpi-title-label,
+body:not(.dark-mode) .kpi-sub-text,
+body:not(.dark-mode) .inv-kpi-label,
+body:not(.dark-mode) .sbm-state-desc,
+body:not(.dark-mode) .sbm-helper-text,
+body:not(.dark-mode) .sbm-counter-badge,
+body:not(.dark-mode) .sbm-quick-title,
+body:not(.dark-mode) .sbm-quick-name,
+body:not(.dark-mode) .aside-notif-row-desc,
+body:not(.dark-mode) .aside-notif-ts {
+  color: #111827 !important;
+}
+
+body:not(.dark-mode) .sbm-result-header,
+body:not(.dark-mode) .sbm-result-header h4,
+body:not(.dark-mode) .sbm-result-header span,
+body:not(.dark-mode) .sbm-result-header div,
+body:not(.dark-mode) .modal-header:not(.bg-warning):not(.bg-danger),
+body:not(.dark-mode) .modal-header:not(.bg-warning):not(.bg-danger) h5,
+body:not(.dark-mode) .modal-header:not(.bg-warning):not(.bg-danger) .text-muted,
+body:not(.dark-mode) .modal-header:not(.bg-warning):not(.bg-danger) small {
+  color: #FFFFFF !important;
+}
+
+body:not(.dark-mode) .btn.btn-outline-primary,
+body:not(.dark-mode) .btn.btn-outline-success,
+body:not(.dark-mode) .btn.btn-outline-primary i,
+body:not(.dark-mode) .btn.btn-outline-success i,
+body:not(.dark-mode) .btn.btn-outline-primary span,
+body:not(.dark-mode) .btn.btn-outline-success span {
+  color: #000000 !important;
+}
+
+body:not(.dark-mode) .btn.btn-outline-primary:hover,
+body:not(.dark-mode) .btn.btn-outline-success:hover,
+body:not(.dark-mode) .btn.btn-outline-primary:active,
+body:not(.dark-mode) .btn.btn-outline-success:active,
+body:not(.dark-mode) .btn.btn-outline-primary.active,
+body:not(.dark-mode) .btn.btn-outline-success.active,
+body:not(.dark-mode) .btn-check:checked + .btn.btn-outline-primary,
+body:not(.dark-mode) .btn-check:checked + .btn.btn-outline-success,
+body:not(.dark-mode) .btn.btn-outline-primary:hover i,
+body:not(.dark-mode) .btn.btn-outline-success:hover i,
+body:not(.dark-mode) .btn.btn-outline-primary:hover span,
+body:not(.dark-mode) .btn.btn-outline-success:hover span,
+body:not(.dark-mode) .btn.btn-outline-primary.active i,
+body:not(.dark-mode) .btn.btn-outline-success.active i,
+body:not(.dark-mode) .btn.btn-outline-primary.active span,
+body:not(.dark-mode) .btn.btn-outline-success.active span {
+  color: #FFFFFF !important;
+}
+
+body.dark-mode .dev-tool-chip {
+  color: #F3F4F6 !important;
 }

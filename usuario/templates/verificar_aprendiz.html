@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Verificar Aprendiz SENA – Sistema de Bodega Minera{% endblock %}
+{% block title %}Verificar Usuarios desde Excel – Sistema de Bodega Minera{% endblock %}
 
 {% block content %}
 <div class="sbm-verif-container">
@@ -11,17 +11,17 @@
     <div>
       <div class="d-flex align-items-center gap-2 mb-1">
         <span class="badge sbm-badge-modulo">
-          <i class="bi bi-shield-check me-1"></i>MÓDULO DE INTEGRACIÓN
+          <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i>VERIFICACIÓN POR EXCEL
         </span>
         <span class="badge bg-light text-secondary border fs-sm-badge">
           <i class="bi bi-lock-fill text-muted me-1"></i>Ley 1581 / Habeas Data
         </span>
       </div>
       <h3 class="fw-bold mb-1 sbm-title-heading">
-        Verificación de Aprendices SENA
+        Verificación de Usuarios SENA
       </h3>
       <p class="text-muted mb-0 small">
-        Consulta y validación de estado formativo y ficha en SofiaPlus para control de préstamos en el Centro Minero.
+        Consulta y validación de usuarios contra el archivo Excel (.xlsx) administrado por el administrador del Centro Minero.
       </p>
     </div>
 
@@ -35,6 +35,16 @@
       </a>
     </div>
   </div>
+
+  {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}success{% endif %} d-flex align-items-center gap-2 rounded-3 py-2 px-3 mb-3 small fw-semibold" role="alert">
+      <i class="bi bi-{% if msg.tags == 'error' %}exclamation-triangle-fill{% else %}check-circle-fill{% endif %}"></i>
+      <span>{{ msg }}</span>
+      <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endfor %}
+  {% endif %}
 
   <!-- AVISO DE TRATAMIENTO DE DATOS PERSONALES (HABEAS DATA / LEY 1581) -->
   <div class="card border-0 mb-4 shadow-sm sbm-notice-card">
@@ -141,42 +151,52 @@
             </button>
           </form>
 
-          <!-- ACCESOS DE PRUEBA RÁPIDA (DATOS MUESTRA EN GRID UNIFORME) -->
+          <!-- CARGA DE ARCHIVO EXCEL ADMINISTRADO -->
           <div class="sbm-quick-section mt-4 pt-3 border-top">
             <div class="d-flex align-items-center justify-content-between mb-2">
               <span class="sbm-quick-title">
-                <svg class="sbm-icon-amber me-1" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                </svg>
-                Pruebas rápidas (Datos muestra)
+                <i class="bi bi-file-earmark-excel-fill text-success me-1"></i>
+                Base Excel de Verificación (.xlsx)
               </span>
+              {% if excel_info.cargado %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                  {{ excel_info.registros }} registro{{ excel_info.registros|pluralize:"s" }}
+                </span>
+              {% else %}
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                  Sin cargar
+                </span>
+              {% endif %}
             </div>
-            <div class="row g-2">
-              <div class="col-6">
-                <button type="button" class="sbm-quick-btn w-100 quick-doc-btn" data-doc="1000000001" data-tipo="CC" title="Probar aprendiz Juan">
-                  <span class="sbm-quick-doc">1000000001</span>
-                  <span class="sbm-quick-name">Juan Pérez</span>
-                </button>
-              </div>
-              <div class="col-6">
-                <button type="button" class="sbm-quick-btn w-100 quick-doc-btn" data-doc="1000000002" data-tipo="CC" title="Probar aprendiz María">
-                  <span class="sbm-quick-doc">1000000002</span>
-                  <span class="sbm-quick-name">María Gómez</span>
-                </button>
-              </div>
-              <div class="col-6">
-                <button type="button" class="sbm-quick-btn w-100 quick-doc-btn" data-doc="1000000003" data-tipo="CC" title="Probar aprendiz Carlos">
-                  <span class="sbm-quick-doc">1000000003</span>
-                  <span class="sbm-quick-name">Carlos Ruiz</span>
-                </button>
-              </div>
-              <div class="col-6">
-                <button type="button" class="sbm-quick-btn sbm-quick-btn--warn w-100 quick-doc-btn" data-doc="9999999999" data-tipo="CC" title="Probar documento inexistente">
-                  <span class="sbm-quick-doc">9999999999</span>
-                  <span class="sbm-quick-name sbm-quick-name--warn">No existe (404)</span>
-                </button>
-              </div>
+
+            {% if excel_info.cargado %}
+            <div class="small text-secondary mb-2">
+              <i class="bi bi-check-circle-fill text-success me-1"></i>
+              Archivo activo actualizado el <strong>{{ excel_info.fecha }}</strong>.
             </div>
+            {% else %}
+            <div class="small text-secondary mb-2">
+              Carga un archivo <code>.xlsx</code> con el listado de usuarios para habilitar las consultas.
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'verificar_aprendiz' %}" enctype="multipart/form-data" data-no-validate>
+              {% csrf_token %}
+              <div class="mb-2">
+                <input
+                  type="file"
+                  name="archivo_excel"
+                  id="archivoExcelVerificacion"
+                  class="form-control form-control-sm"
+                  accept=".xlsx"
+                  required
+                >
+              </div>
+              <button type="submit" class="btn btn-success btn-sm fw-bold w-100 d-inline-flex align-items-center justify-content-center gap-1">
+                <i class="bi bi-upload"></i>
+                {% if excel_info.cargado %}Actualizar Archivo Excel{% else %}Cargar Archivo Excel{% endif %}
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -185,13 +205,13 @@
       <div class="card border-0 shadow-sm sbm-panel-card mt-auto">
         <div class="card-body p-3 small text-secondary">
           <div class="fw-bold text-dark mb-2 d-flex align-items-center gap-2">
-            <i class="bi bi-info-circle text-primary"></i>
-            ¿Cómo funciona la integración?
+            <i class="bi bi-info-circle text-success"></i>
+            ¿Cómo funciona la verificación por Excel?
           </div>
           <ol class="ps-3 mb-0 sbm-list-guide">
-            <li class="mb-1">El número es validado y sanitizado para evitar caracteres no válidos.</li>
-            <li class="mb-1">El servicio <code class="sbm-code-tag">SofiaPlusClient</code> consulta el endpoint oficial con tokens seguros y caché efímera de 5 minutos.</li>
-            <li>Si el aprendiz está <strong>ACTIVO / EN FORMACIÓN</strong>, puedes vincularlo directamente a un nuevo préstamo de bodega.</li>
+            <li class="mb-1">El administrador carga un archivo <code class="sbm-code-tag">.xlsx</code> con columnas como <code class="sbm-code-tag">documento</code>, <code class="sbm-code-tag">nombre_completo</code>, <code class="sbm-code-tag">tipo_documento</code>, <code class="sbm-code-tag">ficha</code>, <code class="sbm-code-tag">programa</code> y <code class="sbm-code-tag">estado</code>.</li>
+            <li class="mb-1">Cada consulta valida el documento directamente contra el archivo Excel cargado en el sistema.</li>
+            <li>Si el usuario aparece registrado, puedes vincularlo directamente a un nuevo préstamo de bodega.</li>
           </ol>
         </div>
       </div>
@@ -210,9 +230,9 @@
               <path d="M20 8v6M23 11h-6"/>
             </svg>
           </div>
-          <h5 class="fw-bold text-dark mb-2 sbm-tracking-tight">Esperando consulta de aprendiz</h5>
+          <h5 class="fw-bold text-dark mb-2 sbm-tracking-tight">Esperando consulta de usuario</h5>
           <p class="sbm-state-desc mb-0">
-            Ingresa el tipo y número de documento en el panel izquierdo para consultar en vivo la ficha, programa y estado formativo del aprendiz en SofiaPlus.
+            Ingresa el tipo y número de documento en el panel izquierdo para consultar la ficha, programa y estado del usuario en el archivo Excel administrado.
           </p>
         </div>
       </div>
@@ -223,9 +243,9 @@
           <div class="spinner-border mb-3 sbm-spinner-amber" role="status">
             <span class="visually-hidden">Consultando...</span>
           </div>
-          <h5 class="fw-bold text-dark mb-2">Consultando servicio SofiaPlus...</h5>
+          <h5 class="fw-bold text-dark mb-2">Consultando archivo Excel...</h5>
           <p class="sbm-state-desc mb-0">
-            Conectando con la base institucional del SENA. Esto puede tomar un par de segundos.
+            Verificando el documento en el listado cargado por el administrador.
           </p>
         </div>
       </div>
@@ -362,17 +382,17 @@
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           </div>
-          <h5 class="fw-bold text-dark mb-2">Aprendiz No Encontrado</h5>
+          <h5 class="fw-bold text-dark mb-2">Usuario No Encontrado</h5>
           <p id="msgNotFound" class="sbm-state-desc mb-4">
-            No se encontró ningún aprendiz registrado con el documento especificado en SofiaPlus.
+            No se encontró ningún usuario registrado con el documento especificado en el archivo Excel cargado.
           </p>
 
           <div class="card bg-light border-0 text-start p-3 mx-auto mb-4 sbm-guide-box">
-            <div class="small fw-bold text-dark mb-1"><i class="bi bi-check2-circle text-success me-1"></i>Sugerencias para el supervisor:</div>
+            <div class="small fw-bold text-dark mb-1"><i class="bi bi-check2-circle text-success me-1"></i>Sugerencias para el administrador:</div>
             <ul class="small text-muted mb-0 ps-3 sbm-guide-list">
-              <li>Verifique si el tipo de documento seleccionado coincide con el documento físico (CC, TI, CE, etc.).</li>
+              <li>Verifique que haya cargado el archivo Excel (<code>.xlsx</code>) actualizado en el panel izquierdo.</li>
               <li>Asegúrese de haber digitado el número sin espacios, puntos ni guiones.</li>
-              <li>Si es un aprendiz nuevo en el Centro Minero, confirme con la coordinación académica si su matrícula se encuentra en estado activa.</li>
+              <li>Confirme que el usuario figure en la columna de documento del archivo cargado.</li>
             </ul>
           </div>
 
@@ -382,7 +402,7 @@
         </div>
       </div>
 
-      <!-- ESTADO 5: SERVICIO NO DISPONIBLE O TIMEOUT (503) -->
+      <!-- ESTADO 5: ERROR DE CONSULTA -->
       <div id="stateServiceError" class="card border-0 shadow-sm sbm-panel-card sbm-state-card h-100 d-none">
         <div class="card-body p-4 p-md-5 text-center d-flex flex-column justify-content-center align-items-center">
           <div class="p-3 rounded-circle d-inline-flex mb-3 sbm-danger-icon-wrap">
@@ -392,9 +412,9 @@
               <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
           </div>
-          <h5 class="fw-bold text-dark mb-2">Servicio del SENA No Disponible</h5>
+          <h5 class="fw-bold text-dark mb-2">Error al Consultar el Archivo Excel</h5>
           <p id="msgServiceError" class="sbm-state-desc mb-4">
-            El servicio de consulta externa de SofiaPlus no responde o se encuentra en mantenimiento temporal. Se intentaron reintentos con espera exponencial de forma automática.
+            No fue posible completar la verificación contra el archivo Excel en este momento.
           </p>
 
           <div class="d-flex justify-content-center gap-2">
@@ -948,10 +968,10 @@ document.addEventListener('DOMContentLoaded', function() {
         renderAprendiz(ap);
         setCardState('success');
       } else if (response.status === 404) {
-        msgNotFound.textContent = data.error || 'No se encontró ningún aprendiz con este número de documento.';
+        msgNotFound.textContent = data.error || 'No se encontró ningún usuario con este número de documento en el archivo Excel.';
         setCardState('not_found');
-      } else if (response.status === 503) {
-        msgServiceError.textContent = data.error || 'El servicio de SofiaPlus no se encuentra disponible en este momento.';
+      } else if (response.status >= 500) {
+        msgServiceError.textContent = data.error || 'No fue posible consultar el archivo Excel de verificación.';
         setCardState('service_error');
       } else {
         // Error de validación u otro

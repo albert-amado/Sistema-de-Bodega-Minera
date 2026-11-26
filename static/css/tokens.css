@@ -20,9 +20,9 @@
   --sena-blue-border:    #A8E08A;   /* Contorno verde SENA unificado */
 
   --sena-white:          #FFFFFF;   /* Blanco puro (Tarjetas, Fondos limpios, Contraste) */
-  --sena-text:           #1E1E1E;   /* Texto principal de alto contraste */
+  --sena-text:           #000000;   /* Texto principal en negro de alto contraste */
   --sena-text-black:     #000000;   /* Negro absoluto para énfasis */
-  --sena-text-muted:     #4B5563;   /* Texto secundario legible sobre #FFFFFF y #F4F6F9 */
+  --sena-text-muted:     #111827;   /* Texto secundario oscuro legible sobre #FFFFFF y #F4F6F9 */
   --sena-bg-light:       #F4F6F9;   /* Gris claro (Fondo de secciones, página y paneles) */
   --sena-border:         #D1D5DB;   /* Gris medio (Bordes de tarjetas, tablas e inputs) */
 
@@ -49,9 +49,10 @@
   --bs-light:            #F4F6F9;
   --bs-light-rgb:        244, 246, 249;
   --bs-body-bg:          #F4F6F9;
-  --bs-body-color:       #1E1E1E;
+  --bs-body-color:       #000000;
+  --bs-secondary-color:  #111827;
   --bs-border-color:     #D1D5DB;
-  --bs-link-color:       #1E1E1E;
+  --bs-link-color:       #000000;
   --bs-link-hover-color: #39A900;
 
   /* ── 3. COMPATIBILIDAD CON TOKENS SBM EXISTENTES ── */

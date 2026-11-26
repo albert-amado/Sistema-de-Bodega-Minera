@@ -85,28 +85,37 @@
     {% endfor %}
   {% endif %}
 
-  <!-- 1. CAMBIO DE ENTORNO ACTIVO -->
-  <form method="POST" action="{% url 'configuracion' %}" class="mb-4">
-    {% csrf_token %}
-    <input type="hidden" name="accion" value="cambiar_entorno">
+  <!-- GESTIÓN UNIFICADA: BASE DE DATOS Y COPIAS DE SEGURIDAD EN EXCEL -->
+  <div class="card rounded-4 shadow-sm mb-4">
+    <div class="card-body p-4">
 
-    <div class="card rounded-4 shadow-sm mb-4">
-      <div class="card-body p-4">
-
-        <div class="d-flex align-items-start justify-content-between mb-4">
-          <div class="d-flex align-items-center gap-2">
-            <i class="bi bi-database-gear fs-4 text-primary"></i>
-            <div>
-              <h2 class="h6 fw-bold mb-0">Motor de Base de Datos Activo</h2>
-              <p class="small text-secondary mb-0">Selecciona el entorno en el que opera el sistema en tiempo real</p>
-            </div>
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-database-gear fs-4 text-success"></i>
+          <div>
+            <h2 class="h6 fw-bold mb-0">Base de Datos y Copias de Seguridad (.xlsx)</h2>
+            <p class="small text-secondary mb-0">
+              Cambia de entorno con respaldo automático en Excel, exporta la base actual o restaura registros faltantes desde <code>backups/</code>.
+            </p>
           </div>
-          <span class="badge bg-opacity-10 text-primary border border-primary px-3 py-2 rounded-pill small fw-bold">
+        </div>
+        <div class="d-flex align-items-center flex-wrap gap-2">
+          <span class="badge bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill small fw-bold">
             Entorno Activo: {{ config.almacenamiento|upper }}
           </span>
+          <a href="{% url 'configuracion:exportar_excel' %}" class="btn btn-success fw-bold px-3 d-inline-flex align-items-center gap-2">
+            <i class="bi bi-download"></i>
+            Generar y Descargar Copia en Excel (.xlsx)
+          </a>
         </div>
+      </div>
 
-        <div class="row g-3 mb-4">
+      <!-- 1. Selección de entorno activo (genera respaldo automático en backups/ al cambiar) -->
+      <form method="POST" action="{% url 'configuracion' %}" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="cambiar_entorno">
+
+        <div class="row g-3 mb-3">
           <!-- Local -->
           <div class="col-12 col-md-6">
             <input type="radio" class="btn-check" name="almacenamiento"
@@ -154,36 +163,20 @@
           </div>
         </div>
 
-        <div class="d-flex justify-content-end">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <span class="small text-secondary">
+            <i class="bi bi-shield-check text-success me-1"></i>
+            Al cambiar de entorno se guarda automáticamente una copia preventiva en <code>backups/</code> para restaurar datos faltantes cuando lo necesites.
+          </span>
           <button type="submit" class="btn fw-bold px-4 btn-save">
             <i class="bi bi-floppy-fill me-2"></i>Guardar y Sincronizar Entorno
           </button>
         </div>
+      </form>
 
-      </div>
-    </div>
-  </form>
+      <hr class="my-4">
 
-  <!-- 2. COPIA DE SEGURIDAD EN EXCEL (EXPORTAR E IMPORTAR FALTANTES) -->
-  <div class="card rounded-4 shadow-sm mb-4">
-    <div class="card-body p-4">
-
-      <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-4">
-        <div class="d-flex align-items-center gap-2">
-          <i class="bi bi-file-earmark-spreadsheet-fill fs-4 text-success"></i>
-          <div>
-            <h2 class="h6 fw-bold mb-0">Copia de Seguridad en Excel (.xlsx)</h2>
-            <p class="small text-secondary mb-0">
-              Exporta toda la base de datos a un libro Excel o importa una copia de seguridad para subir únicamente los registros que falten.
-            </p>
-          </div>
-        </div>
-        <a href="{% url 'configuracion:exportar_excel' %}" class="btn btn-success fw-bold px-4 d-inline-flex align-items-center gap-2">
-          <i class="bi bi-download"></i>
-          Generar y Descargar Copia en Excel (.xlsx)
-        </a>
-      </div>
-
+      <!-- 2. Importar respaldo e historial centralizado de backups/ -->
       <div class="row g-4">
         <!-- Subir archivo Excel para importar lo que falte -->
         <div class="col-12 col-lg-6">
@@ -224,7 +217,7 @@
               <span class="badge bg-secondary rounded-pill">{{ backups_excel|length }}</span>
             </div>
             <p class="small text-secondary mb-3">
-              Cada vez que exportas una copia en Excel se guarda automáticamente un respaldo en <code>backups/</code>. Puedes descargarlo o restaurar los datos que falten desde aquí:
+              Incluye las exportaciones manuales y los respaldos automáticos generados al cambiar de base de datos en <code>backups/</code>:
             </p>
 
             {% if backups_excel %}
