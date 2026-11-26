@@ -183,30 +183,27 @@ function rchLimpiarError() {
           var statusMap = { activo: ['dev-badge-activo','Activo'], parcial: ['dev-badge-parcial','Parcial'], vencido: ['dev-badge-vencido','Vencido'] };
           var sm = statusMap[p.estado] || ['',''];
           var chipsHtml = p.items.filter(function(it){ return !it.devuelto; })
-            .map(function(it){ return '<span style="font-family:var(--font-mono);font-size:.65rem;background:rgba(57, 169, 0,.07);color:var(--sena-green, #39A900);border:1px solid rgba(57, 169, 0,.12);padding:.1rem .38rem;border-radius:var(--radius-sm);margin:1px 2px 0 0;">' + it.producto.nombre + ' ×' + it.cantidad + '</span>'; }).join('');
+            .map(function(it){ return '<span class="dev-loan-chip">' + it.producto.nombre + ' ×' + it.cantidad + '</span>'; }).join('');
           var textoData = p.id + ' ' + p.usuario.toLowerCase() + ' ' + p.items.map(function(it){ return it.producto.nombre.toLowerCase() + ' ' + it.producto.codigo_sku.toLowerCase(); }).join(' ');
-          var esActiva = (_prestamo && _prestamo.id === p.id);
 
           return '<div class="' + selectedCls + '" data-id="' + p.id + '" data-texto="' + textoData.replace(/"/g,'&quot;') + '" onclick="devSeleccionarPrestamo(this,' + p.id + ')">' +
-            '<span style="font-family:var(--font-mono);font-size:.7rem;font-weight:700;color:var(--sena-green, #39A900);background:rgba(57, 169, 0,.08);border:1px solid rgba(57, 169, 0,.15);padding:.18rem .5rem;border-radius:var(--radius-sm);white-space:nowrap;flex-shrink:0;">#' + p.id + '</span>' +
+            '<span class="dev-loan-id">#' + p.id + '</span>' +
             '<div style="flex:1;min-width:0;">' +
               '<div style="font-family:var(--font-ui);font-size:.88rem;font-weight:600;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.25rem;">' + p.usuario + (p.nombre_usuario ? ' · <span style="font-weight:400;opacity:.7;">' + p.nombre_usuario + '</span>' : '') + '</div>' +
-              '<div style="display:flex;flex-wrap:wrap;">' + chipsHtml + '</div>' +
+              '<div style="display:flex;flex-wrap:wrap;gap:2px;">' + chipsHtml + '</div>' +
             '</div>' +
-            '<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;">' +
-              '<span class="' + sm[0] + '" style="font-size:.65rem;font-weight:700;padding:.12rem .45rem;border-radius:20px;font-family:var(--font-ui);">' + sm[1] + '</span>' +
-              '<span style="font-family:var(--font-mono);font-size:.65rem;color:var(--text-muted);">' + p.fecha_prestamo + '</span>' +
+            '<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:.25rem;">' +
+              (sm[1] ? '<span class="' + sm[0] + '" style="font-size:.65rem;font-weight:700;padding:.12rem .45rem;border-radius:20px;font-family:var(--font-ui);">' + sm[1] + '</span>' : '') +
+              '<span style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);white-space:nowrap;">' + p.fecha_prestamo + '</span>' +
             '</div>' +
-            '<div style="width:16px;height:16px;border-radius:50%;flex-shrink:0;border:1.5px solid ' + (esActiva ? 'var(--rust)' : 'rgba(0,0,0,.15)') + ';background:' + (esActiva ? 'var(--rust)' : 'transparent') + ';position:relative;">' +
-              (esActiva ? '<span style="position:absolute;inset:3px;border-radius:50%;background:#fff;display:block;"></span>' : '') +
-            '</div>' +
+            '<div class="dev-radio-circle"></div>' +
           '</div>';
         }).join('');
 
     return '<div class="dev-wiz-sec-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Selecciona el préstamo a devolver</div>' +
-      '<div style="position:relative;margin-bottom:.75rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
+      '<div style="position:relative;margin-bottom:.85rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
       '<input type="text" class="dev-wiz-search-input" id="dev-search-prestamos" placeholder="Buscar por usuario, N° o herramienta…" oninput="devFiltrarPrestamos()" autocomplete="off"></div>' +
-      '<div id="dev-loan-list" style="max-height:280px;overflow-y:auto;">' + loansHtml + '</div>' +
+      '<div id="dev-loan-list">' + loansHtml + '</div>' +
       '<div id="dev-sin-resultados" class="d-none" style="text-align:center;padding:1.5rem;color:var(--text-muted);font-family:var(--font-ui);font-size:.85rem;">Sin coincidencias.</div>' +
       '<div class="dev-wiz-nav-row"><div></div>' +
         '<button class="dev-wiz-btn-next" id="dev-btn-next" onclick="devWizSiguiente()" ' + (canAdvance() ? '' : 'disabled') + '>Continuar ' + svgArR() + '</button>' +
@@ -225,10 +222,10 @@ function rchLimpiarError() {
       var sel  = e.seleccionado !== undefined ? e.seleccionado : true;
       var esc  = e.escaneado    || false;
       var cant = e.cantDevolver !== undefined ? e.cantDevolver : it.cantidad;
-      var serialTxt = '';
+      var rowCls = 'dev-item-row' + (sel ? ' dev-item-sel' : '') + (esc ? ' dev-item-scanned' : '');
       var chkMark = sel ? '<svg width="8" height="7" viewBox="0 0 11 9" fill="none"><path d="M1 4L4.5 7.5L10 1.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '';
       var cantCtrl = sel
-        ? '<div style="display:flex;align-items:center;gap:3px;" onclick="event.stopPropagation()"><button type="button" onclick="devCambiarCant(' + it.id + ',-1)" style="width:20px;height:20px;border-radius:4px;border:1px solid rgba(152,71,62,.3);background:#fff;color:var(--rust);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button><span id="dev-cant-' + it.id + '" style="font-family:var(--font-mono);font-weight:700;font-size:.82rem;min-width:18px;text-align:center;color:var(--sena-green, #39A900);">' + cant + '</span><button type="button" onclick="devCambiarCant(' + it.id + ',+1)" style="width:20px;height:20px;border-radius:4px;border:1px solid rgba(152,71,62,.3);background:#fff;color:var(--rust);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button><span style="font-size:.62rem;color:var(--text-muted);">/' + it.cantidad + '</span></div>'
+        ? '<div style="display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation()"><button type="button" class="dev-cant-btn" onclick="devCambiarCant(' + it.id + ',-1)">−</button><span id="dev-cant-' + it.id + '" style="font-family:var(--font-mono);font-weight:700;font-size:.82rem;min-width:18px;text-align:center;color:var(--sena-green, #39A900);">' + cant + '</span><button type="button" class="dev-cant-btn" onclick="devCambiarCant(' + it.id + ',+1)">+</button><span style="font-size:.65rem;color:var(--text-muted);">/' + it.cantidad + '</span></div>'
         : '<span style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);">' + it.cantidad + ' ud.</span>';
 
       return '<div class="' + rowCls + '" onclick="devToggleItem(' + it.id + ')">' +
@@ -259,7 +256,7 @@ function rchLimpiarError() {
         '<span style="font-size:.6rem;background:rgba(57, 169, 0,.1);color:var(--sena-green, #39A900);border:1px solid rgba(57, 169, 0,.18);padding:.08rem .42rem;border-radius:10px;font-family:var(--font-mono);">' + badgeTxt + '</span>' +
         '<button type="button" onclick="devToggleTodas()" style="margin-left:auto;background:none;border:none;color:var(--sena-green, #39A900);font-family:var(--font-ui);font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;opacity:.75;">Marcar todas</button>' +
       '</div>' +
-      '<div style="max-height:195px;overflow-y:auto;margin-bottom:.4rem;">' + itemsHtml + devueltosHtml + '</div>' +
+      '<div style="margin-bottom:.4rem;">' + itemsHtml + devueltosHtml + '</div>' +
       '<div id="dev-resumen-strip"></div>' +
       '<div class="dev-wiz-nav-row">' +
         '<button class="dev-wiz-btn-back" onclick="devWizAtras()">' + svgArL() + ' Volver</button>' +

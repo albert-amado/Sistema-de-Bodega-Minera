@@ -6,22 +6,34 @@ from django.urls import reverse_lazy
 
 
 class SesionRequeridaMixin:
-    """
-    clase para corregir error de seguridad. Se asegura de que exista una sesion iniciada
-    no se salta los filtros por si un usuario conoce la direccion exacta de una pagina protegida
-    no pueda acceder a esta. Siempre debe existir una sesion.
-    (protege vistas para que solo entren usuarios con sesión válida)
-    Si request.user está autenticado y además es superuser o staff, deja pasar directamente.
-    Si no cumple lo anterior, revisa la sesión personalizada: request.session["usuario_documento"].
-    Si usuario_documento no existe, redirige al login.
-    Si existe, deja pasar a la vista.
-    """
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff):
             return super().dispatch(request, *args, **kwargs)
 
         if not request.session.get('usuario_documento'):
             return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
+
+
+class AdminRequeridoMixin:
+    def dispatch(self, request, *args, **kwargs):
+        from django.contrib import messages
+        from django.http import JsonResponse
+        from usuario.decorators import _es_peticion_json, es_administrador_valido
+
+        tiene_sesion = bool(request.session.get('usuario_documento')) or (
+            request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)
+        )
+        if not tiene_sesion:
+            if _es_peticion_json(request):
+                return JsonResponse({'error': 'Debes iniciar sesión para acceder.'}, status=401)
+            messages.error(request, 'Debes iniciar sesión para acceder.')
+            return redirect('login')
+        if not es_administrador_valido(request):
+            if _es_peticion_json(request):
+                return JsonResponse({'error': 'No tienes permisos de administrador para acceder a este recurso.'}, status=403)
+            messages.error(request, 'No tienes permisos para acceder a esta sección.')
+            return redirect('pagina_principal')
         return super().dispatch(request, *args, **kwargs)
 
 

@@ -42,7 +42,58 @@ document.addEventListener('DOMContentLoaded', function () {
   var notifPanel = document.getElementById('aside-notif-panel');
   var notifClose = document.getElementById('aside-notif-close');
   var notifRefresh = document.getElementById('aside-notif-refresh');
+  var notifClear = document.getElementById('aside-notif-clear');
   var refreshIcon = document.getElementById('aside-refresh-icon');
+  var DISMISSED_KEY = 'sbm_dismissed_notifs_v1';
+  var lastServerItems = [];
+
+  function getNotifKey(item) {
+    return (item.tipo || 'local') + '|' + (item.titulo || '') + '|' + (item.desc || '');
+  }
+
+  function loadDismissedSet() {
+    try {
+      var raw = localStorage.getItem(DISMISSED_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveDismissedSet(arr) {
+    try {
+      localStorage.setItem(DISMISSED_KEY, JSON.stringify(arr.slice(-150)));
+    } catch (e) {}
+  }
+
+  function isDismissed(item, dismissedArr) {
+    return dismissedArr.indexOf(getNotifKey(item)) !== -1;
+  }
+
+  function dismissNotification(item) {
+    var key = getNotifKey(item);
+    window.localNotifications = window.localNotifications.filter(function (n) {
+      return getNotifKey(n) !== key;
+    });
+    var dismissed = loadDismissedSet();
+    if (dismissed.indexOf(key) === -1) {
+      dismissed.push(key);
+      saveDismissedSet(dismissed);
+    }
+    renderNotifications(lastServerItems);
+  }
+
+  function clearAllNotifications() {
+    var dismissed = loadDismissedSet();
+    lastServerItems.forEach(function (item) {
+      var key = getNotifKey(item);
+      if (dismissed.indexOf(key) === -1) dismissed.push(key);
+    });
+    saveDismissedSet(dismissed);
+    window.localNotifications = [];
+    renderNotifications(lastServerItems);
+  }
 
   function toggleNotifPanel(forceOpen) {
     if (!notifPanel || !notifBtn) return;
@@ -67,23 +118,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function renderNotifIcon(item) {
     var ico = item.icono || 'info-circle';
-    var color = item.color || '#094D92';
+    var color = item.color || '#39A900';
+    var toneCls = '';
 
-    if (item.tipo === 'activo') color = '#0284c7';
-    else if (item.tipo === 'vencido' || item.tipo === 'vencido_no_marcado') color = '#dc2626';
-    else if (item.tipo === 'proximo' || item.tipo === 'stock_bajo') color = '#d97706';
-    else if (item.tipo === 'devolucion') color = '#094D92';
-    else if (!color || color === 'var(--navy)' || color === 'var(--cream)') color = '#094D92';
+    if (item.tipo === 'activo') {
+      color = '#0284c7';
+      toneCls = ' notif-tone-info';
+    } else if (item.tipo === 'vencido' || item.tipo === 'vencido_no_marcado' || item.tipo === 'stock_bajo') {
+      color = '#dc2626';
+      toneCls = ' notif-tone-danger';
+    } else if (item.tipo === 'proximo') {
+      color = '#d97706';
+      toneCls = ' notif-tone-warn';
+    } else if (item.tipo === 'devolucion') {
+      color = '#39A900';
+    } else if (!color || color === 'var(--navy)' || color === 'var(--cream)') {
+      color = '#39A900';
+    }
 
     if (typeof ico === 'string' && ico.startsWith('<svg')) {
       return (
-        '<div class="flex-shrink-0 aside-notif-row-icon" style="color: ' +
-        color +
-        ' !important;"><span style="color: ' +
+        '<div class="flex-shrink-0 aside-notif-row-icon' +
+        toneCls +
+        '" style="color: ' +
         color +
         ' !important;">' +
         ico +
-        '</span></div>'
+        '</div>'
       );
     }
 
@@ -100,13 +161,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     return (
-      '<div class="flex-shrink-0 aside-notif-row-icon" style="color: ' +
-      color +
-      ' !important; font-size: 1.15rem; display: flex; align-items: center;"><i class="bi ' +
-      iconClass +
+      '<div class="flex-shrink-0 aside-notif-row-icon' +
+      toneCls +
       '" style="color: ' +
       color +
-      ' !important; opacity: 1 !important;"></i></div>'
+      ' !important;"><i class="bi ' +
+      iconClass +
+      '"></i></div>'
     );
   }
 
@@ -120,13 +181,101 @@ document.addEventListener('DOMContentLoaded', function () {
       .replace(/'/g, '&#39;');
   }
 
-  function loadNotifications() {
-    var loading = document.getElementById('aside-notif-loading');
+  function updateTimestamp() {
+    var ts = document.getElementById('aside-notif-ts');
+    if (ts) {
+      var now = new Date();
+      ts.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+  }
+
+  function createNotifRow(item) {
+    var row = document.createElement('div');
+    row.className = 'aside-notif-row';
+
+    var link = document.createElement('a');
+    link.href = item.url || '#';
+    link.className = 'aside-notif-link';
+    link.innerHTML =
+      renderNotifIcon(item) +
+      '<div class="aside-notif-row-body">' +
+      '<div class="aside-notif-row-title">' +
+      escapeHtml(item.titulo) +
+      '</div>' +
+      '<div class="aside-notif-row-desc">' +
+      escapeHtml(item.desc) +
+      '</div>' +
+      '</div>';
+
+    var delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'aside-notif-delete';
+    delBtn.setAttribute('aria-label', 'Borrar notificación');
+    delBtn.setAttribute('title', 'Borrar notificación');
+    delBtn.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
+    delBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      dismissNotification(item);
+    });
+
+    row.appendChild(link);
+    row.appendChild(delBtn);
+    return row;
+  }
+
+  function renderNotifications(serverItems) {
     var empty = document.getElementById('aside-notif-empty');
     var list = document.getElementById('aside-notif-list');
     var countBadge = document.getElementById('aside-panel-count');
     var bellBadge = document.getElementById('aside-notif-badge');
-    var ts = document.getElementById('aside-notif-ts');
+    if (!list || !empty) return;
+
+    var dismissed = loadDismissedSet();
+    var visibleServer = (serverItems || []).filter(function (item) {
+      return !isDismissed(item, dismissed);
+    });
+    var allItems = window.localNotifications.concat(visibleServer);
+    var total = allItems.length;
+
+    if (total > 0) {
+      if (bellBadge) {
+        bellBadge.textContent = total;
+        bellBadge.classList.remove('d-none');
+        bellBadge.style.display = 'inline-flex';
+      }
+      if (countBadge) {
+        countBadge.textContent = total;
+        countBadge.classList.remove('d-none');
+      }
+      if (notifClear) notifClear.classList.remove('d-none');
+    } else {
+      if (bellBadge) {
+        bellBadge.textContent = '0';
+        bellBadge.classList.add('d-none');
+        bellBadge.style.display = 'none';
+      }
+      if (countBadge) countBadge.classList.add('d-none');
+      if (notifClear) notifClear.classList.add('d-none');
+    }
+
+    updateTimestamp();
+    list.innerHTML = '';
+
+    if (total > 0) {
+      empty.classList.add('d-none');
+      allItems.forEach(function (item) {
+        list.appendChild(createNotifRow(item));
+      });
+    } else {
+      empty.classList.remove('d-none');
+    }
+  }
+
+  function loadNotifications() {
+    var loading = document.getElementById('aside-notif-loading');
+    var empty = document.getElementById('aside-notif-empty');
+    var list = document.getElementById('aside-notif-list');
 
     if (!list || !loading || !empty) return;
 
@@ -144,77 +293,13 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(function (data) {
         loading.classList.add('d-none');
         if (refreshIcon) refreshIcon.style.animation = '';
-
-        var serverItems = data.items || [];
-        var allItems = window.localNotifications.concat(serverItems);
-        var total = allItems.length;
-
-        if (total > 0) {
-          if (bellBadge) {
-            bellBadge.textContent = total;
-            bellBadge.style.display = 'inline-flex';
-          }
-          if (countBadge) {
-            countBadge.textContent = total;
-            countBadge.classList.remove('d-none');
-          }
-        } else {
-          if (bellBadge) bellBadge.style.display = 'none';
-          if (countBadge) countBadge.classList.add('d-none');
-        }
-
-        var now = new Date();
-        if (ts) ts.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        if (total > 0) {
-          empty.classList.add('d-none');
-          allItems.forEach(function (item) {
-            var row = document.createElement('a');
-            row.href = item.url || '#';
-            row.className = 'aside-notif-row';
-
-            row.innerHTML =
-              renderNotifIcon(item) +
-              '<div class="aside-notif-row-body">' +
-              '<div class="aside-notif-row-title">' +
-              escapeHtml(item.titulo) +
-              '</div>' +
-              '<div class="aside-notif-row-desc">' +
-              escapeHtml(item.desc) +
-              '</div>' +
-              '</div>';
-
-            list.appendChild(row);
-          });
-        } else {
-          empty.classList.remove('d-none');
-        }
+        lastServerItems = data.items || [];
+        renderNotifications(lastServerItems);
       })
       .catch(function (err) {
         console.error('Error loading notifications:', err);
         loading.classList.add('d-none');
-
-        if (window.localNotifications.length > 0) {
-          window.localNotifications.forEach(function (item) {
-            var row = document.createElement('a');
-            row.href = item.url || '#';
-            row.className = 'aside-notif-row';
-
-            row.innerHTML =
-              renderNotifIcon(item) +
-              '<div class="aside-notif-row-body">' +
-              '<div class="aside-notif-row-title">' +
-              escapeHtml(item.titulo) +
-              '</div>' +
-              '<div class="aside-notif-row-desc">' +
-              escapeHtml(item.desc) +
-              '</div>' +
-              '</div>';
-            list.appendChild(row);
-          });
-        } else {
-          empty.classList.remove('d-none');
-        }
+        renderNotifications([]);
         if (refreshIcon) refreshIcon.style.animation = '';
       });
   }
@@ -231,6 +316,12 @@ document.addEventListener('DOMContentLoaded', function () {
     notifClose.addEventListener('click', function (e) {
       e.stopPropagation();
       closeNotifPanel();
+    });
+  }
+  if (notifClear) {
+    notifClear.addEventListener('click', function (e) {
+      e.stopPropagation();
+      clearAllNotifications();
     });
   }
   if (notifRefresh) {

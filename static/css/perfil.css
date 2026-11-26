@@ -137,3 +137,34 @@
   height: 8px;
   border-radius: 50%;
 }
+
+body.dark-mode .modal-tab {
+  color: #9CA3AF;
+}
+body.dark-mode .modal-tab:hover {
+  color: #F3F4F6;
+}
+body.dark-mode .modal-tab--active {
+  color: #4ADE80 !important;
+  border-bottom-color: #39A900 !important;
+}
+body.dark-mode .toggle-slider {
+  background: #2A3038;
+}
+body.dark-mode .perfil__style-10 {
+  color: #F3F4F6 !important;
+}
+body.dark-mode .perfil__style-12 {
+  color: #4ADE80 !important;
+}
+body.dark-mode .perfil__style-14 {
+  color: #F87171 !important;
+}
+body.dark-mode .perfil__style-11,
+body.dark-mode .perfil__style-13,
+body.dark-mode .perfil__style-15 {
+  color: #8E96A0 !important;
+}
+body.dark-mode .notif-channel-item:hover {
+  background-color: #1A1D21 !important;
+}

@@ -4,7 +4,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 
 from almacen.models import Almacen, Estante
-from common.mixins import sesion_requerida
+from common.mixins import AdminRequeridoMixin
+from usuario.decorators import admin_required
 from usuario.models import Usuario
 
 from .models import (
@@ -16,7 +17,7 @@ from .models import (
 )
 
 
-@sesion_requerida
+@admin_required
 def inventario_view(request):
     """Vista principal del Inventario de Herramientas y Catálogo de Equipos."""
     herramientas = Herramienta.objects.select_related('codigo_categoria', 'codigo_suministro', 'estante', 'estante__codigo_almacen').all()
@@ -136,53 +137,49 @@ def inventario_view(request):
     return render(request, 'inventario.html', context)
 
 
-# Vistas genéricas para Herramienta
-class HerramientaListView(ListView):
+class HerramientaListView(AdminRequeridoMixin, ListView):
     model = Herramienta
     template_name = "herramienta/herramienta_list.html"
     context_object_name = "herramientas"
 
 
-class HerramientaDetailView(DetailView):
+class HerramientaDetailView(AdminRequeridoMixin, DetailView):
     model = Herramienta
     template_name = "herramienta/herramienta_detail.html"
     context_object_name = "herramienta"
 
 
-# Vistas para CategoriaHerramienta
-class CategoriaHerramientaListView(ListView):
+class CategoriaHerramientaListView(AdminRequeridoMixin, ListView):
     model = CategoriaHerramienta
     template_name = "herramienta/categoria_list.html"
     context_object_name = "categorias"
 
 
-class CategoriaHerramientaDetailView(DetailView):
+class CategoriaHerramientaDetailView(AdminRequeridoMixin, DetailView):
     model = CategoriaHerramienta
     template_name = "herramienta/categoria_detail.html"
     context_object_name = "categoria"
 
 
-# Vistas para Traslado
-class TrasladoListView(ListView):
+class TrasladoListView(AdminRequeridoMixin, ListView):
     model = Traslado
     template_name = "herramienta/traslado_list.html"
     context_object_name = "traslados"
 
 
-class TrasladoDetailView(DetailView):
+class TrasladoDetailView(AdminRequeridoMixin, DetailView):
     model = Traslado
     template_name = "herramienta/traslado_detail.html"
     context_object_name = "traslado"
 
 
-# Vistas para DetalleTraslado
-class DetalleTrasladoListView(ListView):
+class DetalleTrasladoListView(AdminRequeridoMixin, ListView):
     model = DetalleTraslado
     template_name = "herramienta/detalle_traslado_list.html"
     context_object_name = "detalles_traslado"
 
 
-class DetalleTrasladoDetailView(DetailView):
+class DetalleTrasladoDetailView(AdminRequeridoMixin, DetailView):
     model = DetalleTraslado
     template_name = "herramienta/detalle_traslado_detail.html"
     context_object_name = "detalle_traslado"
@@ -191,12 +188,12 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 
 
-class ProveedorListView(ListView):
+class ProveedorListView(AdminRequeridoMixin, ListView):
     model = Proveedor
     template_name = "proveedores.html"
     context_object_name = "proveedores"
 
-class ProveedorCreateView(CreateView):
+class ProveedorCreateView(AdminRequeridoMixin, CreateView):
     model = Proveedor
     template_name = "proveedores.html"
     fields = ['nit_proveedor', 'telefono_contacto', 'correo_proveedor', 'descripcion']
@@ -207,7 +204,7 @@ class ProveedorCreateView(CreateView):
         return super().form_valid(form)
 
 
-@sesion_requerida
+@admin_required
 def api_estantes(request):
     """
     Devuelve los estantes de un almacén específico en formato JSON.

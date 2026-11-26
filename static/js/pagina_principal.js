@@ -21,16 +21,19 @@
     const dark = isDarkMode();
     return {
       activo: '#39A900',
-      vencido: '#ef4444',
+      vencido: dark ? '#E5484D' : '#ef4444',
       devuelto: '#10b981',
-      parcial: '#f59e0b',
-      barFill: dark ? 'rgba(57, 169, 0, 0.78)' : 'rgba(57, 169, 0, 0.85)',
-      barBorder: '#39A900',
+      parcial: dark ? '#E5A00D' : '#f59e0b',
+      barFill: dark ? 'rgba(57, 169, 0, 0.75)' : 'rgba(57, 169, 0, 0.85)',
+      barHover: '#39A900',
+      barBorder: dark ? 'rgba(74, 222, 128, 0.45)' : '#39A900',
       gridColor: dark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)',
       textColor: dark ? '#9CA3AF' : '#334155',
-      yTickColor: dark ? '#E5E7EB' : '#0f172a',
-      borderColor: dark ? '#141920' : '#ffffff',
-      tooltipBg: dark ? '#1A2029' : '#1e293b',
+      yTickColor: dark ? '#D1D5DB' : '#0f172a',
+      borderColor: dark ? '#141619' : '#ffffff',
+      tooltipBg: dark ? '#1A1D21' : '#1e293b',
+      tooltipTitle: '#F3F4F6',
+      tooltipBody: '#D1D5DB',
       tooltipBorder: dark ? 'rgba(255, 255, 255, 0.1)' : '#334155',
       fontFamily: "'Inter', system-ui, sans-serif"
     };
@@ -79,11 +82,12 @@
               }
             },
             tooltip: {
-              backgroundColor: '#1e293b',
-              titleColor: '#ffffff',
-              bodyColor: '#e2e8f0',
-              borderColor: '#334155',
+              backgroundColor: tc.tooltipBg,
+              titleColor: tc.tooltipTitle,
+              bodyColor: tc.tooltipBody,
+              borderColor: tc.tooltipBorder,
               borderWidth: 1,
+              cornerRadius: 8,
               padding: 10
             }
           },
@@ -119,6 +123,7 @@
             label: 'Solicitudes / Préstamos',
             data: rawData.data || [0, 0, 0, 0, 0, 0, 0, 0],
             backgroundColor: tc.barFill,
+            hoverBackgroundColor: tc.barHover,
             borderColor: tc.barBorder,
             borderWidth: 1,
             borderRadius: 6
@@ -131,11 +136,12 @@
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: '#1e293b',
-              titleColor: '#ffffff',
-              bodyColor: '#e2e8f0',
-              borderColor: '#334155',
+              backgroundColor: tc.tooltipBg,
+              titleColor: tc.tooltipTitle,
+              bodyColor: tc.tooltipBody,
+              borderColor: tc.tooltipBorder,
               borderWidth: 1,
+              cornerRadius: 8,
               padding: 10
             }
           },
@@ -200,11 +206,12 @@
               }
             },
             tooltip: {
-              backgroundColor: '#1e293b',
-              titleColor: '#ffffff',
-              bodyColor: '#e2e8f0',
-              borderColor: '#334155',
+              backgroundColor: tc.tooltipBg,
+              titleColor: tc.tooltipTitle,
+              bodyColor: tc.tooltipBody,
+              borderColor: tc.tooltipBorder,
               borderWidth: 1,
+              cornerRadius: 8,
               padding: 10
             }
           }
@@ -260,14 +267,15 @@
     init();
   }
 
-  // Observador reactivo para conmutar colores si cambia la clase dark-mode en el body
   const observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (m) {
-      if (m.attributeName === 'class') {
+    for (let i = 0; i < mutations.length; i++) {
+      if (mutations[i].attributeName === 'class' || mutations[i].attributeName === 'data-theme') {
         renderAllCharts();
+        break;
       }
-    });
+    }
   });
-  observer.observe(document.body, { attributes: true });
+  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
 
 })();

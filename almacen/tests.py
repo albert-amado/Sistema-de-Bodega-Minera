@@ -192,14 +192,16 @@ class AlmacenViewIntegrationTests(AlmacenBaseTestCase):
         self.assertEqual(self.almacen.nombre, "Almacén Modificado")
 
     def test_vista_almacenes_usuario_regular_bloqueado(self):
-        """[RBAC] Verifica que usuarios regulares no puedan crear ni editar almacenes."""
+        """[RBAC] Verifica que usuarios regulares no puedan acceder ni modificar almacenes."""
         self.login_as(self.operador)
+        resp_get = self.client.get(reverse("almacenes"))
+        self.assertRedirects(resp_get, reverse("pagina_principal"))
         post_data = {
             "accion": "crear",
             "nombre": "Almacén No Autorizado",
         }
         response = self.client.post(reverse("almacenes"), data=post_data)
-        self.assertRedirects(response, reverse("almacenes"))
+        self.assertRedirects(response, reverse("pagina_principal"))
         self.assertFalse(Almacen.objects.filter(nombre="Almacén No Autorizado").exists())
 
     def test_vista_estantes_admin_get_200(self):

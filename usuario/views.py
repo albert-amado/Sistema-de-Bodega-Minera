@@ -35,8 +35,9 @@ ROLES_VALIDOS = [r[0] for r in Usuario.ROL_CHOICES]
 ROLES = [{'id': r[0], 'nombre': r[1]} for r in Usuario.ROL_CHOICES]
 
 
+@admin_required
 def registro_qr_pdf(request):
-    pass
+    return redirect('lista_usuarios')
 
 
 # ─────────────────────────────────────────────────────────────
@@ -107,9 +108,28 @@ def logout_view(request):
 # ─────────────────────────────────────────────────────────────
 #  REGISTRO
 # ─────────────────────────────────────────────────────────────
+FICHAS_REGISTRO = ['3196477']
+
+PROGRAMAS_CENTRO_MINERO = [
+    'Análisis y Desarrollo de Software (ADSO)',
+    'Administración y Gestión Minera',
+    'Electricidad y Automatización Industrial',
+    'Gestión y Seguridad Ambiental Minera',
+    'Mantenimiento Electromecánico Industrial',
+    'Operación de Maquinaria Pesada',
+    'Sistemas y Computación',
+    'Soldadura en Productos Metálicos',
+    'Supervisión de Labores Mineras',
+    'Supervisión de Labores Mineras Subterráneas',
+    'Topografía y Geomática',
+]
+
+
 def registro_view(request):
     ctx_base = {
         'roles': ROLES,
+        'fichas': FICHAS_REGISTRO,
+        'programas': PROGRAMAS_CENTRO_MINERO,
         'tipo_documento': 'CC',
         'first_name': '',
         'last_name': '',
@@ -642,6 +662,7 @@ def verificar_aprendiz_api(request):
         }, status=500)
 
 
+@admin_required
 def verificar_documento_registro_api(request):
     """
     Endpoint AJAX para la verificación en tiempo real durante el registro de usuarios.

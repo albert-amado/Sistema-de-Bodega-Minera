@@ -17,6 +17,46 @@
     border-color: #39A900;
     background-color: #EBF7E5;
   }
+  body.dark-mode .btn-save {
+    background-color: #1E242B !important;
+    color: #F3F4F6 !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  }
+  body.dark-mode .btn-save:hover {
+    background-color: #39A900 !important;
+    border-color: #39A900 !important;
+    color: #FFFFFF !important;
+  }
+  body.dark-mode .storage-card {
+    background-color: #16191D !important;
+    border-color: rgba(255, 255, 255, 0.09) !important;
+    color: #F3F4F6 !important;
+  }
+  body.dark-mode .storage-card:hover {
+    border-color: rgba(57, 169, 0, 0.45) !important;
+  }
+  body.dark-mode .btn-check:checked + .storage-card {
+    border-color: #39A900 !important;
+    background-color: rgba(57, 169, 0, 0.12) !important;
+    color: #F3F4F6 !important;
+  }
+  body.dark-mode .backup-dropzone {
+    border: 2px dashed rgba(57, 169, 0, 0.42) !important;
+    background-color: #16191D !important;
+    color: #F3F4F6 !important;
+  }
+  body.dark-mode .backup-dropzone:hover {
+    border-color: #39A900 !important;
+    background-color: rgba(57, 169, 0, 0.08) !important;
+  }
+  body.dark-mode .backup-dropzone h3,
+  body.dark-mode .backup-dropzone strong {
+    color: #F3F4F6 !important;
+  }
+  body.dark-mode .backup-dropzone p,
+  body.dark-mode .backup-dropzone .form-label {
+    color: #9CA3AF !important;
+  }
 </style>
 {% endblock css %}
 

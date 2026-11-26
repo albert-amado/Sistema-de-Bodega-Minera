@@ -5,13 +5,29 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   var overlay = document.getElementById('page-loading-overlay');
+  var mainContent = document.getElementById('main-content');
+  var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var navTimer = null;
 
   function showLoading() {
-    if (overlay) overlay.style.display = 'flex';
+    if (overlay) {
+      overlay.classList.add('is-visible');
+      overlay.setAttribute('aria-hidden', 'false');
+    }
   }
 
   function hideLoading() {
-    if (overlay) overlay.style.display = 'none';
+    if (navTimer) {
+      clearTimeout(navTimer);
+      navTimer = null;
+    }
+    if (mainContent) {
+      mainContent.classList.remove('is-leaving');
+    }
+    if (overlay) {
+      overlay.classList.remove('is-visible');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
   }
 
   window.showLoading = showLoading;
@@ -22,40 +38,84 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   function isSamePageAnchor(anchor) {
-    if (!anchor.href) return false;
+    var rawHref = anchor.getAttribute('href');
+    if (!rawHref || rawHref === '#' || rawHref.indexOf('javascript:') === 0) return true;
     try {
       var url = new URL(anchor.href, location.href);
       return (
         url.origin === location.origin &&
         url.pathname === location.pathname &&
-        (url.hash || anchor.getAttribute('href') === '#')
+        url.search === location.search
       );
     } catch (e) {
       return false;
     }
   }
 
+  function isDownloadLink(anchor) {
+    if (anchor.hasAttribute('download')) return true;
+    try {
+      var path = new URL(anchor.href, location.href).pathname.toLowerCase();
+      return /exportar|descargar|excel|xlsx|pdf|backup/.test(path);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function highlightSidebarLink(anchor) {
+    var sidebarNav = anchor.closest('#aside-sidebar .aside-nav');
+    if (!sidebarNav) return;
+    sidebarNav.querySelectorAll('a.nav-link.active').forEach(function (el) {
+      if (el !== anchor && !el.hasAttribute('data-bs-toggle')) {
+        el.classList.remove('active');
+      }
+    });
+    anchor.classList.add('active');
+  }
+
   document.addEventListener('click', function (event) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
     var anchor = event.target.closest('a');
     if (!anchor) return;
-    if (anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+    if (anchor.target === '_blank' || anchor.hasAttribute('data-bs-toggle') || isDownloadLink(anchor)) return;
     if (isSamePageAnchor(anchor)) return;
-    if (anchor.href && anchor.href !== location.href) {
-      showLoading();
+
+    var destUrl;
+    try {
+      destUrl = new URL(anchor.href, location.href);
+    } catch (e) {
+      return;
     }
+    if (destUrl.origin !== location.origin) return;
+
+    highlightSidebarLink(anchor);
+
+    if (prefersReducedMotion || !mainContent) {
+      showLoading();
+      return;
+    }
+
+    event.preventDefault();
+    mainContent.classList.add('is-leaving');
+    showLoading();
+
+    var targetHref = anchor.href;
+    navTimer = setTimeout(function () {
+      window.location.href = targetHref;
+    }, 150);
   });
 
   document.addEventListener('submit', function (e) {
     if (e.defaultPrevented) return;
+    var form = e.target;
+    if (form && form.target === '_blank') return;
     setTimeout(function () {
       if (!e.defaultPrevented) {
         showLoading();
       }
     }, 50);
-  });
-
-  window.addEventListener('beforeunload', function () {
-    showLoading();
   });
 
   // Aplicar colores de fondo dinámicos desde atributos de datos
