@@ -222,6 +222,71 @@
   gap: 4px;
 }
 
+.sbm-chat-reset-dialog {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(8, 12, 10, 0.72);
+}
+
+.sbm-chat-reset-dialog[hidden] {
+  display: none;
+}
+
+.sbm-chat-reset-confirmation {
+  width: 100%;
+  max-width: 330px;
+  padding: 22px;
+  border: 1px solid var(--dark-border-color);
+  border-radius: 14px;
+  background: var(--dark-bg-surface);
+  color: var(--dark-text-primary);
+  box-shadow: 0 16px 40px var(--dark-shadow-strong);
+}
+
+.sbm-chat-reset-confirmation p {
+  margin: 0 0 20px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.sbm-chat-reset-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.sbm-chat-reset-btn {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--dark-border-strong);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sbm-chat-reset-cancel {
+  background: var(--dark-bg-card);
+  color: var(--dark-text-secondary);
+}
+
+.sbm-chat-reset-accept {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #FFFFFF;
+}
+
+.sbm-chat-reset-btn:focus-visible {
+  outline: 2px solid var(--color-primary-accent);
+  outline-offset: 2px;
+}
+
 .sbm-chat-btn-header {
   background: transparent;
   border: none;
