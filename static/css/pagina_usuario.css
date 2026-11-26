@@ -12,7 +12,7 @@
   transition: opacity .45s ease, transform .45s ease,
               box-shadow .18s, transform .18s;
 }
-.kpi-usr:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(27,32,33,.12); }
+.kpi-usr:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--shadow-color-md); }
 .kpi-bar {
   position: absolute; top: 0; left: 0; right: 0;
   height: 3px; border-radius: 0;
@@ -52,18 +52,18 @@
   font-weight: 700;
   line-height: 18px;
   text-align: center;
-  background: #d64541;
-  color: #fff;
+  background: var(--status-danger);
+  color: var(--bg-surface);
 }
 .stock-notif-panel {
   position: absolute;
   top: calc(100% + .55rem);
   right: 0;
   width: min(330px, 100vw - 2rem);
-  background: #fff;
-  border: 1px solid rgba(0,0,0,.12);
+  background: var(--bg-surface);
+  border: 1px solid var(--shadow-color-md);
   border-radius: 18px;
-  box-shadow: 0 24px 60px rgba(46,61,73,.14);
+  box-shadow: 0 24px 60px var(--shadow-color-md);
   padding: .85rem;
   display: none;
   opacity: 0;
@@ -109,7 +109,7 @@
   align-items: center;
   padding: .75rem .85rem;
   border-radius: 14px;
-  background: rgba(245, 241, 237, .8);
+  background: var(--bg-surface-translucent);
   font-size: .88rem;
   color: var(--text-main);
 }
@@ -118,13 +118,13 @@
 }
 .stock-notif-value {
   font-weight: 700;
-  color: #b46414;
+  color: var(--status-warning);
   white-space: nowrap;
 }
 .stock-notif-empty {
   padding: .9rem .85rem;
   border-radius: 14px;
-  background: rgba(245,245,245,.9);
+  background: var(--bg-surface-translucent);
   color: var(--text-muted);
   font-size: .88rem;
   text-align: center;
