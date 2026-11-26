@@ -1699,7 +1699,7 @@ aside .aside-brand-name,
 body.light-mode aside .aside-brand-name,
 body.dark-mode aside .aside-brand-name,
 [data-theme="dark"] aside .aside-brand-name {
-  color: var(--bg-surface) !important;
+  color: #FFFFFF !important;
   font-weight: 800 !important;
 }
 
@@ -5002,7 +5002,8 @@ aside[data-acc-dark="1"] .profile-pill-caret {
 aside .aside-profile-dropdown,
 .aside-profile-dropdown {
   background: var(--dark-bg-card) !important;
-  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--bg-overlay-medium) !important;
   border-radius: .75rem !important;
   min-width: 190px !important;
@@ -8213,7 +8214,7 @@ aside .aside-brand-name,
 body.light-mode aside .aside-brand-name,
 body.dark-mode aside .aside-brand-name,
 [data-theme="dark"] aside .aside-brand-name {
-  color: var(--bg-surface) !important;
+  color: #FFFFFF !important;
   font-family: var(--font-ui) !important;
   font-weight: 500 !important;
   font-size: 0.92rem !important;
@@ -8257,7 +8258,7 @@ aside .aside-nav a,
 body.light-mode aside .nav-link,
 body.dark-mode aside .nav-link,
 [data-theme="dark"] aside .nav-link {
-  color: var(--bg-surface) !important;
+  color: #FFFFFF !important;
   background: transparent !important;
   border-left: none !important;
   border-radius: 10px !important;
@@ -8279,8 +8280,8 @@ aside .bi-chevron-down,
 body.light-mode aside .nav-icon,
 body.dark-mode aside .nav-icon,
 [data-theme="dark"] aside .nav-icon {
-  stroke: var(--bg-surface) !important;
-  color: var(--bg-surface) !important;
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
   opacity: 1 !important;
 }
 
@@ -9799,7 +9800,7 @@ body.dark-mode aside#aside-sidebar .nav-link,
 body.dark-mode aside#aside-sidebar .aside-nav .nav-link,
 body.dark-mode aside#aside-sidebar .aside-nav a,
 [data-theme="dark"] aside#aside-sidebar .nav-link {
-  color: var(--border-color) !important;
+  color: var(--dark-text-secondary) !important;
   background: transparent !important;
   border: 1px solid transparent !important;
   border-radius: 9px !important;
@@ -9820,13 +9821,13 @@ body.dark-mode aside#aside-sidebar .aside-nav .nav-link:hover:not(.active),
 body.dark-mode aside#aside-sidebar .aside-nav a:hover:not(.active),
 [data-theme="dark"] aside#aside-sidebar .nav-link:hover:not(.active) {
   background: var(--dark-border-color) !important;
-  color: var(--dark-text-primary) !important;
+  color: #FFFFFF !important;
 }
 
 body.dark-mode aside#aside-sidebar .nav-link:hover:not(.active) .nav-icon,
 body.dark-mode aside#aside-sidebar .nav-link:hover:not(.active) i {
-  stroke: var(--dark-text-primary) !important;
-  color: var(--dark-text-primary) !important;
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
 }
 
 body.dark-mode aside#aside-sidebar .nav-link.active,
@@ -10113,4 +10114,40 @@ body:not(.dark-mode) .btn.btn-outline-success.active span {
 
 body.dark-mode .dev-tool-chip {
   color: #F3F4F6 !important;
+}
+
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link.active,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a.active,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link:hover:not(.active),
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a:hover:not(.active),
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link:active,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a:active {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  color: #1E1E1E !important;
+}
+
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link.active span,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a.active span,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link:hover:not(.active) span,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a:hover:not(.active) span,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link:active span,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a:active span {
+  color: #1E1E1E !important;
+}
+
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link.active .nav-icon,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link.active i,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a.active .nav-icon,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a.active i,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link:hover:not(.active) .nav-icon,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link:hover:not(.active) i,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a:hover:not(.active) .nav-icon,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a:hover:not(.active) i,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link:active .nav-icon,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav .nav-link:active i,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a:active .nav-icon,
+html:not(.dark-mode):not([data-theme="dark"]) body:not(.dark-mode):not(.dark-theme) aside#aside-sidebar .aside-nav a:active i {
+  stroke: var(--color-primary-active) !important;
+  color: var(--color-primary-active) !important;
 }

@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=57">
   <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=66">
   <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=12">
-  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=5">
+  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=6">
 {% block css %}{% endblock css %}
 </head>
 
@@ -81,7 +81,7 @@
   <script defer src="{% static 'js/base.js' %}?v=2"></script>
   <script defer src="{% static 'js/notificaciones.js' %}?v=2"></script>
   {% if request.session.usuario_documento %}
-  <script defer src="{% static 'js/chatbot.js' %}?v=2"></script>
+  <script defer src="{% static 'js/chatbot.js' %}?v=3"></script>
   {% endif %}
   {% block js %}{% endblock %}
 </body>

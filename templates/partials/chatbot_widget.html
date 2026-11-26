@@ -63,6 +63,16 @@
       </div>
     </div>
 
+    <div id="chatbotResetDialog" class="sbm-chat-reset-dialog" hidden>
+      <div class="sbm-chat-reset-confirmation" role="alertdialog" aria-modal="true" aria-labelledby="chatbotResetMessage">
+        <p id="chatbotResetMessage">¿Deseas reiniciar la conversación con el asistente?</p>
+        <div class="sbm-chat-reset-actions">
+          <button id="btnChatbotResetCancel" class="sbm-chat-reset-btn sbm-chat-reset-cancel" type="button">Cancelar</button>
+          <button id="btnChatbotResetConfirm" class="sbm-chat-reset-btn sbm-chat-reset-accept" type="button">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Contenedor de mensajes y flujo de conversación -->
     <div id="chatbotMessages" class="sbm-chat-messages" tabindex="0" aria-live="polite">
       

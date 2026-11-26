@@ -88,7 +88,9 @@ body.auth-page #a11y-widget {
     bottom: 60px;
     top: auto;
     width: 292px;
-    background: var(--a11y-surface);
+    z-index: 1050;
+    background: #FFFFFF;
+    background-color: #FFFFFF;
     border: 1px solid var(--a11y-border);
     border-radius: 16px;
     padding: 12px;
