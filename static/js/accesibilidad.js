@@ -42,10 +42,9 @@
 
     // ---- filtros visuales combinados y modo oscuro real ----
     function applyFilters() {
-        var parts = [];
-        if (state.grayscale) parts.push("grayscale(1)");
-        if (state.saturate) parts.push("saturate(0.45)");
-        root.style.filter = parts.length ? parts.join(" ") : "";
+        root.style.filter = "";
+        root.classList.toggle("a11y-grayscale", !!state.grayscale);
+        root.classList.toggle("a11y-saturate", !!state.saturate);
 
         var isDark = !!state.invert;
         root.classList.toggle("dark-mode", isDark);
@@ -68,10 +67,10 @@
     }
 
     function applyLineHeight() {
-        // 10..30 -> 1.0..3.0
         var value = (state.lineHeight / 10).toFixed(1);
+        root.style.lineHeight = "";
         root.style.setProperty("--a11y-line-height", value);
-        root.style.lineHeight = value;
+        root.classList.toggle("a11y-line-scaled", state.lineHeight !== 15);
     }
 
     function syncControls() {

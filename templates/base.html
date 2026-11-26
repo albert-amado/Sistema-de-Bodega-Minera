@@ -5,8 +5,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Sistema de Bodega Minera</title>
-  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+  <title>{% block title %}Sistema de Bodega Minera{% endblock %}</title>
+  <link rel="icon" type="image/png" href="{% static 'img/Logo-del-sena-Verde-150x150-removebg-preview.png' %}">
+  <link rel="shortcut icon" type="image/png" href="{% static 'img/Logo-del-sena-Verde-150x150-removebg-preview.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/Logo-del-sena-Verde-150x150-removebg-preview.png' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet">
@@ -15,10 +17,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=53">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=53">
-  <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=9">
-  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=4">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=56">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=63">
+  <link rel="stylesheet" href="{% static 'css/notificaciones.css' %}?v=12">
+  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=5">
 {% block css %}{% endblock css %}
 </head>
 
@@ -76,8 +78,8 @@
   <script defer src="{% static 'js/datatables-init.js' %}?v=4"></script>
   <script defer src="{% static 'js/sbm-datatable.js' %}?v=1"></script>
   <script defer src="{% static 'js/sbm-actions.js' %}?v=1"></script>
-  <script defer src="{% static 'js/base.js' %}?v=1"></script>
-  <script defer src="{% static 'js/notificaciones.js' %}?v=1"></script>
+  <script defer src="{% static 'js/base.js' %}?v=2"></script>
+  <script defer src="{% static 'js/notificaciones.js' %}?v=2"></script>
   {% if request.session.usuario_documento %}
   <script defer src="{% static 'js/chatbot.js' %}?v=2"></script>
   {% endif %}

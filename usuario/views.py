@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Q
+from django.db.models import ProtectedError, Q, RestrictedError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -35,8 +35,9 @@ ROLES_VALIDOS = [r[0] for r in Usuario.ROL_CHOICES]
 ROLES = [{'id': r[0], 'nombre': r[1]} for r in Usuario.ROL_CHOICES]
 
 
+@admin_required
 def registro_qr_pdf(request):
-    pass
+    return redirect('lista_usuarios')
 
 
 # ─────────────────────────────────────────────────────────────
@@ -107,9 +108,28 @@ def logout_view(request):
 # ─────────────────────────────────────────────────────────────
 #  REGISTRO
 # ─────────────────────────────────────────────────────────────
+FICHAS_REGISTRO = ['3196477']
+
+PROGRAMAS_CENTRO_MINERO = [
+    'Análisis y Desarrollo de Software (ADSO)',
+    'Administración y Gestión Minera',
+    'Electricidad y Automatización Industrial',
+    'Gestión y Seguridad Ambiental Minera',
+    'Mantenimiento Electromecánico Industrial',
+    'Operación de Maquinaria Pesada',
+    'Sistemas y Computación',
+    'Soldadura en Productos Metálicos',
+    'Supervisión de Labores Mineras',
+    'Supervisión de Labores Mineras Subterráneas',
+    'Topografía y Geomática',
+]
+
+
 def registro_view(request):
     ctx_base = {
         'roles': ROLES,
+        'fichas': FICHAS_REGISTRO,
+        'programas': PROGRAMAS_CENTRO_MINERO,
         'tipo_documento': 'CC',
         'first_name': '',
         'last_name': '',
@@ -268,6 +288,21 @@ def lista_usuarios_view(request):
             for field, errs in form.errors.items():
                 for err in errs:
                     messages.error(request, err)
+        return redirect('lista_usuarios')
+
+    # ── POST: eliminar usuario ────────────────────────────────
+    if request.method == 'POST' and request.POST.get('accion') == 'eliminar_usuario':
+        doc = request.POST.get('numero_documento', '').strip()
+        usuario = get_object_or_404(Usuario, documento=doc)
+        if doc == str(request.session.get('usuario_documento', '')).strip():
+            messages.error(request, 'No puedes eliminar tu propia cuenta de administrador.')
+            return redirect('lista_usuarios')
+        try:
+            nombre = usuario.nombre_completo
+            usuario.delete()
+            messages.success(request, f'Usuario {nombre} eliminado correctamente.')
+        except (ProtectedError, RestrictedError):
+            messages.error(request, f'No se puede eliminar a {usuario.nombre_completo} porque tiene préstamos o registros asociados.')
         return redirect('lista_usuarios')
 
     # ── GET: listar con filtros ───────────────────────────────
@@ -642,6 +677,7 @@ def verificar_aprendiz_api(request):
         }, status=500)
 
 
+@admin_required
 def verificar_documento_registro_api(request):
     """
     Endpoint AJAX para la verificación en tiempo real durante el registro de usuarios.

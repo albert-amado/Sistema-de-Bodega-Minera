@@ -14,7 +14,7 @@ function cargarEstantes(almacenId, selectEstanteEl, estanteSeleccionado) {
   selectEstanteEl.innerHTML = '<option value="">Cargando...</option>';
   selectEstanteEl.disabled = true;
 
-  var apiUrl = selectEstanteEl.getAttribute('data-api-url') || '/api/estantes/';
+  var apiUrl = selectEstanteEl.getAttribute('data-api-url') || '/herramienta/api/estantes/';
 
   fetch(apiUrl + (apiUrl.includes('?') ? '&' : '?') + 'almacen_id=' + encodeURIComponent(almacenId))
     .then(function (res) {

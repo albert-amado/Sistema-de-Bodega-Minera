@@ -3,7 +3,7 @@
 {% block title %}Gestión de Usuarios – SENA Centro Minero{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/usuarios.css?v=10' %}">
+<link rel="stylesheet" href="{% static 'css/usuarios.css' %}?v=12">
 {% endblock css %}
 
 {% block content %}
@@ -111,9 +111,9 @@
 
 <!-- ══ VISTA EN TARJETAS (GRID) ══ -->
 <div id="vistaFichas">
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+  <div class="gu-cards-grid">
     {% for u in usuarios %}
-    <div class="col d-flex align-items-stretch">
+    <div class="gu-card-col">
       <div class="gu-card w-100">
         <!-- Barra de acento superior según rol -->
         <div class="gu-card-accent-bar {% if u.rol == 'Administrador' %}gu-card-accent-admin{% else %}gu-card-accent-user{% endif %}"></div>
@@ -192,6 +192,9 @@
             <button type="button" class="btn btn-sm gu-btn-edit" onclick="abrirEditar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}', '{{ u.numero_ficha|default:''|escapejs }}', '{{ u.nombre_programa|default:''|escapejs }}')">
               <i class="bi bi-pencil-square"></i> Editar
             </button>
+            <button type="button" class="btn btn-sm gu-btn-delete" onclick="abrirEliminar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|default:''|escapejs }}', '{{ u.get_rol_display|default:u.rol|escapejs }}', '{{ u.get_tipo_documento_display|escapejs }}')">
+              <i class="bi bi-trash3"></i> Eliminar
+            </button>
           </div>
         </div>
       </div>
@@ -256,6 +259,9 @@
                 </button>
                 <button type="button" class="sbm-action-btn sbm-btn-edit" onclick="abrirEditar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|escapejs }}', '{{ u.telefono|default:''|escapejs }}', '{{ u.rol }}', '{{ u.tipo_documento }}', '{{ u.numero_ficha|default:''|escapejs }}', '{{ u.nombre_programa|default:''|escapejs }}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar a {{ u.nombre_completo }}" aria-label="Editar a {{ u.nombre_completo }}">
                   <i class="bi bi-pencil"></i>
+                </button>
+                <button type="button" class="sbm-action-btn sbm-btn-delete" onclick="abrirEliminar('{{ u.numero_documento }}', '{{ u.nombre_completo|escapejs }}', '{{ u.correo|default:''|escapejs }}', '{{ u.get_rol_display|default:u.rol|escapejs }}', '{{ u.get_tipo_documento_display|escapejs }}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar a {{ u.nombre_completo }}" aria-label="Eliminar a {{ u.nombre_completo }}">
+                  <i class="bi bi-trash"></i>
                 </button>
               </div>
             </td>
@@ -466,8 +472,53 @@
     </div>
   </div>
 </div>
+
+{# ══ MODAL ELIMINAR USUARIO ══ #}
+<div class="modal fade" id="modalEliminarUsuario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+
+      <div class="modal-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-trash3"></i>
+          <h5 class="modal-title fw-bold mb-0">Eliminar Usuario</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <form method="post" action="{% url 'lista_usuarios' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="eliminar_usuario">
+        <input type="hidden" name="numero_documento" id="del_doc_hidden">
+
+        <div class="modal-body">
+          <p class="small mb-3">¿Estás seguro de eliminar permanentemente este usuario del sistema?</p>
+          <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 border mb-3">
+            <div id="delAvatar" class="gu-avatar gu-avatar-admin flex-shrink-0"></div>
+            <div class="min-w-0 flex-grow-1">
+              <div id="delNombre" class="fw-bold text-truncate"></div>
+              <div class="small text-muted font-monospace" id="delDoc"></div>
+              <div class="small text-muted text-truncate" id="delCorreo"></div>
+            </div>
+            <span id="delRol" class="gu-badge-role flex-shrink-0"></span>
+          </div>
+          <p class="small text-danger mb-0">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>Esta acción no se puede deshacer.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger btn-sm">
+            <i class="bi bi-trash3 me-1"></i> Confirmar eliminación
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock content %}
 
 {% block js %}
-<script src="{% static 'js/usuarios_gestion.js' %}"></script>
+<script src="{% static 'js/usuarios_gestion.js' %}?v=2"></script>
 {% endblock js %}

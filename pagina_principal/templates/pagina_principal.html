@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/pagina_principal.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/pagina_principal.css' %}?v=4">
 {% endblock css %}
 
 {% block content %}
@@ -216,5 +216,5 @@
 <script id="chart-salud-data" type="application/json">{{ chart_salud_json|safe }}</script>
 
 <!-- Lógica modularizada -->
-<script defer src="{% static 'js/pagina_principal.js' %}?v=2"></script>
+<script defer src="{% static 'js/pagina_principal.js' %}?v=3"></script>
 {% endblock js %}
