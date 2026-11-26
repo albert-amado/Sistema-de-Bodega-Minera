@@ -1,496 +1,219 @@
 /* ==========================================================================
-   SISTEMA DE BODEGA MINERA (SBM) — PALETA MAESTRA DE COLORES (var.css)
-   Centralización total de colores del sistema con soporte para:
-   1. Modo Claro (Light Mode / Base Institucional)
-   2. Escala de Grises (Rampa Neutral + Modo Grises del Panel de Accesibilidad)
-   3. Modo Oscuro (Dark Mode del Panel de Accesibilidad)
-   4. Accesibilidad (Resaltado de Enlaces, Alto Contraste y Widget A11y)
-   5. Tokens de Módulos (SENA, Bootstrap 5, Stock, Auth, Chatbot, Usuarios)
+   SISTEMA DE BODEGA MINERA (SBM) — DESIGN SYSTEM & TOKENS SEMÁNTICOS (var.css)
+   Single Source of Truth (~70 variables semánticas reactivas por tema).
+   Los mismos tokens se redefinen automáticamente en Modo Oscuro, Escala de
+   Grises y Alto Contraste sin duplicar variables por módulo o por tema.
    ========================================================================== */
 
 :root {
-  /* ========================================================================
-     SECCIÓN 1: MODO CLARO (LIGHT MODE) — PALETA PRINCIPAL SEMÁNTICA
-     ======================================================================== */
+  /* ──────────────────────────────────────────────────────────────────────────
+     1. ESCALA DE GRISES UNIFICADA (10 PASOS NEUTRALES)
+     ────────────────────────────────────────────────────────────────────────── */
+  --gray-50:                 #F8FAFC;
+  --gray-100:                #F4F6F9;
+  --gray-200:                #E2E8F0;
+  --gray-300:                #D1D5DB;
+  --gray-400:                #94A3B8;
+  --gray-500:                #64748B;
+  --gray-600:                #4B5563;
+  --gray-700:                #334155;
+  --gray-800:                #1E293B;
+  --gray-900:                #141619;
 
-  /* ── 1.1 Colores de Marca / Primarios y Secundarios ── */
-  --color-primary:                 #39A900;   /* Verde institucional SENA principal */
-  --color-primary-rgb:             57, 169, 0;
-  --color-primary-hover:           #2E8800;   /* Unifica #2E8800, #2F8E00, #246B00 */
-  --color-primary-active:          #1E6000;   /* Unifica #1E6000, #1B4D2E, #14532D, #233320, #0D6334, #107C41, #1A7A40, #1F6040, #1F6E38, #2B5430, #3A7A42 */
-  --color-primary-soft:            #EBF7E5;   /* Unifica #EBF7E5, #F0F9EC, #E5F3EC, #E6F0E8 */
-  --color-primary-accent:          #4ADE80;   /* Unifica #4ADE80, #4EC97B, #34D399, #6EE7B7, #86EFAC, #A7F3D0, #AADCC4, #99F6E4, #C6EBB3 */
+  /* ──────────────────────────────────────────────────────────────────────────
+     2. COLORES DE MARCA / PRIMARIOS Y SECUNDARIOS
+     ────────────────────────────────────────────────────────────────────────── */
+  --color-primary:           #39A900;
+  --color-primary-rgb:       57, 169, 0;
+  --color-primary-hover:     #2E8800;
+  --color-primary-active:    #1E6000;
+  --color-primary-soft:      #EBF7E5;
+  --color-primary-accent:    #4ADE80;
 
-  --color-secondary:               #00324D;   /* Azul institucional SENA (unifica #00324D, #003B5C, #04294F, #043666, #063462, #063870, #082F49) */
-  --color-secondary-rgb:           0, 50, 77;
-  --color-secondary-hover:         #002438;   /* Unifica #002438, #071525, #08172B */
-  --color-secondary-soft:          #E6EEF2;
+  --color-secondary:         #00324D;
+  --color-secondary-rgb:     0, 50, 77;
+  --color-secondary-hover:   #002438;
+  --color-secondary-soft:    #E6EEF2;
 
-  --color-accent-legacy:           #98473E;   /* Unifica #98473E, #93382D, #8B1E0F, #75190C, #73180B, #7A3530, #7C2A23, #5C1308, #6E2020, #E07A6E, #CC7070, #F3B8B5 */
-  --color-accent-neutral:          #71816D;
+  /* ──────────────────────────────────────────────────────────────────────────
+     3. FONDOS Y SUPERFICIES (MODO CLARO POR DEFECTO)
+     ────────────────────────────────────────────────────────────────────────── */
+  --bg-main:                 #F4F6F9;
+  --bg-main-rgb:             244, 246, 249;
+  --bg-surface:              #FFFFFF;
+  --bg-surface-alt:          #F8FAFC;
+  --bg-card:                 #FFFFFF;
+  --bg-input:                #FFFFFF;
+  --bg-sidebar:              #278144;
+  --bg-hover:                #F1F5F9;
+  --bg-overlay:              rgba(255, 255, 255, 0.14);
+  --bg-backdrop:             rgba(0, 0, 0, 0.50);
 
-  /* ── 1.2 Fondos y Superficies (Modo Claro) ── */
-  --bg-main:                       #F4F6F9;   /* Unifica #F4F6F9, #F3F4F6, #F1F5F9, #EDF2F7, #F0F0F0 */
-  --bg-main-rgb:                   244, 246, 249;
-  --bg-surface:                    #FFFFFF;   /* Unifica #FFFFFF, #FFF, white */
-  --bg-surface-alt:                #F8FAFC;   /* Unifica #F8FAFC, #F8F9FA, #F9FAFB */
-  --bg-surface-warm:               #FBF8EE;   /* Unifica #FBF8EE, #F9F7F3, #F6F4EF, #F5F5F3, #EFE9D7, #EFECCA, #EADBCA, #E8DEC8, #E5DFC8, #DDD5BC */
-  --bg-surface-translucent:        rgba(244, 246, 249, 0.85); /* Unifica rgba(244,246,249,.58), rgba(245,241,237,.8), rgba(245,245,245,.9) */
-  --bg-card:                       #FFFFFF;
-  --bg-sidebar:                    #278144;   /* Unifica #278144, #237A4B */
+  /* ──────────────────────────────────────────────────────────────────────────
+     4. TEXTOS (MODO CLARO POR DEFECTO — CONTRASTE WCAG AA/AAA)
+     ────────────────────────────────────────────────────────────────────────── */
+  --text-primary:            #1E1E1E;
+  --text-emphasis:           #000000;
+  --text-secondary:          #4B5563;
+  --text-muted:              #64748B;
+  --text-placeholder:        #94A3B8;
+  --text-on-primary:         #FFFFFF;
+  --text-on-primary-muted:   rgba(255, 255, 255, 0.85);
 
-  /* Overlays y superficies translúcidas generales */
-  --bg-overlay-light:              rgba(255, 255, 255, 0.08);
-  --bg-overlay-medium:             rgba(255, 255, 255, 0.15);
-  --bg-overlay-strong:             rgba(255, 255, 255, 0.30);
-  --bg-backdrop:                   rgba(0, 0, 0, 0.50);
+  /* ──────────────────────────────────────────────────────────────────────────
+     5. BORDES Y SOMBRAS
+     ────────────────────────────────────────────────────────────────────────── */
+  --border-color:            #D1D5DB;
+  --border-subtle:           #E2E8F0;
+  --border-primary:          #A8E08A;
+  --border-focus:            rgba(57, 169, 0, 0.25);
 
-  /* ── 1.3 Textos (Modo Claro) ── */
-  --text-primary:                  #1E1E1E;   /* Unifica #1E1E1E, #1A1A1A, #212529, #222222 */
-  --text-emphasis:                 #000000;   /* Unifica #000000, black */
-  --text-heading-alt:              #0F172A;   /* Títulos y métricas en tarjetas/tablas */
-  --text-secondary:                #4B5563;   /* Unifica #4B5563, #475569, #4A5568, #4A5868, #334155, #374151 */
-  --text-muted:                    #64748B;   /* Unifica #64748B, #6B7280, #6C757D, #6E7681, #5C636E */
-  --text-placeholder:              #94A3B8;   /* Unifica #94A3B8, #9CA3AF, #8E96A0, #8B949E, #8CA4C4, #7E97B8, #7D8590 */
-  --text-on-primary:               #FFFFFF;
-  --text-on-primary-muted:         rgba(255, 255, 255, 0.85);
-  --text-high-contrast:            #FACC15;   /* Unifica #FACC15, #FEF08A, #FFF3B0 */
+  --shadow-color:            rgba(0, 0, 0, 0.08);
+  --shadow-color-md:         rgba(0, 0, 0, 0.16);
+  --shadow-color-strong:     rgba(0, 0, 0, 0.35);
+  --shadow-color-primary-zero: rgba(57, 169, 0, 0);
+  --shadow-sm:               0 1px 3px var(--shadow-color);
+  --shadow-md:               0 4px 14px var(--shadow-color-md);
 
-  /* ── 1.4 Bordes y Divisores (Modo Claro) ── */
-  --border-color:                  #D1D5DB;   /* Unifica #D1D5DB, #CBD5E1, #C9D1D9, #DEE2E6, #CCC, #D0DBEA, #C2D2E8, #99B8C9 */
-  --border-subtle:                 #E2E8F0;   /* Unifica #E2E8F0, #E5E7EB */
-  --border-primary:                #A8E08A;
-  --border-focus:                  rgba(57, 169, 0, 0.25);
-  --border-dark:                   #334155;
-  --border-on-dark:                rgba(255, 255, 255, 0.12);
+  /* ──────────────────────────────────────────────────────────────────────────
+     6. ESTADOS Y ALERTAS
+     ────────────────────────────────────────────────────────────────────────── */
+  --status-success:          #16A34A;
+  --status-success-text:     #1E6000;
+  --status-success-bg:       #EBF7E5;
+  --status-success-border:   #A8E08A;
 
-  /* ── 1.5 Estados y Alertas (Modo Claro) ── */
-  /* Éxito (Success) */
-  --status-success:                #16A34A;   /* Unifica #16A34A, #22C55E, #10B981, #059669, #15803D, #166534, #065F46, #115E59 */
-  --status-success-text:           #1E6000;
-  --status-success-bg:             #EBF7E5;   /* Unifica #EBF7E5, #ECFDF5, #F0FDFA */
-  --status-success-border:         #A8E08A;
-  --status-success-soft:           rgba(22, 163, 74, 0.15);
+  --status-warning:          #D97706;
+  --status-warning-text:     #92400E;
+  --status-warning-bg:       #FFFBEB;
+  --status-warning-border:   #FDE68A;
 
-  /* Advertencia (Warning) */
-  --status-warning:                #D97706;   /* Unifica #D97706, #F59E0B, #E5A00D, #C4900A, #B46414 */
-  --status-warning-text:           #92400E;   /* Unifica #92400E, #B45309, #7A5500 */
-  --status-warning-accent:         #FBBF24;
-  --status-warning-bg:             #FFFBEB;   /* Unifica #FFFBEB, #FEF3C7, #FDF3D0 */
-  --status-warning-border:         #FDE68A;   /* Unifica #FDE68A, #FCD34D, #FDE047 */
-  --status-warning-soft:           rgba(245, 158, 11, 0.15);
+  --status-danger:           #DC2626;
+  --status-danger-text:      #991B1B;
+  --status-danger-bg:        #FEF2F2;
+  --status-danger-border:    #FECACA;
 
-  /* Peligro / Error (Danger) */
-  --status-danger:                 #DC2626;   /* Unifica #DC2626, #EF4444, #E5484D, #D64541, #D32F2F, #CC3300 */
-  --status-danger-text:            #991B1B;   /* Unifica #991B1B, #B91C1C, #7F1D1D, #450A0A */
-  --status-danger-accent:          #F87171;
-  --status-danger-bg:              #FEF2F2;   /* Unifica #FEF2F2, #FEE2E2, #FDE8E7, #FAEAEA */
-  --status-danger-border:          #FECACA;   /* Unifica #FECACA, #FCA5A5 */
-  --status-danger-soft:            rgba(239, 68, 68, 0.15);
+  --status-info:             #0369A1;
+  --status-info-bg:          #EFF6FF;
+  --status-info-border:      #BFDBFE;
 
-  /* Información (Info) */
-  --status-info:                   #0369A1;   /* Unifica #0369A1, #0284C7, #2563EB, #1D4ED8, #0D6EFD, #0B5ED7, #0056B3, #0043A8, #1E40AF */
-  --status-info-accent:            #38BDF8;   /* Unifica #38BDF8, #3B82F6, #60A5FA, #64B5F6, #7DD3FC */
-  --status-info-bg:                #EFF6FF;   /* Unifica #EFF6FF, #E0F2FE, #DBEAFE */
-  --status-info-border:            #BFDBFE;   /* Unifica #BFDBFE, #BAE6FD, #93C5FD */
-  --status-info-soft:              rgba(56, 189, 248, 0.15);
+  --a11y-highlight-bg:       rgba(254, 240, 138, 0.60);
+  --a11y-highlight-border:   #FACC15;
 
-  /* ── 1.6 Sombras con Color (Modo Claro) ── */
-  --shadow-color:                  rgba(0, 0, 0, 0.08);
-  --shadow-color-md:               rgba(0, 0, 0, 0.15);
-  --shadow-color-strong:           rgba(0, 0, 0, 0.30);
-  --shadow-color-primary:          rgba(57, 169, 0, 0.25);
-  --shadow-color-primary-strong:   rgba(57, 169, 0, 0.45);
-  --shadow-color-primary-zero:     rgba(57, 169, 0, 0);
-  --shadow-color-secondary:        rgba(0, 50, 77, 0.12);
-  --shadow-color-legacy:           rgba(152, 71, 62, 0.12);
-
-
-  /* ========================================================================
-     SECCIÓN 2: ESCALA DE GRISES (RAMPA NEUTRAL Y MODO GRISES ACCESIBILIDAD)
-     ======================================================================== */
-
-  /* ── 2.1 Rampa Unificada de Escala de Grises del Proyecto ── */
-  --gray-0:                        #FFFFFF;   /* Blanco puro (#FFFFFF, #FFF, white) */
-  --gray-50:                       #F8FAFC;   /* Gris ultra claro (#F8FAFC, #F8F9FA, #F9FAFB) */
-  --gray-100:                      #F4F6F9;   /* Gris claro de fondo (#F4F6F9, #F3F4F6, #F1F5F9, #EDF2F7, #F0F0F0) */
-  --gray-200:                      #E2E8F0;   /* Gris divisor sutil (#E2E8F0, #E5E7EB) */
-  --gray-300:                      #D1D5DB;   /* Gris borde estándar (#D1D5DB, #CBD5E1, #C9D1D9, #DEE2E6, #CCC) */
-  --gray-400:                      #94A3B8;   /* Gris placeholder / texto suave (#94A3B8, #9CA3AF, #8E96A0, #8B949E, #7D8590) */
-  --gray-500:                      #64748B;   /* Gris texto atenuado (#64748B, #6B7280, #6C757D, #6E7681, #5C636E) */
-  --gray-600:                      #4B5563;   /* Gris texto secundario (#4B5563, #475569, #4A5568, #4A5868) */
-  --gray-700:                      #334155;   /* Gris borde oscuro / carbón medio (#334155, #374151, #2C3A4B, #323C46) */
-  --gray-800:                      #1E293B;   /* Gris pizarra oscuro (#1E293B, #242930, #243248, #262B33, #2A3038, #22262C, #20242A) */
-  --gray-850:                      #1A1D21;   /* Gris grafito de tarjetas oscuras (#1A1D21, #1C2026, #1E1E1E, #1A1A1A, #212529, #222222) */
-  --gray-900:                      #141619;   /* Gris superficie profunda (#141619, #141920, #16191D, #171A1E, #181B20, #181D24, #1B2021) */
-  --gray-950:                      #0F1114;   /* Gris fondo nocturno (#0F1114, #0F172A, #0B0D0F, #0D1117, #0E1013, #101214, #111316, #111827) */
-  --gray-1000:                     #000000;   /* Negro absoluto (#000000, black) */
-
-  /* ── 2.2 Tokens de Modo Escala de Grises (Panel de Accesibilidad) ── */
-  --grayscale-primary:             var(--gray-600);
-  --grayscale-primary-hover:       var(--gray-700);
-  --grayscale-primary-soft:        var(--gray-200);
-  --grayscale-secondary:           var(--gray-800);
-  --grayscale-bg-main:             var(--gray-100);
-  --grayscale-bg-surface:          var(--gray-0);
-  --grayscale-bg-surface-alt:      var(--gray-50);
-  --grayscale-bg-card:             var(--gray-0);
-  --grayscale-bg-sidebar:          var(--gray-700);
-  --grayscale-text-primary:        var(--gray-850);
-  --grayscale-text-secondary:      var(--gray-600);
-  --grayscale-text-muted:          var(--gray-500);
-  --grayscale-border-color:        var(--gray-300);
-  --grayscale-border-subtle:       var(--gray-200);
-  --grayscale-filter:              grayscale(1);
-
-
-  /* ========================================================================
-     SECCIÓN 3: MODO OSCURO (DARK MODE — PANEL DE ACCESIBILIDAD)
-     ======================================================================== */
-
-  /* ── 3.1 Colores de Marca en Modo Oscuro ── */
-  --dark-color-primary:            #39A900;
-  --dark-color-primary-hover:      #2E8800;
-  --dark-color-primary-accent:     #4ADE80;
-  --dark-color-primary-soft:       rgba(57, 169, 0, 0.15);
-  --dark-color-secondary:          #00324D;
-  --dark-color-secondary-surface:  #002438;
-
-  /* ── 3.2 Fondos y Superficies en Modo Oscuro ── */
-  --dark-bg-main:                  #0F1114;   /* Unifica #0B0D0F, #0D1117, #0E1013, #0F1114, #101214, #111316, #111827 */
-  --dark-bg-surface:               #141619;   /* Unifica #141619, #141920, #16191D, #171A1E, #181B20, #181D24, #1B2021 */
-  --dark-bg-card:                  #1A1D21;   /* Unifica #1A1D21, #1C2026, #1E293B, #1E2227, #1F242B */
-  --dark-bg-elevated:              #20242A;   /* Unifica #20242A, #202834, #22262C, #232A31, #242930, #243248, #262B33, #2A3038, #2A303A */
-  --dark-bg-sidebar:               #101214;
-  --dark-bg-input:                 #0F1114;
-  --dark-bg-overlay-subtle:        rgba(255, 255, 255, 0.08);
-  --dark-bg-overlay-hover:         rgba(255, 255, 255, 0.15);
-  --dark-bg-backdrop:              rgba(0, 0, 0, 0.55);
-
-  /* ── 3.3 Textos en Modo Oscuro ── */
-  --dark-text-primary:             #F3F4F6;   /* Unifica #F3F4F6, #F8FAFC */
-  --dark-text-secondary:           #D1D5DB;   /* Unifica #D1D5DB, #E5E7EB, #CBD5E1, #E2E8F0 */
-  --dark-text-muted:               #9CA3AF;   /* Unifica #9CA3AF, #94A3B8, #8E96A0, #8B949E */
-  --dark-text-placeholder:         #6E7681;   /* Unifica #6E7681, #7D8590, #64748B, #5C636E */
-  --dark-text-on-primary:          #FFFFFF;
-  --dark-text-on-primary-muted:    rgba(255, 255, 255, 0.85);
-
-  /* ── 3.4 Bordes y Divisores en Modo Oscuro ── */
-  --dark-border-color:             rgba(255, 255, 255, 0.08); /* Unifica rgba(255,255,255, 0.05..0.10) */
-  --dark-border-strong:            rgba(255, 255, 255, 0.14); /* Unifica rgba(255,255,255, 0.12..0.18) y rgba(148,163,184, ...) */
-  --dark-border-hover:             rgba(255, 255, 255, 0.25); /* Unifica rgba(255,255,255, 0.20..0.35) */
-  --dark-border-solid:             #334155;   /* Unifica #334155, #475569 */
-  --dark-border-focus:             rgba(57, 169, 0, 0.35);
-
-  /* ── 3.5 Estados y Alertas en Modo Oscuro ── */
-  --dark-status-success:           #4ADE80;
-  --dark-status-success-bg:        rgba(57, 169, 0, 0.15);
-  --dark-status-success-border:    rgba(57, 169, 0, 0.40);
-
-  --dark-status-warning:           #FBBF24;
-  --dark-status-warning-bg:        rgba(245, 158, 11, 0.15);
-  --dark-status-warning-border:    rgba(245, 158, 11, 0.35);
-
-  --dark-status-danger:            #F87171;
-  --dark-status-danger-bg:         rgba(239, 68, 68, 0.15);
-  --dark-status-danger-border:     rgba(239, 68, 68, 0.35);
-
-  --dark-status-info:              #38BDF8;
-  --dark-status-info-bg:           rgba(56, 189, 248, 0.15);
-  --dark-status-info-border:       rgba(56, 189, 248, 0.35);
-
-  /* ── 3.6 Sombras en Modo Oscuro ── */
-  --dark-shadow-color:             rgba(0, 0, 0, 0.35);
-  --dark-shadow-strong:            rgba(0, 0, 0, 0.55);
-
-  /* Alias semánticos de compatibilidad para variables de modo oscuro */
-  --bg-dark-main:                  var(--dark-bg-main);
-  --bg-dark-surface:               var(--dark-bg-surface);
-  --bg-dark-card:                  var(--dark-bg-card);
-
-
-  /* ========================================================================
-     SECCIÓN 4: PANEL DE ACCESIBILIDAD (WIDGET, ENLACES Y ALTO CONTRASTE)
-     ======================================================================== */
-  --a11y-green:                    var(--color-primary);
-  --a11y-green-hover:              var(--color-primary-hover);
-  --a11y-surface:                  var(--bg-surface);
-  --a11y-surface-soft:             var(--bg-surface-alt);
-  --a11y-border:                   var(--border-subtle);
-  --a11y-text:                     var(--gray-800);
-  --a11y-muted:                    var(--text-secondary);
-
-  /* Resaltado de enlaces (Modo Claro y Modo Oscuro) */
-  --a11y-link-highlight-bg:        rgba(254, 240, 138, 0.60);
-  --a11y-link-highlight-text:      var(--gray-950);
-  --a11y-link-highlight-underline: var(--color-primary-hover);
-  --a11y-link-dark-bg:             rgba(250, 204, 21, 0.22);
-  --a11y-link-dark-text:           #FEF08A;
-  --a11y-link-dark-outline:        #FACC15;
-
-  /* Alto Contraste */
-  --hc-bg-main:                    #FFFFFF;
-  --hc-bg-surface:                 #FFFFFF;
-  --hc-text-primary:               #000000;
-  --hc-text-muted:                 #111111;
-  --hc-border-color:               #000000;
-
-
-  /* ========================================================================
-     SECCIÓN 5: VARIABLES DE MÓDULOS Y COMPONENTES DEL SISTEMA
-     ======================================================================== */
-
-  /* ── 5.1 Paleta Oficial SENA y Mapeo Bootstrap 5 ── */
-  --sena-green:                    var(--color-primary);
-  --sena-green-hover:              var(--color-primary-hover);
-  --sena-green-light:              var(--color-primary-soft);
-  --sena-green-border:             var(--border-primary);
-  --sena-green-focus:              var(--border-focus);
-
-  --sena-blue:                     var(--color-secondary);
-  --sena-blue-hover:               var(--color-secondary-hover);
-  --sena-blue-light:               var(--color-secondary-soft);
-  --sena-blue-border:              var(--border-primary);
-
-  --sena-white:                    var(--bg-surface);
-  --sena-text:                     var(--text-primary);
-  --sena-text-black:               var(--text-emphasis);
-  --sena-text-muted:               var(--text-secondary);
-  --sena-bg-light:                 var(--bg-main);
-  --sena-border:                   var(--border-color);
-
-  --bg-body:                       var(--bg-main);
-  --text-main:                     var(--text-primary);
-  --navy:                          var(--color-secondary);
-  --dark:                          var(--color-secondary);
-  --sage:                          var(--color-primary);
-  --rust:                          var(--color-secondary);
-  --cream:                         var(--bg-surface);
-
-  --bs-primary:                    var(--color-primary);
-  --bs-primary-rgb:                var(--color-primary-rgb);
-  --bs-success:                    var(--color-primary);
-  --bs-success-rgb:                var(--color-primary-rgb);
-  --bs-info:                       var(--color-secondary);
-  --bs-info-rgb:                   var(--color-secondary-rgb);
-  --bs-dark:                       var(--color-secondary);
-  --bs-dark-rgb:                   var(--color-secondary-rgb);
-  --bs-light:                      var(--bg-main);
-  --bs-light-rgb:                  var(--bg-main-rgb);
-  --bs-body-bg:                    var(--bg-main);
-  --bs-body-color:                 var(--text-primary);
-  --bs-border-color:               var(--border-color);
-  --bs-link-color:                 var(--text-primary);
-  --bs-link-hover-color:           var(--color-primary);
-
-  /* ── 5.2 Tokens SBM (Rocas, Ámbar, Cobre y Estados de Stock) ── */
-  --sbm-rock-950:                  var(--color-secondary-hover);
-  --sbm-rock-900:                  var(--color-secondary);
-  --sbm-rock-850:                  var(--color-secondary);
-  --sbm-rock-800:                  var(--color-secondary);
-  --sbm-rock-700:                  var(--color-secondary);
-  --sbm-rock-600:                  var(--text-secondary);
-  --sbm-rock-500:                  var(--text-secondary);
-  --sbm-rock-400:                  var(--text-placeholder);
-  --sbm-rock-200:                  var(--border-color);
-  --sbm-rock-100:                  var(--bg-main);
-  --sbm-rock-50:                   var(--bg-main);
-  --sbm-white:                     var(--bg-surface);
-
-  --sbm-amber-600:                 var(--color-primary-hover);
-  --sbm-amber-500:                 var(--color-primary);
-  --sbm-amber-400:                 var(--color-primary);
-  --sbm-amber-100:                 var(--color-primary-soft);
-  --sbm-amber-50:                  var(--bg-main);
-  --sbm-copper-600:                var(--color-secondary-hover);
-  --sbm-copper-500:                var(--color-primary);
-  --sbm-copper-400:                var(--color-primary-hover);
-
-  --sbm-stock-ok-text:             var(--status-success-text);
-  --sbm-stock-ok-bg:               var(--status-success-bg);
-  --sbm-stock-ok-border:           var(--status-success-border);
-  --sbm-stock-ok-solid:            var(--color-primary);
-
-  --sbm-stock-warn-text:           var(--status-warning-text);
-  --sbm-stock-warn-bg:             var(--status-warning-bg);
-  --sbm-stock-warn-border:         var(--status-warning-border);
-  --sbm-stock-warn-solid:          var(--status-warning);
-
-  --sbm-stock-danger-text:         var(--status-danger-text);
-  --sbm-stock-danger-bg:           var(--status-danger-bg);
-  --sbm-stock-danger-border:       var(--status-danger-border);
-  --sbm-stock-danger-solid:        var(--status-danger);
-
-  /* ── 5.3 Módulo de Autenticación (auth.css) ── */
-  --auth-green:                    var(--color-primary);
-  --auth-green-hover:              var(--color-primary-hover);
-  --auth-green-light:              var(--color-primary-soft);
-  --auth-green-border:             var(--border-primary);
-  --auth-green-focus:              var(--border-focus);
-  --auth-bg:                       var(--bg-surface-alt);
-  --auth-white:                    var(--bg-surface);
-  --auth-text:                     var(--text-primary);
-  --auth-muted:                    var(--text-muted);
-  --auth-border:                   var(--border-color);
-
-  /* ── 5.4 Módulo de Chatbot (chatbot.css) ── */
-  --sbm-chat-primary:              var(--color-primary);
-  --sbm-chat-primary-hover:        var(--color-primary-hover);
-  --sbm-chat-success:              var(--color-primary);
-  --sbm-chat-warning:              var(--status-warning);
-  --sbm-chat-danger:               var(--status-danger);
-  --sbm-chat-dark:                 var(--color-secondary);
-  --sbm-chat-dark-surface:         var(--color-secondary-hover);
-  --sbm-chat-border:               var(--border-color);
-  --sbm-chat-bg-user:              var(--color-primary);
-  --sbm-chat-bg-bot:               var(--bg-surface);
-  --sbm-chat-text-dark:            var(--text-primary);
-
-  /* ── 5.5 Módulo de Gestión de Usuarios (Modo Claro por defecto) ── */
-  --gu-card-bg:                    var(--bg-surface);
-  --gu-card-border:                var(--border-subtle);
-  --gu-card-shadow:                0 4px 14px var(--shadow-color);
-  --gu-card-hover-border:          var(--border-color);
-  --gu-text-name:                  var(--text-heading-alt);
-  --gu-text-muted:                 var(--text-muted);
-  --gu-text-sub:                   var(--text-secondary);
-  --gu-icon-color:                 var(--status-info);
-  --gu-icon-bg:                    var(--bg-surface-alt);
-  --gu-icon-border:                var(--border-subtle);
-  --gu-badge-admin-bg:             var(--status-danger-bg);
-  --gu-badge-admin-color:          var(--status-danger-text);
-  --gu-badge-admin-border:         var(--status-danger-border);
-  --gu-badge-user-bg:              var(--status-info-bg);
-  --gu-badge-user-color:           var(--status-info);
-  --gu-badge-user-border:          var(--status-info-border);
-  --gu-avatar-admin-bg:            var(--status-danger-bg);
-  --gu-avatar-admin-color:         var(--status-danger-text);
-  --gu-avatar-admin-border:        var(--status-danger-border);
-  --gu-avatar-user-bg:             var(--status-info-bg);
-  --gu-avatar-user-color:          var(--status-info);
-  --gu-avatar-user-border:         var(--status-info-border);
-  --gu-badge-ficha-bg:             var(--bg-main);
-  --gu-badge-ficha-color:          var(--text-secondary);
-  --gu-filter-bg:                  var(--bg-surface);
-  --gu-filter-border:              var(--border-subtle);
-  --gu-filter-label:               var(--text-muted);
-  --gu-input-bg:                   var(--bg-surface-alt);
-  --gu-input-border:               var(--border-color);
-  --gu-input-text:                 var(--text-heading-alt);
-  --gu-input-placeholder:          var(--text-placeholder);
-  --gu-btn-view-bg:                var(--bg-surface);
-  --gu-btn-view-color:             var(--text-secondary);
-  --gu-btn-view-border:            var(--border-color);
-  --gu-btn-view-hover-bg:          var(--bg-main);
-  --gu-btn-view-hover-color:       var(--text-heading-alt);
-  --gu-btn-edit-bg:                var(--color-accent-legacy);
-  --gu-btn-edit-color:             var(--text-on-primary);
-  --gu-btn-edit-border:            var(--color-accent-legacy);
-  --gu-btn-edit-hover-bg:          var(--color-accent-legacy);
-  --gu-table-bg:                   var(--bg-surface);
-  --gu-table-border:               var(--border-subtle);
-  --gu-table-th-bg:                var(--bg-surface-alt);
-  --gu-table-th-color:             var(--text-secondary);
-  --gu-table-td-color:             var(--text-heading-alt);
-  --gu-table-tr-hover:             var(--bg-surface-alt);
+  /* ──────────────────────────────────────────────────────────────────────────
+     7. INTEGRACIÓN NATIVA CON BOOTSTRAP 5
+     ────────────────────────────────────────────────────────────────────────── */
+  --bs-primary:              var(--color-primary);
+  --bs-primary-rgb:          var(--color-primary-rgb);
+  --bs-success:              var(--color-primary);
+  --bs-success-rgb:          var(--color-primary-rgb);
+  --bs-info:                 var(--color-secondary);
+  --bs-info-rgb:             var(--color-secondary-rgb);
+  --bs-body-bg:              var(--bg-main);
+  --bs-body-color:           var(--text-primary);
+  --bs-secondary-color:      var(--text-secondary);
+  --bs-border-color:         var(--border-color);
 }
 
 /* ==========================================================================
-   MODO CLARO EXPLÍCITO (Panel de Accesibilidad / Atributo data-theme="light")
-   ========================================================================== */
-html[data-theme="light"],
-body.light-mode,
-body:not(.dark-mode) {
-  --bg-body:                       var(--bg-main);
-  --bg-surface:                    var(--bg-card);
-  --text-main:                     var(--text-primary);
-  --text-muted:                    var(--text-secondary);
-  --border-color:                  var(--gray-300);
-}
-
-/* ==========================================================================
-   MODO OSCURO REACTIVO (Panel de Accesibilidad: html.dark-mode / body.dark-mode)
+   TEMA 1: MODO OSCURO (Panel de Accesibilidad: html.dark-mode / body.dark-mode)
+   Redefine las MISMAS variables semánticas para sincronizar toda la interfaz.
    ========================================================================== */
 html.dark-mode,
 body.dark-mode,
 [data-theme="dark"] {
-  --sena-white:                    var(--dark-text-on-primary);
-  --sena-bg-light:                 var(--dark-bg-main);
-  --sena-text:                     var(--dark-text-primary);
-  --sena-text-muted:               var(--dark-text-muted);
-  --sena-border:                   var(--dark-border-color);
+  --color-primary:           #39A900;
+  --color-primary-hover:     #2E8800;
+  --color-primary-active:    #4ADE80;
+  --color-primary-soft:      rgba(57, 169, 0, 0.16);
+  --color-primary-accent:    #4ADE80;
 
-  --bg-body:                       var(--dark-bg-main);
-  --bg-surface:                    var(--dark-bg-surface);
-  --text-main:                     var(--dark-text-primary);
-  --text-muted:                    var(--dark-text-muted);
-  --border-color:                  var(--dark-border-color);
+  --color-secondary:         #38BDF8;
+  --color-secondary-hover:   #0284C7;
+  --color-secondary-soft:    rgba(56, 189, 248, 0.15);
 
-  --a11y-surface:                  var(--dark-bg-surface);
-  --a11y-surface-soft:             var(--dark-bg-card);
-  --a11y-border:                   var(--dark-border-color);
-  --a11y-text:                     var(--dark-text-secondary);
-  --a11y-muted:                    var(--dark-text-muted);
+  --bg-main:                 #0F1114;
+  --bg-main-rgb:             15, 17, 20;
+  --bg-surface:              #141619;
+  --bg-surface-alt:          #1A1D21;
+  --bg-card:                 #1A1D21;
+  --bg-input:                #0F1114;
+  --bg-sidebar:              #101214;
+  --bg-hover:                #20242A;
+  --bg-overlay:              rgba(255, 255, 255, 0.08);
+  --bg-backdrop:             rgba(0, 0, 0, 0.60);
 
-  --gu-card-bg:                    var(--dark-bg-card);
-  --gu-card-border:                var(--dark-border-color);
-  --gu-card-shadow:                0 4px 14px var(--dark-shadow-color);
-  --gu-card-hover-border:          var(--dark-border-solid);
-  --gu-text-name:                  var(--dark-text-primary);
-  --gu-text-muted:                 var(--dark-text-muted);
-  --gu-text-sub:                   var(--dark-text-secondary);
-  --gu-icon-color:                 var(--dark-color-primary);
-  --gu-icon-bg:                    var(--dark-bg-main);
-  --gu-icon-border:                var(--dark-border-color);
-  --gu-badge-admin-bg:             var(--dark-status-danger-bg);
-  --gu-badge-admin-color:          var(--dark-status-danger);
-  --gu-badge-admin-border:         var(--dark-status-danger-border);
-  --gu-badge-user-bg:              var(--dark-status-info-bg);
-  --gu-badge-user-color:           var(--dark-status-info);
-  --gu-badge-user-border:          var(--dark-status-info-border);
-  --gu-avatar-admin-bg:            var(--status-danger-text);
-  --gu-avatar-admin-color:         var(--status-danger-border);
-  --gu-avatar-admin-border:        var(--status-danger-text);
-  --gu-avatar-user-bg:             var(--color-secondary);
-  --gu-avatar-user-color:          var(--status-info-accent);
-  --gu-avatar-user-border:         var(--status-info);
-  --gu-badge-ficha-bg:             var(--dark-bg-main);
-  --gu-badge-ficha-color:          var(--dark-text-muted);
-  --gu-filter-bg:                  var(--dark-bg-card);
-  --gu-filter-border:              var(--dark-border-solid);
-  --gu-filter-label:               var(--dark-text-muted);
-  --gu-input-bg:                   var(--dark-bg-main);
-  --gu-input-border:               var(--dark-border-solid);
-  --gu-input-text:                 var(--dark-text-primary);
-  --gu-input-placeholder:          var(--dark-text-placeholder);
-  --gu-btn-view-bg:                var(--dark-bg-overlay-subtle);
-  --gu-btn-view-color:             var(--dark-text-secondary);
-  --gu-btn-view-border:            var(--dark-border-solid);
-  --gu-btn-view-hover-bg:          var(--dark-bg-overlay-hover);
-  --gu-btn-view-hover-color:       var(--dark-text-on-primary);
-  --gu-table-bg:                   var(--dark-bg-card);
-  --gu-table-border:               var(--dark-border-solid);
-  --gu-table-th-bg:                var(--dark-bg-main);
-  --gu-table-th-color:             var(--dark-text-muted);
-  --gu-table-td-color:             var(--dark-text-secondary);
-  --gu-table-tr-hover:             var(--dark-bg-elevated);
+  --text-primary:            #F3F4F6;
+  --text-emphasis:           #FFFFFF;
+  --text-secondary:          #D1D5DB;
+  --text-muted:              #9CA3AF;
+  --text-placeholder:        #6E7681;
+  --text-on-primary:         #FFFFFF;
+  --text-on-primary-muted:   rgba(255, 255, 255, 0.85);
+
+  --border-color:            rgba(255, 255, 255, 0.14);
+  --border-subtle:           rgba(255, 255, 255, 0.08);
+  --border-primary:          rgba(57, 169, 0, 0.45);
+  --border-focus:            rgba(57, 169, 0, 0.35);
+
+  --shadow-color:            rgba(0, 0, 0, 0.35);
+  --shadow-color-md:         rgba(0, 0, 0, 0.50);
+  --shadow-color-strong:     rgba(0, 0, 0, 0.65);
+
+  --status-success:          #4ADE80;
+  --status-success-text:     #4ADE80;
+  --status-success-bg:       rgba(57, 169, 0, 0.16);
+  --status-success-border:   rgba(57, 169, 0, 0.40);
+
+  --status-warning:          #FBBF24;
+  --status-warning-text:     #FBBF24;
+  --status-warning-bg:       rgba(245, 158, 11, 0.16);
+  --status-warning-border:   rgba(245, 158, 11, 0.38);
+
+  --status-danger:           #F87171;
+  --status-danger-text:      #F87171;
+  --status-danger-bg:        rgba(239, 68, 68, 0.16);
+  --status-danger-border:    rgba(239, 68, 68, 0.38);
+
+  --status-info:             #38BDF8;
+  --status-info-bg:          rgba(56, 189, 248, 0.16);
+  --status-info-border:      rgba(56, 189, 248, 0.38);
+
+  --a11y-highlight-bg:       rgba(250, 204, 21, 0.22);
 }
 
 /* ==========================================================================
-   MODO ESCALA DE GRISES REACTIVO (Panel de Accesibilidad: html.a11y-grayscale)
+   TEMA 2: ESCALA DE GRISES (Panel de Accesibilidad: html.a11y-grayscale)
+   Redefine los acentos sobre la rampa neutral de grises.
    ========================================================================== */
 html.a11y-grayscale {
-  --a11y-active-filter:            var(--grayscale-filter);
+  --color-primary:           var(--gray-600);
+  --color-primary-hover:     var(--gray-700);
+  --color-primary-active:    var(--gray-800);
+  --color-primary-soft:      var(--gray-200);
+  --color-primary-accent:    var(--gray-400);
+  --color-secondary:         var(--gray-800);
+  --color-secondary-hover:   var(--gray-900);
+  --color-secondary-soft:    var(--gray-200);
+  --bg-sidebar:              var(--gray-700);
+  --border-primary:          var(--gray-400);
+  --border-focus:            rgba(100, 116, 139, 0.30);
 }
 
 /* ==========================================================================
-   MODO ALTO CONTRASTE (body.high-contrast)
+   TEMA 3: ALTO CONTRASTE (body.high-contrast)
    ========================================================================== */
 body.high-contrast:not(.dark-mode),
 body.light-mode.high-contrast {
-  --bg-body:                       var(--hc-bg-main);
-  --bg-surface:                    var(--hc-bg-surface);
-  --text-main:                     var(--hc-text-primary);
-  --text-muted:                    var(--hc-text-muted);
-  --border-color:                  var(--hc-border-color);
+  --bg-main:                 #FFFFFF;
+  --bg-surface:              #FFFFFF;
+  --bg-surface-alt:          #FFFFFF;
+  --bg-card:                 #FFFFFF;
+  --bg-input:                #FFFFFF;
+  --text-primary:            #000000;
+  --text-emphasis:           #000000;
+  --text-secondary:          #000000;
+  --text-muted:              #000000;
+  --border-color:            #000000;
+  --border-subtle:           #000000;
 }

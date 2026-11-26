@@ -4,17 +4,6 @@
    ========================================================================== */
 
 :root {
-  --sbm-chat-primary: var(--color-primary);
-  --sbm-chat-primary-hover: var(--color-primary-hover);
-  --sbm-chat-success: var(--color-primary);
-  --sbm-chat-warning: var(--status-warning);
-  --sbm-chat-danger:  var(--status-danger);
-  --sbm-chat-dark:    var(--color-secondary);
-  --sbm-chat-dark-surface: var(--color-secondary-hover);
-  --sbm-chat-border:  var(--border-color);
-  --sbm-chat-bg-user: var(--color-primary);
-  --sbm-chat-bg-bot:  var(--bg-surface);
-  --sbm-chat-text-dark: var(--text-primary);
   --sbm-chat-radius:  16px;
   --sbm-chat-zindex:  1045;
 }
@@ -35,9 +24,9 @@
   height: 58px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
-  color: var(--bg-surface);
-  border: 2px solid var(--bg-overlay-strong);
-  box-shadow: 0 6px 20px var(--shadow-color-primary-strong), 0 2px 6px var(--shadow-color-secondary);
+  color: var(--text-on-primary);
+  border: 2px solid var(--bg-overlay);
+  box-shadow: 0 6px 20px var(--border-focus), 0 2px 6px var(--shadow-color);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -50,7 +39,7 @@
 
 .sbm-chatbot-trigger:hover {
   transform: scale(1.08);
-  box-shadow: 0 8px 26px var(--shadow-color-primary-strong), 0 3px 8px var(--shadow-color-md);
+  box-shadow: 0 8px 26px var(--border-focus), 0 3px 8px var(--shadow-color-md);
   background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-hover) 100%);
 }
 
@@ -74,8 +63,8 @@
 
 .sbm-chatbot-container.is-open .sbm-chatbot-trigger {
   background: var(--color-secondary);
-  border-color: var(--bg-overlay-strong);
-  box-shadow: 0 4px 16px var(--shadow-color-secondary);
+  border-color: var(--bg-overlay);
+  box-shadow: 0 4px 16px var(--shadow-color);
 }
 
 .sbm-chatbot-container.is-open .sbm-icon-open {
@@ -96,12 +85,12 @@
   background-color: var(--color-primary);
   border: 2.5px solid var(--bg-surface);
   border-radius: 50%;
-  box-shadow: 0 0 0 0 var(--shadow-color-primary-strong);
+  box-shadow: 0 0 0 0 var(--border-focus);
   animation: sbm-pulse-ring 2s infinite;
 }
 
 @keyframes sbm-pulse-ring {
-  0% { box-shadow: 0 0 0 0 var(--shadow-color-primary-strong); }
+  0% { box-shadow: 0 0 0 0 var(--border-focus); }
   70% { box-shadow: 0 0 0 8px var(--shadow-color-primary-zero); }
   100% { box-shadow: 0 0 0 0 var(--shadow-color-primary-zero); }
 }
@@ -120,7 +109,7 @@
   background: var(--bg-main);
   border-radius: var(--sbm-chat-radius);
   border: 1px solid var(--border-color);
-  box-shadow: 0 16px 40px -8px var(--shadow-color-secondary), 0 0 0 1px var(--shadow-color);
+  box-shadow: 0 16px 40px -8px var(--shadow-color), 0 0 0 1px var(--shadow-color);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -148,13 +137,13 @@
    3. ENCABEZADO
    ───────────────────────────────────────────────────────────────────────────── */
 .sbm-chat-header {
-  background: var(--sena-blue, var(--color-secondary));
-  color: var(--bg-surface);
+  background: var(--color-secondary);
+  color: var(--text-on-primary);
   padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 3px solid var(--sena-green, var(--color-primary));
+  border-bottom: 3px solid var(--color-primary);
   flex-shrink: 0;
 }
 
@@ -166,14 +155,14 @@
 .sbm-chat-avatar {
   width: 38px;
   height: 38px;
-  background: var(--sena-green, var(--color-primary));
+  background: var(--color-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--bg-surface);
+  color: var(--text-on-primary);
   font-size: 1.15rem;
-  border: 2px solid var(--bg-overlay-strong);
+  border: 2px solid var(--bg-overlay);
 }
 
 .sbm-chat-status-dot {
@@ -182,7 +171,7 @@
   right: 0;
   width: 10px;
   height: 10px;
-  background-color: var(--sena-green, var(--color-primary));
+  background-color: var(--color-primary);
   border: 2px solid var(--color-secondary);
   border-radius: 50%;
 }
@@ -196,7 +185,7 @@
   margin: 0;
   font-size: 0.94rem;
   font-weight: 700;
-  color: var(--bg-surface);
+  color: var(--text-on-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -220,8 +209,8 @@
 .sbm-badge-role {
   font-size: 0.68rem;
   background: var(--border-focus);
-  color: var(--bg-surface);
-  border: 1px solid var(--sena-green, var(--color-primary));
+  color: var(--text-on-primary);
+  border: 1px solid var(--color-primary);
   padding: 1px 6px;
   border-radius: 999px;
   font-weight: 600;
@@ -249,12 +238,12 @@
 }
 
 .sbm-chat-btn-header:hover {
-  background: var(--bg-overlay-medium);
-  color: var(--bg-surface);
+  background: var(--bg-overlay);
+  color: var(--text-on-primary);
 }
 
 .sbm-chat-btn-header:focus-visible {
-  outline: 2px solid var(--sena-green, var(--color-primary));
+  outline: 2px solid var(--color-primary);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -333,8 +322,8 @@
 }
 
 .sbm-message-user .sbm-bubble {
-  background: var(--sena-green, var(--color-primary));
-  color: var(--bg-surface);
+  background: var(--color-primary);
+  color: var(--text-on-primary);
   border-bottom-right-radius: 4px;
   box-shadow: 0 3px 8px var(--border-focus);
 }
@@ -382,7 +371,7 @@
   gap: 5px;
 }
 .sbm-suggestions-label i {
-  color: var(--sena-green, var(--color-primary));
+  color: var(--color-primary);
 }
 
 .sbm-chips-grid {
@@ -407,14 +396,14 @@
 }
 
 .sbm-chip:hover {
-  background: var(--sena-green-light, var(--color-primary-soft));
-  border-color: var(--sena-green, var(--color-primary));
-  color: var(--sena-green-hover, var(--color-primary-hover));
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
   transform: translateY(-1px);
 }
 
 .sbm-chip:focus-visible {
-  outline: 2px solid var(--sena-green, var(--color-primary));
+  outline: 2px solid var(--color-primary);
   outline-offset: 1px;
 }
 
@@ -469,7 +458,7 @@
   border-top: 1px solid var(--border-color);
   padding: 12px 14px 10px 14px;
   flex-shrink: 0;
-  box-shadow: 0 -4px 12px var(--shadow-color-secondary);
+  box-shadow: 0 -4px 12px var(--shadow-color);
 }
 
 .sbm-chat-form {
@@ -507,8 +496,8 @@
 }
 
 .sbm-input-wrapper:focus-within {
-  border-color: var(--sena-green, var(--color-primary));
-  box-shadow: 0 0 0 3px var(--sena-green-focus, var(--border-focus));
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--border-focus);
   background: var(--bg-surface);
 }
 
@@ -553,8 +542,8 @@
   flex: 0 0 42px;
   width: 42px;
   height: 42px;
-  background: var(--sena-green, var(--color-primary));
-  color: var(--bg-surface);
+  background: var(--color-primary);
+  color: var(--text-on-primary);
   border: none;
   border-radius: 12px;
   display: flex;
@@ -574,9 +563,9 @@
 }
 
 .sbm-chat-send-btn:hover:not(:disabled) {
-  background: var(--sena-green-hover, var(--color-primary-hover));
+  background: var(--color-primary-hover);
   transform: translateY(-1.5px);
-  box-shadow: 0 4px 10px var(--shadow-color-primary-strong);
+  box-shadow: 0 4px 10px var(--border-focus);
 }
 
 .sbm-chat-send-btn:hover:not(:disabled) i {
@@ -598,7 +587,7 @@
 }
 
 .sbm-chat-send-btn:focus-visible {
-  outline: 2px solid var(--sena-green, var(--color-primary));
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -626,7 +615,7 @@
 }
 
 .sbm-chat-disclaimer i {
-  color: var(--sena-green, var(--color-primary));
+  color: var(--color-primary);
   font-size: 0.78rem;
   flex-shrink: 0;
 }
@@ -695,108 +684,108 @@
 }
 
 body.dark-mode .sbm-chatbot-container.is-open .sbm-chatbot-trigger {
-  background: var(--dark-bg-card);
-  border-color: var(--dark-border-strong);
+  background: var(--bg-card);
+  border-color: var(--border-color);
 }
 body.dark-mode .sbm-chatbot-panel {
-  background: var(--dark-bg-main);
-  border-color: var(--dark-border-color);
-  box-shadow: 0 18px 44px var(--dark-shadow-strong);
+  background: var(--bg-main);
+  border-color: var(--border-subtle);
+  box-shadow: 0 18px 44px var(--shadow-color-strong);
 }
 body.dark-mode .sbm-chat-header {
-  background: var(--dark-bg-sidebar);
-  border-bottom: 2px solid var(--dark-color-primary);
+  background: var(--bg-sidebar);
+  border-bottom: 2px solid var(--color-primary);
 }
 body.dark-mode .sbm-chat-status-dot {
-  border-color: var(--dark-bg-sidebar);
+  border-color: var(--bg-sidebar);
 }
 body.dark-mode .sbm-chat-messages,
 body.dark-mode .sbm-chat-typing {
-  background-color: var(--dark-bg-main);
+  background-color: var(--bg-main);
 }
 body.dark-mode .sbm-chat-messages::-webkit-scrollbar-thumb {
-  background: var(--dark-border-strong);
+  background: var(--border-color);
 }
 body.dark-mode .sbm-message-bot .sbm-bubble {
-  background: var(--dark-bg-surface);
-  color: var(--dark-text-primary);
-  border-color: var(--dark-border-color);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
   box-shadow: none;
 }
 body.dark-mode .sbm-message-bot .sbm-msg-time {
-  color: var(--dark-text-muted);
+  color: var(--text-muted);
 }
 body.dark-mode .sbm-message-system-error .sbm-bubble {
-  background: var(--dark-status-danger-bg);
-  border-color: var(--dark-status-danger-border);
-  color: var(--dark-status-danger);
+  background: var(--status-danger-bg);
+  border-color: var(--status-danger-border);
+  color: var(--status-danger);
 }
 body.dark-mode .sbm-suggestions-label {
-  color: var(--dark-text-muted);
+  color: var(--text-muted);
 }
 body.dark-mode .sbm-chip {
-  background: var(--dark-bg-surface);
-  border-color: var(--dark-border-color);
-  color: var(--dark-text-secondary);
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
   box-shadow: none;
 }
 body.dark-mode .sbm-chip:hover {
-  background: var(--dark-status-success-bg);
-  border-color: var(--dark-status-success-border);
-  color: var(--dark-color-primary-accent);
+  background: var(--status-success-bg);
+  border-color: var(--status-success-border);
+  color: var(--color-primary-accent);
 }
 body.dark-mode .sbm-typing-bubble {
-  background: var(--dark-bg-card);
+  background: var(--bg-card);
 }
 body.dark-mode .sbm-dot {
-  background-color: var(--dark-text-muted);
+  background-color: var(--text-muted);
 }
 body.dark-mode .sbm-typing-text {
-  color: var(--dark-text-muted);
+  color: var(--text-muted);
 }
 body.dark-mode .sbm-chat-footer {
-  background: var(--dark-bg-surface);
-  border-top-color: var(--dark-border-color);
+  background: var(--bg-surface);
+  border-top-color: var(--border-subtle);
   box-shadow: none;
 }
 body.dark-mode .sbm-input-wrapper {
-  background: var(--dark-bg-main);
-  border-color: var(--dark-border-strong);
+  background: var(--bg-main);
+  border-color: var(--border-color);
 }
 body.dark-mode .sbm-input-wrapper:hover {
-  border-color: var(--dark-border-hover);
+  border-color: var(--border-primary);
 }
 body.dark-mode .sbm-input-wrapper:focus-within {
-  background: var(--dark-bg-main);
-  border-color: var(--dark-color-primary);
+  background: var(--bg-main);
+  border-color: var(--color-primary);
 }
 body.dark-mode .sbm-chat-textarea,
 body.dark-mode .sbm-input-wrapper textarea {
-  color: var(--dark-text-primary) !important;
+  color: var(--text-primary) !important;
 }
 body.dark-mode .sbm-chat-textarea::placeholder {
-  color: var(--dark-text-placeholder);
+  color: var(--text-placeholder);
 }
 body.dark-mode .sbm-chat-send-btn:disabled {
-  background: var(--dark-bg-elevated);
-  color: var(--dark-text-placeholder);
+  background: var(--bg-hover);
+  color: var(--text-placeholder);
   opacity: 0.8;
 }
 body.dark-mode .sbm-chat-disclaimer {
-  color: var(--dark-text-muted);
+  color: var(--text-muted);
 }
 body.dark-mode .sbm-chat-char-counter {
-  color: var(--dark-text-muted);
-  background: var(--dark-bg-card);
-  border-color: var(--dark-border-color);
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border-color: var(--border-subtle);
 }
 body.dark-mode .sbm-chat-char-counter.near-limit {
-  color: var(--dark-status-warning);
-  background: var(--dark-status-warning-bg);
-  border-color: var(--dark-status-warning-border);
+  color: var(--status-warning);
+  background: var(--status-warning-bg);
+  border-color: var(--status-warning-border);
 }
 body.dark-mode .sbm-chat-char-counter.at-limit {
-  color: var(--dark-status-danger);
-  background: var(--dark-status-danger-bg);
-  border-color: var(--dark-status-danger-border);
+  color: var(--status-danger);
+  background: var(--status-danger-bg);
+  border-color: var(--status-danger-border);
 }

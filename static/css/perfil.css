@@ -1,7 +1,7 @@
 /* ── static/css/perfil.css (Adaptado a Paleta Institucional SENA) ── */
 
 .modal-tab {
-  color: var(--sena-text-muted, var(--text-secondary));
+  color: var(--text-secondary);
   cursor: pointer;
   background: transparent;
   border: none;
@@ -10,11 +10,11 @@
   transition: color 0.15s, border-color 0.15s;
 }
 .modal-tab:hover {
-  color: var(--sena-text, var(--text-primary));
+  color: var(--text-primary);
 }
 .modal-tab--active {
-  color: var(--sena-green, var(--color-primary)) !important;
-  border-bottom-color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--color-primary) !important;
+  border-bottom-color: var(--color-primary) !important;
   font-weight: 700 !important;
 }
 
@@ -33,7 +33,7 @@
 .toggle-slider {
   position: absolute;
   inset: 0;
-  background: var(--sena-border, var(--border-color));
+  background: var(--border-color);
   border-radius: 24px;
   transition: background 0.2s;
 }
@@ -50,7 +50,7 @@
   box-shadow: 0 1px 3px var(--shadow-color-md);
 }
 .toggle-switch input:checked + .toggle-slider {
-  background: var(--sena-green, var(--color-primary));
+  background: var(--color-primary);
 }
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(18px);
@@ -78,26 +78,26 @@
   font-family: var(--font-mono, monospace);
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--sena-blue, var(--color-secondary));
+  color: var(--color-secondary);
 }
 .perfil__style-11 {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--sena-text-muted, var(--text-secondary));
+  color: var(--text-secondary);
   font-weight: 600;
 }
 .perfil__style-12 {
   font-family: var(--font-mono, monospace);
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--sena-green, var(--color-primary));
+  color: var(--color-primary);
 }
 .perfil__style-13 {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--sena-text-muted, var(--text-secondary));
+  color: var(--text-secondary);
   font-weight: 600;
 }
 .perfil__style-14 {
@@ -110,7 +110,7 @@
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--sena-text-muted, var(--text-secondary));
+  color: var(--text-secondary);
   font-weight: 600;
 }
 .perfil__style-16 {
@@ -129,7 +129,7 @@
   transition: background-color 0.15s ease;
 }
 .notif-channel-item:hover {
-  background-color: var(--sena-bg-light, var(--bg-main));
+  background-color: var(--bg-main);
 }
 .badge-dot {
   display: inline-block;
@@ -139,32 +139,32 @@
 }
 
 body.dark-mode .modal-tab {
-  color: var(--dark-text-muted);
+  color: var(--text-muted);
 }
 body.dark-mode .modal-tab:hover {
-  color: var(--dark-text-primary);
+  color: var(--text-primary);
 }
 body.dark-mode .modal-tab--active {
-  color: var(--dark-color-primary-accent) !important;
-  border-bottom-color: var(--dark-color-primary) !important;
+  color: var(--color-primary-accent) !important;
+  border-bottom-color: var(--color-primary) !important;
 }
 body.dark-mode .toggle-slider {
-  background: var(--dark-bg-elevated);
+  background: var(--bg-hover);
 }
 body.dark-mode .perfil__style-10 {
-  color: var(--dark-text-primary) !important;
+  color: var(--text-primary) !important;
 }
 body.dark-mode .perfil__style-12 {
-  color: var(--dark-color-primary-accent) !important;
+  color: var(--color-primary-accent) !important;
 }
 body.dark-mode .perfil__style-14 {
-  color: var(--dark-status-danger) !important;
+  color: var(--status-danger) !important;
 }
 body.dark-mode .perfil__style-11,
 body.dark-mode .perfil__style-13,
 body.dark-mode .perfil__style-15 {
-  color: var(--dark-text-muted) !important;
+  color: var(--text-muted) !important;
 }
 body.dark-mode .notif-channel-item:hover {
-  background-color: var(--dark-bg-card) !important;
+  background-color: var(--bg-card) !important;
 }

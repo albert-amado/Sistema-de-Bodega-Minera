@@ -1,33 +1,21 @@
 /* ==========================================================================
    AUTH SENA — Inicio de sesión y Registro
    Se carga DESPUÉS de styles.css en login.html y registro.html.
-   - Paleta institucional SENA centralizada en variables.
-   - Contornos limpios que cambian a Verde SENA en hover / focus.
-   - Animación fluida (fade + slide lateral) al alternar Login <-> Registro.
+   - Usa únicamente los tokens semánticos globales de var.css.
+   - Soporte reactivo completo para Modo Claro, Modo Oscuro y Escala de Grises.
    ========================================================================== */
 
 :root {
-  --auth-green:        var(--color-primary);
-  --auth-green-hover:  var(--color-primary-hover);
-  --auth-green-light:  var(--color-primary-soft);
-  --auth-green-border: var(--border-primary);
-  --auth-green-focus:  var(--border-focus);
-  --auth-bg:           var(--bg-surface-alt);
-  --auth-white:        var(--bg-surface);
-  --auth-text:         var(--text-primary);
-  --auth-muted:        var(--text-muted);
-  --auth-border:       var(--border-color);
-
-  --auth-anim:         0.45s;
-  --auth-ease:         cubic-bezier(0.4, 0, 0.2, 1);
+  --auth-anim: 0.45s;
+  --auth-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --------------------------------------------------------------------------
-   1. PANEL IZQUIERDO (marca) — oscuro neutro con acentos verdes
+   1. PANEL IZQUIERDO (marca) — oscuro institucional con acentos verdes
    -------------------------------------------------------------------------- */
 html body.auth-page,
 html body.auth-page .left-panel {
-  background: linear-gradient(160deg, var(--text-primary) 0%, var(--color-primary-active) 100%) !important;
+  background: linear-gradient(160deg, var(--gray-900) 0%, var(--color-secondary-hover) 100%) !important;
 }
 
 html body.auth-page .left-panel::after {
@@ -43,54 +31,76 @@ html body.auth-page .left-panel::after {
   pointer-events: none;
 }
 
-html body.auth-page .brand-text       { color: var(--auth-white) !important; }
-html body.auth-page .brand-text span  { color: var(--auth-green) !important; }
-html body.auth-page .brand-sub        { color: var(--text-on-primary-muted) !important; }
-html body.auth-page .corner-note      { color: var(--bg-overlay-strong) !important; }
+html body.auth-page .brand-text {
+  color: var(--text-on-primary) !important;
+}
+
+html body.auth-page .brand-text span {
+  color: var(--color-primary) !important;
+}
+
+html body.auth-page .brand-sub {
+  color: var(--text-on-primary-muted) !important;
+}
+
+html body.auth-page .corner-note {
+  color: var(--text-on-primary-muted) !important;
+}
 
 html body.auth-page .img-container-center {
-  border: 1px solid var(--shadow-color-primary-strong) !important;
+  border: 1px solid var(--border-focus) !important;
 }
 
 /* --------------------------------------------------------------------------
-   2. PANEL DERECHO (formulario) — tarjeta blanca limpia
+   2. PANEL DERECHO (formulario) — superficie reactiva por tema
    -------------------------------------------------------------------------- */
 html body.auth-page .right-panel {
-  background: var(--auth-white) !important;
-  color: var(--auth-text) !important;
-  border-left: 1px solid var(--auth-border) !important;
+  background: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-left: 1px solid var(--border-color) !important;
   box-shadow: -12px 0 40px var(--shadow-color-md);
   overflow-x: hidden;
 }
 
 html body.auth-page .logo-box {
-  background: var(--auth-green-light) !important;
-  border: 1px solid var(--auth-green-border);
+  background: var(--color-primary-soft) !important;
+  border: 1px solid var(--border-primary);
   border-radius: 12px !important;
 }
-html body.auth-page .logo-box img { filter: none !important; }
 
-html body.auth-page .logo-sup      { color: var(--auth-green) !important; font-weight: 700; }
-html body.auth-page .logo-name     { color: var(--auth-text) !important; }
-html body.auth-page .page-title    { color: var(--auth-text) !important; }
+html body.auth-page .logo-box img {
+  filter: none !important;
+}
+
+html body.auth-page .logo-sup {
+  color: var(--color-primary) !important;
+  font-weight: 700;
+}
+
+html body.auth-page .logo-name,
+html body.auth-page .page-title {
+  color: var(--text-primary) !important;
+}
+
 html body.auth-page .page-sub,
 html body.auth-page .field-lbl,
 html body.auth-page .doc-hint,
-html body.auth-page .version-text  { color: var(--auth-muted) !important; }
+html body.auth-page .version-text {
+  color: var(--text-muted) !important;
+}
 
 /* --------------------------------------------------------------------------
    3. PESTAÑAS con indicador deslizante (pill)
    -------------------------------------------------------------------------- */
 html body.auth-page .auth-tabs {
   position: relative;
-  background: var(--auth-bg) !important;
-  border: 1px solid var(--auth-border);
+  background: var(--bg-surface-alt) !important;
+  border: 1px solid var(--border-color);
   border-radius: 12px !important;
   padding: 4px !important;
   gap: 0 !important;
 }
 
-/* Indicador que se desliza entre "Iniciar sesión" y "Registro" */
 html body.auth-page .auth-tabs::before {
   content: '';
   position: absolute;
@@ -98,12 +108,13 @@ html body.auth-page .auth-tabs::before {
   bottom: 4px;
   left: 4px;
   width: calc(50% - 4px);
-  background: var(--auth-green);
+  background: var(--color-primary);
   border-radius: 9px;
   box-shadow: 0 4px 12px var(--border-focus);
   transition: transform var(--auth-anim) var(--auth-ease);
   z-index: 0;
 }
+
 html body.auth-page .auth-tabs[data-active="registro"]::before {
   transform: translateX(100%);
 }
@@ -113,160 +124,243 @@ html body.auth-page .tab-btn.on {
   position: relative;
   z-index: 1;
   background: transparent !important;
-  color: var(--auth-muted) !important;
+  color: var(--text-muted) !important;
   font-weight: 600 !important;
   transition: color 0.3s ease !important;
 }
-html body.auth-page .tab-btn:not(.on):hover { color: var(--auth-green) !important; }
-html body.auth-page .tab-btn.on             { color: var(--auth-white) !important; }
+
+html body.auth-page .tab-btn:not(.on):hover {
+  color: var(--color-primary) !important;
+}
+
+html body.auth-page .tab-btn.on {
+  color: var(--text-on-primary) !important;
+}
 
 /* --------------------------------------------------------------------------
-   4. CAMPOS: contorno sutil -> Verde SENA en hover / focus
+   4. CAMPOS DE ENTRADA (INPUT / SELECT) Y AUTOCOMPLETADO DEL NAVEGADOR
    -------------------------------------------------------------------------- */
 html body.auth-page .input-group-mine,
+html body.auth-page .mine-input,
 html body.auth-page .mine-input.full,
 html body.auth-page select.mine-input {
-  border: 1.5px solid var(--auth-border) !important;
+  border: 1.5px solid var(--border-color) !important;
   border-radius: 10px !important;
-  background: var(--auth-white) !important;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease !important;
+}
+
+/* El input y botón dentro de .input-group-mine heredan el fondo de su contenedor */
+html body.auth-page .input-group-mine .mine-input {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+  border: none !important;
+  border-radius: 0 9px 9px 0 !important;
+  box-shadow: none !important;
 }
 
 html body.auth-page .input-group-mine .sel-btn {
-  border-right: 1.5px solid var(--auth-border) !important;
-  color: var(--auth-text) !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-right: 1.5px solid var(--border-color) !important;
+  border-radius: 9px 0 0 9px !important;
+  color: var(--text-primary) !important;
   transition: border-color 0.25s ease, color 0.25s ease !important;
 }
 
 html body.auth-page .input-group-mine:hover,
-html body.auth-page .mine-input.full:hover {
-  border-color: var(--auth-green-border) !important;
+html body.auth-page .mine-input.full:hover,
+html body.auth-page select.mine-input:hover {
+  border-color: var(--border-primary) !important;
 }
 
 html body.auth-page .input-group-mine:focus-within,
 html body.auth-page .mine-input.full:focus,
 html body.auth-page select.mine-input:focus {
-  border-color: var(--auth-green) !important;
-  box-shadow: 0 0 0 4px var(--auth-green-focus) !important;
-}
-html body.auth-page .input-group-mine:focus-within .sel-btn {
-  border-right-color: var(--auth-green) !important;
-  color: var(--auth-green) !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 4px var(--border-focus) !important;
 }
 
-html body.auth-page .mine-input::placeholder { color: var(--text-placeholder); }
+html body.auth-page .input-group-mine:focus-within .sel-btn {
+  border-right-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+html body.auth-page .mine-input::placeholder {
+  color: var(--text-placeholder) !important;
+}
+
+html body.auth-page select.mine-input option {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Evitar que el autocompletado del navegador pinte los campos de blanco en Modo Oscuro */
+html body.auth-page input:-webkit-autofill,
+html body.auth-page input:-webkit-autofill:hover,
+html body.auth-page input:-webkit-autofill:focus,
+html body.auth-page select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
 
 /* Campos bloqueados por SofiaPlus */
 html body.auth-page .mine-input[readonly] {
-  background: var(--auth-bg) !important;
-  color: var(--auth-muted) !important;
+  background-color: var(--bg-surface-alt) !important;
+  color: var(--text-muted) !important;
 }
 
 /* Desplegable de tipo de documento */
 html body.auth-page .doc-dropdown {
-  border: 1px solid var(--auth-border) !important;
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 12px !important;
 }
+
+html body.auth-page .doc-dropdown a {
+  color: var(--text-primary) !important;
+}
+
 html body.auth-page .doc-dropdown a:hover {
-  background: var(--auth-green-light) !important;
-  color: var(--auth-green-hover) !important;
+  background-color: var(--color-primary-soft) !important;
+  color: var(--color-primary-active) !important;
 }
 
 /* Estados de validación (form-validation.js) */
 html body.auth-page .input-group-mine.fv-valid,
 html body.auth-page .mine-input.full.fv-valid {
-  border-color: var(--auth-green) !important;
+  border-color: var(--color-primary) !important;
 }
+
 html body.auth-page .input-group-mine.fv-invalid,
 html body.auth-page .mine-input.full.fv-invalid {
   border-color: var(--status-danger) !important;
-  box-shadow: 0 0 0 4px var(--status-danger-soft) !important;
+  box-shadow: 0 0 0 4px var(--status-danger-bg) !important;
 }
 
 /* --------------------------------------------------------------------------
    5. BOTÓN PRINCIPAL, ENLACES Y ALERTAS
    -------------------------------------------------------------------------- */
 html body.auth-page .btn-submit {
-  background: var(--auth-green) !important;
-  border: 1px solid var(--auth-green) !important;
-  color: var(--auth-white) !important;
+  background: var(--color-primary) !important;
+  border: 1px solid var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
   border-radius: 10px !important;
   font-weight: 600 !important;
   box-shadow: 0 4px 14px var(--border-focus) !important;
   transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
 }
+
 html body.auth-page .btn-submit:hover:not(:disabled) {
-  background: var(--auth-green-hover) !important;
-  border-color: var(--auth-green-hover) !important;
+  background: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px var(--shadow-color-primary-strong) !important;
+  box-shadow: 0 6px 18px var(--border-focus) !important;
 }
-html body.auth-page .btn-submit:active:not(:disabled) { transform: translateY(0); }
+
+html body.auth-page .btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 html body.auth-page .btn-submit:focus-visible {
-  outline: 3px solid var(--auth-green-border) !important;
+  outline: 3px solid var(--border-primary) !important;
   outline-offset: 2px;
+}
+
+html body.auth-page .btn-submit:disabled {
+  background: var(--bg-surface-alt) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-muted) !important;
+  opacity: 0.7 !important;
 }
 
 html body.auth-page .link-mine,
 html body.auth-page .auth-switch a {
-  color: var(--auth-green) !important;
+  color: var(--color-primary) !important;
   font-weight: 600;
   text-decoration: none;
 }
+
 html body.auth-page .link-mine:hover,
 html body.auth-page .auth-switch a:hover {
-  color: var(--auth-green-hover) !important;
+  color: var(--color-primary-hover) !important;
   text-decoration: underline;
+}
+
+html.dark-mode body.auth-page .logo-sup,
+html.dark-mode body.auth-page .link-mine,
+html.dark-mode body.auth-page .auth-switch a {
+  color: var(--color-primary-accent) !important;
 }
 
 html body.auth-page .auth-switch {
   text-align: center;
   font-size: 13px;
-  color: var(--auth-muted);
+  color: var(--text-muted);
   margin-top: 1.25rem;
 }
 
 html body.auth-page .alert-mine {
   border-radius: 10px !important;
 }
+
 html body.auth-page .alert-mine.success {
-  background: var(--auth-green-light) !important;
-  border: 1px solid var(--auth-green-border) !important;
+  background: var(--status-success-bg) !important;
+  border: 1px solid var(--status-success-border) !important;
   color: var(--status-success-text) !important;
 }
 
 /* --------------------------------------------------------------------------
    6. ANIMACIÓN DE TRANSICIÓN LOGIN <-> REGISTRO
-   El contenido del panel derecho sale con fade + slide y la página destino
-   entra desde el lado opuesto (escalonado por elemento).
    -------------------------------------------------------------------------- */
-html body.auth-page .right-panel > * {
+html body.auth-page .right-panel>* {
   transition: opacity var(--auth-anim) var(--auth-ease),
-              transform var(--auth-anim) var(--auth-ease);
+    transform var(--auth-anim) var(--auth-ease);
 }
 
-/* Escalonado suave de entrada */
-html body.auth-page .right-panel > *:nth-child(1) { transition-delay: 0s; }
-html body.auth-page .right-panel > *:nth-child(2) { transition-delay: 0.03s; }
-html body.auth-page .right-panel > *:nth-child(3) { transition-delay: 0.06s; }
-html body.auth-page .right-panel > *:nth-child(4) { transition-delay: 0.09s; }
-html body.auth-page .right-panel > *:nth-child(n+5) { transition-delay: 0.12s; }
+html body.auth-page .right-panel>*:nth-child(1) { transition-delay: 0s; }
+html body.auth-page .right-panel>*:nth-child(2) { transition-delay: 0.03s; }
+html body.auth-page .right-panel>*:nth-child(3) { transition-delay: 0.06s; }
+html body.auth-page .right-panel>*:nth-child(4) { transition-delay: 0.09s; }
+html body.auth-page .right-panel>*:nth-child(n+5) { transition-delay: 0.12s; }
 
-/* Salida: el pill de pestañas se queda fijo para que se vea deslizarse */
-html.auth-leave-left  body.auth-page .right-panel > *:not(.auth-tabs) { opacity: 0; transform: translateX(-40px); }
-html.auth-leave-right body.auth-page .right-panel > *:not(.auth-tabs) { opacity: 0; transform: translateX(40px); }
-html.auth-leave-left  body.auth-page .right-panel > *,
-html.auth-leave-right body.auth-page .right-panel > * { transition-delay: 0s !important; }
+html.auth-leave-left body.auth-page .right-panel>*:not(.auth-tabs) {
+  opacity: 0;
+  transform: translateX(-40px);
+}
 
-/* Entrada (estado inicial antes de animar) */
-html.auth-enter-right body.auth-page .right-panel > *:not(.auth-tabs) { opacity: 0; transform: translateX(40px); transition: none !important; }
-html.auth-enter-left  body.auth-page .right-panel > *:not(.auth-tabs) { opacity: 0; transform: translateX(-40px); transition: none !important; }
+html.auth-leave-right body.auth-page .right-panel>*:not(.auth-tabs) {
+  opacity: 0;
+  transform: translateX(40px);
+}
+
+html.auth-leave-left body.auth-page .right-panel>*,
+html.auth-leave-right body.auth-page .right-panel>* {
+  transition-delay: 0s !important;
+}
+
+html.auth-enter-right body.auth-page .right-panel>*:not(.auth-tabs) {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: none !important;
+}
+
+html.auth-enter-left body.auth-page .right-panel>*:not(.auth-tabs) {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: none !important;
+}
+
 html.auth-enter-right body.auth-page .auth-tabs::before,
-html.auth-enter-left  body.auth-page .auth-tabs::before { transition: none !important; }
+html.auth-enter-left body.auth-page .auth-tabs::before {
+  transition: none !important;
+}
 
-/* Accesibilidad: sin desplazamiento para quien reduce movimiento */
 @media (prefers-reduced-motion: reduce) {
-  html body.auth-page .right-panel > *,
+  html body.auth-page .right-panel>*,
   html body.auth-page .auth-tabs::before {
     transition: opacity 0.2s linear !important;
     transform: none !important;
@@ -278,97 +372,17 @@ html.auth-enter-left  body.auth-page .auth-tabs::before { transition: none !impo
    -------------------------------------------------------------------------- */
 @media (max-width: 820px) {
   html body.auth-page .right-panel {
-    border-top: 1px solid var(--auth-border) !important;
+    border-top: 1px solid var(--border-color) !important;
     box-shadow: 0 -12px 30px var(--shadow-color-md);
   }
 }
 
 @media (max-width: 480px) {
-  html body.auth-page .right-panel { padding: 1.75rem 1.25rem !important; }
-  html body.auth-page .row-2 { grid-template-columns: 1fr !important; }
-}
+  html body.auth-page .right-panel {
+    padding: 1.75rem 1.25rem !important;
+  }
 
-html.dark-mode body.auth-page .right-panel {
-  background: var(--dark-bg-surface) !important;
-  color: var(--dark-text-primary) !important;
-  border-left-color: var(--dark-border-color) !important;
+  html body.auth-page .row-2 {
+    grid-template-columns: 1fr !important;
+  }
 }
-html.dark-mode body.auth-page .logo-box {
-  background: var(--dark-status-success-bg) !important;
-  border-color: var(--dark-border-focus) !important;
-}
-html.dark-mode body.auth-page .logo-sup {
-  color: var(--dark-color-primary-accent) !important;
-}
-html.dark-mode body.auth-page .logo-name,
-html.dark-mode body.auth-page .page-title {
-  color: var(--dark-text-primary) !important;
-}
-html.dark-mode body.auth-page .page-sub,
-html.dark-mode body.auth-page .field-lbl,
-html.dark-mode body.auth-page .doc-hint,
-html.dark-mode body.auth-page .version-text,
-html.dark-mode body.auth-page .auth-switch {
-  color: var(--dark-text-muted) !important;
-}
-html.dark-mode body.auth-page .auth-tabs {
-  background: var(--dark-bg-main) !important;
-  border-color: var(--dark-border-color) !important;
-}
-html.dark-mode body.auth-page .tab-btn:not(.on) {
-  color: var(--dark-text-muted) !important;
-}
-html.dark-mode body.auth-page .tab-btn:not(.on):hover {
-  color: var(--dark-color-primary-accent) !important;
-}
-html.dark-mode body.auth-page .input-group-mine,
-html.dark-mode body.auth-page .mine-input.full,
-html.dark-mode body.auth-page select.mine-input {
-  background: var(--dark-bg-main) !important;
-  border-color: var(--dark-border-strong) !important;
-  color: var(--dark-text-primary) !important;
-}
-html.dark-mode body.auth-page .mine-input,
-html.dark-mode body.auth-page select.mine-input:not(:invalid) {
-  color: var(--dark-text-primary) !important;
-}
-html.dark-mode body.auth-page select.mine-input option {
-  background: var(--dark-bg-surface) !important;
-  color: var(--dark-text-primary) !important;
-}
-html.dark-mode body.auth-page .input-group-mine .sel-btn {
-  background: transparent !important;
-  border-right-color: var(--dark-border-strong) !important;
-  color: var(--dark-text-secondary) !important;
-}
-html.dark-mode body.auth-page .mine-input[readonly] {
-  background: var(--dark-bg-card) !important;
-  color: var(--dark-text-muted) !important;
-}
-html.dark-mode body.auth-page .doc-dropdown {
-  background: var(--dark-bg-surface) !important;
-  border-color: var(--dark-border-strong) !important;
-}
-html.dark-mode body.auth-page .doc-dropdown a {
-  color: var(--dark-text-secondary) !important;
-}
-html.dark-mode body.auth-page .doc-dropdown a:hover {
-  background: var(--dark-status-success-bg) !important;
-  color: var(--dark-color-primary-accent) !important;
-}
-html.dark-mode body.auth-page .link-mine,
-html.dark-mode body.auth-page .auth-switch a {
-  color: var(--dark-color-primary-accent) !important;
-}
-html.dark-mode body.auth-page .btn-submit:disabled {
-  background: var(--color-primary-active) !important;
-  border-color: var(--dark-border-color) !important;
-  color: var(--dark-text-muted) !important;
-  opacity: 0.7 !important;
-}
-html.dark-mode body.auth-page .alert-mine.success {
-  background: var(--dark-status-success-bg) !important;
-  border-color: var(--dark-border-focus) !important;
-  color: var(--dark-color-primary-accent) !important;
-}
-
