@@ -3,98 +3,25 @@
 /* ==========================================================================
    SISTEMA DE BODEGA MINERA (SBM) — IDENTIDAD VISUAL INSTITUCIONAL SENA
    Paleta de colores oficial SENA centralizada en :root (WCAG AA/AAA).
-   Predominio: Verde SENA (#39A900), Blanco (#FFFFFF), Gris Claro (#F4F6F9),
+   Predominio: Verde SENA (#39A900), Blanco (var(--text-on-primary)), Gris Claro (#F4F6F9),
    Gris Medio (#D1D5DB) y Texto (#1E1E1E).
    Azul Institucional (#00324D) usado con moderación exclusiva institucional.
    ========================================================================== */
 
 :root {
   /* ── 1. PALETA OFICIAL SENA (TOKENS MAESTROS) ── */
-  --sena-green:          var(--color-primary);   /* Verde Principal SENA (Botones CTA, Foco, Éxito, Iconos activos) */
-  --sena-green-hover:    var(--color-primary-hover);   /* Verde SENA Hover / Activo */
-  --sena-green-light:    var(--color-primary-soft);   /* Fondo sutil verde SENA */
-  --sena-green-border:   var(--border-primary);   /* Borde suave verde SENA */
-  --sena-green-focus:    var(--border-focus); /* Anillo de foco accesible */
 
-  --sena-blue:           var(--color-secondary);   /* Azul Institucional SENA (Headers, Sidebar, Títulos H1-H3) */
-  --sena-blue-hover:     var(--color-secondary-hover);   /* Azul Institucional profundo */
-  --sena-blue-light:     var(--color-secondary-soft);   /* Fondo sutil azul institucional */
-  --sena-blue-border:    var(--border-primary);   /* Contorno verde SENA unificado */
 
-  --sena-white:          var(--bg-surface);   /* Blanco puro (Tarjetas, Fondos limpios, Contraste) */
-  --sena-text:           var(--text-emphasis);   /* Texto principal en negro de alto contraste */
-  --sena-text-black:     var(--text-emphasis);   /* Negro absoluto para énfasis */
-  --sena-text-muted:     #111827;   /* Texto secundario oscuro legible sobre #FFFFFF y #F4F6F9 */
-  --sena-bg-light:       var(--bg-main);   /* Gris claro (Fondo de secciones, página y paneles) */
-  --sena-border:         var(--border-color);   /* Gris medio (Bordes de tarjetas, tablas e inputs) */
 
   /* ── 2. MAPEO A VARIABLES DEL SISTEMA Y BOOTSTRAP 5 ── */
-  --bg-body:             var(--sena-bg-light);
-  --bg-surface:          var(--sena-white);
-  --text-main:           var(--sena-text);
-  --text-muted:          var(--sena-text-muted);
-  --border-color:        var(--sena-border);
-  --navy:                var(--sena-blue);
-  --dark:                var(--sena-blue);
-  --sage:                var(--sena-green);
-  --rust:                var(--sena-blue);
-  --cream:               var(--sena-white);
 
-  --bs-primary:          var(--color-primary);
-  --bs-primary-rgb:      var(--color-primary-rgb);
-  --bs-success:          var(--color-primary);
-  --bs-success-rgb:      var(--color-primary-rgb);
-  --bs-info:             var(--color-secondary);
-  --bs-info-rgb:         var(--color-secondary-rgb);
-  --bs-dark:             var(--color-secondary);
-  --bs-dark-rgb:         var(--color-secondary-rgb);
-  --bs-light:            var(--bg-main);
-  --bs-light-rgb:        var(--bg-main-rgb);
-  --bs-body-bg:          var(--bg-main);
-  --bs-body-color:       var(--text-emphasis);
-  --bs-secondary-color:  #111827;
-  --bs-border-color:     var(--border-color);
-  --bs-link-color:       var(--text-emphasis);
-  --bs-link-hover-color: var(--color-primary);
 
   /* ── 3. COMPATIBILIDAD CON TOKENS SBM EXISTENTES ── */
-  --sbm-rock-950:        var(--color-secondary-hover);
-  --sbm-rock-900:        var(--sena-blue);
-  --sbm-rock-850:        var(--color-secondary);
-  --sbm-rock-800:        var(--sena-blue);
-  --sbm-rock-700:        var(--sena-blue);
-  --sbm-rock-600:        var(--sena-text-muted);
-  --sbm-rock-500:        var(--sena-text-muted);
-  --sbm-rock-400:        var(--text-placeholder);
-  --sbm-rock-200:        var(--sena-border);
-  --sbm-rock-100:        var(--sena-bg-light);
-  --sbm-rock-50:         var(--sena-bg-light);
-  --sbm-white:           var(--sena-white);
 
-  --sbm-amber-600:       var(--sena-green-hover);
-  --sbm-amber-500:       var(--sena-green);
-  --sbm-amber-400:       var(--sena-green);
-  --sbm-amber-100:       var(--sena-green-light);
-  --sbm-amber-50:        var(--sena-bg-light);
-  --sbm-copper-600:      var(--sena-blue-hover);
-  --sbm-copper-500:      var(--sena-green);
-  --sbm-copper-400:      var(--sena-green-hover);
 
   /* ── 4. ESTADOS DE STOCK (ALTO CONTRASTE WCAG AA) ── */
-  --sbm-stock-ok-text:     var(--status-success-text);
-  --sbm-stock-ok-bg:       var(--sena-green-light);
-  --sbm-stock-ok-border:   var(--sena-green-border);
-  --sbm-stock-ok-solid:    var(--sena-green);
 
-  --sbm-stock-warn-text:   var(--status-warning-text);
-  --sbm-stock-warn-bg:     var(--status-warning-bg);
-  --sbm-stock-warn-border: var(--status-warning-border);
-  --sbm-stock-warn-solid:  var(--status-warning);
 
-  --sbm-stock-danger-text:   var(--status-danger-text);
-  --sbm-stock-danger-bg:     var(--status-danger-bg);
-  --sbm-stock-danger-border: var(--status-danger-border);
-  --sbm-stock-danger-solid:  var(--status-danger);
 
   /* ── 5. SISTEMA DE ESPACIADO Y BORDES ── */
   --sbm-space-1:  4px;
@@ -115,10 +42,6 @@
   --sbm-radius-pill: 9999px;
 
   /* ── 6. SOMBRAS LIMPIAS ── */
-  --sbm-shadow-sm:   0 1px 3px var(--shadow-color);
-  --sbm-shadow-md:   0 4px 12px var(--shadow-color);
-  --sbm-shadow-lg:   0 10px 25px var(--shadow-color-md);
-  --sbm-shadow-glow: 0 0 14px var(--border-focus);
 
   /* ── 7. TIPOGRAFÍA ── */
   --sbm-font-sans: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
@@ -127,7 +50,7 @@
 
 /* ==========================================================================
    REGLA 1: BOTONES PRINCIPALES, LLAMADAS A LA ACCIÓN (CTA) E INDICADORES DE FOCO
-   Verde Principal SENA (#39A900) con texto blanco (#FFFFFF)
+   Verde Principal SENA (#39A900) con texto blanco (var(--text-on-primary))
    ========================================================================== */
 .btn-primary,
 .btn-success,
@@ -138,10 +61,10 @@
 .gu-btn-filter,
 .gu-btn-edit,
 body.auth-page .btn-submit {
-  background: var(--sena-green) !important;
-  background-color: var(--sena-green) !important;
-  border-color: var(--sena-green) !important;
-  color: var(--sena-white) !important;
+  background: var(--color-primary) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
   font-weight: 600;
   box-shadow: 0 2px 6px var(--border-focus) !important;
   transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
@@ -158,33 +81,33 @@ body.auth-page .btn-submit {
 .gu-btn-filter:hover:not(:disabled),
 .gu-btn-edit:hover:not(:disabled),
 body.auth-page .btn-submit:hover:not(:disabled) {
-  background: var(--sena-green-hover) !important;
-  background-color: var(--sena-green-hover) !important;
-  border-color: var(--sena-green-hover) !important;
-  color: var(--sena-white) !important;
+  background: var(--color-primary-hover) !important;
+  background-color: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
+  color: var(--text-on-primary) !important;
   box-shadow: 0 4px 12px var(--border-focus) !important;
   transform: translateY(-1px);
 }
 
 .btn-outline-primary,
 .btn-outline-success {
-  color: var(--sena-green) !important;
-  border-color: var(--sena-green) !important;
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
   background-color: transparent !important;
 }
 
 .btn-outline-primary:hover,
 .btn-outline-success:hover {
-  background-color: var(--sena-green) !important;
-  border-color: var(--sena-green) !important;
-  color: var(--sena-white) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* Indicadores de foco accesibles WCAG (#39A900) */
 :focus-visible {
-  outline: 3px solid var(--sena-green) !important;
+  outline: 3px solid var(--color-primary) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 4px var(--sena-green-focus) !important;
+  box-shadow: 0 0 0 4px var(--border-focus) !important;
 }
 
 .form-control:focus,
@@ -200,20 +123,20 @@ body.auth-page .btn-submit:hover:not(:disabled) {
 .inv-cat-select:focus,
 body.auth-page .mine-input:focus,
 body.auth-page .input-group-mine:focus-within {
-  border-color: var(--sena-green) !important;
-  box-shadow: 0 0 0 3px var(--sena-green-focus) !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px var(--border-focus) !important;
   outline: none !important;
 }
 
 .sfb-search-group:focus-within .sfb-search-icon,
 .sbm-search-inner:focus-within .sbm-search-icon {
-  color: var(--sena-green) !important;
+  color: var(--color-primary) !important;
 }
 
 .form-check-input:checked,
 .toggle-switch input:checked + .toggle-slider {
-  background-color: var(--sena-green) !important;
-  border-color: var(--sena-green) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
 }
 
 /* Paginación activa en DataTables y Bootstrap */
@@ -221,14 +144,14 @@ body.auth-page .input-group-mine:focus-within {
 .paginate_button.current,
 div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link,
 div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
-  background-color: var(--sena-green) !important;
-  border-color: var(--sena-green) !important;
-  color: var(--sena-white) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* ==========================================================================
    REGLA 2: ENCABEZADOS (H1-H6), BARRAS DE NAVEGACIÓN (SIDEBAR/HEADER) Y FOOTER
-   Azul Institucional (#00324D) y Blanco (#FFFFFF)
+   Azul Institucional (#00324D) y Blanco (var(--text-on-primary))
    ========================================================================== */
 h1, h2, h3,
 .h1, .h2, .h3,
@@ -237,14 +160,14 @@ h1, h2, h3,
 .config-page-title,
 .config-card-title,
 .sbm-title-heading {
-  color: var(--sena-blue);
+  color: var(--color-secondary);
 }
 
 h4, h5, h6,
 .h4, .h5, .h6,
 .card-header h6,
 .card-header h5 {
-  color: var(--sena-text);
+  color: var(--text-primary);
 }
 
 /* Mantener texto blanco en encabezados dentro de barras o modales oscuros */
@@ -255,7 +178,7 @@ h4, h5, h6,
 .sbm-modal-header h5,
 header h1, header h2, header h3,
 aside h1, aside h2, aside h3 {
-  color: var(--sena-white) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* Sidebar / Barra de Navegación Lateral Institucional Verde SENA (#278144) */
@@ -263,13 +186,13 @@ aside,
 aside#aside-sidebar {
   background: var(--bg-sidebar) !important;
   background-color: var(--bg-sidebar) !important;
-  border-right: 1px solid var(--bg-overlay-medium) !important;
+  border-right: 1px solid var(--bg-overlay) !important;
 }
 
 .aside-header {
   background: transparent !important;
-  border-bottom: 1px solid var(--bg-overlay-medium) !important;
-  color: var(--sena-white) !important;
+  border-bottom: 1px solid var(--bg-overlay) !important;
+  color: var(--text-on-primary) !important;
 }
 
 .aside-header .sbm-logo-icon {
@@ -280,7 +203,7 @@ aside#aside-sidebar {
 }
 
 .aside-brand-name {
-  color: var(--sena-white) !important;
+  color: var(--text-on-primary) !important;
   font-weight: 500 !important;
   font-size: 0.92rem !important;
   letter-spacing: 0.04em !important;
@@ -301,33 +224,33 @@ aside span.text-uppercase {
 }
 
 aside .nav-link {
-  color: var(--sena-white) !important;
+  color: var(--text-on-primary) !important;
   border-left: none !important;
   border-radius: 10px !important;
 }
 
 aside .nav-link .nav-icon,
 aside .nav-link i {
-  stroke: var(--sena-white) !important;
-  color: var(--sena-white) !important;
+  stroke: var(--text-on-primary) !important;
+  color: var(--text-on-primary) !important;
   opacity: 1 !important;
 }
 
 aside .nav-link:hover:not(.active) {
-  background: var(--bg-overlay-medium) !important;
-  color: var(--sena-white) !important;
+  background: var(--bg-overlay) !important;
+  color: var(--text-on-primary) !important;
   border-left: none !important;
 }
 
 aside .nav-link:hover:not(.active) .nav-icon,
 aside .nav-link:hover:not(.active) i {
-  stroke: var(--sena-white) !important;
-  color: var(--sena-white) !important;
+  stroke: var(--text-on-primary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 aside .nav-link.active {
-  background: var(--sena-white) !important;
-  background-color: var(--sena-white) !important;
+  background: var(--bg-surface) !important;
+  background-color: var(--bg-surface) !important;
   border-left: none !important;
   border-radius: 10px !important;
   color: var(--text-emphasis) !important;
@@ -346,8 +269,8 @@ aside .nav-link.active span {
 header,
 .navbar,
 footer {
-  background-color: var(--sena-blue) !important;
-  color: var(--sena-white) !important;
+  background-color: var(--color-secondary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* Modales institucionales */
@@ -355,28 +278,28 @@ footer {
 .modal-header.bg-dark,
 .modal-header.bg-success,
 .sbm-modal-header {
-  background: var(--sena-green) !important;
-  color: var(--sena-white) !important;
-  border-bottom: 2px solid var(--sena-green-hover) !important;
+  background: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
+  border-bottom: 2px solid var(--color-primary-hover) !important;
 }
 
 .sbm-modal-avatar,
 .profile-avatar-circle {
-  background-color: var(--sena-green) !important;
-  color: var(--sena-white) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* Panel izquierdo en Login / Registro */
 body.auth-page .left-panel {
-  background-color: var(--sena-blue) !important;
+  background-color: var(--color-secondary) !important;
 }
 
 body.auth-page .brand-text {
-  color: var(--sena-white) !important;
+  color: var(--text-on-primary) !important;
 }
 
 body.auth-page .brand-text span {
-  color: var(--sena-green) !important;
+  color: var(--color-primary) !important;
 }
 
 body.auth-page .brand-sub,
@@ -386,24 +309,24 @@ body.auth-page .corner-note {
 
 body.auth-page .logo-box,
 body.auth-page .tab-btn.on {
-  background: var(--sena-blue) !important;
-  color: var(--sena-white) !important;
+  background: var(--color-secondary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* ==========================================================================
-   REGLA 3: FONDOS GENERALES Y TARJETAS (#FFFFFF y #F4F6F9)
+   REGLA 3: FONDOS GENERALES Y TARJETAS (var(--text-on-primary) y #F4F6F9)
    Alternancia limpia para dar profundidad visual
    ========================================================================== */
 body,
 main,
 .body-wrap {
-  background-color: var(--sena-bg-light) !important;
-  color: var(--sena-text) !important;
+  background-color: var(--bg-main) !important;
+  color: var(--text-primary) !important;
 }
 
 body.auth-page .right-panel {
-  background-color: var(--sena-bg-light) !important;
-  color: var(--sena-text) !important;
+  background-color: var(--bg-main) !important;
+  color: var(--text-primary) !important;
 }
 
 .card,
@@ -416,12 +339,12 @@ body.auth-page .right-panel {
 .config-card,
 .sfb-wrap,
 .modal-content {
-  background-color: var(--sena-white) !important;
-  color: var(--sena-text) !important;
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
 }
 
 .card-header {
-  background-color: var(--sena-white) !important;
+  background-color: var(--bg-surface) !important;
 }
 
 .card-footer,
@@ -434,13 +357,13 @@ thead tr,
 .recent-dev-row,
 .config-status-box,
 .sbm-child-row-wrapper {
-  background-color: var(--sena-bg-light) !important;
+  background-color: var(--bg-main) !important;
 }
 
 tbody tr:hover,
 .table-hover > tbody > tr:hover > *,
 .gu-table tbody tr:hover td {
-  background-color: var(--sena-bg-light) !important;
+  background-color: var(--bg-main) !important;
 }
 
 /* ==========================================================================
@@ -461,7 +384,7 @@ tbody tr:hover,
 .config-status-box,
 .sbm-child-row-wrapper,
 .border {
-  border-color: var(--sena-border) !important;
+  border-color: var(--border-color) !important;
 }
 
 .card-header,
@@ -479,7 +402,7 @@ thead tr,
 .gu-table tbody td,
 .sfb-divider,
 hr {
-  border-color: var(--sena-border) !important;
+  border-color: var(--border-color) !important;
 }
 
 .form-control,
@@ -498,9 +421,14 @@ body.auth-page .input-group-mine,
 body.auth-page .mine-input,
 body.auth-page select.mine-input,
 body.auth-page .sel-btn {
-  border-color: var(--sena-border) !important;
-  background-color: var(--sena-white) !important;
-  color: var(--sena-text) !important;
+  border-color: var(--border-color) !important;
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+}
+
+body.auth-page .input-group-mine .mine-input,
+body.auth-page .input-group-mine .sel-btn {
+  background-color: transparent !important;
 }
 
 /* ==========================================================================
@@ -508,30 +436,30 @@ body.auth-page .sel-btn {
    (Reemplazo de azules brillantes por Verde SENA y Tonos Neutros)
    ========================================================================== */
 .text-primary {
-  color: var(--sena-green) !important;
+  color: var(--color-primary) !important;
 }
 
 .text-info {
-  color: var(--sena-blue) !important;
+  color: var(--color-secondary) !important;
 }
 
 .text-success {
-  color: var(--sena-green) !important;
+  color: var(--color-primary) !important;
 }
 
 .text-dark {
-  color: var(--sena-text) !important;
+  color: var(--text-primary) !important;
 }
 
 .bg-primary-subtle,
 .bg-light-primary {
-  background-color: var(--sena-green-light) !important;
-  color: var(--sena-green-hover) !important;
+  background-color: var(--color-primary-soft) !important;
+  color: var(--color-primary-hover) !important;
 }
 
 .bg-info-subtle {
-  background-color: var(--sena-blue-light) !important;
-  color: var(--sena-blue) !important;
+  background-color: var(--color-secondary-soft) !important;
+  color: var(--color-secondary) !important;
 }
 
 .bg-success-subtle,
@@ -540,50 +468,50 @@ body.auth-page .sel-btn {
 .inv-kpi-icon.blue,
 .quick-action-icon.icon-blue,
 .quick-action-icon.icon-green {
-  background-color: var(--sena-green-light) !important;
-  color: var(--sena-green) !important;
+  background-color: var(--color-primary-soft) !important;
+  color: var(--color-primary) !important;
 }
 
 .inv-kpi-card.accent-blue,
 .kpi-accent-blue {
-  border-left-color: var(--sena-blue) !important;
+  border-left-color: var(--color-secondary) !important;
 }
 
 .inv-kpi-card.accent-green,
 .kpi-accent-green {
-  border-left-color: var(--sena-green) !important;
+  border-left-color: var(--color-primary) !important;
 }
 
 /* Botones secundarios y ghost en verde SENA / neutro */
 .btn-outline-mine {
-  background: var(--sena-white) !important;
-  color: var(--sena-text) !important;
-  border: 1.5px solid var(--sena-border) !important;
+  background: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1.5px solid var(--border-color) !important;
 }
 .btn-outline-mine i {
-  color: var(--sena-green) !important;
+  color: var(--color-primary) !important;
 }
 .btn-outline-mine:hover {
-  background: var(--sena-bg-light) !important;
-  border-color: var(--sena-green) !important;
-  color: var(--sena-green-hover) !important;
+  background: var(--bg-main) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary-hover) !important;
 }
 
 .btn-ghost {
-  background: var(--sena-green-light) !important;
-  color: var(--sena-green-hover) !important;
-  border: 1px solid var(--sena-green-border) !important;
+  background: var(--color-primary-soft) !important;
+  color: var(--color-primary-hover) !important;
+  border: 1px solid var(--border-primary) !important;
 }
 .btn-ghost i {
-  color: var(--sena-green) !important;
+  color: var(--color-primary) !important;
 }
 .btn-ghost:hover {
-  background: var(--sena-green) !important;
-  color: var(--sena-white) !important;
-  border-color: var(--sena-green) !important;
+  background: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
+  border-color: var(--color-primary) !important;
 }
 .btn-ghost:hover i {
-  color: var(--sena-white) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* Números tabulares */
@@ -624,14 +552,14 @@ table td,
 .badge-state.badge-devuelto,
 .badge-state.badge-approved,
 .sbm-badge-disponible {
-  background-color: var(--sbm-stock-ok-bg) !important;
-  color: var(--sbm-stock-ok-text) !important;
-  border: 1px solid var(--sbm-stock-ok-border) !important;
+  background-color: var(--status-success-bg) !important;
+  color: var(--status-success-text) !important;
+  border: 1px solid var(--status-success-border) !important;
 }
 .badge-state.badge-aprobada::before,
 .badge-state.badge-devuelto::before,
 .badge-state.badge-approved::before {
-  background-color: var(--sbm-stock-ok-solid) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .badge-state.badge-pendiente,
@@ -639,15 +567,15 @@ table td,
 .badge-state.badge-pending,
 .badge-state.badge-parcial,
 .sbm-badge-critico {
-  background-color: var(--sbm-stock-warn-bg) !important;
-  color: var(--sbm-stock-warn-text) !important;
-  border: 1px solid var(--sbm-stock-warn-border) !important;
+  background-color: var(--status-warning-bg) !important;
+  color: var(--status-warning-text) !important;
+  border: 1px solid var(--status-warning-border) !important;
 }
 .badge-state.badge-pendiente::before,
 .badge-state.badge-entregado::before,
 .badge-state.badge-pending::before,
 .badge-state.badge-parcial::before {
-  background-color: var(--sbm-stock-warn-solid) !important;
+  background-color: var(--status-warning) !important;
 }
 
 .badge-state.badge-rechazada,
@@ -656,16 +584,16 @@ table td,
 .badge-state.badge-atrasado,
 .badge-state.badge-rejected,
 .sbm-badge-agotado {
-  background-color: var(--sbm-stock-danger-bg) !important;
-  color: var(--sbm-stock-danger-text) !important;
-  border: 1px solid var(--sbm-stock-danger-border) !important;
+  background-color: var(--status-danger-bg) !important;
+  color: var(--status-danger-text) !important;
+  border: 1px solid var(--status-danger-border) !important;
 }
 .badge-state.badge-rechazada::before,
 .badge-state.badge-vencido::before,
 .badge-state.badge-cancelado::before,
 .badge-state.badge-atrasado::before,
 .badge-state.badge-rejected::before {
-  background-color: var(--sbm-stock-danger-solid) !important;
+  background-color: var(--status-danger) !important;
 }
 
 /* Botones de acción unificados en tablas (36x36px) */
@@ -685,9 +613,9 @@ table td,
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  border: 1px solid var(--sena-border);
-  background-color: var(--sena-bg-light);
-  color: var(--sena-blue);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-main);
+  color: var(--color-secondary);
   font-size: 1rem;
   transition: all 0.15s ease;
   position: relative;
@@ -696,40 +624,40 @@ table td,
 
 .sbm-action-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 2px 5px var(--shadow-color-secondary);
+  box-shadow: 0 2px 5px var(--shadow-color);
 }
 
 .sbm-btn-view {
-  color: var(--sena-blue);
-  background-color: var(--sena-bg-light);
-  border-color: var(--sena-border);
+  color: var(--color-secondary);
+  background-color: var(--bg-main);
+  border-color: var(--border-color);
 }
 .sbm-btn-view:hover:not(:disabled) {
-  background-color: var(--sena-blue);
-  color: var(--sena-white);
-  border-color: var(--sena-blue);
+  background-color: var(--color-secondary);
+  color: var(--text-on-primary);
+  border-color: var(--color-secondary);
 }
 
 .sbm-btn-edit {
-  color: var(--sena-green-hover);
-  background-color: var(--sena-green-light);
-  border-color: var(--sena-green-border);
+  color: var(--color-primary-hover);
+  background-color: var(--color-primary-soft);
+  border-color: var(--border-primary);
 }
 .sbm-btn-edit:hover:not(:disabled) {
-  background-color: var(--sena-green);
-  color: var(--sena-white);
-  border-color: var(--sena-green);
+  background-color: var(--color-primary);
+  color: var(--text-on-primary);
+  border-color: var(--color-primary);
 }
 
 .sbm-btn-success {
-  color: var(--sena-green-hover);
-  background-color: var(--sena-green-light);
-  border-color: var(--sena-green-border);
+  color: var(--color-primary-hover);
+  background-color: var(--color-primary-soft);
+  border-color: var(--border-primary);
 }
 .sbm-btn-success:hover:not(:disabled) {
-  background-color: var(--sena-green);
-  color: var(--sena-white);
-  border-color: var(--sena-green);
+  background-color: var(--color-primary);
+  color: var(--text-on-primary);
+  border-color: var(--color-primary);
 }
 
 .sbm-btn-danger {
@@ -739,20 +667,20 @@ table td,
 }
 .sbm-btn-danger:hover:not(:disabled) {
   background-color: var(--status-danger);
-  color: var(--sena-white);
+  color: var(--text-on-primary);
   border-color: var(--status-danger);
 }
 
 .sbm-btn-print {
-  color: var(--sena-blue);
+  color: var(--color-secondary);
   background-color: var(--bg-main);
   border-color: var(--border-color);
   text-decoration: none;
 }
 .sbm-btn-print:hover:not(:disabled) {
-  background-color: var(--sena-blue);
-  color: var(--sena-white);
-  border-color: var(--sena-blue);
+  background-color: var(--color-secondary);
+  color: var(--text-on-primary);
+  border-color: var(--color-secondary);
 }
 
 /* DataTables control responsive (+) */
@@ -765,8 +693,8 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control:before {
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  background-color: var(--sena-green);
-  color: var(--sena-white);
+  background-color: var(--color-primary);
+  color: var(--text-on-primary);
   font-family: monospace;
   font-weight: 800;
   font-size: 14px;
@@ -777,8 +705,8 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control:before {
 table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control:before,
 table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
   content: "−";
-  background-color: var(--sena-blue);
-  color: var(--sena-white);
+  background-color: var(--color-secondary);
+  color: var(--text-on-primary);
 }
 
 
@@ -791,77 +719,77 @@ table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
 .bg-primary,
 .bg-primary-subtle,
 .bg-light-primary {
-  background-color: var(--sena-green, var(--color-primary)) !important;
-  color: var(--sena-white, var(--bg-surface)) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 .text-primary,
 a.text-primary,
 .link-primary {
-  color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--color-primary) !important;
 }
 
 .text-primary:hover,
 a.text-primary:hover,
 .link-primary:hover {
-  color: var(--sena-green-hover, var(--color-primary-hover)) !important;
+  color: var(--color-primary-hover) !important;
 }
 
 .border-primary {
-  border-color: var(--sena-green, var(--color-primary)) !important;
+  border-color: var(--color-primary) !important;
 }
 
 .btn-primary {
-  background-color: var(--sena-green, var(--color-primary)) !important;
-  border-color: var(--sena-green, var(--color-primary)) !important;
-  color: var(--sena-white, var(--bg-surface)) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
   box-shadow: 0 2px 6px var(--border-focus) !important;
 }
 
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {
-  background-color: var(--sena-green-hover, var(--color-primary-hover)) !important;
-  border-color: var(--sena-green-hover, var(--color-primary-hover)) !important;
-  color: var(--sena-white, var(--bg-surface)) !important;
+  background-color: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
+  color: var(--text-on-primary) !important;
   box-shadow: 0 4px 12px var(--border-focus) !important;
 }
 
 .btn-outline-primary {
-  color: var(--sena-green, var(--color-primary)) !important;
-  border-color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
   background-color: transparent !important;
 }
 
 .btn-outline-primary:hover,
 .btn-outline-primary:focus,
 .btn-outline-primary:active {
-  background-color: var(--sena-green, var(--color-primary)) !important;
-  border-color: var(--sena-green, var(--color-primary)) !important;
-  color: var(--sena-white, var(--bg-surface)) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* 2. Aside / Barra Lateral de Navegación (Logo SENA, Fondo Verde SENA e Ítem Activo Blanco) */
 aside .nav-link:hover:not(.active),
 aside .aside-nav a:hover:not(.active),
 .aside-nav .nav-link:hover:not(.active) {
-  color: var(--sena-white, var(--bg-surface)) !important;
-  background: var(--bg-overlay-medium) !important;
+  color: var(--text-on-primary) !important;
+  background: var(--bg-overlay) !important;
   border-left: none !important;
 }
 
 aside .nav-link:hover:not(.active) .nav-icon,
 aside .nav-link:hover:not(.active) i {
-  stroke: var(--sena-white, var(--bg-surface)) !important;
-  color: var(--sena-white, var(--bg-surface)) !important;
+  stroke: var(--text-on-primary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 aside .nav-link.active,
 aside .aside-nav .nav-link.active,
 aside .aside-nav a.active,
 .aside-nav .nav-link.active {
-  background: var(--sena-white, var(--bg-surface)) !important;
-  background-color: var(--sena-white, var(--bg-surface)) !important;
+  background: var(--bg-surface) !important;
+  background-color: var(--bg-surface) !important;
   border-left: none !important;
   border-radius: 10px !important;
   color: var(--text-emphasis) !important;
@@ -880,7 +808,7 @@ aside .aside-nav a.active i {
 aside .badge,
 .aside-badge {
   background: var(--border-focus) !important;
-  color: var(--sena-green-border, var(--border-primary)) !important;
+  color: var(--border-primary) !important;
 }
 
 /* 3. Wizard (Préstamos y Devoluciones) */
@@ -890,7 +818,7 @@ aside .badge,
 
 .wizard-step-dot.wizard-done:not(:last-child)::after,
 .dev-wiz-step-dot.dev-wiz-done:not(:last-child)::after {
-  background: var(--sena-green, var(--color-primary)) !important;
+  background: var(--color-primary) !important;
 }
 
 .wizard-dot-circle,
@@ -900,41 +828,41 @@ aside .badge,
 
 .wizard-step-dot.wizard-active .wizard-dot-circle,
 .dev-wiz-step-dot.dev-wiz-active .dev-wiz-dot-circle {
-  background: var(--sena-green, var(--color-primary)) !important;
-  border-color: var(--sena-green, var(--color-primary)) !important;
-  color: var(--sena-white, var(--bg-surface)) !important;
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
   box-shadow: 0 0 0 4px var(--border-focus) !important;
 }
 
 .wizard-step-dot.wizard-done .wizard-dot-circle,
 .dev-wiz-step-dot.dev-wiz-done .dev-wiz-dot-circle {
-  background: var(--sena-green, var(--color-primary)) !important;
-  border-color: var(--sena-green, var(--color-primary)) !important;
-  color: var(--sena-white, var(--bg-surface)) !important;
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
 }
 
 .wizard-step-dot.wizard-active .wizard-dot-label,
 .wizard-step-dot.wizard-done .wizard-dot-label,
 .dev-wiz-step-dot.dev-wiz-active .dev-wiz-dot-label,
 .dev-wiz-step-dot.dev-wiz-done .dev-wiz-dot-label {
-  color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--color-primary) !important;
   font-weight: 700 !important;
 }
 
 .dev-wiz-sec-label {
-  color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--color-primary) !important;
   border-bottom-color: var(--border-focus) !important;
 }
 
 .dev-wiz-sec-label svg {
-  color: var(--sena-green, var(--color-primary)) !important;
+  color: var(--color-primary) !important;
 }
 
 /* 4. Estados Interactivos (Focus, Hover, Box-shadow suave) */
 :focus-visible {
-  outline: 3px solid var(--sena-green, var(--color-primary)) !important;
+  outline: 3px solid var(--color-primary) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 4px var(--sena-green-focus, var(--border-focus)) !important;
+  box-shadow: 0 0 0 4px var(--border-focus) !important;
 }
 
 .form-control:focus,
@@ -953,26 +881,26 @@ aside .badge,
 .dev-wiz-textarea:focus,
 body.auth-page .mine-input:focus,
 body.auth-page .input-group-mine:focus-within {
-  border-color: var(--sena-green, var(--color-primary)) !important;
-  box-shadow: 0 0 0 3px var(--sena-green-focus, var(--border-focus)) !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px var(--border-focus) !important;
 }
 
 .form-check-input:checked {
-  background-color: var(--sena-green, var(--color-primary)) !important;
-  border-color: var(--sena-green, var(--color-primary)) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
 }
 
 .form-check-input:focus {
-  border-color: var(--sena-green, var(--color-primary)) !important;
-  box-shadow: 0 0 0 0.25rem var(--sena-green-focus, var(--border-focus)) !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 0.25rem var(--border-focus) !important;
 }
 
 /* Paginación activa */
 .page-item.active .page-link,
 div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link,
 div.dt-container div.dt-paging ul.pagination .page-item.active .page-link {
-  background-color: var(--sena-green, var(--color-primary)) !important;
-  border-color: var(--sena-green, var(--color-primary)) !important;
-  color: var(--sena-white, var(--bg-surface)) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--text-on-primary) !important;
   box-shadow: 0 2px 6px var(--border-focus) !important;
 }

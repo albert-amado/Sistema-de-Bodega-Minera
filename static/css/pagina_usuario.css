@@ -53,7 +53,7 @@
   line-height: 18px;
   text-align: center;
   background: var(--status-danger);
-  color: var(--bg-surface);
+  color: var(--text-on-primary);
 }
 .stock-notif-panel {
   position: absolute;
@@ -84,7 +84,7 @@
   margin-bottom: .8rem;
   font-family: var(--font-ui);
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-primary);
   font-size: .9rem;
 }
 .stock-notif-close {
@@ -109,9 +109,9 @@
   align-items: center;
   padding: .75rem .85rem;
   border-radius: 14px;
-  background: var(--bg-surface-translucent);
+  background: var(--bg-surface);
   font-size: .88rem;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 .stock-notif-item:last-child {
   margin-bottom: 0;
@@ -124,7 +124,7 @@
 .stock-notif-empty {
   padding: .9rem .85rem;
   border-radius: 14px;
-  background: var(--bg-surface-translucent);
+  background: var(--bg-surface);
   color: var(--text-muted);
   font-size: .88rem;
   text-align: center;
