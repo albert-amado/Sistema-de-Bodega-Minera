@@ -241,11 +241,11 @@
   width: 100%;
   max-width: 330px;
   padding: 22px;
-  border: 1px solid var(--dark-border-color);
+  border: 1px solid var(--border-subtle);
   border-radius: 14px;
-  background: var(--dark-bg-surface);
-  color: var(--dark-text-primary);
-  box-shadow: 0 16px 40px var(--dark-shadow-strong);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: 0 16px 40px var(--shadow-color-strong);
 }
 
 .sbm-chat-reset-confirmation p {
@@ -263,7 +263,7 @@
 .sbm-chat-reset-btn {
   min-height: 36px;
   padding: 0 14px;
-  border: 1px solid var(--dark-border-strong);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font: inherit;
   font-size: 0.82rem;
@@ -272,14 +272,14 @@
 }
 
 .sbm-chat-reset-cancel {
-  background: var(--dark-bg-card);
-  color: var(--dark-text-secondary);
+  background: var(--bg-card);
+  color: var(--text-secondary);
 }
 
 .sbm-chat-reset-accept {
   border-color: var(--color-primary);
   background: var(--color-primary);
-  color: #FFFFFF;
+  color: var(--text-on-primary);
 }
 
 .sbm-chat-reset-btn:focus-visible {
